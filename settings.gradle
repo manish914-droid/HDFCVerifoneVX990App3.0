@@ -1,0 +1,3 @@
+include ':customNeumorphic'
+include ':app'
+rootProject.name = "VerifoneVX990App"
