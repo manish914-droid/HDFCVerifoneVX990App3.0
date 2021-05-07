@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Gradle: commons-net:commons-net:3.7">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-net/commons-net/3.7/11481f2c9feeb0e9b1b828953f2d4ba2f9b2753c/commons-net-3.7.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-net/commons-net/3.7/2f28b93a523b307d365549fafc655048ff3c4286/commons-net-3.7-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/commons-net/commons-net/3.7/16192b45f2e4826e5e9dcc59f47fd0d0410500f7/commons-net-3.7-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>
