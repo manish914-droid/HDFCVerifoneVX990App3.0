@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/nested_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/white"
+            android:descendantFocusability="blocksDescendants">
+
+            <include
+                android:id="@+id/toolbar_txn"
+                layout="@layout/app_toolbar" />
+
+            <TextView
+                android:id="@+id/emiSchemeTV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/pad_16"
+                android:gravity="center"
+                android:padding="@dimen/pad_4"
+                android:text="@string/emi_scheme_and_offer"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_xregular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/toolbar_txn" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/emiSchemeOfferRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/emiSchemeTV" />
+
+            <ImageView
+                android:id="@+id/empty_view_placeholder"
+                android:layout_width="@dimen/standard_placeholder_size"
+                android:layout_height="@dimen/standard_placeholder_size"
+                android:background="@drawable/no_data_found"
+                android:contentDescription="@string/app_name"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/emi_scheme_floating_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/pad_60"
+        android:text="@string/proceed_txn"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xregular"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="@dimen/pad_0"
+        app:icon="@drawable/ic_proceed_button"
+        app:iconPadding="@dimen/pad_5"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/colorAccent" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/main_drawer_bank_fun_ll"
+    style="@style/MainDrawerLLStyle"
+    android:layout_marginBottom="1dp">
+
+
+    <TextView
+        android:id="@+id/main_drawer_tv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="40dp"
+        android:layout_marginEnd="@dimen/pad_16"
+        android:gravity="start|center"
+        android:paddingStart="@dimen/pad_16"
+        android:paddingEnd="@dimen/pad_16"
+        android:textColor="@color/toolbar_text_color"
+        android:textSize="@dimen/text_size_regular"
+        android:textStyle="normal" />
+
+</LinearLayout>

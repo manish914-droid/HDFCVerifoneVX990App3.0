@@ -1,0 +1,22 @@
+/**
+This File consist WorkFlow Steps and Short Describe Regarding BankEMI Transaction on Android HDFC POS Terminal:-
+**/
+
+#Key Note:- Transaction Flow Files are (DoEMV --> For First Gen AC , ProcessCards ---> Detect Card Types , VFEmvHandler/GenericReadCard ---> For Reading Card Data)
+
+//=================BankEMI=================
+On Click of Bank EMI Option -> We Hit Host To Get IssuerTAndC Data to Print in EMI ChargeSlip then below steps need to follow:-
+1.First Step is to show Amount Input Screen
+2.Next Step is to show MobileNumber/Bill Number Input in Dialog and they are not mandatory to fill
+3.Navigate To Card Accept Screen (Note:- BankEMI will only work for EMV and Swipe Cards)
+4.Read and Fetch PanNumber of Card From GenericReadCardData Class and Do Host Hit for EMI Tenure , Rates ,
+Amount to be Approved , Discount data , EMI TAndC Data from EMISchemeAndOfferActivity Activity (here we need to call startActivityForResult
+so that we can fetch all result values in VFTransactionActivity OnActivityResult)
+5.After Fetching All Bank EMI Data and TAndC in VFTransactionActivity OnActivityResult we will call DoEMV with all necessary parameters ->
+First Gen AC with Selected EMI Scheme Offer Transaction Amount
+6.Then Create BankEMI Packet in CreateTransactionPacket class as it is like SALE Transaction just we need to add BankEMI Scheme Offer Data Field58.
+7.Hit Host with ISO Packet and Receive Response on the basis of Response Code we will save Bank EMI Data in DB and Print Charge Slip of it.
+
+Note:- as of 16th Feb 2020 BANK EMI ChargeSlip Data Missing from Host End are:-
+1.Tenure TAndC Data which will come in Scheme and Offer Packet Response
+2.Issuer Footer TAndC which will come in IssuerTAndC Packet Response

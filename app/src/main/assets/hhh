@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+<isopackager>
+    <isofield name="BIT MAP" id="1" length="8" type="BINARY" />
+
+    <isofield name="PAN - PRIMARY ACCOUNT NUMBER" id="2"/>
+
+    <isofield name="PROCESSING CODE" id="3" length="6" />
+
+
+    <isofield name="Transaction Amount" id="4"/>
+
+  <!--  <isofield name="Amount, settlement" id="5"  />
+
+    <isofield name="Amount, cardholder billing" id="6"/>
+
+    <isofield name="TRANSMISSION DATE AND TIME" id="7" />
+    <isofield name="Amount, cardholder billing fee" id="8"  />
+    <isofield name="Conversion rate, settlement" id="9" />
+    <isofield name="Conversion rate, cardholder billing" id="10" />-->
+
+
+    <isofield name="ROC" id="11" length="6" type="NUMERIC"/>
+
+
+    <isofield name="Time, Local Txn." id="12" length="6" />
+    <isofield name="Local Txn Date" id="13" length="4" />
+
+  <!--  <isofield name="Expiry Date" id="14"/>
+    <isofield name="Settlement Date" id="15"/>
+    <isofield name="Settlement Date" id="16" />
+
+    <isofield name="Effective Date" id="17" />
+
+    <isofield name="Merchant type/Merchant Category Code" id="18" />
+    <isofield name="Acquiring institution country code" id="19"  />
+    <isofield name="PAN extended, country code " id="20" />
+    <isofield name="Forwarding institution. country code" id="21"  />-->
+
+    <isofield name="Point of service entry mode" id="22" length="3"/>
+    <!--Application PAN sequence number need to change -->
+    <isofield name="Application PAN sequence number" id="23"/>
+
+
+    <isofield name="NII" id="24" length="4"/>
+
+  <!--  <isofield name="Point of service condition code" id="25" />
+    <isofield name="Point of service capture code" id="26"/>
+    <isofield name="Authorizing identification response length" id="27" />-->
+    <!--<isofield name="NII" id="28" length="3" />
+    <isofield name="NII" id="29" />-->
+    <isofield name="NII" id="30" />
+    <isofield name="NII" id="31"/>
+    <isofield name="NII" id="32"/>
+    <isofield name="NII" id="33"/>
+    <isofield name="NII" id="34" />
+    <isofield name="NII" id="35"/>
+    <isofield name="NII" id="36" />
+    <isofield name="NII" id="37"/>
+
+
+    <isofield name="NII" id="40" />
+    <isofield name="Authorization code" id="38" />
+    <isofield name="Response Code" id="39" />
+    <!--TID -->
+    <isofield name="TID" id="41" />
+    <!--MID-->
+    <isofield name="Merchant ID" id="42" />
+
+    <!--Field 48-->
+    <isofield name="Addtional Field" id="48" length="999" type="LLLVAR"/>
+
+    <isofield name="OTP Block" id="52" />
+    <isofield name="OTP Block" id="54"  />
+    <isofield name="OTP Block" id="55"  />
+    <!-- ICC -->
+
+    <!--<isofield name="INTEGRATED CARD CIRCUIT SYSTEM RELATED DATA" id="55" length="255"
+        type="BINARY" />-->
+    <!--Reserved national need to change -->
+    <isofield name="Reserved" id="56" length="999" type="NUMERIC" />
+    <isofield name="Track 2 data" id="57" length="999" type="BINARY" />
+
+    <isofield name="Response Message" id="58" length="999" type="BINARY" />
+    <isofield name="Terminal RSA Key" id="59" length="999" type="CHAR" />
+
+    <isofield name="Application Binary Data" id="60" length="999" type="ANS" />
+    <isofield name="Terminal Model Application version" id="61" length="999" type="ANS" />
+    <isofield name="Master Data" id="62" length="999" type="BINARY" />
+
+    <isofield name="Bank Code" id="63" length="999" type="ANS" />
+
+    <!--<isofield name="ADITIONAL RESPONSE DATA" id="44" length="25" type="CHAR" />
+    <isofield name="RESERVED ISO USE" id="105" length="999" type="CHAR" />-->
+</isopackager>

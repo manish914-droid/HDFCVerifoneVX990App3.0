@@ -1,0 +1,12 @@
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/notification_badge"
+    android:layout_width="30dp"
+    android:layout_height="30dp"
+    android:layout_marginStart="20dp"
+    android:background="@drawable/circular_view"
+    android:gravity="center"
+    android:padding="3dp"
+    android:textColor="@color/white"
+    android:textSize="12sp"
+    tools:text="999" />

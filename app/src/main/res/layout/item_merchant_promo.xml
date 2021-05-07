@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/parent_LL"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_16"
+    app:cardCornerRadius="@dimen/pad_16">
+
+    <LinearLayout
+        android:id="@+id/linear_ll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <ImageView
+            android:id="@+id/scheme_check_iv"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_gravity="center"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_check_box_selected_green"
+            android:contentDescription="@string/select_scheme" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/promoName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_16"
+            android:background="@color/red"
+            android:gravity="center"
+            android:text="IOIOIO"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_large"
+            app:fname="bold" />
+
+
+    </LinearLayout>
+
+</com.google.android.material.card.MaterialCardView>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="330dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingBottom="@dimen/pad_4">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="58dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:padding="@dimen/pad_8"
+        android:text="@string/select_option"
+        android:textAllCaps="true"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_regular" />
+
+    <RadioGroup
+        android:id="@+id/d_chooser_rg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_8" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/d_chooser_cancel_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_8"
+            android:layout_weight="1"
+            android:background="@drawable/theme_btn_bg"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular" />
+
+        <Button
+            android:id="@+id/d_chooser_done_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_8"
+            android:layout_weight="1"
+            android:background="@drawable/theme_btn_bg"
+            android:text="@string/done"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular" />
+
+    </LinearLayout>
+
+</LinearLayout>

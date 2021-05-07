@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/pad_5"
+    android:layout_marginTop="@dimen/pad_16"
+    android:layout_marginEnd="@dimen/pad_5"
+    android:layout_marginBottom="@dimen/pad_5"
+    android:elevation="@dimen/pad_5"
+    app:cardCornerRadius="@dimen/pad_5"
+    app:cardElevation="@dimen/pad_5">
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/isv2_scheme_name_tv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary"
+        android:padding="@dimen/pad_10"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_regular"
+        android:visibility="gone"
+        app:fname="bold" />
+
+</androidx.cardview.widget.CardView>

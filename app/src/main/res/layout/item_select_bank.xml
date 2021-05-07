@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_4"
+    android:elevation="@dimen/pad_8"
+    app:cardCornerRadius="@dimen/pad_4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="@dimen/pad_4"
+
+
+        >
+
+        <CheckBox
+            android:id="@+id/ck_bx"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular" />
+
+        <ImageView
+            android:id="@+id/bnk_logo"
+            android:layout_width="@dimen/pad_56"
+            android:layout_height="@dimen/pad_40"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/pad_4"
+            android:layout_marginStart="@dimen/pad_16"
+            android:contentDescription="@string/_500" />
+
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

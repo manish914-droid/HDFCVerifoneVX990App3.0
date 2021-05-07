@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".bankEmiEnquiry.IssuerListFragment">
+
+    <TextView
+        android:id="@+id/emiSchemeTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_16"
+        android:gravity="center"
+        android:padding="@dimen/pad_4"
+        android:textColor="@color/black"
+        android:textSize="@dimen/text_size_xregular"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_txn" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/issuer_RV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/hello_blank_fragment" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/do_enquiry_btn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|bottom"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/pad_60"
+            android:text="@string/do_enquiry"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_xregular"
+            app:backgroundTint="@color/colorPrimary"
+            app:elevation="@dimen/pad_0"
+            app:icon="@drawable/ic_sent_msg_white"
+            app:iconPadding="@dimen/pad_5"
+            app:iconTint="@color/white"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rippleColor="@color/colorAccent" />
+
+    </FrameLayout>
+
+
+</LinearLayout>

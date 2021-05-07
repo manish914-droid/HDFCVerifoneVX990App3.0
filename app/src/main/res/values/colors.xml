@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<resources>
+
+    <!--<color name="colorPrimary">#9B6CC5</color>
+    <color name="colorPrimaryDark">#9367BB</color>
+    <color name="colorAccent">#683992</color>
+    <color name="colorAccentO">#77683992</color>-->
+
+    <!-- <color name="colorPrimary">#03a9f4</color>
+     <color name="colorPrimaryDark">#039be5</color>
+     <color name="colorAccent">#0288d1</color>
+
+     <color name="colorAccentO">#77683992</color>-->
+
+    <color name="colorPrimaryTrans">#990D47A1</color>
+    <!--  <color name="colorPrimary">#1976d2</color>
+      <color name="colorPrimaryDark">#004ba0</color>
+      <color name="colorAccent">#63a4ff</color>
+      <color name="colorAccentO">#062e87</color>-->
+    <color name="colorPrimary">#9B6CC5</color>
+    <color name="colorPrimaryDark">#9367BB</color>
+    <color name="colorAccent">#683992</color>
+
+    <color name="colorAccentO">#77683992</color>
+
+
+    <!--
+    Below Are AMEX color schemes
+
+    <color name="colorPrimaryTrans">#990D47A1</color>
+
+      <color name="colorPrimary">#3a61d3</color>
+      <color name="colorPrimaryDark">#0038a1</color>
+      <color name="colorAccent">#768eff</color>
+
+      <color name="colorAccentO">#062e87</color>-->
+
+    <color name="heading">#222222</color>
+    <!-- Background color -->
+    <color name="colorPrimaryBackground">#ebebeb</color>
+
+    <color name="text_active">@color/heading</color>
+    <color name="text_inactive">#777777</color>
+    <color name="darkgreen">#006400</color>
+    <color name="lightGreen">#13E113</color>
+    <color name="darkgray">#A9A9A9</color>
+    <color name="white">#FFFFFF</color>
+    <color name="black">#000000</color>
+    <color name="toolbar_text_color">@color/colorPrimary</color>
+
+    <color name="trans_black">#6A000000</color>
+
+    <color name="submenu_bg">#FAFBFB</color>
+    <color name="seperator">#EBEBEB</color>
+
+    <color name="btn_color_1">#009efb</color>
+    <color name="btn_color_2">#29fa98</color>
+
+
+    <color name="sidebar_separator_bg">#F1ECF6</color>
+    <color name="old_icon_color">@color/colorPrimary</color>
+    <color name="item_background_color">#fffde7</color>
+    <color name="colorGrey">#A9A9A9</color>
+    <color name="colorBlack">#000000</color>
+
+    <color name="prompt_no_pwd_color">#666666</color>
+    <color name="silver">#C0C0C0</color>
+    <color name="gray_bg">#f8f8f8</color>
+    <color name="red">#FF00</color>
+    <color name="yellow">#FFFF00</color>
+    <color name="transparent_white">#99ffffff</color>
+    <color name="purple_light">#9B6CC5</color>
+    <color name="purple_d">#683992</color>
+
+</resources>

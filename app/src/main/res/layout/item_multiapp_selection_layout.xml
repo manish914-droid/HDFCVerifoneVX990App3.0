@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <RadioButton
+        android:id="@+id/app_Rb"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginStart="@dimen/pad_8"
+        android:layout_marginEnd="@dimen/pad_8"
+        android:padding="@dimen/pad_16"
+        android:text="@string/american_express">
+
+    </RadioButton>
+
+</LinearLayout>

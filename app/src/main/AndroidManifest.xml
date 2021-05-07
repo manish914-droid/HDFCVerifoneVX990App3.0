@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.verifonevx990app">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Receiver Permission declaration -->
+    <permission android:name="my.app.PERMISSION" />
+
+    <uses-permission
+        android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
+        tools:ignore="ProtectedPermissions" />
+
+    <application
+        android:name=".vxUtils.VerifoneApp"
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:requestLegacyExternalStorage="true"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/VxAppThemeNoActionBar"
+        tools:targetApi="q">
+
+        <activity android:name=".bankEmiEnquiry.EMiEnquiryOnPosActivity" />
+        <activity
+            android:name=".utils.printerUtils.PrinterActivity"
+            android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
+        <activity
+            android:name=".main.MainActivity"
+            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".transactions.TransactionActivity"
+            android:theme="@style/VxAppThemeNoActionBar"
+            android:windowSoftInputMode="adjustNothing">
+
+            <!--
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+            -->
+        </activity>
+        <activity
+            android:name=".emv.transactionprocess.VFTransactionActivity"
+            android:theme="@style/VxAppThemeNoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity
+            android:name=".bankemi.EMISchemeAndOfferActivity"
+            android:theme="@style/VxAppThemeNoActionBar"
+            android:windowSoftInputMode="adjustNothing" />
+        <activity android:name=".nontransaction.EmiActivity" /> <!-- registering the receiver -->
+        <receiver
+            android:name=".utils.AutoSettleBroadcast"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="my.app.PERMISSION"> <!-- Permission enforcement for delivering intents to this receiver -->
+            <intent-filter>
+                <action android:name="my.app.Action" />
+            </intent-filter>
+        </receiver>
+        <receiver android:name=".main.AutoSettleReceiver">
+            <intent-filter>
+                <action android:name="com.bonushub.vxPos.force_settle" />
+            </intent-filter>
+        </receiver>
+    </application>
+
+</manifest>

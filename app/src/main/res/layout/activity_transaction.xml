@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+
+    <include
+        android:id="@+id/toolbar_txn"
+        layout="@layout/app_toolbar" />
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/tv_transaction_amount_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_16"
+        android:layout_marginStart="16dp"
+        android:text="@string/base_amount"
+        android:textSize="@dimen/text_size_xregular"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar_txn" />
+
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/base_amt_tv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="@dimen/pad_16"
+        android:gravity="end"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_xregular"
+        app:fname="bold"
+        app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_amount_heading"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/tv_transaction_amount_heading"
+        app:layout_constraintTop_toTopOf="@+id/tv_transaction_amount_heading" />
+
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/tv_card_number_heading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pad_16"
+        android:layout_marginTop="@dimen/pad_16"
+        android:text="@string/card_number"
+        android:textColor="@color/colorPrimary"
+        android:textSize="@dimen/text_size_xregular"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount_heading" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardView_l"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_16"
+        android:elevation="@dimen/pad_8"
+        android:visibility="gone"
+        app:cardCornerRadius="@dimen/pad_8"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount_heading">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_16">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/card_number"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="bold" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/at_card_no_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_16"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_xregular"
+                app:fname="regular" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+    <!--<com.example.verifonevx990app.vxUtils.BHButton
+        android:id="@+id/manual_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button"
+        />-->
+    <WebView
+        android:id="@+id/payment_gif"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+        android:layout_margin="@dimen/pad_16"
+        android:scaleType="fitXY"
+        android:scrollIndicators="none"
+        android:scrollbars="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/manual_entry_button" />
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/tv_insert_card"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:padding="@dimen/pad_16"
+        android:text="@string/please_insert_swipe_tap_card"
+        android:textSize="@dimen/text_size_xregular"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/payment_gif" />
+
+    <Button
+        android:id="@+id/manual_entry_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        android:text="@string/manual_entry"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/cardView_l" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

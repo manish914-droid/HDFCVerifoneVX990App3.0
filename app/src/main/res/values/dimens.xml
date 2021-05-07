@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="size_70">60dp</dimen>
+    <dimen name="size_140">120dp</dimen>
+    <dimen name="pad_4">4dp</dimen>
+    <dimen name="pad_20">20dp</dimen>
+    <dimen name="key_text_size">24sp</dimen>
+    <dimen name="pad_8">8dp</dimen>
+    <dimen name="pad_16">16dp</dimen>
+    <dimen name="pad_24">24dp</dimen>
+    <dimen name="pad_32">32dp</dimen>
+    <dimen name="width_drawer">280dp</dimen>
+
+    <dimen name="small_btn_size">40dp</dimen>
+
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_xsmall">12sp</dimen>
+    <dimen name="text_size_medium">20sp</dimen>
+    <dimen name="text_size_regular">16sp</dimen>
+    <dimen name="text_size_xregular">18sp</dimen>
+
+    <dimen name="text_size_large">22sp</dimen>
+    <dimen name="profile_qr_img_size">120dp</dimen>
+    <dimen name="height_size_navigation_item">60dp</dimen>
+    <dimen name="drawer_item_size">30dp</dimen>
+    <dimen name="size_toolbar">48dp</dimen>
+    <dimen name="dashboard_img_len">48dp</dimen>
+    <dimen name="lock_img_width_height">16dp</dimen>
+
+    <dimen name="pad_5">5dp</dimen>
+    <dimen name="pad_10">10dp</dimen>
+
+    <dimen name="item_dashboard_size">60dp</dimen>
+    <dimen name="dashboard_item_height">140dp</dimen>
+    <dimen name="pad_30">30dp</dimen>
+    <dimen name="pad_15">15dp</dimen>
+    <dimen name="pad_56">56dp</dimen>
+    <dimen name="pad_0">0dp</dimen>
+    <dimen name="pad_60">60dp</dimen>
+    <dimen name="standard_placeholder_size">250dp</dimen>
+
+    <dimen name="font_size_normal">20sp</dimen>
+    <dimen name="font_size_larger">25sp</dimen>
+    <dimen name="font_size_small">17sp</dimen>
+    <dimen name="pad_40">40dp</dimen>
+    <dimen name="pad_36">36dp</dimen>
+
+    <dimen name="dashboard_img_width">48dp</dimen>
+    <dimen name="dashboard_img_height">56dp</dimen>
+    <dimen name="pad_2">2dp</dimen>
+
+
+</resources>

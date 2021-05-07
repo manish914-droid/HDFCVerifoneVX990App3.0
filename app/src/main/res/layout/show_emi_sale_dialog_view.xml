@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="0dp"
+    android:background="@drawable/rounded_cor_insta"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/closeDialog"
+        android:layout_width="@dimen/drawer_item_size"
+        android:layout_height="@dimen/drawer_item_size"
+        android:layout_gravity="end"
+        android:layout_marginStart="@dimen/pad_8"
+        android:layout_marginEnd="@dimen/pad_16"
+        android:contentDescription="@string/app_name"
+        android:scaleType="fitXY"
+        android:src="@drawable/ic_close_24" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_10"
+        android:orientation="vertical">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_5"
+            android:layout_marginBottom="@dimen/pad_5"
+            android:elevation="@dimen/pad_10"
+            android:paddingStart="@dimen/pad_20"
+            android:paddingTop="@dimen/pad_20"
+            android:paddingEnd="@dimen/pad_20"
+            android:paddingBottom="@dimen/pad_20"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/pad_10">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/congratulations_tv"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:gravity="center"
+                android:text="@string/congratulations"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_xregular"
+                android:textStyle="bold" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_5"
+            android:layout_marginBottom="@dimen/pad_5"
+            android:elevation="@dimen/pad_10"
+            android:paddingStart="@dimen/pad_20"
+            android:paddingTop="@dimen/pad_20"
+            android:paddingEnd="@dimen/pad_20"
+            android:paddingBottom="@dimen/pad_20"
+            app:cardBackgroundColor="@color/white"
+            app:cardCornerRadius="@dimen/pad_10">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/emi_sale_tv"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginTop="@dimen/pad_5"
+                android:gravity="center"
+                android:hint="@string/emi_sale_hint"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_regular" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+
+    <!--Buttons-->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pad_8"
+        android:orientation="vertical"
+        android:weightSum="2">
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_10">
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardsaleButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/pad_5"
+                android:layout_marginBottom="@dimen/pad_5"
+                android:elevation="@dimen/pad_10"
+                android:paddingStart="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_20"
+                android:paddingEnd="@dimen/pad_20"
+                android:paddingBottom="@dimen/pad_20"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/pad_10">
+
+                <TextView
+                    android:id="@+id/saleButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/pad_10"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/sale"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/key_text_size" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:paddingTop="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_chevron_right_black_24dp" />
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_10">
+
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/cardemiButton"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/pad_5"
+                android:layout_marginBottom="@dimen/pad_5"
+                android:elevation="@dimen/pad_10"
+                android:paddingStart="@dimen/pad_20"
+                android:paddingTop="@dimen/pad_20"
+                android:paddingEnd="@dimen/pad_20"
+                android:paddingBottom="@dimen/pad_20"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="@dimen/pad_10">
+
+                <TextView
+                    android:id="@+id/emiButton"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/pad_10"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/emi"
+                    android:textAllCaps="true"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/key_text_size" />
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="right"
+                    android:layout_margin="5dp"
+                    android:layout_weight="1"
+                    android:paddingTop="15dp"
+                    android:scaleType="fitCenter"
+                    android:src="@drawable/ic_chevron_right_black_24dp" />
+
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_8"
+            android:layout_marginEnd="@dimen/pad_8"
+            android:layout_weight="1"
+            android:text="@string/sale"
+            android:visibility="gone" />
+
+
+        <Button
+            style="?android:attr/buttonBarButtonStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_8"
+            android:layout_marginEnd="@dimen/pad_8"
+            android:layout_weight="1"
+            android:text="@string/emi"
+            android:visibility="gone" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

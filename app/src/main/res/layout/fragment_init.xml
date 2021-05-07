@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="@dimen/pad_4"
+            android:orientation="vertical"
+            app:cardCornerRadius="@dimen/pad_4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_16">
+
+
+                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
+                    android:id="@+id/iaum_size_til"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pad_8"
+                    android:layout_marginBottom="@dimen/pad_8">
+
+                    <com.example.verifonevx990app.vxUtils.BHTextInputEditText
+                        android:id="@+id/if_et"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/height_size_navigation_item"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:ems="10"
+                        android:gravity="center|start"
+                        android:hint="@string/enter_tid_colon"
+                        android:imeOptions="actionDone"
+                        android:inputType="numberPassword"
+                        android:maxLength="8"
+                        android:paddingStart="@dimen/pad_8"
+                        android:paddingEnd="@dimen/pad_8"
+                        android:textColor="@color/text_active"
+                        app:fname="bold" />
+
+                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/if_proceed_btn"
+                    style="@style/ActionButtonStyle"
+                    android:layout_gravity="end"
+                    android:background="@drawable/basic_button_bg"
+                    android:enabled="false"
+                    android:text="@string/proceed_to_init"
+                    app:fname="bold" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

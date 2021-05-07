@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/issuer_layout"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_2"
+    android:elevation="@dimen/pad_8"
+    app:cardCornerRadius="@dimen/pad_4"
+    app:cardUseCompatPadding="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="@dimen/pad_8">
+
+        <CheckBox
+            android:id="@+id/issuer_cb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="false" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/issuer_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="HDFC BANK"
+
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_xregular" />
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

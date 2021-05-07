@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/emi_filter_bank"
+        android:title="@string/filter_bank"
+        app:actionLayout="@layout/notification_badge"
+        app:showAsAction="never" />
+
+
+    <item
+        android:id="@+id/emi_send_sms"
+        android:title="@string/send_enquiry_on_sms"
+        app:actionLayout="@layout/notification_badge"
+        app:showAsAction="never" />
+
+    <item
+        android:id="@+id/emi_print"
+        android:title="@string/print_enquiry"
+        app:actionLayout="@layout/notification_badge"
+        app:showAsAction="never" />
+
+</menu>

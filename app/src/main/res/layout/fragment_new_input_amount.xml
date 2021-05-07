@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scc"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/parent_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/enter_sale_amt_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="@dimen/pad_20"
+            android:text="@string/enter_amount"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_xregular"
+            app:fname="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
+
+        <com.example.verifonevx990app.vxUtils.BHEditText
+            android:id="@+id/saleAmount"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/et_bg_un"
+            android:cursorVisible="false"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="end"
+            android:inputType="none"
+            android:maxLength="12"
+            android:maxLines="1"
+            android:padding="@dimen/pad_10"
+            android:text="@string/default_amount"
+            android:textSize="@dimen/key_text_size"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="1.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enter_sale_amt_tv" />
+
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/enter_cash_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+
+            android:text="@string/cash_amount"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_xregular"
+            app:fname="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/saleAmount" />
+
+
+        <EditText
+            android:id="@+id/cashAmount"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/et_bg_un"
+            android:cursorVisible="false"
+            android:ems="9"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:gravity="end"
+            android:inputType="none"
+            android:maxLength="15"
+            android:maxLines="1"
+            android:padding="@dimen/pad_10"
+            android:text="@string/default_amount"
+            android:textSize="@dimen/key_text_size"
+            app:layout_constraintEnd_toEndOf="@+id/enter_cash_amount_tv"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/enter_cash_amount_tv" />
+
+        <include
+            android:id="@+id/main_keyBoard"
+            layout="@layout/enter_amount_keyboard"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_marginBottom="?attr/actionBarSize"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cashAmount"
+            app:layout_constraintVertical_bias="0.0" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.core.widget.NestedScrollView>
+

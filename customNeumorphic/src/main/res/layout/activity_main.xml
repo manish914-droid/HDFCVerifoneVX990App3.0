@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"
+        android:gravity="center"
+        android:orientation="vertical">
+
+        <com.example.customneumorphic.NeumorphTextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Hello World!"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.example.customneumorphic.NeumorphImageButton
+            style="@style/Widget.Neumorph.ImageButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+
+            android:layout_gravity="center"
+
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowElevation="4dp"
+
+
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+
+        android:background="#001f79"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.example.customneumorphic.NeumorphImageButton
+            style="@style/Widget.Neumorph.ImageButton"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:layout_gravity="center"
+            android:paddingTop="16dp"
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp" />
+
+        <com.example.customneumorphic.NeumorphCardView
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp"
+
+            app:neumorph_shapeType="pressed"
+
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="Enter Amount"
+
+
+                />
+
+
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <com.example.customneumorphic.NeumorphCardView
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp"
+
+            app:neumorph_shapeType="basin"
+
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="Enter Age"
+
+
+                />
+
+
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <com.example.customneumorphic.NeumorphCardView
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp"
+            app:neumorph_shapeType="basin"
+
+            >
+
+            <EditText
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:background="@null"
+                android:gravity="center"
+                android:hint="Enter Mobile"
+
+
+                />
+
+
+        </com.example.customneumorphic.NeumorphCardView>
+
+
+    </LinearLayout>
+
+
+</LinearLayout>

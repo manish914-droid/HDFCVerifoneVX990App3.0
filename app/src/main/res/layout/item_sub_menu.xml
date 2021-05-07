@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/ifsm_parent_ll"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/item_dashboard_size"
+    android:layout_marginBottom="1dp"
+    android:background="?android:attr/selectableItemBackground"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/pad_16"
+    android:paddingEnd="@dimen/pad_16">
+
+    <ImageView
+        android:id="@+id/ifsm_iv"
+        android:layout_width="@dimen/drawer_item_size"
+        android:layout_height="@dimen/drawer_item_size"
+        android:background="@drawable/ic_home" />
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:id="@+id/ifsm_title_tv"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center|start"
+        android:paddingStart="@dimen/pad_16"
+        android:paddingEnd="@dimen/pad_16"
+        android:textColor="@color/text_active"
+        android:textSize="@dimen/text_size_regular"
+        app:fname="bold" />
+
+    <ImageView
+        android:id="@+id/ic_lock"
+        android:layout_width="@dimen/lock_img_width_height"
+        android:layout_height="@dimen/lock_img_width_height"
+        android:src="@drawable/ic_baseline_lock_open_24" />
+
+    <ImageView
+        android:layout_width="@dimen/drawer_item_size"
+        android:layout_height="@dimen/drawer_item_size"
+        android:src="@drawable/ic_right_arrow_gray" />
+
+</LinearLayout>

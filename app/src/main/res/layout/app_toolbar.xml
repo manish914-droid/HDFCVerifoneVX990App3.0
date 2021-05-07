@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    android:background="@color/colorPrimary">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/dashboard_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways"
+        app:popupTheme="@style/VerifoneToolbarStyle">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/pad_8"
+            android:paddingBottom="@dimen/pad_8">
+
+
+            <ImageButton
+                android:id="@+id/main_toolbar_start"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_gravity="start|center_vertical"
+                android:background="@drawable/ic_menu"
+                android:contentDescription="@string/app_name" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="@dimen/pad_8"
+                android:gravity="center"
+                android:orientation="horizontal">
+
+                <ImageView
+                    android:id="@+id/toolbar_Bank_logo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pad_4"
+                    android:layout_marginEnd="@dimen/pad_16"
+
+                    android:contentDescription="@string/app_name"
+                    android:paddingStart="@dimen/pad_4"
+                    android:paddingTop="@dimen/pad_2"
+                    android:paddingEnd="@dimen/pad_4"
+                    android:paddingBottom="@dimen/pad_2"
+
+                    android:src="@drawable/ic_hdfcsvg"
+                    android:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/main_toolbar_BhLogo"
+                    android:layout_width="wrap_content"
+                    android:layout_height="22dp"
+                    android:layout_marginEnd="@dimen/pad_4"
+                    android:background="@drawable/bonushub_logo_round"
+                    android:contentDescription="@string/app_name"
+                    android:paddingStart="@dimen/pad_4"
+                    android:paddingTop="@dimen/pad_2"
+                    android:paddingEnd="@dimen/pad_4"
+                    android:paddingBottom="@dimen/pad_2"
+                    android:src="@drawable/bonushub_image"
+                    android:textSize="@dimen/text_size_xregular" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+</com.google.android.material.appbar.AppBarLayout>
+
+
+

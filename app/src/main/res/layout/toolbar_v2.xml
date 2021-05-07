@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="?android:attr/actionBarSize"
+    android:background="@color/colorPrimary">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_v2"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/colorPrimary"
+        app:layout_scrollFlags="scroll|enterAlways">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:paddingTop="@dimen/pad_8"
+            android:paddingBottom="@dimen/pad_8">
+
+
+            <ImageButton
+                android:id="@+id/toolbar_v2_start"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_menu"
+                android:padding="@dimen/pad_8"
+                android:scaleType="centerCrop" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/toolbar_v2_tv"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/title_app"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_large"
+                android:textStyle="bold"
+                app:fname="bold" />
+
+
+            <!--Delete this view if menu option is to be made visible-->
+            <ImageButton
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:background="@drawable/ic_menu"
+                android:padding="@dimen/pad_8"
+                android:scaleType="centerCrop"
+                android:visibility="invisible" />
+
+
+        </LinearLayout>
+
+    </androidx.appcompat.widget.Toolbar>
+
+</com.google.android.material.appbar.AppBarLayout>
+
+

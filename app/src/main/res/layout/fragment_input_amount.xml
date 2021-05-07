@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="@dimen/pad_4"
+            android:orientation="vertical"
+            app:cardCornerRadius="@dimen/pad_4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_16"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_16">
+
+                <com.example.verifonevx990app.vxUtils.BHTextView
+                    android:id="@+id/BHTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:text="@string/enter_the_amount"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_medium"
+                    app:fname="bold" />
+
+
+                <com.example.verifonevx990app.vxUtils.AmountEditText
+                    android:id="@+id/iaf_amount_et"
+
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginEnd="16dp"
+                    android:digits="0123456789"
+                    android:gravity="end"
+                    android:imeOptions="actionDone"
+
+                    android:inputType="number"
+                    android:maxLength="11"
+                    android:paddingStart="@dimen/pad_16"
+                    android:paddingEnd="@dimen/pad_16"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/text_size_xregular"
+                    app:fname="bold" />
+
+
+                <LinearLayout
+                    android:id="@+id/cash_amount_ll"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pad_32"
+                    android:orientation="vertical"
+                    android:visibility="gone">
+
+                    <com.example.verifonevx990app.vxUtils.BHTextView
+                        android:id="@+id/BHTextView2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="@dimen/pad_16"
+                        android:text="@string/enter_cash_amount"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_medium"
+                        app:fname="bold" />
+
+                    <com.example.verifonevx990app.vxUtils.AmountEditText
+                        android:id="@+id/iaf_cash_amount_et"
+
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginEnd="16dp"
+                        android:digits="0123456789"
+                        android:gravity="end"
+                        android:imeOptions="actionDone"
+                        android:inputType="number"
+                        android:maxLength="11"
+                        android:paddingStart="@dimen/pad_16"
+                        android:paddingEnd="@dimen/pad_16"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/text_size_xregular"
+                        app:fname="bold" />
+
+                </LinearLayout>
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/fia_pay_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="right"
+                    android:layout_marginStart="8dp"
+                    android:layout_marginTop="24dp"
+                    android:layout_marginEnd="8dp"
+                    android:background="@drawable/basic_button_bg"
+                    android:drawableStart="@drawable/ic_money"
+                    android:drawablePadding="@dimen/pad_8"
+                    android:paddingStart="@dimen/pad_16"
+                    android:paddingEnd="@dimen/pad_24"
+                    android:text="@string/proceed_to_pay"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_regular"
+                    app:fname="bold" />
+
+            </LinearLayout>
+
+        </androidx.cardview.widget.CardView>
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

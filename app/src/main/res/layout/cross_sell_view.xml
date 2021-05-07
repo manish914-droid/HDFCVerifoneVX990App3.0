@@ -1,0 +1,108 @@
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible" />
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="8dp"
+            android:elevation="@dimen/pad_4"
+            android:orientation="vertical"
+            app:cardCornerRadius="@dimen/pad_4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:padding="@dimen/pad_16">
+
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/flexipay"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/flexi_pay"
+                    android:visibility="visible"
+                    app:fname="bold" />
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/hdfcCreditCard"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/hdfc_credit_card"
+                    android:visibility="gone"
+                    app:fname="bold" />
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/instaLoan"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/insta_loan"
+                    android:visibility="gone"
+                    app:fname="bold" />
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/jumboLoan"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/jumbo_loan"
+                    android:visibility="gone"
+                    app:fname="bold" />
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/creditLimitIncrease"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/credit_limit_increase"
+                    android:visibility="gone"
+                    app:fname="bold" />
+
+                <com.example.verifonevx990app.vxUtils.BHButton
+                    android:id="@+id/reports"
+                    style="@style/ActionButtonStyle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:background="@drawable/basic_button_bg"
+                    android:text="@string/reports"
+                    app:fname="bold" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

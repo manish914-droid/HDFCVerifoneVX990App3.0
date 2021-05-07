@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/white">
+
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/lv_heading_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:padding="@dimen/pad_10"
+                android:text="@string/invoice"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_regular" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/pad_10"
+                android:text="@string/amount"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_regular" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:padding="@dimen/pad_10"
+                android:text="@string/date"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_regular" />
+
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/void_continue_btn"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/theme_btn_bg"
+            android:text="@string/continue_"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_xregular"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/void_rv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:layout_constraintBottom_toTopOf="@+id/void_continue_btn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/lv_heading_view" />
+
+        <ImageView
+            android:id="@+id/empty_view_placeholder"
+            android:layout_width="@dimen/standard_placeholder_size"
+            android:layout_height="@dimen/standard_placeholder_size"
+            android:background="@drawable/no_data_found"
+            android:contentDescription="@string/app_name"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/void_sale_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/pad_60"
+        android:background="@drawable/theme_btn_bg"
+        android:text="@string/void_sale"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xregular"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="@dimen/pad_0"
+        app:icon="@drawable/ic_void"
+        app:iconPadding="@dimen/pad_5"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/colorAccent" />
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

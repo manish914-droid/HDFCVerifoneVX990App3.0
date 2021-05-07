@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_4"
+    android:elevation="@dimen/pad_8"
+    app:cardCornerRadius="@dimen/pad_4">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_10">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/batch_no_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/roc_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/batch_no_tv"
+                android:gravity="end" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/pan_no_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/amt_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/pan_no_tv"
+                android:gravity="end" />
+
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/date_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_toEndOf="@+id/date_tv"
+                android:gravity="end" />
+
+
+        </RelativeLayout>
+
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

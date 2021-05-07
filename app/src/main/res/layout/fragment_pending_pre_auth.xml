@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    >
+-->
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible" />
+
+    <com.example.verifonevx990app.vxUtils.BHButton
+        android:id="@+id/pending_pre_auth_print_btn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/sub_header_view"
+        android:layout_margin="@dimen/pad_8"
+        android:background="@drawable/basic_button_bg"
+        android:text="@string/print"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_regular"
+
+        app:fname="bold" />
+
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/pending_pre_rv"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_below="@+id/pending_pre_auth_print_btn"
+
+        />
+
+    <!-- <com.example.verifonevx990app.vxUtils.BHButton
+         android:id="@+id/pending_pre_auth_print_btn"
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:layout_alignParentBottom="true"
+         android:background="@drawable/basic_button_bg"
+         android:text="@string/print"
+         android:textColor="@color/white"
+         android:textSize="@dimen/text_size_regular"
+         app:fname="bold"
+
+         android:layout_margin="@dimen/pad_16"
+         />
+-->
+
+
+</RelativeLayout><!--</androidx.core.widget.NestedScrollView>-->

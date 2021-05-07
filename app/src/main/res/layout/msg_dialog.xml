@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="vertical">
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/msg_dialog_title"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/small_btn_size"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_8"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:gravity="start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_regular"
+            android:textStyle="bold"
+            app:fname="bold" />
+
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/msg_dialog_msg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:layout_marginBottom="@dimen/pad_16"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular" />
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingStart="@dimen/pad_16"
+            android:paddingEnd="@dimen/pad_16"
+            android:paddingBottom="@dimen/pad_8">
+
+            <com.example.verifonevx990app.vxUtils.BHButton
+                android:id="@+id/msg_dialog_ok"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/small_btn_size"
+                android:layout_alignParentTop="true"
+                android:layout_alignParentEnd="true"
+                android:background="@drawable/basic_button_bg"
+                android:gravity="center"
+                android:paddingStart="@dimen/pad_24"
+                android:paddingTop="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_24"
+                android:paddingBottom="@dimen/pad_8"
+                android:text="@string/key_ok"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                android:textStyle="bold"
+                app:fname="regular" />
+
+            <com.example.verifonevx990app.vxUtils.BHButton
+                android:id="@+id/msg_dialog_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="@dimen/small_btn_size"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:layout_toStartOf="@+id/msg_dialog_ok"
+                android:background="@drawable/basic_button_bg"
+                android:gravity="center"
+                android:paddingStart="@dimen/pad_16"
+                android:paddingTop="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_16"
+                android:paddingBottom="@dimen/pad_8"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                android:textStyle="bold"
+                app:fname="regular" />
+
+
+        </RelativeLayout>
+
+    </LinearLayout>
+
+
+</androidx.cardview.widget.CardView>

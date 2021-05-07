@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/sub_header_view"
+
+    android:elevation="@dimen/pad_4"
+    android:orientation="vertical"
+    app:cardCornerRadius="@dimen/pad_4">
+
+    <LinearLayout
+        android:id="@+id/crossSellMobileCardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_16">
+
+        <RelativeLayout
+            android:id="@+id/rr"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/isv2_scheme_name_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:text="@string/enter_choice"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_xregular"
+                app:fname="bold" />
+
+            <ImageView
+                android:id="@+id/closeDialogChooserIMG"
+                android:layout_width="@dimen/pad_36"
+                android:layout_height="@dimen/pad_36"
+                android:layout_alignParentEnd="true"
+                android:contentDescription="@string/done"
+                android:scaleType="fitXY"
+                android:src="@drawable/ic_close_24" />
+        </RelativeLayout>
+
+        <RadioGroup
+            android:id="@+id/rg"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <RadioButton
+                android:id="@+id/sentToEmail"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:checked="true"
+                android:text="@string/sent_to_registered_email_id"
+                android:textSize="@dimen/text_size_regular" />
+
+            <RadioButton
+                android:id="@+id/printOnPos"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/print_on_pos"
+                android:textSize="@dimen/text_size_regular" />
+        </RadioGroup>
+
+        <com.example.verifonevx990app.vxUtils.BHButton
+            android:id="@+id/otpSubmitBTN"
+            style="@style/ActionButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="@dimen/pad_16"
+            android:background="@drawable/basic_button_bg"
+            android:text="@string/key_ok"
+            app:fname="bold" />
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

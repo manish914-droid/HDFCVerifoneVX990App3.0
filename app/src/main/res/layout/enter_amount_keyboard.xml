@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="@dimen/pad_16"
+    android:gravity="bottom"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key1"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_1" />
+
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key2"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_2" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key3"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_3" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/keyClr"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_cancel" />
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key4"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_4" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key5"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_5" />
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/key6"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_6" />
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+
+            style="@style/Keyboard_Btn_Card"
+            android:elevation="@dimen/pad_5">
+
+            <Button
+                android:id="@+id/keyDelete"
+                style="@style/Keyboard_Btn"
+                android:text="@string/key_delete" />
+
+        </androidx.cardview.widget.CardView>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key7"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_7" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key8"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_8" />
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key9"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_9" />
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key000"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_000" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key00"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_00" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+
+                    style="@style/Keyboard_Btn_Card"
+                    android:elevation="@dimen/pad_5">
+
+                    <Button
+                        android:id="@+id/key0"
+                        style="@style/Keyboard_Btn"
+                        android:text="@string/key_0" />
+
+                </androidx.cardview.widget.CardView>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <androidx.cardview.widget.CardView
+
+                style="@style/Keyboard_Btn_Card"
+                android:layout_height="match_parent"
+                android:elevation="@dimen/pad_5">
+
+                <Button
+                    android:id="@+id/keyOK"
+                    style="@style/Keyboard_Btn"
+                    android:layout_height="match_parent"
+                    android:text="@string/key_ok" />
+            </androidx.cardview.widget.CardView>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>

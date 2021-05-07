@@ -1,0 +1,278 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="@dimen/pad_5"
+    android:layout_marginTop="@dimen/pad_5"
+    android:layout_marginEnd="@dimen/pad_5"
+    android:layout_marginBottom="@dimen/pad_16"
+    android:elevation="@dimen/pad_5"
+    android:paddingBottom="@dimen/pad_16"
+    app:cardCornerRadius="@dimen/pad_5"
+    app:cardElevation="@dimen/pad_5">
+
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/ied_parent_cl"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="@dimen/pad_16">
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_tenure_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/tenure"
+            android:textColor="@color/purple_d"
+            android:textSize="@dimen/text_size_large"
+            app:fname="bold"
+            app:layout_constraintEnd_toStartOf="@+id/ied_check_iv"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_interest_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ied_tenure_tv" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/processing_fee"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ied_interest_tv" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_processing_fee_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView4" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView6"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/amount"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView4" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_amount_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView6" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView8"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/loan_amount"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView6" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_loan_amt_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView8" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/monthly_emi"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView8" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_month_emi_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView10" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/total_interest"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView10" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_total_interest_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView12" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/BHTextView14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:text="@string/total_payment"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView12" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/ied_total_amt_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/BHTextView14" />
+
+        <LinearLayout
+            android:id="@+id/ied_discount_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/BHTextView14">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/ied_discount_tv_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="@string/discount"
+                android:textColor="@color/text_active"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular"
+                app:layout_constraintTop_toBottomOf="@+id/BHTextView12" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/ied_discount_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textColor="@color/text_active"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular"
+                app:layout_constraintTop_toTopOf="@+id/BHTextView14" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/ied_extra_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="16dp"
+            android:orientation="horizontal"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ied_discount_ll">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/ied_extra_tv_lbl"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="start"
+                android:text="Extra"
+                android:textColor="@color/text_active"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular"
+                app:layout_constraintTop_toBottomOf="@+id/BHTextView12" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/ied_extra_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="end"
+                android:textColor="@color/text_active"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular"
+                app:layout_constraintTop_toTopOf="@+id/BHTextView14" />
+
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/ied_check_iv"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginEnd="16dp"
+            android:background="@drawable/ic_check_box_selected"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/ied_tenure_tv" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.cardview.widget.CardView>

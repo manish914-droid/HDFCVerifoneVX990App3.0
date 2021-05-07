@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/brand_emi_master_parent"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal">
+
+    <com.example.verifonevx990app.vxUtils.BHButton
+        android:id="@+id/loadMoreBT"
+        style="@style/ActionButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="@dimen/pad_16"
+        android:background="@drawable/basic_button_bg"
+        android:text="@string/load_more"
+        android:visibility="gone"
+        app:fname="bold" />
+
+</LinearLayout>

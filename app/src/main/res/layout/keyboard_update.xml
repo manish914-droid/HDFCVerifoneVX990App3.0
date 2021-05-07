@@ -1,0 +1,233 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:background="@color/purple_light"
+    android:orientation="vertical">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/keyboard_btn1"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_1"
+            android:cropToPadding="false"
+
+            />
+
+        <ImageButton
+            android:id="@+id/keyboard_btn2"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_2"
+
+            />
+
+        <ImageButton
+            android:id="@+id/keyboard_btn3"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_3"
+
+            />
+
+
+        <ImageButton
+            android:id="@+id/keyboard_btn_cancel"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_cancel"
+            android:backgroundTint="@color/red"
+            android:src="@drawable/ic_close_32" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+
+        <ImageButton
+            android:id="@+id/keyboard_btn4"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_4"
+            android:cropToPadding="false"
+
+            />
+
+
+        <ImageButton
+            android:id="@+id/keyboard_btn5"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_5"
+            android:cropToPadding="false"
+
+            />
+
+
+        <ImageButton
+            android:id="@+id/keyboard_btn6"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_6"
+            android:cropToPadding="false" />
+
+        <ImageButton
+            android:id="@+id/keyboard_btn_delete"
+            android:layout_width="@dimen/size_70"
+            android:layout_height="@dimen/size_70"
+            android:layout_weight="1"
+            android:adjustViewBounds="true"
+            android:background="@drawable/selection_button_delete"
+            android:backgroundTint="@color/yellow"
+            android:cropToPadding="false"
+            android:src="@drawable/ic_back_arrow"
+
+            />
+
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:orientation="vertical">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:id="@+id/keyboard_btn7"
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_7"
+                    android:cropToPadding="false"
+
+                    />
+
+
+                <ImageButton
+                    android:id="@+id/keyboard_btn8"
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_8"
+                    android:cropToPadding="false" />
+
+
+                <ImageButton
+                    android:id="@+id/keyboard_btn9"
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_9"
+                    android:cropToPadding="false"
+
+                    />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+
+                <ImageButton
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_cancel"
+                    android:cropToPadding="false"
+
+                    />
+
+                <ImageButton
+                    android:id="@+id/keyboard_btn0"
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_0"
+                    android:cropToPadding="false"
+
+                    />
+
+                <ImageButton
+                    android:layout_width="@dimen/size_70"
+                    android:layout_height="@dimen/size_70"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:background="@drawable/selection_button_cancel"
+                    android:cropToPadding="false"
+
+                    />
+
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <ImageButton
+                android:id="@+id/keyboard_btn_confirm"
+                android:layout_width="@dimen/size_70"
+                android:layout_height="@dimen/size_140"
+                android:layout_weight="1"
+                android:adjustViewBounds="true"
+                android:background="@drawable/selection_button_confirm"
+                android:cropToPadding="false"
+                android:src="@drawable/ic_done_24"
+
+                />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</LinearLayout>
+
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="320dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <com.example.verifonevx990app.vxUtils.BHTextView
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:background="@color/colorPrimary"
+        android:gravity="center"
+        android:text="@string/select_banks"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xregular"
+        app:fname="bold" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/white"
+            android:orientation="vertical"
+            android:padding="@dimen/pad_16">
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/item_bank_rl"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/purple_light"
+                android:orientation="vertical" />
+
+        </LinearLayout>
+
+    </ScrollView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center|end"
+        android:orientation="horizontal"
+        android:paddingStart="@dimen/pad_16"
+        android:paddingTop="@dimen/pad_8"
+        android:paddingEnd="@dimen/pad_16"
+        android:paddingBottom="@dimen/pad_8">
+
+        <com.example.verifonevx990app.vxUtils.BHButton
+            android:id="@+id/dbl_cancel_btn"
+            android:layout_width="90dp"
+            android:layout_height="@dimen/small_btn_size"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:background="@drawable/theme_btn_bg"
+            android:gravity="center"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular"
+            android:visibility="gone"
+            app:fname="bold" />
+
+        <com.example.verifonevx990app.vxUtils.BHButton
+            android:id="@+id/dbl_ok_btn"
+            android:layout_width="90dp"
+            android:layout_height="@dimen/small_btn_size"
+            android:background="@drawable/theme_btn_bg"
+            android:gravity="center"
+            android:text="@string/key_ok"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="bold" />
+
+    </LinearLayout>
+
+</LinearLayout>

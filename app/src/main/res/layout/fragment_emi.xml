@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white">
+
+    <include
+        android:id="@+id/toolbar_view"
+        layout="@layout/toolbar_v2" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_8"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <LinearLayout
+            android:id="@+id/emi_frag_btn_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/pad_8"
+            android:orientation="horizontal">
+
+            <com.example.verifonevx990app.vxUtils.BHButton
+                android:id="@+id/emi_frag_print_btn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/small_btn_size"
+                android:layout_weight="1"
+                android:background="@drawable/theme_btn_bg"
+                android:text="@string/print_enquiry"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="bold" />
+
+            <com.example.verifonevx990app.vxUtils.BHButton
+                android:id="@+id/emi_frag_send_sms_btn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/small_btn_size"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:layout_weight="1"
+                android:background="@drawable/theme_btn_bg"
+                android:text="@string/send_enquiry_on_sms"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="bold" />
+
+            <com.example.verifonevx990app.vxUtils.BHButton
+                android:id="@+id/emi_frag_filter_btn"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/small_btn_size"
+                android:layout_weight="1"
+                android:background="@drawable/theme_btn_bg"
+                android:text="@string/filter_bank"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="bold" />
+
+        </LinearLayout>
+
+        <androidx.viewpager.widget.ViewPager
+            android:id="@+id/emi_frag_vp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.viewpager.widget.PagerTabStrip
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="top" />
+
+        </androidx.viewpager.widget.ViewPager>
+
+    </LinearLayout>
+
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+        android:id="@+id/emi_send_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="@dimen/pad_60"
+        android:text="@string/proceed_txn"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xregular"
+        app:backgroundTint="@color/colorPrimary"
+        app:elevation="@dimen/pad_0"
+        app:icon="@drawable/ic_proceed_button"
+        app:iconPadding="@dimen/pad_5"
+        app:iconTint="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:rippleColor="@color/colorAccent" />
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
