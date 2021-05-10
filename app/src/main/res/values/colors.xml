@@ -11,16 +11,27 @@
      <color name="colorPrimaryDark">#039be5</color>
      <color name="colorAccent">#0288d1</color>
 
-     <color name="colorAccentO">#77683992</color>-->
+     <color name="colorAccentO">#77683992</color>
 
+
+      app:neumorph_shadowColorDark="#485FF2"
+            app:neumorph_shadowColorLight="#091352"
+
+     -->
+    <color name="themeBackground">#001F79</color>
+    <color name="testupershadow">#001F90</color>
     <color name="colorPrimaryTrans">#990D47A1</color>
     <!--  <color name="colorPrimary">#1976d2</color>
       <color name="colorPrimaryDark">#004ba0</color>
       <color name="colorAccent">#63a4ff</color>
       <color name="colorAccentO">#062e87</color>-->
-    <color name="colorPrimary">#9B6CC5</color>
-    <color name="colorPrimaryDark">#9367BB</color>
-    <color name="colorAccent">#683992</color>
+    <!--  <color name="colorPrimary">#9B6CC5</color>
+      <color name="colorPrimaryDark">#9367BB</color>
+      <color name="colorAccent">#683992</color>-->
+
+    <color name="colorPrimary">@color/themeBackground</color>
+    <color name="colorPrimaryDark">@color/black</color>
+    <color name="colorAccent">@color/themeBackground</color>
 
     <color name="colorAccentO">#77683992</color>
 
@@ -71,6 +82,6 @@
     <color name="yellow">#FFFF00</color>
     <color name="transparent_white">#99ffffff</color>
     <color name="purple_light">#9B6CC5</color>
-    <color name="purple_d">#683992</color>
+    <color name="purple_d">@color/white</color>
 
 </resources>

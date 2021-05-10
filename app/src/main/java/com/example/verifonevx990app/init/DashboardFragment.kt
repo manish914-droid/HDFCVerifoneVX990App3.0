@@ -11,11 +11,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.cardview.widget.CardView
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
@@ -452,10 +452,10 @@ class DashBoardAdapter(
     override fun getItemCount(): Int = mList.size
 
     override fun onBindViewHolder(holder: DashBoardViewHolder, position: Int) {
-        holder.logoIV.background =
-            ContextCompat.getDrawable(holder.view.context, mList[position].res)
+        holder.logoIV.setImageResource(mList[position].res)
+        // ContextCompat.getDrawable(holder.view.context, mList[position].res)
         holder.titleTV.text = mList[position].title
-        holder.itemParent.setOnClickListener {
+        holder.logoIV.setOnClickListener {
             if (mList[position] == EDashboardItem.LESS || mList[position] == EDashboardItem.MORE)
                 lessMoreClick(mList[position])
             else
@@ -472,7 +472,7 @@ class DashBoardAdapter(
 
 
     inner class DashBoardViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        val logoIV: ImageView = view.findViewById(R.id.item_logo_iv)
+        val logoIV: ImageButton = view.findViewById(R.id.item_logo_iv)
         val titleTV: TextView = view.findViewById(R.id.item_title_tv)
         val itemParent: ConstraintLayout = view.findViewById(R.id.item_parent_rv)
 

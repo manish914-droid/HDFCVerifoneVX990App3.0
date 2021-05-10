@@ -4436,8 +4436,8 @@ enum class EDashboardItem(
     var childList: MutableList<EDashboardItem>? = null
 ) {
     NONE("No Option Found", R.drawable.ic_home),
-    SALE("Sale", R.drawable.ic_sale, 1),
-    BANK_EMI("Bank EMI", R.drawable.ic_emi, 2),
+    SALE("Sale", R.drawable.ic_bbg, 1),
+    BANK_EMI("Bank EMI", R.drawable.ic_bbg, 2),
     PREAUTH("Pre-Auth", R.drawable.ic_preauth, 3),
     EMI_ENQUIRY("EMI Enquiry", R.drawable.ic_meeting, 4),
     PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
@@ -4457,10 +4457,10 @@ enum class EDashboardItem(
     PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.ic_preauth, 9),
     MORE("View More", R.drawable.ic_arrow_down, 999),
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
-    EMI_PRO("Brand EMI By Access Code", R.drawable.ic_emi, 16),
+    EMI_PRO("Brand EMI By Access Code", R.drawable.ic_sale, 16),
 
     // just for handling the test emi not used in dashboard items
-    TEST_EMI("Test Emi", R.drawable.ic_emi, 777),
+    TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
     FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance, 666),
     LESS("View Less", R.drawable.ic_arrow_up, 888);
 }

@@ -55,7 +55,7 @@
         <item name="android:stateListAnimator">@animator/button_state_list_anim_neumorph</item>
         <item name="android:focusable">true</item>
         <item name="android:clickable">true</item>
-        <item name="android:scaleType">center</item>
+
         <item name="neumorph_inset">@dimen/design_default_inset</item>
         <item name="neumorph_shadowElevation">6dp</item>
         <item name="neumorph_shadowColorLight">?colorShadowLight</item>
@@ -103,6 +103,11 @@
     <style name="ShapeAppearance.Neumorph.ImageButton" parent="">
         <item name="neumorph_cornerFamily">rounded</item>
         <item name="neumorph_cornerSize">@dimen/design_default_corner_radius</item>
+    </style>
+
+    <style name="ShapeAppearance.Neumorph.ImageButton_costom_round_corner" parent="">
+        <item name="neumorph_cornerFamily">rounded</item>
+        <item name="neumorph_cornerSize">@dimen/design_custom_corner_radius</item>
     </style>
 
     <style name="ShapeAppearance.Neumorph.ImageView" parent="">
