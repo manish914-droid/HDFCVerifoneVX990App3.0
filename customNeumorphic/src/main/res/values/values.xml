@@ -18,7 +18,8 @@
 
     <!-- Default corner radius -->
     <dimen name="design_default_corner_radius">24dp</dimen>
-    <dimen name="design_custom_corner_radius">14dp</dimen>
+    <dimen name="design_custom_corner_radius_14">14dp</dimen>
+    <dimen name="design_custom_corner_radius_10">10dp</dimen>
 
     <dimen name="edit_text_underline_inset_bottom">4dp</dimen>
     <dimen name="edit_text_underline_height">5dp</dimen>

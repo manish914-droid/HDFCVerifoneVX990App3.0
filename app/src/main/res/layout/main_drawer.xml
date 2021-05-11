@@ -30,11 +30,11 @@
         android:paddingEnd="@dimen/pad_16">
 
         <ImageView
-            android:layout_width="60dp"
-            android:layout_height="80dp"
+            android:layout_width="40dp"
+            android:layout_height="70dp"
             android:layout_marginStart="@dimen/pad_8"
             android:padding="@dimen/pad_4"
-            android:src="@drawable/ic_pos" />
+            android:src="@drawable/ic_new_terminal_icon" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -116,7 +116,8 @@
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
                 app:neumorph_shapeType="flat"
 
                 >
@@ -133,9 +134,9 @@
                     android:paddingEnd="@dimen/pad_16">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/ic_bank_fun" />
+                        android:layout_width="@dimen/pad_24"
+                        android:layout_height="@dimen/pad_24"
+                        android:background="@drawable/ic_new_bank_function" />
 
                     <com.example.verifonevx990app.vxUtils.BHTextView
                         android:layout_width="0dp"
@@ -167,7 +168,7 @@
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
 
                 app:neumorph_shapeType="flat"
 
@@ -185,9 +186,9 @@
                     android:paddingEnd="@dimen/pad_16">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/ic_report" />
+                        android:layout_width="@dimen/pad_24"
+                        android:layout_height="@dimen/pad_24"
+                        android:background="@drawable/ic_new_reports" />
 
 
                     <com.example.verifonevx990app.vxUtils.BHTextView
@@ -220,7 +221,7 @@
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
 
                 app:neumorph_shapeType="flat"
 
@@ -238,9 +239,9 @@
                     android:paddingEnd="@dimen/pad_16">
 
                     <ImageView
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/ic_bbg" />
+                        android:layout_width="@dimen/pad_24"
+                        android:layout_height="@dimen/pad_24"
+                        android:background="@drawable/ic_new_settlement" />
 
 
                     <com.example.verifonevx990app.vxUtils.BHTextView
@@ -287,7 +288,7 @@
             android:hint="@string/versionHint"
             android:padding="@dimen/pad_4"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular"
+            android:textSize="@dimen/text_size_xsmall"
             app:fname="regular" />
 
         <com.example.verifonevx990app.vxUtils.BHTextView
@@ -298,7 +299,7 @@
             android:gravity="center"
             android:hint="@string/versionHint"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular"
+            android:textSize="@dimen/text_size_small"
             android:visibility="invisible"
             app:fname="regular" />
 

@@ -32,7 +32,7 @@
 
             app:neumorph_shadowColorLight="@color/upperShadow"
             app:neumorph_shadowElevation="4dp"
-            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_14"
             app:layout_constraintStart_toStartOf="parent"
             app:neumorph_shapeType="basin">
 
@@ -73,7 +73,7 @@
 
             app:neumorph_shadowElevation="4dp"
 
-            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_14"
 
             app:layout_constraintStart_toStartOf="parent"
             app:neumorph_shapeType="flat"

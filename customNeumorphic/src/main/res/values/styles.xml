@@ -105,9 +105,14 @@
         <item name="neumorph_cornerSize">@dimen/design_default_corner_radius</item>
     </style>
 
-    <style name="ShapeAppearance.Neumorph.ImageButton_costom_round_corner" parent="">
+    <style name="ShapeAppearance.Neumorph.ImageButton_costom_round_corner_14" parent="">
         <item name="neumorph_cornerFamily">rounded</item>
-        <item name="neumorph_cornerSize">@dimen/design_custom_corner_radius</item>
+        <item name="neumorph_cornerSize">@dimen/design_custom_corner_radius_14</item>
+    </style>
+
+    <style name="ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10" parent="">
+        <item name="neumorph_cornerFamily">rounded</item>
+        <item name="neumorph_cornerSize">@dimen/design_custom_corner_radius_10</item>
     </style>
 
     <style name="ShapeAppearance.Neumorph.ImageView" parent="">
