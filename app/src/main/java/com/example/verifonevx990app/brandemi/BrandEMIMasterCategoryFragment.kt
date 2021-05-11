@@ -2,7 +2,9 @@ package com.example.verifonevx990app.brandemi
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,12 +12,12 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.databinding.BrandEmiMasterCategoryFragmentBinding
-import com.example.verifonevx990app.databinding.ItemBrandEmiFooterBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiMasterBinding
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
@@ -29,12 +31,14 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import java.util.*
 
 /**
 This is a Brand EMI Master Category Data Fragment
 Here we are Fetching Master Category Data From Host and Displaying on UI:-
 ================Written By Ajay Thakur on 8th March 2021====================
  */
+
 class BrandEMIMasterCategoryFragment : Fragment() {
     private var binding: BrandEmiMasterCategoryFragmentBinding? = null
     private var iDialog: IDialog? = null
@@ -52,7 +56,6 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     private val brandEMIMasterCategoryAdapter by lazy {
         BrandEMIMasterCategoryAdapter(
             brandEmiMasterDataList,
-            moreDataFlag,
             ::onItemClick
         )
     }
@@ -73,8 +76,11 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_master)
-        binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
+        binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
+        binding?.subHeaderView?.backImageButton?.setOnClickListener {
+            hideSoftKeyboard(requireActivity())
+            parentFragmentManager.popBackStackImmediate()
+        }
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
 
@@ -92,7 +98,55 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
         //Method to Fetch BrandEMIMasterData:-
         fetchBrandEMIMasterDataFromHost()
+
+        //region================Search EditText TextChangeListener event:-
+        binding?.brandSearchET?.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                if (TextUtils.isEmpty(p0.toString())) {
+                    brandEMIMasterCategoryAdapter.refreshAdapterList(brandEmiMasterDataList)
+                    binding?.brandEmiMasterRV?.smoothScrollToPosition(0)
+                    hideSoftKeyboard(requireActivity())
+                }
+            }
+        })
+        //endregion
+
+        //region=================Search Button onClick event:-
+        binding?.searchButton?.setOnClickListener {
+            if (!TextUtils.isEmpty(binding?.brandSearchET?.text?.toString())) {
+                iDialog?.showProgress(getString(R.string.searchingBrand))
+                getSearchedBrands(binding?.brandSearchET?.text?.toString())
+                hideSoftKeyboard(requireActivity())
+            } else
+                VFService.showToast(getString(R.string.please_enter_brand_name_to_search))
+        }
+        //endregion
     }
+
+    //region===================Get Searched Results from Brand List:-
+    private fun getSearchedBrands(searchText: String?) {
+        val searchedDataList = mutableListOf<BrandEMIMasterDataModal>()
+        if (!TextUtils.isEmpty(searchText)) {
+            for (i in 0 until brandEmiMasterDataList.size) {
+                val brandData = brandEmiMasterDataList[i]
+                //check whether brand name contains letter which is inserted in search box:-
+                if (brandData.brandName.toLowerCase(Locale.ROOT).trim()
+                        .contains(searchText?.toLowerCase(Locale.ROOT)?.trim()!!)
+                )
+                    searchedDataList.add(
+                        BrandEMIMasterDataModal(
+                            brandData.brandID, brandData.brandName,
+                            brandData.mobileNumberBillNumberFlag
+                        )
+                    )
+            }
+        }
+        brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
+        iDialog?.hideProgress()
+    }
+    //endregion
 
     //region===============================Hit Host to Fetch BrandEMIMaster Data:-
     private fun fetchBrandEMIMasterDataFromHost() {
@@ -131,11 +185,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                                 ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                                 AppPreference.getBankCode()
                             )
-                            GlobalScope.launch(Dispatchers.Main) {
                                 //Processing BrandEMIMasterData:-
                                 stubbingBrandEMIMasterDataToList(brandEMIMasterData, hostMsg)
-                                iDialog?.hideProgress()
-                            }
+
                         } else {
                             ROCProviderV2.incrementFromResponse(
                                 ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
@@ -187,18 +239,46 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                     var tempDataList = mutableListOf<String>()
                     tempDataList = dataList.subList(6, dataList.size)
                     for (i in tempDataList.indices) {
-                        if (!TextUtils.isEmpty(tempDataList[i]))
-                            brandEmiMasterDataList.add(BrandEMIMasterDataModal(tempDataList[i]))
+                        if (!TextUtils.isEmpty(tempDataList[i])) {
+                            /* Below parseDataWithSplitter gives following data:-
+                                 0 index -> Brand ID
+                                 1 index -> Brand Name
+                                 2 index -> Mobile Number Capture Flag / Bill Invoice Capture Flag
+                               */
+                            if (!TextUtils.isEmpty(tempDataList[i])) {
+                                val brandData = parseDataListWithSplitter(
+                                    SplitterTypes.CARET.splitter,
+                                    tempDataList[i]
+                                )
+                                brandEmiMasterDataList.add(
+                                    BrandEMIMasterDataModal(
+                                        brandData[0],
+                                        brandData[1],
+                                        brandData[2]
+                                    )
+                                )
+                            }
+                        }
                     }
-                    //Notify RecyclerView DataList on UI:-
-                    brandEMIMasterCategoryAdapter.refreshAdapterList(
-                        brandEmiMasterDataList,
-                        moreDataFlag
-                    )
+
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData = "${EMIRequestType.BRAND_DATA.requestType}^$totalRecord"
+                        Log.d("Field57UpdateRequest:- ", field57RequestData.toString())
+                        fetchBrandEMIMasterDataFromHost()
+                    } else {
+                        //Notify RecyclerView DataList on UI:-
+                        iDialog?.hideProgress()
+                        brandEMIMasterCategoryAdapter.refreshAdapterList(brandEmiMasterDataList)
+                    }
+                } else {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                        iDialog?.alertBoxWithAction(null, null,
+                            getString(R.string.error), hostMsg,
+                            false, getString(R.string.positive_button_ok),
+                            {}, {})
                     }
                 }
             } else {
@@ -211,7 +291,6 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                 }
             }
         }
-
     }
     //endregion
 
@@ -228,10 +307,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     //region=============================Load More Button CallBack Function:-
     private fun onItemClick(position: Int) {
         try {
-            if (brandEmiMasterDataList.size == position) {
-                Log.d("LoadMore Position:- ", position.toString())
-                fetchBrandEMIMasterDataFromHost()
-            } else {
+            if (position > -1) {
                 Log.d("Navigate To Category:- ", position.toString())
                 val issuerTAndCData =
                     runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
@@ -243,7 +319,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         if (issuerTCDataSaved) {
                             getBrandTAndCData { brandTCDataSaved ->
                                 if (brandTCDataSaved) {
-                                    saveBrandMasterTimeStampsData { brandMasterDataTimeStampsSaved ->
+                                    saveBrandMasterTimeStampsData {
                                         GlobalScope.launch(Dispatchers.Main) {
                                             iDialog?.hideProgress()
                                             navigateToBrandEMISubCategoryFragment(position)
@@ -269,7 +345,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         navigateToBrandEMISubCategoryFragment(position)
                     }
                 }
-            }
+            } else
+                VFService.showToast("Something went wrong")
         } catch (ex: IndexOutOfBoundsException) {
             ex.printStackTrace()
         }
@@ -347,7 +424,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         runBlocking(Dispatchers.IO) {
                             BrandTAndCTable.performOperation(brandModel)
                         }
-                    }
+                    } else
+                        cb(false)
                 }
                 cb(true)
             } else
@@ -372,14 +450,11 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     //region===================================Navigate Fragment to BrandEMISubCategory Fragment:-
     private fun navigateToBrandEMISubCategoryFragment(position: Int) {
         if (checkInternetConnection()) {
-            val brandData = parseDataListWithSplitter(
-                SplitterTypes.CARET.splitter,
-                brandEmiMasterDataList[position].recordData
-            )
+            val modal = brandEmiMasterDataList[position]
             //region=========Adding BrandID , BrandName and Brand ReservedValues in BrandEMIDataModal:-
-            brandEMIDataModel.setBrandID(brandData[0])
-            brandEMIDataModel.setBrandName(brandData[1])
-            brandEMIDataModel.setBrandReservedValue(brandData[2])
+            brandEMIDataModel.setBrandID(modal.brandID)
+            brandEMIDataModel.setBrandName(modal.brandName)
+            brandEMIDataModel.setBrandReservedValue(modal.mobileNumberBillNumberFlag)
             //endregion
             (activity as MainActivity).transactFragment(BrandEMISubCategoryFragment().apply {
                 arguments = Bundle().apply {
@@ -419,98 +494,63 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
 internal class BrandEMIMasterCategoryAdapter(
     private var dataList: MutableList<BrandEMIMasterDataModal>?,
-    private var moreDataAvailableToLoad: String?,
     private val onItemClick: (Int) -> Unit
 ) :
-    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    RecyclerView.Adapter<BrandEMIMasterCategoryAdapter.BrandEMIMasterViewHolder>() {
 
-    //region========================Below Variables are for Inserting Footer View after last item in recyclerview items:-
-    private val TYPE_FOOTER = 1
-    private val TYPE_ITEM = 2
-    //endregion
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): BrandEMIMasterViewHolder {
+        val binding: ItemBrandEmiMasterBinding =
+            ItemBrandEmiMasterBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return BrandEMIMasterViewHolder(binding)
+    }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return when (viewType) {
-            TYPE_ITEM -> {
-                val binding: ItemBrandEmiMasterBinding = ItemBrandEmiMasterBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                BrandEMIMasterViewHolder(binding)
-            }
-            TYPE_FOOTER -> {
-                val binding: ItemBrandEmiFooterBinding = ItemBrandEmiFooterBinding.inflate(
-                    LayoutInflater.from(parent.context), parent, false
-                )
-                FooterViewHolder(binding)
-            }
-            else -> null!!
-        }
+    private val brandEmiDataList: MutableList<BrandEMIMasterDataModal> = mutableListOf()
+
+    init {
+        if (dataList?.isNotEmpty() == true)
+            brandEmiDataList.addAll(dataList!!)
     }
 
     override fun getItemCount(): Int {
-        return dataList?.size?.plus(1) ?: 0
+        return brandEmiDataList.size
     }
 
-    override fun getItemViewType(position: Int): Int {
-        if (position == dataList?.size) {
-            return TYPE_FOOTER
-        }
-        return TYPE_ITEM
-    }
+    override fun onBindViewHolder(holder: BrandEMIMasterViewHolder, p1: Int) {
+        //region==============Parse BrandEMIMaster Record Data and set Brand Name to TextView:-
+        /* Below parseDataWithSplitter gives following data:-
+         0 index -> Brand ID
+         1 index -> Brand Name
+         2 index -> Mobile Number Capture Flag
+         3 index -> Bill Invoice Capture Flag*/
 
-    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, p1: Int) {
-        if (holder is BrandEMIMasterViewHolder) {
-            //region==============Parse BrandEMIMaster Record Data and set Brand Name to TextView:-
-            /*
-            Below parseDataWithSplitter gives following data:-
-            0 index -> Brand ID
-            1 index -> Brand Name
-            2 index -> Mobile Number Capture Flag
-            3 index -> Bill Invoice Capture Flag
-             */
-            if (!TextUtils.isEmpty(dataList?.get(p1)?.recordData)) {
-                val brandData = parseDataListWithSplitter(
-                    SplitterTypes.CARET.splitter,
-                    dataList?.get(p1)?.recordData ?: ""
-                )
-                holder.binding.tvBrandMasterName.text = brandData[1]
-            }
-            //endregion
-        } else if (holder is FooterViewHolder) {
-            if (moreDataAvailableToLoad == "1")
-                holder.binding.loadMoreBT.visibility = View.VISIBLE
-            else
-                holder.binding.loadMoreBT.visibility = View.GONE
+        if (!TextUtils.isEmpty(brandEmiDataList[p1].brandName)) {
+            holder.binding.tvBrandMasterName.text = brandEmiDataList[p1].brandName
         }
+        //endregion
     }
 
     inner class BrandEMIMasterViewHolder(val binding: ItemBrandEmiMasterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.brandEmiMasterParent.setOnClickListener { onItemClick(adapterPosition) }
+            binding.brandEmiMasterParent.setOnClickListener { onItemClick(absoluteAdapterPosition) }
         }
     }
 
-    inner class FooterViewHolder(val binding: ItemBrandEmiFooterBinding) :
-        RecyclerView.ViewHolder(binding.root) {
-        init {
-            binding.loadMoreBT.setOnClickListener { onItemClick(adapterPosition) }
-        }
-    }
-
-    //region==========================Below Method is used to refresh Adapter New Data and Also
-    // MoreDataAvailable Variable to check whether we need to show Footer Load More Button or not:-
-    fun refreshAdapterList(
-        refreshList: MutableList<BrandEMIMasterDataModal>,
-        moreDataFlagRefreshValue: String
-    ) {
-        this.dataList = refreshList
-        this.moreDataAvailableToLoad = moreDataFlagRefreshValue
-        notifyDataSetChanged()
+    //region==========================Below Method is used to refresh Adapter New Data:-
+    fun refreshAdapterList(refreshList: MutableList<BrandEMIMasterDataModal>) {
+        val diffCallback = RecyclerViewUpdateDiffUtil(this.brandEmiDataList, refreshList)
+        val diffResult = DiffUtil.calculateDiff(diffCallback)
+        this.brandEmiDataList.clear()
+        this.brandEmiDataList.addAll(refreshList)
+        diffResult.dispatchUpdatesTo(this)
     }
     //endregion
 }
 
 //region=============================Brand EMI Master Category Data Modal==========================
-data class BrandEMIMasterDataModal(var recordData: String)
+data class BrandEMIMasterDataModal(
+    var brandID: String,
+    var brandName: String,
+    var mobileNumberBillNumberFlag: String
+)
 //endregion

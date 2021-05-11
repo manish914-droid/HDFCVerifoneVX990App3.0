@@ -114,8 +114,14 @@ class BrandEMIProductFragment : Fragment() {
                 brandEMIDataModal?.setInputDataType(brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
                 brandEMIDataModal?.setMinLength(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
                 brandEMIDataModal?.setMaxLength(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
-                brandEMIDataModal?.setProductMinAmount(brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount)
-                brandEMIDataModal?.setProductMaxAmount(brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount)
+                brandEMIDataModal?.setProductMinAmount(
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
+                        .div(100).toString()
+                )
+                brandEMIDataModal?.setProductMaxAmount(
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
+                        .div(100).toString()
+                )
             }
             //endregion
             (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {

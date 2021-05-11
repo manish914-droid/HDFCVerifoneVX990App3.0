@@ -417,6 +417,10 @@
     <string name="do_you_want_to_auto_settle_batch">Do You Want To Auto Settle Batch?</string>
     <string name="flexi_pay">Flexi Pay</string>
     <string name="please_wait_aaplication_is_configuring_updates">Please Wait Application is Configuring Updates....</string>
+    <string name="searchBrand">Search Brand</string>
+    <string name="searchingBrand">Searching Brand.....</string>
+    <string name="brandEmi">Brand EMI</string>
+    <string name="please_enter_brand_name_to_search">Enter Brand Name To Search</string>
 
 
 </resources>

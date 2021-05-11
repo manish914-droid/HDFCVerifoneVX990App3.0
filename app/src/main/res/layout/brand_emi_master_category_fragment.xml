@@ -2,33 +2,82 @@
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/nested_scroll_view"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:fillViewport="true"
+        android:background="@color/themeBackground"
         app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/searchViewLV"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/white">
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
 
-            <include
-                android:id="@+id/sub_header_view"
-                layout="@layout/sub_header_layout"
-                android:visibility="visible" />
+            <com.example.customneumorphic.NeumorphCardView
+                android:id="@+id/searchView"
+                style="@style/Widget.Neumorph.CardView"
+                android:layout_width="0dp"
+                android:layout_height="80dp"
+                android:layout_weight="1"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="4dp"
+                app:neumorph_shapeType="pressed">
 
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/brandEmiMasterRV"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/brandSearchET"
+                    android:layout_width="match_parent"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:background="@null"
+                    android:gravity="start|center_vertical"
+                    android:hint="@string/searchBrand"
+                    android:inputType="text"
+                    android:paddingStart="@dimen/pad_16"
+                    android:paddingEnd="@dimen/pad_16"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/transparent_white"
+                    android:textCursorDrawable="@drawable/cursorbg" />
+
+                <com.example.customneumorphic.NeumorphImageButton
+                    android:id="@+id/searchButton"
+                    style="@style/Widget.Neumorph.ImageButton"
+                    android:layout_width="@dimen/pad_80"
+                    android:layout_height="@dimen/pad_80"
+                    android:layout_gravity="end|center_vertical"
+                    android:layout_weight="1"
+                    android:paddingTop="16dp"
+                    android:src="@drawable/ic_search_24"
+                    app:neumorph_inset="@dimen/pad_4"
+                    app:neumorph_lightSource="rightBottom"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="4dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+                    app:neumorph_shapeType="pressed" />
+            </com.example.customneumorphic.NeumorphCardView>
+        </LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/brandEmiMasterRV"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:scrollbars="none"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/searchViewLV" />
 
             <ImageView
                 android:id="@+id/empty_view_placeholder"
@@ -43,7 +92,5 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.core.widget.NestedScrollView>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

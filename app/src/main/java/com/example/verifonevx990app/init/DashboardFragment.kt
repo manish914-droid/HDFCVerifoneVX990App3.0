@@ -34,6 +34,7 @@ import com.example.verifonevx990app.realmtables.BatchFileDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
+import com.google.gson.Gson
 import kotlinx.coroutines.*
 import java.lang.Runnable
 import java.util.*
@@ -110,6 +111,11 @@ class DashboardFragment : Fragment() {
             binding?.pagerViewLL?.visibility = View.GONE
         } else {
             binding?.pagerViewLL?.visibility = View.VISIBLE
+        }
+
+        runBlocking(Dispatchers.IO) {
+            val data = TerminalParameterTable.selectFromSchemeTable()
+            Log.d("Updated TPT:- ", Gson().toJson(data))
         }
 
         update = Runnable {
