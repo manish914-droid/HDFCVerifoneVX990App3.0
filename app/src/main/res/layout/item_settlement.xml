@@ -4,13 +4,14 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="@dimen/pad_5"
-    android:background="@color/white"
+
     android:elevation="@dimen/pad_5"
     app:cardCornerRadius="@dimen/pad_5">
 
     <LinearLayout
         android:id="@+id/void_parent"
         android:layout_width="match_parent"
+        android:background="@color/themeBackground"
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -22,7 +23,7 @@
             android:gravity="center"
             android:hint="@string/_1245678"
             android:padding="@dimen/pad_10"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular" />
 
         <TextView
@@ -33,7 +34,7 @@
             android:gravity="center"
             android:hint="@string/_500"
             android:padding="@dimen/pad_10"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular" />
 
         <TextView
@@ -44,7 +45,7 @@
             android:gravity="center"
             android:hint="@string/_500"
             android:padding="@dimen/pad_10"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular" />
 
         <TextView
@@ -55,7 +56,7 @@
             android:gravity="center"
             android:hint="@string/_06_07_2020"
             android:padding="@dimen/pad_10"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular" />
 
     </LinearLayout>

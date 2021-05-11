@@ -13,11 +13,9 @@ import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentInitBinding
 import com.example.verifonevx990app.main.IFragmentRequest
-import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
-import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class InitFragment : Fragment() {
 
@@ -34,17 +32,16 @@ class InitFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.ma_bnv)
+      //  val bottomNavigationView = activity?.findViewById<BottomNavigationView>(R.id.ma_bnv)
         AppPreference.saveBoolean(
             PrefConstant.INIT_AFTER_SETTLE_BATCH_SUCCESS.keyName.toString(),
             true
         )
-        if (bottomNavigationView is BottomNavigationView) {
-            bottomNavigationView.menu.findItem(R.id.home)?.isChecked = true
-        }
+        /* if (bottomNavigationView is BottomNavigationView) {
+             bottomNavigationView.menu.findItem(R.id.home)?.isChecked = true
+         }*/
         activity?.let { refreshToolbarLogos(it) }
-        (iDialog as MainActivity).findViewById<BottomNavigationView>(R.id.ma_bnv).visibility =
-            View.GONE
+        //  (iDialog as MainActivity).findViewById<BottomNavigationView>(R.id.ma_bnv).visibility = View.GONE
         binding?.ifEt?.transformationMethod = null
 
         //Below Code write App Revision ID to file when first time Init Screen opens

@@ -75,7 +75,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_master)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
-        (activity as MainActivity).showBottomNavigationBar(isShow = false)
+        //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
 
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-

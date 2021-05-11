@@ -52,7 +52,7 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-        <View
+      <!--  <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
             android:background="@drawable/top_shadow" />
@@ -63,7 +63,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:background="@color/white"
-            app:menu="@menu/bottom_navigation_menu" />
+            app:menu="@menu/bottom_navigation_menu" />-->
 
     </LinearLayout>
     <!--Sliding drawer-->

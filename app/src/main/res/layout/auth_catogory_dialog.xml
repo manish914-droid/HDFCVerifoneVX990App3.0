@@ -5,13 +5,14 @@
     android:layout_height="match_parent"
     android:layout_margin="@dimen/pad_16"
     app:cardCornerRadius="@dimen/pad_16"
+
     app:cardUseCompatPadding="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-
+        android:background="@color/themeBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -55,7 +55,7 @@ class BrandEMIDataByCategoryID : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_sub_category)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
-        (activity as MainActivity).showBottomNavigationBar(isShow = false)
+      //  //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as BrandEMIDataModal
         subCategoryData = arguments?.getParcelableArrayList("subCategoryData")
 

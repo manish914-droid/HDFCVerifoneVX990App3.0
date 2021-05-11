@@ -58,17 +58,17 @@ import com.example.verifonevx990app.voidrefund.VoidOfRefund
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.saveBatchInPreference
-import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
 
-class MainActivity : BaseActivity(), IFragmentRequest,
-    BottomNavigationView.OnNavigationItemSelectedListener {
+// BottomNavigationView.OnNavigationItemSelectedListener
+class MainActivity : BaseActivity(), IFragmentRequest {
     private var isToExit = false
     private val initFragment by lazy { InitFragment() }
     private val dashBoardFragment by lazy { DashboardFragment() }
-    private val bottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.ma_bnv) }
+
+    //  private val bottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.ma_bnv) }
     var merchantName = "X990 EMV Demo"
     private var appUpdateProcCode = ProcessingCode.APP_UPDATE.code
     private var totalAppUpdateBytes = 0
@@ -145,12 +145,12 @@ class MainActivity : BaseActivity(), IFragmentRequest,
     }
 
     //region=================Show Bottom Navigation Bar====================
-    fun showBottomNavigationBar(isShow: Boolean = true) {
-        if (isShow)
-            bottomNavigationView?.visibility = View.VISIBLE
-        else
-            bottomNavigationView?.visibility = View.GONE
-    }
+    /* fun showBottomNavigationBar(isShow: Boolean = true) {
+         if (isShow)
+             bottomNavigationView?.visibility = View.VISIBLE
+         else
+             bottomNavigationView?.visibility = View.GONE
+     }*/
     //endregion
 
 
@@ -371,15 +371,16 @@ class MainActivity : BaseActivity(), IFragmentRequest,
     private fun initUI() {
         binding?.toolbarView?.mainToolbarStart?.setOnClickListener { toggleDrawer() }
         arrayOf<View>(
-            // app_update_ll,
-            findViewById<LinearLayout>(R.id.report_ll),
-            findViewById<LinearLayout>(R.id.bank_fun_ll)
+                // app_update_ll,
+                findViewById<LinearLayout>(R.id.report_ll),
+                findViewById<LinearLayout>(R.id.bank_fun_ll),
+                findViewById<LinearLayout>(R.id.settlement_ll)
         ).forEach { _ -> }
 
         //Displaying the Version Name of App:-
         binding?.mainDrawerView?.versionName?.text = "App Version: v${BuildConfig.VERSION_NAME}"
 
-        bottomNavigationView.setOnNavigationItemSelectedListener(this)
+        //bottomNavigationView.setOnNavigationItemSelectedListener(this)
         setDrawerClick()
         UserProvider.refresh()
         refreshSide()
@@ -606,7 +607,7 @@ class MainActivity : BaseActivity(), IFragmentRequest,
 
     private fun refreshSide() {
         //region==========Setting for sidebar details==========
-        binding?.mainDrawerView?.mdShopTv?.text = UserProvider.name
+        // binding?.mainDrawerView?.mdShopTv?.text = UserProvider.name
         val tid = "TID : ${UserProvider.tid}"
         binding?.mainDrawerView?.mdTidTv?.text = tid
         val mid = "MID : ${UserProvider.mid}"
@@ -628,6 +629,7 @@ class MainActivity : BaseActivity(), IFragmentRequest,
             //  init_ll.visibility = View.VISIBLE
             // key_exchange_ll.visibility = View.VISIBLE
             binding?.mainDrawerView?.reportLl?.visibility = View.VISIBLE
+            binding?.mainDrawerView?.settlementLl?.visibility = View.VISIBLE
             // app_update_ll.visibility = View.VISIBLE
             //  key_exchange_hdfc_ll.visibility = View.VISIBLE
             transactFragment(DashboardFragment(), isBackStackAdded = true)
@@ -649,6 +651,7 @@ class MainActivity : BaseActivity(), IFragmentRequest,
             //   key_exchange_ll.visibility = View.GONE
             //  key_exchange_hdfc_ll.visibility = View.GONE
             binding?.mainDrawerView?.reportLl?.visibility = View.GONE
+            binding?.mainDrawerView?.settlementLl?.visibility = View.GONE
             //   app_update_ll.visibility = View.GONE
             //initFragment
             transactFragment(initFragment, isBackStackAdded = false)
@@ -1312,9 +1315,24 @@ class MainActivity : BaseActivity(), IFragmentRequest,
             send(EOptionGroup.REPORT, false)
         }
 
+        binding?.mainDrawerView?.settlementLl?.setOnClickListener {
+            //  VFService.showToast("Settlement Click")
+            if (checkInternetConnection()) {
+                toggleDrawer()
+                transactFragment(SettlementFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable("trans_type", TransactionType.VOID_REFUND)
+                        putString(INPUT_SUB_HEADING, SubHeaderTitle.SETTLEMENT_SUBHEADER_VALUE.title)
+                    }
+                }, true)
+            } else {
+                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+            }
+        }
+
     }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+    /*override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.home -> {
                 if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
@@ -1347,7 +1365,7 @@ class MainActivity : BaseActivity(), IFragmentRequest,
         }
 
         return true
-    }
+    }*/
 
     override fun onBackPressed() {
         if (binding?.mainDl?.isDrawerOpen(GravityCompat.START) == true) {

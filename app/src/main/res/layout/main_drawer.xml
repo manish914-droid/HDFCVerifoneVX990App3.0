@@ -2,47 +2,57 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="@dimen/width_drawer"
-
+    android:background="@color/themeBackground"
     android:layout_height="match_parent"
     android:layout_gravity="start"
     android:orientation="vertical">
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="@dimen/pad_24"
+        android:layout_marginStart="@dimen/pad_30"
+        android:layout_marginTop="@dimen/pad_16"
+        android:background="@drawable/bonushub_image"
+
+        />
 
 
     <!--Details for Merchant info-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/drawer_rounded_cor"
+
         android:gravity="center|start"
 
         android:orientation="horizontal"
-        android:padding="@dimen/pad_16">
+
+        android:paddingStart="@dimen/pad_16"
+        android:paddingEnd="@dimen/pad_16">
 
         <ImageView
             android:layout_width="60dp"
             android:layout_height="80dp"
-            android:layout_marginStart="@dimen/pad_16"
-            android:padding="@dimen/pad_8"
-
+            android:layout_marginStart="@dimen/pad_8"
+            android:padding="@dimen/pad_4"
             android:src="@drawable/ic_pos" />
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:padding="@dimen/pad_16">
+            android:padding="@dimen/pad_8">
 
-            <com.example.verifonevx990app.vxUtils.BHTextView
-                android:id="@+id/md_shop_tv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="@dimen/pad_8"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="@string/shop_name"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_regular"
-                app:fname="bold" />
+            <!--  <com.example.verifonevx990app.vxUtils.BHTextView
+                  android:id="@+id/md_shop_tv"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginBottom="@dimen/pad_8"
+                  android:ellipsize="end"
+                  android:maxLines="1"
+                  android:text="@string/shop_name"
+                  android:textColor="@color/white"
+                  android:textSize="@dimen/text_size_regular"
+                  app:fname="regular" />-->
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/md_tid_tv"
@@ -53,8 +63,8 @@
                 android:maxLines="1"
                 android:text="@string/terminal_id"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_regular"
-                app:fname="bold" />
+                android:textSize="@dimen/text_size_small"
+                app:fname="regular" />
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/md_mid_tv"
@@ -64,8 +74,8 @@
                 android:maxLines="1"
                 android:text="@string/merchant_id"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_regular"
-                app:fname="bold" />
+                android:textSize="@dimen/text_size_small"
+                app:fname="regular" />
 
 
         </LinearLayout>
@@ -84,31 +94,39 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
 
             android:orientation="vertical">
 
-            <!--Sidebar option in dashboard-->
-            <LinearLayout
-                android:id="@+id/container_ll"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
+            <!--Sidebar options in dashboard-->
 
-            <!--Settings-->
-            <LinearLayout
+            <!-- <LinearLayout
+                 android:id="@+id/container_ll"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+                 android:orientation="vertical" />
+ -->
+            <!--Bank Functions Settings-->
+            <com.example.customneumorphic.NeumorphCardView
                 android:id="@+id/bank_fun_ll"
+                style="@style/Widget.Neumorph.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
+                android:layout_marginTop="@dimen/pad_20"
+                app:neumorph_inset="@dimen/pad_10"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+                app:neumorph_shapeType="flat"
+
+                >
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:layout_marginBottom="1dp"
-                    android:background="@color/white"
+
                     android:gravity="center|start"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/pad_16"
@@ -127,42 +145,40 @@
                         android:paddingStart="@dimen/pad_16"
                         android:paddingEnd="@dimen/pad_16"
                         android:text="@string/bank_functions"
-                        android:textColor="@color/text_active"
-                        android:textSize="@dimen/text_size_regular"
-                        app:fname="bold" />
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small"
+                        app:fname="regular" />
 
 
-                    <ImageView
-                        android:id="@+id/lock_iv"
-                        android:layout_width="@dimen/lock_img_width_height"
-                        android:layout_height="@dimen/lock_img_width_height"
-                        android:background="@drawable/ic_baseline_lock_open_24" />
-
-
-                    <ImageView
-                        android:id="@+id/setting_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/ic_right_arrow_gray" />
                 </LinearLayout>
 
-            </LinearLayout>
+
+            </com.example.customneumorphic.NeumorphCardView>
 
 
             <!--Report-->
-            <LinearLayout
+            <com.example.customneumorphic.NeumorphCardView
                 android:id="@+id/report_ll"
+                style="@style/Widget.Neumorph.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:animateLayoutChanges="true"
-                android:background="?android:attr/selectableItemBackground"
-                android:orientation="vertical">
+                app:neumorph_inset="@dimen/pad_10"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+
+                app:neumorph_shapeType="flat"
+
+                >
+
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="50dp"
+                    android:layout_height="40dp"
                     android:layout_marginBottom="1dp"
-                    android:background="@color/white"
+
                     android:gravity="center|start"
                     android:orientation="horizontal"
                     android:paddingStart="@dimen/pad_16"
@@ -182,19 +198,68 @@
                         android:paddingStart="@dimen/pad_16"
                         android:paddingEnd="@dimen/pad_16"
                         android:text="@string/reports"
-                        android:textColor="@color/text_active"
-                        android:textSize="@dimen/text_size_regular"
-                        app:fname="bold" />
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small"
+                        app:fname="regular" />
 
-                    <ImageView
-                        android:id="@+id/report_iv"
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/ic_right_arrow_gray" />
                 </LinearLayout>
 
 
-            </LinearLayout>
+            </com.example.customneumorphic.NeumorphCardView>
+
+
+            <!--Settlement-->
+
+            <com.example.customneumorphic.NeumorphCardView
+                android:id="@+id/settlement_ll"
+                style="@style/Widget.Neumorph.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:neumorph_inset="@dimen/pad_10"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+
+                app:neumorph_shapeType="flat"
+
+                >
+
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:layout_marginBottom="1dp"
+
+                    android:gravity="center|start"
+                    android:orientation="horizontal"
+                    android:paddingStart="@dimen/pad_16"
+                    android:paddingEnd="@dimen/pad_16">
+
+                    <ImageView
+                        android:layout_width="30dp"
+                        android:layout_height="30dp"
+                        android:background="@drawable/ic_bbg" />
+
+
+                    <com.example.verifonevx990app.vxUtils.BHTextView
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="start|center"
+                        android:paddingStart="@dimen/pad_16"
+                        android:paddingEnd="@dimen/pad_16"
+                        android:text="@string/settlement"
+                        android:textAllCaps="true"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small"
+                        app:fname="regular" />
+
+                </LinearLayout>
+
+
+            </com.example.customneumorphic.NeumorphCardView>
 
 
         </LinearLayout>
@@ -205,13 +270,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+
         android:gravity="center"
         android:orientation="vertical">
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="@dimen/pad_8"
+            android:layout_height="@dimen/pad_4"
             android:background="@drawable/top_shadow" />
 
         <com.example.verifonevx990app.vxUtils.BHTextView
@@ -221,9 +286,9 @@
             android:gravity="center"
             android:hint="@string/versionHint"
             android:padding="@dimen/pad_4"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular"
-            app:fname="bold" />
+            app:fname="regular" />
 
         <com.example.verifonevx990app.vxUtils.BHTextView
             android:id="@+id/helpDeskTV"
@@ -232,10 +297,10 @@
             android:layout_marginBottom="@dimen/pad_16"
             android:gravity="center"
             android:hint="@string/versionHint"
-            android:textColor="@color/colorPrimary"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular"
             android:visibility="invisible"
-            app:fname="bold" />
+            app:fname="regular" />
 
 
     </LinearLayout>

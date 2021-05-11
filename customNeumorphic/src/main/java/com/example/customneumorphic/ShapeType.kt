@@ -11,7 +11,6 @@ annotation class ShapeType {
         const val FLAT = 0
         const val PRESSED = 1
         const val BASIN = 2
-
         const val DEFAULT = FLAT
     }
 }

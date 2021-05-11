@@ -7,6 +7,14 @@
     android:orientation="vertical">
 
 
+    <View
+        android:id="@+id/shadow_view"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/pad_4"
+        android:background="@drawable/top_shadow"
+        android:elevation="@dimen/pad_16" />
+
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -233,5 +241,6 @@
         </LinearLayout>
 
     </LinearLayout>
+
 
 </LinearLayout>

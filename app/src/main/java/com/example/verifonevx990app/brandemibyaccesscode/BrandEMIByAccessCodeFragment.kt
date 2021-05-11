@@ -18,7 +18,6 @@ import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.BrandEmiByAccessCodeViewBinding
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
 import com.example.verifonevx990app.main.EMIRequestType
-import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMIAccessDataModalTable
 import com.example.verifonevx990app.vxUtils.*
@@ -47,7 +46,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        (activity as MainActivity).showBottomNavigationBar(isShow = false)
+        //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_by_access_code)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
 

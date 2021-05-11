@@ -13,8 +13,8 @@ import android.view.animation.AnimationUtils
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.ShapeType
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.databinding.FragmentNewInputAmountBinding
@@ -88,26 +88,26 @@ class NewInputAmountFragment : Fragment() {
         ///  navController = Navigation.findNavController(view)
         transactionType = arguments?.getSerializable("type") as EDashboardItem
         if (transactionType == EDashboardItem.SALE_WITH_CASH) {
-            binding?.enterCashAmountTv?.visibility = View.VISIBLE
+            //  binding?.enterCashAmountTv?.visibility = View.VISIBLE
             cashAmount?.visibility = View.VISIBLE
-            binding?.enterCashAmountTv?.text =
-                VerifoneApp.appContext.getString(R.string.cash_amount)
+            cashAmount?.hint = VerifoneApp.appContext.getString(R.string.cash_amount)
+            //   binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.cash_amount)
 
         } else if (transactionType == EDashboardItem.SALE) {
             if (checkHDFCTPTFieldsBitOnOff(TransactionType.TIP_SALE)) {
-                binding?.enterCashAmountTv?.visibility = View.VISIBLE
+                //   binding?.enterCashAmountTv?.visibility = View.VISIBLE
                 cashAmount?.visibility = View.VISIBLE
-                binding?.enterCashAmountTv?.text =
-                    VerifoneApp.appContext.getString(R.string.enter_tip_amount)
+                cashAmount?.hint = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
+                //    binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
 
             } else {
                 cashAmount?.visibility = View.GONE
-                binding?.enterCashAmountTv?.visibility = View.GONE
+                //  binding?.enterCashAmountTv?.visibility = View.GONE
 
             }
         } else {
             cashAmount?.visibility = View.GONE
-            binding?.enterCashAmountTv?.visibility = View.GONE
+            //   binding?.enterCashAmountTv?.visibility = View.GONE
         }
 
         subHeaderText = view.findViewById(R.id.sub_header_text)
@@ -120,59 +120,65 @@ class NewInputAmountFragment : Fragment() {
         keyModelSaleAmount.callback = ::onOKClicked
         inputInSaleAmount = true
         inputInCashAmount = false
-        binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_selected)
+        // binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_selected)
+        binding?.saleAmtCrdView?.setShapeType(ShapeType.BASIN)
+
         if (hdfcTPTData != null) {
             binding?.saleAmount?.filters = arrayOf<InputFilter>(
-                InputFilter.LengthFilter(
-                    hdfcTPTData.transAmountDigit.toInt()
-                )
+                    InputFilter.LengthFilter(
+                            hdfcTPTData.transAmountDigit.toInt()
+                    )
             )
         }
-        binding?.enterSaleAmtTv?.setTextColor(
-            ContextCompat.getColor(
-                VerifoneApp.appContext,
-                R.color.colorPrimary
-            )
-        )
+        /*  binding?.enterSaleAmtTv?.setTextColor(
+              ContextCompat.getColor(
+                  VerifoneApp.appContext,
+                  R.color.colorPrimary
+              )
+          )*/
         binding?.saleAmount?.setOnClickListener {
             keyModelSaleAmount.view = it
             keyModelSaleAmount.callback = ::onOKClicked
             inputInSaleAmount = true
             inputInCashAmount = false
-            it.setBackgroundResource(R.drawable.et_bg_selected)
-            cashAmount?.setBackgroundResource(R.drawable.et_bg_un)
-            binding?.enterSaleAmtTv?.setTextColor(
-                ContextCompat.getColor(
-                    VerifoneApp.appContext,
-                    R.color.colorPrimary
-                )
-            )
-            binding?.enterCashAmountTv?.setTextColor(
-                ContextCompat.getColor(
-                    VerifoneApp.appContext,
-                    R.color.black
-                )
-            )
+            //    it.setBackgroundResource(R.drawable.et_bg_selected)
+            //  cashAmount?.setBackgroundResource(R.drawable.et_bg_un)
+            /* binding?.enterSaleAmtTv?.setTextColor(
+                 ContextCompat.getColor(
+                     VerifoneApp.appContext,
+                     R.color.colorPrimary
+                 )
+             )
+             binding?.enterCashAmountTv?.setTextColor(
+                 ContextCompat.getColor(
+                     VerifoneApp.appContext,
+                     R.color.black
+                 )
+             )*/
+            binding?.saleAmtCrdView?.setShapeType(ShapeType.BASIN)
+            binding?.cashAmtCrdView?.setShapeType(ShapeType.FLAT)
         }
         cashAmount?.setOnClickListener {
             keyModelCashAmount.view = it
             keyModelCashAmount.callback = ::onOKClicked
             inputInSaleAmount = false
             inputInCashAmount = true
-            it.setBackgroundResource(R.drawable.et_bg_selected)
-            binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_un)
-            binding?.enterSaleAmtTv?.setTextColor(
-                ContextCompat.getColor(
-                    VerifoneApp.appContext,
-                    R.color.colorPrimary
-                )
-            )
-            binding?.enterSaleAmtTv?.setTextColor(
-                ContextCompat.getColor(
-                    VerifoneApp.appContext,
-                    R.color.black
-                )
-            )
+            //   it.setBackgroundResource(R.drawable.et_bg_selected)
+            // binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_un)
+            /* binding?.enterSaleAmtTv?.setTextColor(
+                 ContextCompat.getColor(
+                     VerifoneApp.appContext,
+                     R.color.colorPrimary
+                 )
+             )
+             binding?.enterSaleAmtTv?.setTextColor(
+                 ContextCompat.getColor(
+                     VerifoneApp.appContext,
+                     R.color.black
+                 )
+             )*/
+            binding?.saleAmtCrdView?.setShapeType(ShapeType.FLAT)
+            binding?.cashAmtCrdView?.setShapeType(ShapeType.BASIN)
         }
         onSetKeyBoardButtonClick()
 

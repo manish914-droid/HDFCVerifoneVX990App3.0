@@ -71,7 +71,7 @@ class BrandEMIProductFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isSubCategoryItemPresent = arguments?.getBoolean("isSubCategoryItemPresent") ?: false
-        (activity as MainActivity).showBottomNavigationBar(isShow = false)
+        //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as BrandEMIDataModal
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.select_product)
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
