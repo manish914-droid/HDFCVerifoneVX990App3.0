@@ -1,7 +1,6 @@
 package com.example.verifonevx990app.brandemi
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.TextUtils
@@ -73,7 +72,10 @@ class BrandEMIProductFragment : Fragment() {
         isSubCategoryItemPresent = arguments?.getBoolean("isSubCategoryItemPresent") ?: false
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as BrandEMIDataModal
-        binding?.subHeaderView?.subHeaderText?.text = getString(R.string.select_product)
+        binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
+        binding?.subHeaderView?.subHeaderText?.setCompoundDrawablesWithIntrinsicBounds(
+            R.drawable.ic_brand_emi_sub_header_logo, 0, 0, 0
+        )
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             if (isSubCategoryItemPresent) parentFragmentManager.popBackStackImmediate()
             else {
@@ -92,12 +94,7 @@ class BrandEMIProductFragment : Fragment() {
         fetchBrandEMIProductDataFromHost()
 
         //OnClick Event of Floating Action Button:-
-        binding?.brandEmiProductFloatingButton?.setOnClickListener {
-            if (selectedProductUpdatedPosition > -1)
-                navigateToInputAmountFragment()
-            else
-                VFService.showToast(getString(R.string.please_select_product))
-        }
+        binding?.brandEmiProductFloatingButton?.visibility = View.GONE
 
         Log.d("BrandDataModal:- ", Gson().toJson(brandEMIDataModal))
     }
@@ -282,18 +279,12 @@ class BrandEMIProductFragment : Fragment() {
                         Log.d("FullDataList:- ", brandEmiProductDataList.toString())
                     } else {
                         iDialog?.hideProgress()
-                        binding?.brandEmiProductFloatingButton?.visibility = View.VISIBLE
                         Log.d("Full Product Data:- ", Gson().toJson(brandEmiProductDataList))
                     }
                 }
             } else {
                 GlobalScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    binding?.brandEmiProductFloatingButton?.visibility = View.VISIBLE
-                    /* iDialog?.alertBoxWithAction(null, null,
-                         getString(R.string.error), hostMsg,
-                         false, getString(R.string.positive_button_ok),
-                         {}, {})*/
                 }
             }
         }
@@ -304,8 +295,11 @@ class BrandEMIProductFragment : Fragment() {
     private fun onProductSelected(position: Int) {
         try {
             Log.d("Product Position:- ", position.toString())
-            if (position > -1)
-                selectedProductUpdatedPosition = position
+            selectedProductUpdatedPosition = position
+            if (selectedProductUpdatedPosition > -1)
+                navigateToInputAmountFragment()
+            else
+                VFService.showToast(getString(R.string.please_select_product))
         } catch (ex: IndexOutOfBoundsException) {
             ex.printStackTrace()
         }
@@ -332,30 +326,32 @@ internal class BrandEMIProductAdapter(
 
     override fun onBindViewHolder(holder: BrandEMIProductViewHolder, position: Int) {
         // holder.binding.tvProductIdValue.text = dataList?.get(position)?.productID ?: ""
-        holder.binding.tvProductNameValue.text = dataList?.get(position)?.productName ?: ""
-        holder.binding.tvSkuCodeValue.text = dataList?.get(position)?.skuCode ?: ""
+        holder.binding.tvProductName.text = dataList?.get(position)?.productName ?: ""
+        //holder.binding.tvSkuCodeValue.text = dataList?.get(position)?.skuCode ?: ""
         // holder.binding.tvProductMinAmountValue.text = dataList?.get(position)?.productMinAmount ?: ""
         // holder.binding.tvProductMaxAmountValue.text = dataList?.get(position)?.productMaxAmount ?: ""
 
-        holder.binding.parentEmiProductViewLl.setOnClickListener {
-            index = position
-            notifyDataSetChanged()
-        }
 
-        //region==========================Checked Particular Row of RecyclerView Logic:-
-        if (index === position) {
-            holder.binding.cardView.strokeColor = Color.parseColor("#683992")
-            holder.binding.productCheckIv.visibility = View.VISIBLE
-            onProductSelect(position)
-        } else {
-            holder.binding.cardView.strokeColor = Color.parseColor("#FFFFFF")
-            holder.binding.productCheckIv.visibility = View.GONE
-        }
-        //endregion
+        /*  //region==========================Checked Particular Row of RecyclerView Logic:-
+          if (index === position) {
+              holder.binding.cardView.strokeColor = Color.parseColor("#683992")
+              holder.binding.productCheckIv.visibility = View.VISIBLE
+              onProductSelect(position)
+          } else {
+              holder.binding.cardView.strokeColor = Color.parseColor("#FFFFFF")
+              holder.binding.productCheckIv.visibility = View.GONE
+          }
+          //endregion*/
     }
 
     inner class BrandEMIProductViewHolder(val binding: ItemBrandEmiProductBinding) :
-        RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root) {
+        init {
+            binding.brandEmiProductLv.setOnClickListener {
+                onProductSelect(absoluteAdapterPosition)
+            }
+        }
+    }
 
     //region==========================Below Method is used to refresh Adapter New Data and Also
     fun refreshAdapterList(refreshList: MutableList<BrandEMIProductDataModal>) {

@@ -421,6 +421,11 @@
     <string name="searchingBrand">Searching Brand.....</string>
     <string name="brandEmi">Brand EMI</string>
     <string name="please_enter_brand_name_to_search">Enter Brand Name To Search</string>
+    <string name="searchCategory">Search Category</string>
+    <string name="searchingCategory">Searching Category.....</string>
+    <string name="no_category_data_found">No Category Data Found</string>
+    <string name="category_data">Category Data</string>
+    <string name="search">Search</string>
 
 
 </resources>

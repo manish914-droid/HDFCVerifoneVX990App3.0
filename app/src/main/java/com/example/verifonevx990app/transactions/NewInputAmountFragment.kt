@@ -22,7 +22,6 @@ import com.example.verifonevx990app.main.IFragmentRequest
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.BrandEMIDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
-import com.example.verifonevx990app.realmtables.HdfcCdt
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.KeyboardModel
 import com.example.verifonevx990app.vxUtils.*
@@ -72,10 +71,7 @@ class NewInputAmountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         ///   (activity as NavigationActivity).showBottomNavigationBar(isShow = false)
         val hdfcTPTData = getHDFCTptData()
-        //todo change below
-        val hdfcCDTData = HdfcCdt.selectAllHDFCCDTData() ///getHDFCDtData()
         Log.d("HDFCTPTData:- ", hdfcTPTData.toString())
-        Log.d("HDFCCDTData:- ", hdfcCDTData.toString())
         initAnimation()
 
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
@@ -111,6 +107,11 @@ class NewInputAmountFragment : Fragment() {
         }
 
         subHeaderText = view.findViewById(R.id.sub_header_text)
+        if (transactionType == EDashboardItem.BRAND_EMI) {
+            subHeaderText?.setCompoundDrawablesWithIntrinsicBounds(
+                R.drawable.ic_brand_emi_sub_header_logo, 0, 0, 0
+            )
+        }
         subHeaderBackButton = view.findViewById(R.id.back_image_button)
         setTxnTypeMsg(transactionType.title)
         subHeaderBackButton?.setOnClickListener {
@@ -438,10 +439,10 @@ class NewInputAmountFragment : Fragment() {
                 }
 
                 EDashboardItem.BRAND_EMI -> {
-                    if (binding?.saleAmount?.text.toString()
-                            .trim() >= brandEMIDataModal?.getProductMinAmount() ?: "0"
-                        && binding?.saleAmount?.text.toString()
-                            .trim() <= brandEMIDataModal?.getProductMaxAmount() ?: "0"
+                    val checkSaleAmt = binding?.saleAmount?.text.toString().trim().toDouble()
+                    if (checkSaleAmt >= brandEMIDataModal?.getProductMinAmount()?.toDouble() ?: 0.0
+                        && checkSaleAmt <= brandEMIDataModal?.getProductMaxAmount()
+                            ?.toDouble() ?: 0.0
                     ) {
                         enableDisableMobileAndInvoiceField()
                     } else {

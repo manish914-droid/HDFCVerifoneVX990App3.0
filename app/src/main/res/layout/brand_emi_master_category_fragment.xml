@@ -64,7 +64,7 @@
                     app:neumorph_shadowColorDark="@color/upperShadow"
                     app:neumorph_shadowColorLight="@color/upperShadow"
                     app:neumorph_shadowElevation="4dp"
-                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
                     app:neumorph_shapeType="pressed" />
             </com.example.customneumorphic.NeumorphCardView>
         </LinearLayout>
