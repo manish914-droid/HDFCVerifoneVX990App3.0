@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.appbar.AppBarLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/appBar_ll"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="?android:attr/actionBarSize"
+    android:theme="@style/VxAppThemeNoActionBar"
     android:elevation="@dimen/pad_16">
 
 
     <androidx.appcompat.widget.Toolbar
+
         android:id="@+id/dashboard_toolbar"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -59,13 +62,12 @@
                     android:layout_width="wrap_content"
                     android:layout_height="22dp"
                     android:layout_marginEnd="@dimen/pad_4"
-                    android:background="@drawable/bonushub_logo_round"
                     android:contentDescription="@string/app_name"
                     android:paddingStart="@dimen/pad_4"
                     android:paddingTop="@dimen/pad_2"
                     android:paddingEnd="@dimen/pad_4"
                     android:paddingBottom="@dimen/pad_2"
-                    android:src="@drawable/bonushub_image"
+                    android:src="@drawable/bonushub_white"
                     android:textSize="@dimen/text_size_xregular" />
             </LinearLayout>
 

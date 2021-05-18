@@ -58,6 +58,7 @@ import com.example.verifonevx990app.voidrefund.VoidOfRefund
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.saveBatchInPreference
+import com.google.android.material.appbar.AppBarLayout
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
@@ -67,6 +68,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     private var isToExit = false
     private val initFragment by lazy { InitFragment() }
     private val dashBoardFragment by lazy { DashboardFragment() }
+    var appBarLayout: AppBarLayout? = null
 
     //  private val bottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.ma_bnv) }
     var merchantName = "X990 EMV Demo"
@@ -119,6 +121,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
+        //  setSupportActionBar(binding?.toolbarView?.dashboardToolbar)
+        appBarLayout = binding?.toolbarView?.appBarLl
+
         //VFService.showToast("Same Version Updated success By Ajay Thakur")
         initUI()
         decideHome()
@@ -690,6 +695,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putExtra("mobileNumber", extraPairData?.first)
                         putExtra("billNumber", extraPairData?.second)
                         putExtra("saleWithTipAmt", saleWithTipAmt)
+                        putExtra("uiAction", action)
                     }, EIntentRequest.TRANSACTION.code)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1040,15 +1046,16 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             EDashboardItem.SALE_TIP -> {
                 if (checkInternetConnection()) {
                     (transactFragment(TipAdjustFragment()
-                        .apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", TransactionType.TIP_SALE)
-                                putString(
-                                    INPUT_SUB_HEADING,
-                                    SubHeaderTitle.TIP_SALE.title
-                                )
-                            }
-                        }))
+                            .apply {
+                                arguments = Bundle().apply {
+                                    putSerializable("type", TransactionType.TIP_SALE)
+                                    putString(
+                                            INPUT_SUB_HEADING,
+                                            SubHeaderTitle.TIP_SALE.title
+                                    )
+                                    putSerializable("action", action)
+                                }
+                            }))
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
@@ -2197,5 +2204,7 @@ interface IFragmentRequest {
     )
 
     fun onDashBoardItemClick(action: EDashboardItem)
+
+
 }
 

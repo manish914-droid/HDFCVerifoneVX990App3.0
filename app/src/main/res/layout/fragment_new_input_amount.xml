@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:layout_marginBottom="@dimen/pad_4">
 
         <include
             android:id="@+id/sub_header_view"
@@ -29,10 +29,10 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
             app:neumorph_shadowColorDark="@color/lowerShadow"
-
+            app:neumorph_inset="@dimen/pad_8"
             app:neumorph_shadowColorLight="@color/upperShadow"
             app:neumorph_shadowElevation="4dp"
-            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_14"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
             app:layout_constraintStart_toStartOf="parent"
             app:neumorph_shapeType="basin">
 
@@ -40,23 +40,23 @@
                 android:id="@+id/saleAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+
                 android:background="@null"
                 android:cursorVisible="false"
                 android:focusable="false"
                 android:focusableInTouchMode="false"
                 android:gravity="end"
-                android:drawableStart="@drawable/ic_indian"
+                android:drawableStart="@drawable/ic_indian_rupee"
                 android:inputType="none"
                 android:maxLength="12"
                 android:maxLines="1"
-                android:padding="@dimen/pad_10"
+                android:paddingStart="@dimen/pad_16"
+                android:paddingTop="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_16"
+                android:paddingBottom="@dimen/pad_8"
                 android:text="@string/default_amount"
                 android:textSize="@dimen/key_text_size"
-                android:hint="Enter Sale Amount"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white" />
 
         </com.example.customneumorphic.NeumorphCardView>
@@ -70,24 +70,21 @@
             app:layout_constraintTop_toBottomOf="@+id/sale_amt_crdView"
             app:neumorph_shadowColorDark="@color/lowerShadow"
             app:neumorph_shadowColorLight="@color/upperShadow"
-
+            app:neumorph_inset="@dimen/pad_8"
             app:neumorph_shadowElevation="4dp"
 
-            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_14"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
 
             app:layout_constraintStart_toStartOf="parent"
             app:neumorph_shapeType="flat"
 
             >
 
-            <EditText
+            <com.example.verifonevx990app.vxUtils.BHEditText
                 android:id="@+id/cashAmount"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginBottom="8dp"
+
                 android:background="@null"
                 android:cursorVisible="false"
                 android:ems="9"
@@ -98,10 +95,56 @@
                 android:inputType="none"
                 android:maxLength="15"
                 android:maxLines="1"
-                android:padding="@dimen/pad_10"
+                android:drawableStart="@drawable/ic_indian_rupee"
+                android:paddingStart="@dimen/pad_16"
+                android:paddingTop="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_16"
                 android:text="@string/default_amount"
                 android:textSize="@dimen/key_text_size"
-                android:drawableStart="@drawable/ic_indian"
+                android:paddingBottom="@dimen/pad_8"
+                android:textColor="@color/white"
+
+                />
+        </com.example.customneumorphic.NeumorphCardView>
+
+
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/mob_no_crdView"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+
+            app:neumorph_shadowElevation="4dp"
+
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+
+            >
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/mobNumbr"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/pad_12"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_indian_rupee"
+                android:ems="9"
+                android:focusable="false"
+
+                android:focusableInTouchMode="false"
+                android:gravity="center"
+                android:hint="@string/enter_mobile_number"
+                android:inputType="none"
+
+                android:maxLength="13"
+                android:maxLines="1"
+                android:textSize="@dimen/key_text_size"
                 android:textColor="@color/white"
 
                 />
@@ -110,20 +153,18 @@
 
         <include
             android:id="@+id/main_keyBoard"
-            layout="@layout/enter_amount_keyboard"
+            layout="@layout/new_enter_amount_keyboard"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginBottom="?attr/actionBarSize"
-            android:visibility="gone"
+            android:layout_height="wrap_content"
+
+            android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
-            app:layout_constraintVertical_bias="0.0" />
+            app:layout_constraintTop_toBottomOf="@+id/mob_no_crdView" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
 </androidx.core.widget.NestedScrollView>
 

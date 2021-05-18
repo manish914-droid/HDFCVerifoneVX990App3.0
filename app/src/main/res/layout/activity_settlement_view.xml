@@ -12,68 +12,97 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-           >
+            android:layout_height="match_parent">
 
             <include
                 android:id="@+id/sub_header_view"
                 layout="@layout/sub_header_layout"
                 android:visibility="visible" />
 
-            <LinearLayout
-                android:id="@+id/lv_heading_view"
+            <com.example.customneumorphic.NeumorphCardView
+                android:id="@+id/header_cardview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
 
-                <TextView
-                    android:layout_width="0dp"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
+                app:neumorph_inset="@dimen/pad_10"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.CardView"
+                app:neumorph_shapeType="flat">
+
+                <LinearLayout
+                    android:id="@+id/lv_heading_view"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="center"
-                    android:padding="@dimen/pad_10"
-                    android:text="@string/invoice"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_regular" />
+                    android:orientation="horizontal">
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="@dimen/pad_10"
-                    android:text="@string/amount"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_regular" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:padding="@dimen/pad_10"
+                        android:text="@string/invoice"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="@dimen/pad_10"
-                    android:text="@string/transaction_type"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_regular" />
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/top_shadow" />
 
-                <TextView
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_weight="1"
-                    android:gravity="start"
-                    android:padding="@dimen/pad_10"
-                    android:text="@string/date"
-                    android:textColor="@color/white"
-                    android:textSize="@dimen/text_size_regular" />
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:padding="@dimen/pad_10"
+                        android:text="@string/amount"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/top_shadow" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:padding="@dimen/pad_10"
+                        android:text="@string/transaction_type"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small" />
+
+                    <View
+                        android:layout_width="1dp"
+                        android:layout_height="match_parent"
+                        android:background="@drawable/top_shadow" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="start"
+                        android:padding="@dimen/pad_10"
+                        android:text="@string/date"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_small" />
 
 
-            </LinearLayout>
+                </LinearLayout>
+
+            </com.example.customneumorphic.NeumorphCardView>
+
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/settlement_rv"
@@ -82,7 +111,7 @@
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/lv_heading_view" />
+                app:layout_constraintTop_toBottomOf="@+id/header_cardview" />
 
             <ImageView
                 android:id="@+id/empty_view_placeholder"
@@ -103,18 +132,19 @@
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/settlement_batch_btn"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="@dimen/pad_60"
+        android:layout_marginBottom="@dimen/pad_80"
         android:text="@string/settle_batch"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_xregular"
-        app:backgroundTint="@color/colorPrimary"
-        app:elevation="@dimen/pad_0"
-        app:icon="@drawable/ic_settlement"
+        android:textSize="@dimen/text_size_small"
+        app:backgroundTint="@color/hdfc_red_color"
+        app:elevation="@dimen/pad_8"
+        app:icon="@drawable/ic_new_settlement"
         app:iconPadding="@dimen/pad_5"
         app:iconTint="@color/white"
         app:layout_constraintBottom_toBottomOf="parent"
