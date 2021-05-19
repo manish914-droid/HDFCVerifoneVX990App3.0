@@ -13,6 +13,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
 import com.example.verifonevx990app.main.MainActivity
@@ -39,6 +40,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
     private var settlementByteArray: ByteArray? = null
     private var back_image_button: ImageView? = null
     private var sub_header_text: TextView? = null
+    private var header_cardview: NeumorphCardView? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -50,7 +52,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
         sub_header_text?.text = title
         lv_heading_view = view.findViewById(R.id.lv_heading_view)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
-
+        header_cardview = view.findViewById(R.id.header_cardview)
 
         batchList = BatchFileDataTable.selectBatchData()
         getAndInflateSettlementData()
@@ -340,10 +342,12 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
     private fun conditionBasedShowHideViews(showStatus: Boolean) {
         if (!showStatus) {
             lv_heading_view?.visibility = View.GONE
+            header_cardview?.visibility = View.GONE
             settlement_rv?.visibility = View.GONE
             empty_view_placeholder?.visibility = View.VISIBLE
         } else {
             lv_heading_view?.visibility = View.VISIBLE
+            header_cardview?.visibility = View.VISIBLE
             settlement_rv?.visibility = View.VISIBLE
             empty_view_placeholder?.visibility = View.GONE
         }
@@ -389,6 +393,7 @@ internal class SettlementAdapter(private val list: List<BatchFileDataTable>) :
 
         p0.baseAmountText.text = amount
         p0.transactionType.text = list[p1].getTransactionType()
+
         p0.transactionDateText.text = list[p1].transactionDate
     }
 

@@ -1,30 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:id="@+id/brand_emi_sub_category_lv"
-    android:layout_height="@dimen/pad_80"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_5"
+    android:background="@color/white"
+    android:elevation="@dimen/pad_5"
+    app:cardCornerRadius="@dimen/pad_5">
 
-    <com.example.customneumorphic.NeumorphCardView
-        style="@style/Widget.Neumorph.CardView"
+    <LinearLayout
+        android:id="@+id/brand_emi_master_sub_category_parent"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:neumorph_shadowColorDark="@color/upperShadow"
-        app:neumorph_shadowColorLight="@color/lowerShadow"
-        app:neumorph_shadowElevation="4dp"
-        app:neumorph_shapeType="pressed">
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <com.example.customneumorphic.NeumorphButton
-            style="@style/Widget.Neumorph.TextView"
+        <TextView
             android:id="@+id/tv_brand_sub_category_name"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
+            android:layout_weight="1"
+            android:background="?attr/selectableItemBackground"
+            android:gravity="start"
             android:hint="@string/brand_name"
-            android:textColor="@color/white"
-            android:textColorHint="@color/transparent_white"
-            android:textSize="@dimen/text_size_regular" />
-    </com.example.customneumorphic.NeumorphCardView>
-</LinearLayout>
+            android:padding="@dimen/pad_16"
+            android:textColor="@color/text_active"
+            android:textSize="@dimen/text_size_regular"
+            app:drawableEndCompat="@drawable/ic_right_arrow_gray" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

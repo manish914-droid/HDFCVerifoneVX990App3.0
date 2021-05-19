@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/pad_5"
+    app:neumorph_inset="@dimen/pad_4"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
 
-    android:elevation="@dimen/pad_5"
-    app:cardCornerRadius="@dimen/pad_5">
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20"
+    app:neumorph_shapeType="pressed"
+
+    >
 
     <LinearLayout
         android:id="@+id/void_parent"
         android:layout_width="match_parent"
-        android:background="@color/themeBackground"
+
         android:layout_height="wrap_content"
         android:orientation="horizontal">
 
@@ -20,11 +26,11 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:gravity="center"
+            android:gravity="start"
             android:hint="@string/_1245678"
-            android:padding="@dimen/pad_10"
+            android:padding="@dimen/pad_6"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular" />
+            android:textSize="@dimen/text_size_small" />
 
         <TextView
             android:id="@+id/tv_base_amount"
@@ -33,9 +39,9 @@
             android:layout_weight="1"
             android:gravity="center"
             android:hint="@string/_500"
-            android:padding="@dimen/pad_10"
+            android:padding="@dimen/pad_6"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular" />
+            android:textSize="@dimen/text_size_small" />
 
         <TextView
             android:id="@+id/tv_transaction_type"
@@ -44,21 +50,21 @@
             android:layout_weight="1"
             android:gravity="center"
             android:hint="@string/_500"
-            android:padding="@dimen/pad_10"
+            android:padding="@dimen/pad_6"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular" />
+            android:textSize="@dimen/text_size_small" />
 
         <TextView
             android:id="@+id/tv_transaction_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1.5"
-            android:gravity="center"
+            android:gravity="end"
             android:hint="@string/_06_07_2020"
-            android:padding="@dimen/pad_10"
+            android:padding="@dimen/pad_6"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_regular" />
+            android:textSize="@dimen/text_size_small" />
 
     </LinearLayout>
 
-</androidx.cardview.widget.CardView>
+</com.example.customneumorphic.NeumorphCardView>

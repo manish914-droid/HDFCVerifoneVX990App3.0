@@ -21,17 +21,17 @@
 
             <com.example.customneumorphic.NeumorphCardView
                 android:id="@+id/header_cardview"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-
-                app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
                 app:neumorph_inset="@dimen/pad_10"
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
+
                 app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.CardView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
                 app:neumorph_shapeType="flat">
 
                 <LinearLayout

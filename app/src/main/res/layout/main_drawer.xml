@@ -12,7 +12,7 @@
         android:layout_height="@dimen/pad_24"
         android:layout_marginStart="@dimen/pad_30"
         android:layout_marginTop="@dimen/pad_16"
-        android:background="@drawable/bonushub_image"
+        android:background="@drawable/bonushub_white"
 
         />
 
@@ -117,7 +117,7 @@
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
 
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
                 app:neumorph_shapeType="flat"
 
                 >
@@ -168,7 +168,7 @@
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
 
                 app:neumorph_shapeType="flat"
 
@@ -221,7 +221,7 @@
                 app:neumorph_shadowColorDark="@color/lowerShadow"
                 app:neumorph_shadowColorLight="@color/upperShadow"
                 app:neumorph_shadowElevation="2dp"
-                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.ImageButton_costom_round_corner_10"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
 
                 app:neumorph_shapeType="flat"
 

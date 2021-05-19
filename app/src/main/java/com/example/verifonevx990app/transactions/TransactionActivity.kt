@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.view.MotionEvent
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.verifonevx990app.R
@@ -48,8 +47,8 @@ class TransactionActivity : AppCompatActivity(), OnXmlDataParsed {
 
     @SuppressLint("ClickableViewAccessibility")
     private fun initUI() {
-        binding?.paymentGif?.loadUrl("file:///android_asset/card_animation.html")
-        binding?.paymentGif?.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
+        //  binding?.paymentGif?.loadUrl("file:///android_asset/card_animation.html")
+        //    binding?.paymentGif?.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
         val amountValue = "${getString(R.string.rupees_symbol)} $transactionAmountValue"
         findViewById<BHTextView>(R.id.base_amt_tv).text = amountValue
 

@@ -14,6 +14,7 @@ import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.IssuerParameterTable
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.HexStringConverter
@@ -30,7 +31,7 @@ import java.util.*
 class TipAdjustFragment : Fragment() {
     private var successResponseCode: String? = null
     private val title: String by lazy { arguments?.getString(MainActivity.INPUT_SUB_HEADING) ?: "" }
-
+    private var itemType: EDashboardItem? = null
     /*  private val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
       private val authData: AuthCompletionData by lazy { AuthCompletionData() }*/
 
@@ -48,7 +49,9 @@ class TipAdjustFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        itemType = arguments?.getSerializable("action") as EDashboardItem
         binding?.subHeaderView?.subHeaderText?.text = title
+        itemType?.res?.let { binding?.subHeaderView?.headerImage?.setBackgroundResource(it) }
         binding?.tipOnInvoiceEt?.isFocusableInTouchMode = true
         binding?.tipOnInvoiceEt?.requestFocus()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
@@ -57,6 +60,7 @@ class TipAdjustFragment : Fragment() {
         binding?.authVoidBtn?.setOnClickListener {
             validate()
         }
+
 
     }
 

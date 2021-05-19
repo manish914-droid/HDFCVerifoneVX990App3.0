@@ -8,72 +8,139 @@
 
     <include
         android:id="@+id/toolbar_txn"
-        layout="@layout/app_toolbar" />
-
-    <com.example.verifonevx990app.vxUtils.BHTextView
-        android:id="@+id/tv_transaction_amount_heading"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_16"
-        android:layout_marginStart="16dp"
-        android:text="@string/base_amount"
-        android:textSize="@dimen/text_size_xregular"
+        layout="@layout/app_toolbar"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_txn" />
 
 
-    <com.example.verifonevx990app.vxUtils.BHTextView
-        android:id="@+id/base_amt_tv"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="@dimen/pad_16"
-        android:gravity="end"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/text_size_xregular"
-        app:fname="bold"
-        app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_amount_heading"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/tv_transaction_amount_heading"
-        app:layout_constraintTop_toTopOf="@+id/tv_transaction_amount_heading" />
+    <!--
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/tv_transaction_amount_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_16"
+            android:layout_marginStart="16dp"
+            android:text="@string/trans_amount"
+            android:textSize="@dimen/text_size_xregular"
+
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
 
 
-    <com.example.verifonevx990app.vxUtils.BHTextView
-        android:id="@+id/tv_card_number_heading"
-        android:layout_width="wrap_content"
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/base_amt_tv"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:gravity="end"
+            android:textColor="@color/colorPrimary"
+            android:textSize="@dimen/text_size_xregular"
+            app:fname="bold"
+            app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_amount_heading"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/tv_transaction_amount_heading"
+            app:layout_constraintTop_toTopOf="@+id/tv_transaction_amount_heading" />
+    -->
+    <com.example.customneumorphic.NeumorphCardView
+        android:id="@+id/trans_amount_cardview"
+        style="@style/Widget.Neumorph.CardView"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/pad_16"
-        android:layout_marginTop="@dimen/pad_16"
-        android:text="@string/card_number"
-        android:textColor="@color/colorPrimary"
-        android:textSize="@dimen/text_size_xregular"
-        android:visibility="gone"
+        android:layout_gravity="center"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount_heading" />
+        app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
+        app:neumorph_inset="@dimen/pad_12"
+        app:neumorph_shadowColorDark="@color/lowerShadow"
+        app:neumorph_shadowColorLight="@color/upperShadow"
+        app:neumorph_shadowElevation="8dp"
+
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_36"
+        app:neumorph_shapeType="flat">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/pad_6">
+
+
+            <ImageView
+                android:id="@+id/imageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="24dp"
+                android:src="@drawable/ic_indian_rupee"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/tv_transaction_amount_heading"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:text="@string/trans_amount"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/base_amt_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:layout_marginEnd="24dp"
+                android:gravity="center"
+                android:text="@string/_500_00"
+                android:textColor="@color/hdfc_red_color"
+                android:textSize="@dimen/text_size_large"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/imageView"
+                app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount_heading" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </com.example.customneumorphic.NeumorphCardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView_l"
+
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_16"
+        android:layout_margin="@dimen/pad_8"
         android:elevation="@dimen/pad_8"
         android:visibility="gone"
         app:cardCornerRadius="@dimen/pad_8"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_transaction_amount_heading">
+        app:layout_constraintTop_toBottomOf="@+id/trans_amount_cardview">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/white"
             android:orientation="vertical"
-            android:padding="@dimen/pad_16">
+            android:padding="@dimen/pad_8">
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/card_number"
-                android:textColor="@color/black"
+                android:layout_gravity="center"
+                android:textColor="@color/themeBackground"
                 android:textSize="@dimen/text_size_regular"
                 app:fname="bold" />
 
@@ -81,9 +148,10 @@
                 android:id="@+id/at_card_no_tv"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/pad_16"
+                android:layout_marginTop="@dimen/pad_8"
                 android:gravity="center"
-                android:textColor="@color/black"
+
+                android:textColor="@color/themeBackground"
                 android:textSize="@dimen/text_size_xregular"
                 app:fname="regular" />
 
@@ -100,34 +168,54 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/button"
         />-->
-    <WebView
-        android:id="@+id/payment_gif"
+    <!-- <WebView
+         android:id="@+id/payment_gif"
+         android:layout_width="match_parent"
+         android:layout_height="250dp"
+         android:layout_margin="@dimen/pad_16"
+         android:scaleType="fitXY"
+         android:scrollIndicators="none"
+         android:scrollbars="none"
+         app:layout_constraintEnd_toEndOf="parent"
+         app:layout_constraintStart_toStartOf="parent"
+         app:layout_constraintTop_toBottomOf="@+id/manual_entry_button" />-->
+
+    <ImageView
+        android:id="@+id/card_detect_img"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_margin="@dimen/pad_16"
-        android:scaleType="fitXY"
-        android:scrollIndicators="none"
-        android:scrollbars="none"
+        android:layout_height="200dp"
+
+        android:layout_marginTop="24dp"
+        android:src="@drawable/ic_crd_detect_img"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/manual_entry_button" />
+
+        app:layout_constraintTop_toBottomOf="@+id/manual_entry_button">
+
+
+    </ImageView>
+
 
     <com.example.verifonevx990app.vxUtils.BHTextView
         android:id="@+id/tv_insert_card"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:background="@drawable/card_entry_rounded_cor"
         android:layout_marginEnd="16dp"
         android:gravity="center"
-        android:padding="@dimen/pad_16"
+        android:paddingStart="@dimen/pad_20"
+        android:paddingTop="@dimen/pad_8"
+        android:paddingEnd="@dimen/pad_20"
+        android:paddingBottom="@dimen/pad_8"
         android:text="@string/please_insert_swipe_tap_card"
         android:textSize="@dimen/text_size_xregular"
-        android:textStyle="bold"
+        android:textColor="@color/themeBackground"
+        android:textStyle="normal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/payment_gif" />
+        app:layout_constraintTop_toBottomOf="@+id/card_detect_img" />
 
     <Button
         android:id="@+id/manual_entry_button"

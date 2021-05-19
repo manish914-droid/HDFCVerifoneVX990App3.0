@@ -62,7 +62,7 @@
     <string name="bonushub">bonushub</string>
     <string name="versionHint">App Version: v1.0.2</string>
     <string name="execute_success">success</string>
-    <string name="base_amount">Transaction Amount</string>
+    <string name="trans_amount">Transaction Amount :</string>
     <string name="card_number">Card Number</string>
     <string name="_500_00">\u20B9 500.00</string>
     <string name="rupees_symbol">\u20B9</string>
@@ -83,7 +83,7 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="do_you_to_print_summary_reports">Do you want to print summary reports?</string>
-    <string name="transaction_type">Txn\nType</string>
+    <string name="transaction_type">Txn Type</string>
 
 
     <string name="address">Address</string>
@@ -97,7 +97,7 @@
     <string name="receipt">Receipt</string>
     <string name="enter_cash_amount">Enter Cash Amount (\u20B9)</string>
     <string name="void_sale">Void Sale</string>
-    <string name="sale_data_sync">Sending Receiving From Host</string>
+    <string name="sale_data_sync">Sending/Receiving From Host</string>
     <string name="emi_data_sync">Emi data sync</string>
     <string name="send_sms_data_sync">Send Sms Emi data sync</string>
     <string name="proceed">Proceed</string>
@@ -421,11 +421,6 @@
     <string name="searchingBrand">Searching Brand.....</string>
     <string name="brandEmi">Brand EMI</string>
     <string name="please_enter_brand_name_to_search">Enter Brand Name To Search</string>
-    <string name="searchCategory">Search Category</string>
-    <string name="searchingCategory">Searching Category.....</string>
-    <string name="no_category_data_found">No Category Data Found</string>
-    <string name="category_data">Category Data</string>
-    <string name="search">Search</string>
 
 
 </resources>

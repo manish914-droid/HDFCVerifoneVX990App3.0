@@ -4,70 +4,143 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <!--  <androidx.constraintlayout.widget.ConstraintLayout
+          android:layout_width="match_parent"
+          android:layout_height="match_parent">
+
+
+          <androidx.cardview.widget.CardView
+              android:layout_width="0dp"
+              android:layout_height="wrap_content"
+              android:layout_marginStart="8dp"
+              android:layout_marginTop="16dp"
+              android:layout_marginEnd="8dp"
+              android:elevation="@dimen/pad_4"
+              android:orientation="vertical"
+              app:cardCornerRadius="@dimen/pad_4"
+              app:layout_constraintEnd_toEndOf="parent"
+              app:layout_constraintStart_toStartOf="parent"
+              app:layout_constraintTop_toTopOf="parent">
+
+              <LinearLayout
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:orientation="vertical"
+                  android:padding="@dimen/pad_16">
+
+
+                  <com.example.verifonevx990app.vxUtils.BHTextInputLayout
+                      android:id="@+id/iaum_size_til"
+                      style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                      android:layout_width="match_parent"
+                      android:layout_height="wrap_content"
+                      android:layout_marginTop="@dimen/pad_8"
+                      android:layout_marginBottom="@dimen/pad_8">
+
+                      <com.example.verifonevx990app.vxUtils.BHTextInputEditText
+                          android:id="@+id/if_et"
+                          android:layout_width="match_parent"
+                          android:layout_height="@dimen/height_size_navigation_item"
+                          android:layout_marginTop="@dimen/pad_8"
+                          android:layout_marginBottom="@dimen/pad_16"
+                          android:ems="10"
+                          android:gravity="center|start"
+                          android:hint="@string/enter_tid_colon"
+                          android:imeOptions="actionDone"
+                          android:inputType="numberPassword"
+                          android:maxLength="8"
+                          android:paddingStart="@dimen/pad_8"
+                          android:paddingEnd="@dimen/pad_8"
+                          android:textColor="@color/text_active"
+                          app:fname="bold" />
+
+                  </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+
+                  <com.example.verifonevx990app.vxUtils.BHButton
+                      android:id="@+id/if_proceed_btn"
+                      style="@style/ActionButtonStyle"
+                      android:layout_gravity="end"
+                      android:background="@drawable/basic_button_bg"
+                      android:enabled="false"
+                      android:text="@string/proceed_to_init"
+                       android:id="@+id/if_proceed_btn"
+                      app:fname="bold" />
+
+              </LinearLayout>
+
+          </androidx.cardview.widget.CardView>
+
+      </androidx.constraintlayout.widget.ConstraintLayout>-->
+
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dashboard_img_height"
+        android:orientation="vertical">
 
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="0dp"
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/tid_crd_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="@dimen/pad_4"
-            android:orientation="vertical"
-            app:cardCornerRadius="@dimen/pad_4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
 
-            <LinearLayout
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat">
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/if_et"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/pad_16">
+
+                android:background="@null"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_new_terminal_icon"
+                android:drawablePadding="@dimen/pad_20"
+                android:ems="10"
+                android:hint="@string/enter_tid_colon"
+                android:imeOptions="actionDone"
+
+                android:inputType="numberPassword"
+                android:maxLength="8"
+                android:paddingStart="@dimen/pad_16"
+                android:paddingTop="@dimen/pad_10"
+                android:paddingEnd="@dimen/pad_16"
+                android:paddingBottom="@dimen/pad_10"
+
+                android:textColor="@color/white"
+                android:textColorHint="@color/white"
+                app:fname="bold" />
+
+        </com.example.customneumorphic.NeumorphCardView>
 
 
-                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
-                    android:id="@+id/iaum_size_til"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pad_8"
-                    android:layout_marginBottom="@dimen/pad_8">
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/if_proceed_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="200dp"
+            android:layout_height="50dp"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/pad_8"
+            android:layout_marginTop="@dimen/pad_40"
 
-                    <com.example.verifonevx990app.vxUtils.BHTextInputEditText
-                        android:id="@+id/if_et"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/height_size_navigation_item"
-                        android:layout_marginTop="@dimen/pad_8"
-                        android:layout_marginBottom="@dimen/pad_16"
-                        android:ems="10"
-                        android:gravity="center|start"
-                        android:hint="@string/enter_tid_colon"
-                        android:imeOptions="actionDone"
-                        android:inputType="numberPassword"
-                        android:maxLength="8"
-                        android:paddingStart="@dimen/pad_8"
-                        android:paddingEnd="@dimen/pad_8"
-                        android:textColor="@color/text_active"
-                        app:fname="bold" />
 
-                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+            android:padding="@dimen/pad_2"
+            android:text="@string/proceed_to_init"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_small"
+            app:neumorph_backgroundColor="@color/hdfc_red_color"
+            app:neumorph_inset="@dimen/pad_2"
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph.Button" />
 
-                <com.example.verifonevx990app.vxUtils.BHButton
-                    android:id="@+id/if_proceed_btn"
-                    style="@style/ActionButtonStyle"
-                    android:layout_gravity="end"
-                    android:background="@drawable/basic_button_bg"
-                    android:enabled="false"
-                    android:text="@string/proceed_to_init"
-                    app:fname="bold" />
 
-            </LinearLayout>
+    </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

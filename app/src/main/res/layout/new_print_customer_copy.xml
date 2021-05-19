@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="360dp"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:gravity="center"
+
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:id="@+id/custom_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:id="@+id/linearLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="80dp"
+            android:background="#BECFFF"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:padding="@dimen/pad_8"
+                android:text="Print Customer Copy"
+                android:textColor="@color/themeBackground"
+                android:textSize="@dimen/text_size_regular" />
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#2349B5"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="@dimen/pad_16"
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/noBtn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginEnd="@dimen/pad_8"
+                android:padding="@dimen/pad_2"
+                android:text="@string/no"
+
+                android:textColor="@color/themeBackground"
+                android:textSize="@dimen/text_size_small"
+                app:neumorph_backgroundColor="@color/white"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/yesBtn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+                android:layout_marginStart="@dimen/pad_8"
+                android:padding="@dimen/pad_2"
+                android:text="@string/yes"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/img_printer"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+
+        android:src="@drawable/ic_printer"
+        app:layout_constraintBottom_toTopOf="@+id/custom_layout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/custom_layout" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

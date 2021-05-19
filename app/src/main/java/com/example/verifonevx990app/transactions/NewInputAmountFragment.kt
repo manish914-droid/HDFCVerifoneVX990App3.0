@@ -1,3 +1,4 @@
+
 package com.example.verifonevx990app.transactions
 
 import android.content.Context
@@ -22,6 +23,7 @@ import com.example.verifonevx990app.main.IFragmentRequest
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.BrandEMIDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.realmtables.HdfcCdt
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.KeyboardModel
 import com.example.verifonevx990app.vxUtils.*
@@ -50,6 +52,7 @@ class NewInputAmountFragment : Fragment() {
     private var binding: FragmentNewInputAmountBinding? = null
     private var brandEMIDataModal: BrandEMIDataModal? = null
 
+
     override fun onCreateView(
             inflater: LayoutInflater,
             container: ViewGroup?,
@@ -72,7 +75,10 @@ class NewInputAmountFragment : Fragment() {
         //    (activity as AppCompatActivity?)?.supportActionBar?.hide()
         //    (activity as MainActivity).isAppbarVisibleOrGone(false)
         val hdfcTPTData = getHDFCTptData()
+        //todo change below
+        val hdfcCDTData = HdfcCdt.selectAllHDFCCDTData() ///getHDFCDtData()
         Log.d("HDFCTPTData:- ", hdfcTPTData.toString())
+        Log.d("HDFCCDTData:- ", hdfcCDTData.toString())
         initAnimation()
 
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
@@ -111,11 +117,6 @@ class NewInputAmountFragment : Fragment() {
         }
 
         subHeaderText = view.findViewById(R.id.sub_header_text)
-        if (transactionType == EDashboardItem.BRAND_EMI) {
-            subHeaderText?.setCompoundDrawablesWithIntrinsicBounds(
-                R.drawable.ic_brand_emi_sub_header_logo, 0, 0, 0
-            )
-        }
         subHeaderBackButton = view.findViewById(R.id.back_image_button)
         setTxnTypeMsg(transactionType.title)
         subHeaderBackButton?.setOnClickListener {
@@ -210,35 +211,35 @@ class NewInputAmountFragment : Fragment() {
     }
 
     private fun onSetKeyBoardButtonClick() {
-        binding?.mainKeyBoard?.key0.setOnClickListener {
+        binding?.mainKeyBoard?.key0?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("0")
             } else {
                 keyModelCashAmount.onKeyClicked("0")
             }
         }
-        binding?.mainKeyBoard?.key00.setOnClickListener {
+        binding?.mainKeyBoard?.key00?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("00")
             } else {
                 keyModelCashAmount.onKeyClicked("00")
             }
         }
-        binding?.mainKeyBoard?.key000.setOnClickListener {
+        binding?.mainKeyBoard?.key000?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("000")
             } else {
                 keyModelCashAmount.onKeyClicked("000")
             }
         }
-        binding?.mainKeyBoard?.key1.setOnClickListener {
+        binding?.mainKeyBoard?.key1?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("1")
             } else {
                 keyModelCashAmount.onKeyClicked("1")
             }
         }
-        binding?.mainKeyBoard?.key2.setOnClickListener {
+        binding?.mainKeyBoard?.key2?.setOnClickListener {
             if (inputInSaleAmount) {
                 Log.e("SALE", "KEY 2")
                 keyModelSaleAmount.onKeyClicked("2")
@@ -247,70 +248,70 @@ class NewInputAmountFragment : Fragment() {
                 keyModelCashAmount.onKeyClicked("2")
             }
         }
-        binding?.mainKeyBoard?.key3.setOnClickListener {
+        binding?.mainKeyBoard?.key3?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("3")
             } else {
                 keyModelCashAmount.onKeyClicked("3")
             }
         }
-        binding?.mainKeyBoard?.key4.setOnClickListener {
+        binding?.mainKeyBoard?.key4?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("4")
             } else {
                 keyModelCashAmount.onKeyClicked("4")
             }
         }
-        binding?.mainKeyBoard?.key5.setOnClickListener {
+        binding?.mainKeyBoard?.key5?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("5")
             } else {
                 keyModelCashAmount.onKeyClicked("5")
             }
         }
-        binding?.mainKeyBoard?.key6.setOnClickListener {
+        binding?.mainKeyBoard?.key6?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("6")
             } else {
                 keyModelCashAmount.onKeyClicked("6")
             }
         }
-        binding?.mainKeyBoard?.key7.setOnClickListener {
+        binding?.mainKeyBoard?.key7?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("7")
             } else {
                 keyModelCashAmount.onKeyClicked("7")
             }
         }
-        binding?.mainKeyBoard?.key8.setOnClickListener {
+        binding?.mainKeyBoard?.key8?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("8")
             } else {
                 keyModelCashAmount.onKeyClicked("8")
             }
         }
-        binding?.mainKeyBoard?.key9.setOnClickListener {
+        binding?.mainKeyBoard?.key9?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("9")
             } else {
                 keyModelCashAmount.onKeyClicked("9")
             }
         }
-        binding?.mainKeyBoard?.keyClr.setOnClickListener {
+        binding?.mainKeyBoard?.keyClr?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("c")
             } else {
                 keyModelCashAmount.onKeyClicked("c")
             }
         }
-        binding?.mainKeyBoard?.keyDelete.setOnClickListener {
+        binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("d")
             } else {
                 keyModelCashAmount.onKeyClicked("d")
             }
         }
-        binding?.mainKeyBoard?.keyOK.setOnClickListener {
+        binding?.mainKeyBoard?.keyOK?.setOnClickListener {
             if (inputInSaleAmount) {
                 keyModelSaleAmount.onKeyClicked("o")
             } else {
@@ -443,10 +444,10 @@ class NewInputAmountFragment : Fragment() {
                 }
 
                 EDashboardItem.BRAND_EMI -> {
-                    val checkSaleAmt = binding?.saleAmount?.text.toString().trim().toDouble()
-                    if (checkSaleAmt >= brandEMIDataModal?.getProductMinAmount()?.toDouble() ?: 0.0
-                        && checkSaleAmt <= brandEMIDataModal?.getProductMaxAmount()
-                            ?.toDouble() ?: 0.0
+                    if (binding?.saleAmount?.text.toString()
+                                    .trim() >= brandEMIDataModal?.getProductMinAmount() ?: "0"
+                            && binding?.saleAmount?.text.toString()
+                                    .trim() <= brandEMIDataModal?.getProductMaxAmount() ?: "0"
                     ) {
                         enableDisableMobileAndInvoiceField()
                     } else {

@@ -53,6 +53,7 @@ class SyncTransactionToHost(
             val reversalPacket = Gson().toJson(transactionISOData)
             AppPreference.saveString(GENERIC_REVERSAL_KEY, reversalPacket)
             //  transactionISOByteArray?.byteArr2HexStr()?.let { logger("PACKET-->", it) }
+            //  val oo=90/0
         }
 
         if (transactionISOByteArray != null) {

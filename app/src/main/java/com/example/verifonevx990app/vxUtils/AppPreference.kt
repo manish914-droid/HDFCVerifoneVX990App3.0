@@ -39,7 +39,6 @@ object AppPreference {
     const val IsAutoSettleDone = "is_auto_settle_done"
 
     const val F48IdentifierAndSuccesssTxn = "f48id_txnDate"
-    const val BrandID = "brandID"
 
     @JvmStatic
     fun getBankCode(): String {

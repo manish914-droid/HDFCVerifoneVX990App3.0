@@ -51,8 +51,8 @@
                 android:maxLength="12"
                 android:maxLines="1"
                 android:paddingStart="@dimen/pad_16"
-                android:paddingTop="@dimen/pad_8"
                 android:paddingEnd="@dimen/pad_16"
+                android:paddingTop="@dimen/pad_8"
                 android:paddingBottom="@dimen/pad_8"
                 android:text="@string/default_amount"
                 android:textSize="@dimen/key_text_size"
@@ -95,8 +95,8 @@
                 android:inputType="none"
                 android:maxLength="15"
                 android:maxLines="1"
-                android:drawableStart="@drawable/ic_indian_rupee"
                 android:paddingStart="@dimen/pad_16"
+                android:drawableStart="@drawable/ic_indian_rupee"
                 android:paddingTop="@dimen/pad_8"
                 android:paddingEnd="@dimen/pad_16"
                 android:text="@string/default_amount"
@@ -113,15 +113,15 @@
             style="@style/Widget.Neumorph.CardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:visibility="visible"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
             app:neumorph_shadowColorDark="@color/lowerShadow"
             app:neumorph_shadowColorLight="@color/upperShadow"
-
+            android:visibility="visible"
             app:neumorph_shadowElevation="4dp"
 
             app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+
+            app:layout_constraintStart_toStartOf="parent"
             app:neumorph_shapeType="flat"
 
             >
@@ -133,18 +133,18 @@
                 android:layout_margin="@dimen/pad_12"
                 android:background="@null"
                 android:cursorVisible="false"
-                android:drawableStart="@drawable/ic_indian_rupee"
                 android:ems="9"
                 android:focusable="false"
-
                 android:focusableInTouchMode="false"
-                android:gravity="center"
-                android:hint="@string/enter_mobile_number"
-                android:inputType="none"
 
+                android:gravity="center"
+                android:inputType="none"
                 android:maxLength="13"
                 android:maxLines="1"
+
+                android:drawableStart="@drawable/ic_indian_rupee"
                 android:textSize="@dimen/key_text_size"
+                android:hint="@string/enter_mobile_number"
                 android:textColor="@color/white"
 
                 />

@@ -83,5 +83,7 @@
     <color name="transparent_white">#99ffffff</color>
     <color name="purple_light">#9B6CC5</color>
     <color name="purple_d">@color/white</color>
+    <color name="hdfc_red_color">#ED1C24</color>
+
 
 </resources>

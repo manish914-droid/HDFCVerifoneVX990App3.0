@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +27,10 @@ import com.example.verifonevx990app.realmtables.BrandTAndCTable
 import com.example.verifonevx990app.realmtables.IssuerTAndCTable
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -50,7 +52,6 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     private var issuerTAndCTimeStamp: String? = null
     private var brandTAndCTimeStamp: String? = null
     private var empty_view_placeholder: ImageView? = null
-    private var isDataMatch = false
     private val brandEMIDataModel by lazy { BrandEMIDataModal() }
     private val brandEMIMasterCategoryAdapter by lazy {
         BrandEMIMasterCategoryAdapter(
@@ -76,9 +77,6 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
-        binding?.subHeaderView?.subHeaderText?.setCompoundDrawablesWithIntrinsicBounds(
-            R.drawable.ic_brand_emi_sub_header_logo, 0, 0, 0
-        )
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             hideSoftKeyboard(requireActivity())
             parentFragmentManager.popBackStackImmediate()
@@ -119,7 +117,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         binding?.searchButton?.setOnClickListener {
             if (!TextUtils.isEmpty(binding?.brandSearchET?.text?.toString())) {
                 iDialog?.showProgress(getString(R.string.searchingBrand))
-                getSearchedBrands(binding?.brandSearchET?.text?.trim()?.toString())
+                getSearchedBrands(binding?.brandSearchET?.text?.toString())
                 hideSoftKeyboard(requireActivity())
             } else
                 VFService.showToast(getString(R.string.please_enter_brand_name_to_search))
@@ -130,30 +128,23 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     //region===================Get Searched Results from Brand List:-
     private fun getSearchedBrands(searchText: String?) {
         val searchedDataList = mutableListOf<BrandEMIMasterDataModal>()
-        lifecycleScope.launch(Dispatchers.Default) {
-            if (!TextUtils.isEmpty(searchText)) {
-                for (i in 0 until brandEmiMasterDataList.size) {
-                    val brandData = brandEmiMasterDataList[i]
-                    //check whether brand name contains letter which is inserted in search box:-
-                    if (brandData.brandName.toLowerCase(Locale.ROOT).trim()
-                            .contains(searchText?.toLowerCase(Locale.ROOT)?.trim()!!)
-                    )
-                        searchedDataList.add(
+        if (!TextUtils.isEmpty(searchText)) {
+            for (i in 0 until brandEmiMasterDataList.size) {
+                val brandData = brandEmiMasterDataList[i]
+                //check whether brand name contains letter which is inserted in search box:-
+                if (brandData.brandName.toLowerCase(Locale.ROOT).trim()
+                                .contains(searchText?.toLowerCase(Locale.ROOT)?.trim()!!)
+                )
+                    searchedDataList.add(
                             BrandEMIMasterDataModal(
-                                brandData.brandID, brandData.brandName,
-                                brandData.mobileNumberBillNumberFlag
+                                    brandData.brandID, brandData.brandName,
+                                    brandData.mobileNumberBillNumberFlag
                             )
-                        )
-                }
-                withContext(Dispatchers.Main) {
-                    brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
-                    iDialog?.hideProgress()
-                }
-            } else
-                withContext(Dispatchers.Main) {
-                    iDialog?.hideProgress()
-                }
+                    )
+            }
         }
+        brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
+        iDialog?.hideProgress()
     }
     //endregion
 
@@ -170,7 +161,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         //endregion
 
         //region==============================Host Hit To Fetch BrandEMIMaster Data:-
-        lifecycleScope.launch(Dispatchers.IO) {
+        GlobalScope.launch(Dispatchers.IO) {
             if (brandEMIMasterISOData != null) {
                 val byteArrayRequest = brandEMIMasterISOData?.generateIsoByteRequest()
                 HitServer.hitServer(byteArrayRequest!!, { result, success ->
@@ -179,7 +170,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         logger("Transaction RESPONSE ", "---", "e")
                         logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
                         Log.e(
-                            "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
+                                "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
                                 .toString() + "---->" + responseIsoData.isoMap[58]?.parseRaw2String()
                                 .toString()
                         )
@@ -187,40 +178,40 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         val responseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
                         val hostMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                         val brandEMIMasterData =
-                            responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                                responseIsoData.isoMap[57]?.parseRaw2String().toString()
 
                         if (responseCode == "00") {
                             ROCProviderV2.incrementFromResponse(
-                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                AppPreference.getBankCode()
+                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                    AppPreference.getBankCode()
                             )
-                                //Processing BrandEMIMasterData:-
-                                stubbingBrandEMIMasterDataToList(brandEMIMasterData, hostMsg)
+                            //Processing BrandEMIMasterData:-
+                            stubbingBrandEMIMasterDataToList(brandEMIMasterData, hostMsg)
 
                         } else {
                             ROCProviderV2.incrementFromResponse(
-                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                AppPreference.getBankCode()
+                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                    AppPreference.getBankCode()
                             )
-                            lifecycleScope.launch(Dispatchers.Main) {
+                            GlobalScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
                                 iDialog?.alertBoxWithAction(null, null,
-                                    getString(R.string.error), hostMsg,
-                                    false, getString(R.string.positive_button_ok),
-                                    { parentFragmentManager.popBackStackImmediate() }, {})
+                                        getString(R.string.error), hostMsg,
+                                        false, getString(R.string.positive_button_ok),
+                                        { parentFragmentManager.popBackStackImmediate() }, {})
                             }
                         }
                     } else {
                         ROCProviderV2.incrementFromResponse(
-                            ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                            AppPreference.getBankCode()
+                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                AppPreference.getBankCode()
                         )
-                        lifecycleScope.launch(Dispatchers.Main) {
+                        GlobalScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             iDialog?.alertBoxWithAction(null, null,
-                                getString(R.string.error), result,
-                                false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})
+                                    getString(R.string.error), result,
+                                    false, getString(R.string.positive_button_ok),
+                                    { parentFragmentManager.popBackStackImmediate() }, {})
                         }
                     }
                 }, {})
@@ -232,7 +223,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
     //region=================================Stubbing BrandEMI Master Data and Display in List:-
     private fun stubbingBrandEMIMasterDataToList(brandEMIMasterData: String, hostMsg: String) {
-        lifecycleScope.launch(Dispatchers.Default) {
+        GlobalScope.launch(Dispatchers.Main) {
             if (!TextUtils.isEmpty(brandEMIMasterData)) {
                 val dataList = parseDataListWithSplitter("|", brandEMIMasterData)
                 if (dataList.isNotEmpty()) {
@@ -269,6 +260,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             }
                         }
                     }
+
+
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData = "${EMIRequestType.BRAND_DATA.requestType}^$totalRecord"
@@ -276,30 +269,25 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         fetchBrandEMIMasterDataFromHost()
                     } else {
                         //Notify RecyclerView DataList on UI:-
-                        withContext(Dispatchers.Main) {
-                            iDialog?.hideProgress()
-                            Log.d("Brands Data:- ", Gson().toJson(brandEmiMasterDataList))
-                            brandEMIMasterCategoryAdapter.refreshAdapterList(
-                                brandEmiMasterDataList
-                            )
-                        }
+                        iDialog?.hideProgress()
+                        brandEMIMasterCategoryAdapter.refreshAdapterList(brandEmiMasterDataList)
                     }
                 } else {
-                    withContext(Dispatchers.Main) {
+                    GlobalScope.launch(Dispatchers.Main) {
                         iDialog?.hideProgress()
                         iDialog?.alertBoxWithAction(null, null,
-                            getString(R.string.error), hostMsg,
-                            false, getString(R.string.positive_button_ok),
-                            {}, {})
+                                getString(R.string.error), hostMsg,
+                                false, getString(R.string.positive_button_ok),
+                                {}, {})
                     }
                 }
             } else {
-                withContext(Dispatchers.Main) {
+                GlobalScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
                     iDialog?.alertBoxWithAction(null, null,
-                        getString(R.string.error), hostMsg,
-                        false, getString(R.string.positive_button_ok),
-                        {}, {})
+                            getString(R.string.error), hostMsg,
+                            false, getString(R.string.positive_button_ok),
+                            {}, {})
                 }
             }
         }
@@ -332,20 +320,20 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             getBrandTAndCData { brandTCDataSaved ->
                                 if (brandTCDataSaved) {
                                     saveBrandMasterTimeStampsData {
-                                        lifecycleScope.launch(Dispatchers.Main) {
+                                        GlobalScope.launch(Dispatchers.Main) {
                                             iDialog?.hideProgress()
                                             navigateToBrandEMISubCategoryFragment(position)
                                         }
                                     }
                                 } else {
-                                    lifecycleScope.launch(Dispatchers.Main) {
+                                    GlobalScope.launch(Dispatchers.Main) {
                                         iDialog?.hideProgress()
                                         showSomethingWrongPopUp()
                                     }
                                 }
                             }
                         } else {
-                            lifecycleScope.launch(Dispatchers.Main) {
+                            GlobalScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
                                 showSomethingWrongPopUp()
                             }
@@ -428,15 +416,16 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                     val brandModel = BrandTAndCTable()
                     if (!TextUtils.isEmpty(brandTAndCData.first[i])) {
                         val splitData = parseDataListWithSplitter(
-                            SplitterTypes.CARET.splitter,
-                            brandTAndCData.first[i]
+                                SplitterTypes.CARET.splitter,
+                                brandTAndCData.first[i]
                         )
                         brandModel.brandId = splitData[0]
                         brandModel.brandTAndC = splitData[1]
                         runBlocking(Dispatchers.IO) {
                             BrandTAndCTable.performOperation(brandModel)
                         }
-                    }
+                    } else
+                        cb(false)
                 }
                 cb(true)
             } else
@@ -466,9 +455,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             brandEMIDataModel.setBrandID(modal.brandID)
             brandEMIDataModel.setBrandName(modal.brandName)
             brandEMIDataModel.setBrandReservedValue(modal.mobileNumberBillNumberFlag)
-            brandEMIDataModel.setDataTimeStampChangedOrNot(isDataMatch)
             //endregion
-
             (activity as MainActivity).transactFragment(BrandEMISubCategoryFragment().apply {
                 arguments = Bundle().apply {
                     putString("categoryUpdatedTimeStamp", brandCategoryUpdatedTimeStamp)
@@ -486,7 +473,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     //region=======================Check Whether we got Updated Data from Host or to use Previous BrandEMIMaster Store Data:-
     private fun matchHostAndDBData(): Boolean {
         val timeStampsData =
-            runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.getAllBrandEMIMasterDataTimeStamps() }
+                runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.getAllBrandEMIMasterDataTimeStamps() }
+        var isDataMatch = false
 
         if (!TextUtils.isEmpty(timeStampsData[0].brandTAndCTimeStamp) &&
             !TextUtils.isEmpty(timeStampsData[0].issuerTAndCTimeStamp)
@@ -544,13 +532,13 @@ internal class BrandEMIMasterCategoryAdapter(
     inner class BrandEMIMasterViewHolder(val binding: ItemBrandEmiMasterBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.brandEmiMasterParent.setOnClickListener { onItemClick(absoluteAdapterPosition) }
+            binding.brandEmiMasterParent.setOnClickListener { onItemClick(adapterPosition) }
         }
     }
 
     //region==========================Below Method is used to refresh Adapter New Data:-
     fun refreshAdapterList(refreshList: MutableList<BrandEMIMasterDataModal>) {
-        val diffCallback = BrandMasterUpdateDiffUtil(this.brandEmiDataList, refreshList)
+        val diffCallback = RecyclerViewUpdateDiffUtil(this.brandEmiDataList, refreshList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
         this.brandEmiDataList.clear()
         this.brandEmiDataList.addAll(refreshList)

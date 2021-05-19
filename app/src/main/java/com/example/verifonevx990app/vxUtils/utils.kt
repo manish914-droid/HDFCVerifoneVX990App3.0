@@ -63,19 +63,19 @@ open class OnTextChange(private val cb: (String) -> Unit) : TextWatcher {
 }
 
 
-enum class UiAction(val tvalue: Int = 0, val title: String = "") {
-    INIT, KEY_EXCHANGE, INIT_WITH_KEY_EXCHANGE, START_SALE(title = "Sale"), SETTLEMENT, APP_UPDATE, PRE_AUTH(
-        title = "Pre-Auth"
+enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawable.ic_sad) {
+    INIT, KEY_EXCHANGE, INIT_WITH_KEY_EXCHANGE, START_SALE("Sale", R.drawable.ic_bbg), SETTLEMENT, APP_UPDATE, PRE_AUTH(
+            title = "Pre-Auth"
     ),
-    REFUND(title = "Refund"),
+    REFUND("Refund", R.drawable.ic_refund),
     BANK_EMI(title = "Bank EMI"), OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS(title = "Cash Advance"), SALE_WITH_CASH(
-        title = "Sale With Cash"
+            title = "Sale With Cash"
     ),
-    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(title = "Emi Enquiry"), BRAND_EMI(
-        title = "Brand EMI"
+    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(title = "Emi Enquiry"), BRAND_EMI("Brand EMI", R.drawable.ic_brand_emi
     ),
     TEST_EMI(title = "Test EMI"),
-    FLEXI_PAY(title = "Flexi Pay")
+    FLEXI_PAY(title = "Flexi Pay"),
+    DEFAUTL("Not Declared", R.drawable.ic_sad)
 }
 
 
@@ -1865,8 +1865,8 @@ fun txnSuccessToast(context: Context, msg: String = "Transaction Approved") {
         GlobalScope.launch(Dispatchers.Main) {
             VFService.vfBeeper?.startBeep(200)
             val layout = (context as Activity).layoutInflater.inflate(
-                R.layout.success_toast,
-                context.findViewById<LinearLayout>(R.id.custom_toast_layout)
+                    R.layout.new_success_toast,
+                    context.findViewById<LinearLayout>(R.id.custom_toast_layout)
             )
             layout.findViewById<BHTextView>(R.id.txtvw)?.text = msg
             val myToast = Toast(context)
@@ -1875,6 +1875,8 @@ fun txnSuccessToast(context: Context, msg: String = "Transaction Approved") {
             myToast.view = layout//setting the view of custom toast layout
             myToast.show()
         }
+
+
     } catch (ex: java.lang.Exception) {
         VFService.showToast(context.getString(R.string.transaction_approved_successfully))
         VFService.connectToVFService(context)

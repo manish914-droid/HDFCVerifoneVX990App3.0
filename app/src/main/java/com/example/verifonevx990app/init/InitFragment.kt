@@ -49,7 +49,7 @@ class InitFragment : Fragment() {
         context?.let { writeAppRevisionIDInFile(it) }
 
         binding?.ifEt?.addTextChangedListener(OnTextChange {
-            binding?.ifProceedBtn?.isEnabled = it.length == 8
+            //  binding?.ifProceedBtn?.isEnabled = it.length == 8
             /* if(it.length==8)
                  view.if_proceed_btn.isEnabled = true*/
             //actionDone( view.if_et)

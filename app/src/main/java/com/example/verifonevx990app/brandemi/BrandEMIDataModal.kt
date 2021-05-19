@@ -19,7 +19,6 @@ class BrandEMIDataModal : Serializable {
     private var maxLength: String? = null
     private var productMinAmount: String? = null
     private var productMaxAmount: String? = null
-    private var dataTimeStampChangedOrNot: Boolean = false
 
     fun setBrandID(brID: String) {
         this.brandID = brID
@@ -147,13 +146,5 @@ class BrandEMIDataModal : Serializable {
 
     fun getProductMaxAmount(): String? {
         return productMaxAmount
-    }
-
-    fun setDataTimeStampChangedOrNot(timeChangeStatus: Boolean) {
-        this.dataTimeStampChangedOrNot = timeChangeStatus
-    }
-
-    fun getDataTimeStampChangedOrNot(): Boolean {
-        return dataTimeStampChangedOrNot
     }
 }

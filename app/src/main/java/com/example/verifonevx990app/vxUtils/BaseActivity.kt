@@ -4,20 +4,20 @@ package com.example.verifonevx990app.vxUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
-import android.view.Gravity
-import android.view.View
-import android.view.Window
-import android.view.WindowManager
+import android.view.*
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.databinding.NewPrintCustomerCopyBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
@@ -52,7 +52,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     private fun setProgressDialog() {
         progressDialog = Dialog(this).apply {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
-            setContentView(R.layout.item_progress_dialog)
+            setContentView(R.layout.new_tem_progress_dialog)
             setCancelable(false)
         }
         progressTitleMsg = progressDialog.findViewById(R.id.msg_et)
@@ -145,29 +145,44 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         cancelButtonCallback: (Boolean) -> Unit
     ) {
 
-        val builder = androidx.appcompat.app.AlertDialog.Builder(this)
-        builder.setTitle(title)
-        builder.setMessage(msg)
-            .setCancelable(false)
-            .setPositiveButton(positiveButtonText) { dialog, _ ->
-                dialog.dismiss()
-                alertCallback(true)
-            }
+        val dialogBuilder = Dialog(this)
+        //  builder.setTitle(title)
+        //  builder.setMessage(msg)
+        //   val bindingg = EnterOtpDialogBinding.inflate(LayoutInflater.from(activity))
+        val bindingg = NewPrintCustomerCopyBinding.inflate(LayoutInflater.from(this))
 
+        dialogBuilder.setContentView(bindingg.root)
 
+        dialogBuilder.setCancelable(false)
+
+        /* .setPositiveButton(positiveButtonText) { dialog, _ ->
+             dialog.dismiss()
+             alertCallback(true)
+         }*/
+        bindingg.yesBtn.setOnClickListener {
+            dialogBuilder.dismiss()
+            alertCallback(true)
+        }
         //Below condition check is to show Cancel Button in Alert Dialog on condition base:-
         if (showCancelButton) {
-            builder.setNegativeButton("No") { dialog, _ ->
-                dialog.cancel()
+            /*  builder.setNegativeButton("No") { dialog, _ ->
+                  dialog.cancel()
+                  cancelButtonCallback(true)
+              }*/
+            bindingg.noBtn.setOnClickListener {
+                dialogBuilder.cancel()
                 cancelButtonCallback(true)
             }
+        } else {
+            bindingg.imgPrinter.visibility = View.GONE
+            bindingg.noBtn.visibility = View.GONE
         }
-        val alert: androidx.appcompat.app.AlertDialog = builder.create()
+        //     val alert: androidx.appcompat.app.AlertDialog = dialogBuilder.create()
         //Below Handler will execute to auto cancel Alert Dialog Pop-Up when positiveButtonText isEmpty:-
         if (TextUtils.isEmpty(positiveButtonText)) {
             Handler(Looper.getMainLooper()).postDelayed({
-                alert.dismiss()
-                alert.cancel()
+                dialogBuilder.dismiss()
+                dialogBuilder.cancel()
                 startActivity(Intent(this, MainActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                 })
@@ -175,14 +190,17 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         }
 
         try {
-            if (!alert.isShowing) {
-                alert.show()
+            if (!dialogBuilder.isShowing) {
+                dialogBuilder.show()
             }
         } catch (ex: WindowManager.BadTokenException) {
             ex.printStackTrace()
         } catch (ex: Exception) {
             ex.printStackTrace()
         }
+        dialogBuilder.show()
+        dialogBuilder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
     }
 
     open fun transactFragment(fragment: Fragment, isBackStackAdded: Boolean = false): Boolean {

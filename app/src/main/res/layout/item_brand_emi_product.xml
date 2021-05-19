@@ -1,30 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/brand_emi_product_lv"
+    android:id="@+id/cardView"
     android:layout_width="match_parent"
-    android:layout_height="@dimen/pad_80"
-    android:orientation="vertical">
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_5"
+    android:background="@color/white"
+    android:elevation="@dimen/pad_5"
+    app:cardCornerRadius="@dimen/pad_5"
+    app:cardPreventCornerOverlap="true"
+    app:cardUseCompatPadding="false"
+    app:contentPadding="10dp"
+    app:strokeWidth="@dimen/pad_4">
 
-    <com.example.customneumorphic.NeumorphCardView
-        style="@style/Widget.Neumorph.CardView"
+    <LinearLayout
+        android:id="@+id/parent_emi_product_view_ll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:neumorph_shadowColorDark="@color/upperShadow"
-        app:neumorph_shadowColorLight="@color/lowerShadow"
-        app:neumorph_shadowElevation="4dp"
-        app:neumorph_shapeType="pressed">
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
 
-        <com.example.customneumorphic.NeumorphButton
-            android:id="@+id/tv_product_name"
-            style="@style/Widget.Neumorph.TextView"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:gravity="center"
-            android:hint="@string/brand_name"
-            android:textColor="@color/white"
-            android:textColorHint="@color/transparent_white"
-            android:textSize="@dimen/text_size_regular" />
-    </com.example.customneumorphic.NeumorphCardView>
-</LinearLayout>
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal">
+
+            <TextView
+                android:id="@+id/tenure_heading_tv"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/tenure"
+                android:textColor="@color/colorPrimaryDark"
+                android:textSize="@dimen/text_size_regular"
+                android:visibility="invisible" />
+
+            <ImageView
+                android:id="@+id/product_check_iv"
+                android:layout_width="22dp"
+                android:layout_height="22dp"
+                android:layout_marginEnd="16dp"
+                android:background="@drawable/ic_check_box_selected_green"
+                android:contentDescription="@string/select_scheme" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/product_id"
+                android:textColor="@color/text_inactive"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_product_id_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:hint="@string/_06_07_2020"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/product_name_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/product_name"
+                android:textColor="@color/text_inactive"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_product_name_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sku_code_ll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/sku_code"
+                android:textColor="@color/text_inactive"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_sku_code_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/product_min_amount"
+                android:textColor="@color/text_inactive"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_product_min_amount_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:hint="@string/_06_07_2020"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/product_max_amount"
+                android:textColor="@color/text_inactive"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_product_max_amount_value"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="center"
+                android:hint="@string/_06_07_2020"
+                android:textColor="@color/black"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
+
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

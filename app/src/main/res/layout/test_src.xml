@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#2349B5"
+    android:orientation="horizontal"
+
+    app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/noBtn"
+        style="@style/Widget.Neumorph.Button"
+        android:layout_width="@dimen/pad_40"
+        android:layout_height="@dimen/pad_30"
+        android:padding="@dimen/pad_2"
+        android:text="@string/no"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        app:neumorph_inset="@dimen/pad_4"
+        app:neumorph_lightSource="rightBottom"
+        app:neumorph_shadowColorDark="@color/upperShadow"
+        app:neumorph_shadowColorLight="@color/lowerShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/yesBtn"
+        style="@style/Widget.Neumorph.Button"
+        android:layout_width="@dimen/pad_40"
+        android:layout_height="@dimen/pad_30"
+        android:padding="@dimen/pad_2"
+        android:text="@string/yes"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        app:neumorph_inset="@dimen/pad_4"
+        app:neumorph_lightSource="rightBottom"
+        app:neumorph_shadowColorDark="@color/upperShadow"
+        app:neumorph_shadowColorLight="@color/lowerShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+
+</LinearLayout>
+
