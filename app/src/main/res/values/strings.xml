@@ -421,6 +421,19 @@
     <string name="searchingBrand">Searching Brand.....</string>
     <string name="brandEmi">Brand EMI</string>
     <string name="please_enter_brand_name_to_search">Enter Brand Name To Search</string>
+    <string name="complete_txt">Complete</string>
+    <string name="printing">Printing....</string>
+    <string name="print_all">Print All</string>
+
+    <string name="search">Search</string>
+    <string name="bankEmi">Bank EMI</string>
+    <string name="emi_catalogue">EMI CATALOGUE</string>
+    <string name="brandEmiCatalogue">Brand EMI Catalogue</string>
+    <string name="bankEmiCatalogue">BANK EMI CATALOGUE</string>
+    <string name="checked">Checked</string>
+    <string name="selectAll">Select All</string>
+    <string name="please_select_one_or_multiple_issuer_banks">Please Select 1 or Multiple Issuer\'s Bank</string>
+    <string name="please_select_one_issuer_bank">Please Select 1 Issuer Bank</string>
 
 
 </resources>

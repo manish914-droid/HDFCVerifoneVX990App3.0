@@ -1,26 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/brand_emi_sub_category_by_id_lv"
     android:layout_width="match_parent"
-    android:id="@+id/brand_emi_sub_category_lv"
     android:layout_height="@dimen/pad_80"
-    android:orientation="vertical">
+    android:orientation="horizontal">
 
     <com.example.customneumorphic.NeumorphCardView
+        android:id="@+id/issuerNameCV"
         style="@style/Widget.Neumorph.CardView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginEnd="@dimen/pad_16"
         app:neumorph_shadowColorDark="@color/upperShadow"
         app:neumorph_shadowColorLight="@color/lowerShadow"
         app:neumorph_shadowElevation="4dp"
         app:neumorph_shapeType="pressed">
 
+        <ImageView
+            android:id="@+id/issuerCheckedIV"
+            android:layout_width="@dimen/pad_24"
+            android:layout_height="@dimen/pad_24"
+            android:layout_gravity="center_vertical"
+            android:clickable="false"
+            android:contentDescription="@string/checked"
+            android:src="@drawable/circle_with_tick_mark"
+            android:visibility="visible" />
+
         <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/issuerName"
             style="@style/Widget.Neumorph.TextView"
-            android:id="@+id/tv_brand_sub_category_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
+            android:layout_marginStart="@dimen/pad_4"
             android:gravity="center"
             android:hint="@string/brand_name"
             android:textColor="@color/white"

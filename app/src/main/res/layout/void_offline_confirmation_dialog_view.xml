@@ -1,178 +1,233 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mob_no_crdView"
+    style="@style/Widget.Neumorph.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical"
-    android:padding="@dimen/pad_8">
-
-    <com.example.verifonevx990app.vxUtils.BHTextView
-        android:id="@+id/transType"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:gravity="center"
-        android:textColor="@color/black"
-        android:textSize="@dimen/text_size_xregular"
-        app:fname="bold"
-
-        />
-
+    android:layout_gravity="center"
+    android:visibility="visible"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+    app:neumorph_backgroundColor="@color/themeBackground"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+    app:neumorph_shapeType="flat">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_4"
-        android:orientation="horizontal"
-        android:weightSum="2">
+        android:orientation="vertical"
+        android:padding="@dimen/pad_8">
 
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/date" />
 
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/dateET"
-            android:layout_width="0dp"
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/transType"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="@string/_50006758" />
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/pad_24"
+            android:layout_marginEnd="@dimen/pad_24"
+
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="4dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+            app:neumorph_strokeColor="@color/white"
+            app:neumorph_strokeWidth="@dimen/pad_2"></com.example.customneumorphic.NeumorphButton>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/date" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/dateET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/time" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/timeET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/tid" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/tidET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/invoice_number" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/invoiceET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/invoice_hint" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/total_amount" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/amountTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/hint_amount" />
+
+        </LinearLayout>
+
+        <!--Buttons-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_16"
+            android:orientation="horizontal"
+
+            >
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/cancel_btnn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginStart="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/cancel"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/ok_btnn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginEnd="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/confirm"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_4"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/time" />
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/timeET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="@string/_50006758" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_4"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/tid" />
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/tidET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="@string/_50006758" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_4"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/invoice_number" />
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/invoiceET"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/invoice_hint" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="@dimen/pad_4"
-        android:orientation="horizontal"
-        android:weightSum="2">
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:text="@string/total_amount" />
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/amountTV"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:gravity="center"
-            android:hint="@string/hint_amount" />
-
-    </LinearLayout>
-
-    <!--Buttons-->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/pad_16"
-        android:orientation="horizontal"
-        android:weightSum="2"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/exp_date_input_layout">
-
-        <com.example.verifonevx990app.vxUtils.BHButton
-            android:id="@+id/cancel_btnn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/pad_8"
-            android:layout_weight="1"
-            android:background="@drawable/basic_button_bg"
-            android:text="@string/cancel"
-            android:textColor="@color/white" />
-
-
-        <com.example.verifonevx990app.vxUtils.BHButton
-            android:id="@+id/ok_btnn"
-
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/pad_8"
-            android:layout_weight="1"
-            android:background="@drawable/basic_button_bg"
-            android:text="@string/confirm"
-            android:textColor="@color/white" />
-
-
-    </LinearLayout>
-
-</LinearLayout>
+</com.example.customneumorphic.NeumorphCardView>

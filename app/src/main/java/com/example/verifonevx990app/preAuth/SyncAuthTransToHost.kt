@@ -28,7 +28,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
     //
     suspend fun checkReversalPerformAuthTransaction(
         transactionISOByteArray: IsoDataWriter,
-        cardProcessedDataModal: CardProcessedDataModal
+        cardProcessedDataModal: CardProcessedDataModal, cb: (Boolean, String) -> Unit
     ) {
         // //Sending Transaction Data Packet to Host:-(In case of no reversal)
         if (TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
@@ -46,7 +46,6 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                 //withactivityContext(Dispatchers.Main){
                 activityContext?.hideProgress()
                 //}
-
                 if (syncStatus && responseCode == "00") {
                     GlobalScope.launch(Dispatchers.Main) {
                         activityContext?.let { txnSuccessToast(it) }
@@ -75,8 +74,12 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                             printAndSaveAuthTransToBatchDataInDB(
                                 stubbedData, autoSettlementCheck,
                                 it
-                            )
+                            ) { isSuccess, msg ->
+                                cb(isSuccess, msg)
+
+                            }
                         }
+
                     }
                 } else if (syncStatus && responseCode != "00") {
                     AppPreference.clearReversal()
@@ -99,17 +102,16 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                                 autoSettlementCheck.substring(
                                                     0,
                                                     1
-                                                ), activityContext!!
+                                                ), activityContext!!, cb
                                             )
                                         else {
-                                            activityContext?.startActivity(
-                                                Intent(
-                                                    (activityContext as BaseActivity),
-                                                    MainActivity::class.java
-                                                ).apply {
-                                                    flags =
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                })
+                                            // activityContext?.startActivity(Intent((activityContext as BaseActivity), MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK })
+                                            cb(
+                                                false,
+                                                responseIsoData.isoMap[58]?.parseRaw2String()
+                                                    .toString()
+                                            )
+
                                         }
                                     }
                                 },
@@ -131,7 +133,11 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                 activityContext!!.getString(R.string.positive_button_ok),
                                 { alertPositiveCallback ->
                                     if (alertPositiveCallback)
-                                        declinedTransaction()
+                                        cb(
+                                            false,
+                                            activityContext!!.getString(R.string.transaction_delined_msg)
+                                        )
+                                    //  declinedTransaction()
                                 },
                                 {})
                         }
@@ -156,11 +162,34 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                             checkReversalPerformAuthTransaction(
                                 transactionISOByteArray,
                                 cardProcessedDataModal
-                            )
+                            ) { bool, str ->
+                                cb(bool, str)
+                            }
                         }
                     } else {
                         GlobalScope.launch(Dispatchers.Main) {
-                            // VFService.showToast(transactionMsg)
+                            VFService.showToast(transactionMsg)
+                            cb(false, transactionMsg)
+                            GlobalScope.launch(Dispatchers.Main) {
+                                (activityContext as BaseActivity).alertBoxWithAction(
+                                    null,
+                                    null,
+                                    activityContext!!.getString(R.string.reversal),
+                                    activityContext!!.getString(R.string.reversal_upload_fail),
+                                    false,
+                                    activityContext!!.getString(R.string.positive_button_ok),
+                                    { alertPositiveCallback ->
+
+                                        if (alertPositiveCallback)
+                                            cb(
+                                                false,
+                                                activityContext!!.getString(R.string.transaction_delined_msg)
+                                            )
+                                        // declinedTransaction()
+                                    },
+                                    {})
+                            }
+
 
                         }
                     }
@@ -269,7 +298,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
     private fun printAndSaveAuthTransToBatchDataInDB(
         stubbedData: BatchFileDataTable,
         autoSettlementCheck: String,
-        activityContext: BaseActivity
+        activityContext: BaseActivity, cb: (Boolean, String) -> Unit
     ) {
         //Here we are saving printerReceiptData in BatchFileData Table:-
         saveTableInDB(stubbedData)
@@ -282,15 +311,16 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                 //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
                 //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
                 if (!TextUtils.isEmpty(autoSettlementCheck))
-
                     GlobalScope.launch(Dispatchers.Main) {
                         syncOfflineSaleAndAskAutoSettlement(
                             autoSettlementCheck.substring(0, 1),
                             activityContext
-                        )
+                        ) { isSuccess, msg ->
+                            cb(isSuccess, msg)
+
+                        }
                     }
             }
-
         }
         //  }
     }
@@ -306,9 +336,10 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
     //Below method is used to Sync Offline Sale and Ask for Auto Settlement:-
     private fun syncOfflineSaleAndAskAutoSettlement(
         autoSettleCode: String,
-        activityContext: BaseActivity
+        activityContext: BaseActivity, cb: (Boolean, String) -> Unit
     ) {
         val offlineSaleData = BatchFileDataTable.selectOfflineSaleBatchData()
+        // In case of offline transaction available
         if (offlineSaleData.size > 0) {
             (activityContext).showProgress(activityContext.getString(R.string.please_wait_offline_sale_sync))
             SyncOfflineSaleToHost(
@@ -335,21 +366,26 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                                 Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                         })
                                 }, {
-                                    activityContext.startActivity(
-                                        Intent(
-                                            activityContext,
-                                            MainActivity::class.java
-                                        ).apply {
-                                            flags =
-                                                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        })
+                                    /* activityContext.startActivity(
+                                         Intent(
+                                             activityContext,
+                                             MainActivity::class.java
+                                         ).apply {
+                                             flags =
+                                                 Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                         })*/
+                                    cb(
+                                        true,
+                                        "Not wanted to auto batch update after offline trans sync"
+                                    )
                                 })
                         } else {
-                            activityContext.startActivity(
-                                Intent(activityContext, MainActivity::class.java).apply {
-                                    flags =
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                })
+                            /* activityContext.startActivity(
+                                 Intent(activityContext, MainActivity::class.java).apply {
+                                     flags =
+                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                 })*/
+                            cb(true, "offline trans sync  (No autoupdate available)")
                         }
                     }
                 else
@@ -360,16 +396,15 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                             activityContext.getString(R.string.offline_sale_uploading),
                             activityContext.getString(R.string.fail) + validationMsg,
                             false, activityContext.getString(R.string.positive_button_ok), {
-                                activityContext.startActivity(
-                                    Intent(activityContext, MainActivity::class.java).apply {
-                                        flags =
-                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    })
+                                /* activityContext.startActivity(
+                                     Intent(activityContext, MainActivity::class.java).apply {
+                                         flags =
+                                             Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                     })*/
+                                cb(true, "Offline sale upload fail ")
                             }, {
 
                             })
-
-
                     }
             }
         } else {
@@ -386,20 +421,22 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                 })
                         }, {
-                            activityContext.startActivity(
-                                Intent((activityContext), MainActivity::class.java).apply {
-                                    flags =
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                })
+                            /* activityContext.startActivity(
+                                 Intent((activityContext), MainActivity::class.java).apply {
+                                     flags =
+                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                 })*/
+                            cb(true, "Not wanted to auto batch update after preauth done ")
                         })
                 } else {
-                    GlobalScope.launch(Dispatchers.Main) {
-                        activityContext.startActivity(
-                            Intent(activityContext, MainActivity::class.java).apply {
-                                flags =
-                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            })
-                    }
+                    /* GlobalScope.launch(Dispatchers.Main) {
+                         activityContext.startActivity(
+                             Intent(activityContext, MainActivity::class.java).apply {
+                                 flags =
+                                     Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                             })
+                     }*/
+                    cb(true, "No auto batch settle update needed, Preauth done")
                 }
             }
         }

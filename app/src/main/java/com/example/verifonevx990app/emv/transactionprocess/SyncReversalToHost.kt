@@ -2,7 +2,6 @@ package com.example.verifonevx990app.emv.transactionprocess
 
 import android.text.TextUtils
 import android.util.Log
-import com.example.verifonevx990app.R
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +36,6 @@ class SyncReversalToHost(
         if (transactionISOData != null) {
             transactionISOData?.isoMap?.let { logger("Transaction REQUEST PACKET --->>", it, "e") }
         }
-
         val reversalPacket = Gson().toJson(transactionISOData)
         AppPreference.saveString(AppPreference.GENERIC_REVERSAL_KEY, reversalPacket)
         transactionISOByteArray?.byteArr2HexStr()?.let { logger("PACKET-->", it) }
@@ -76,7 +74,7 @@ class SyncReversalToHost(
                     )
                     syncTransactionCallback(
                         false,
-                        VerifoneApp.appContext.resources.getString(R.string.something_went_wrong)
+                        "Uploading reversal fail...."
                     )
                 }
             }, {

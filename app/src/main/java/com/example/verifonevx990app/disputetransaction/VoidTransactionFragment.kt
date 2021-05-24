@@ -4,6 +4,8 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
@@ -15,6 +17,7 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentVoidRefundViewBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
@@ -38,7 +41,7 @@ class VoidTransactionFragment : Fragment() {
     private val title: String by lazy { arguments?.getString(MainActivity.INPUT_SUB_HEADING) ?: "" }
     private var backImageButton: ImageView? = null
     private var invoiceNumberET: BHEditText? = null
-    private var voidRefundBT: BHButton? = null
+    private var voidRefundBT: NeumorphButton? = null
     private var binding: FragmentVoidRefundViewBinding? = null
 
     override fun onCreateView(
@@ -119,7 +122,7 @@ class VoidTransactionFragment : Fragment() {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
         val transactionName = "VOID " + getTransactionNameByTransType(voidData.transactionType)
-        dialog.findViewById<BHTextView>(R.id.transType)?.text = transactionName
+        dialog.findViewById<NeumorphButton>(R.id.transType)?.text = transactionName
         dialog.findViewById<BHTextView>(R.id.dateET)?.text = voidData.transactionDate
 
         val time = voidData.time
@@ -154,6 +157,7 @@ class VoidTransactionFragment : Fragment() {
             onContinueClicked(voidData)
         }
         dialog.show()
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
     }
 

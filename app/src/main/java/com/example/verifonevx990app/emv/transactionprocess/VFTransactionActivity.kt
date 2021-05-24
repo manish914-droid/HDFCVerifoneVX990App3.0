@@ -4,6 +4,8 @@ import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.*
 import android.text.TextUtils
 import android.util.Log
@@ -11,6 +13,7 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
+import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
@@ -801,7 +804,7 @@ class VFTransactionActivity : BaseActivity() {
     ) {
         alertBoxWithAction(
             printerUtil, batchData, getString(R.string.print_customer_copy),
-            getString(R.string.do_you_want_to_print_customer_copy),
+            getString(R.string.print_customer_copy),
             true, getString(R.string.positive_button_yes), { status ->
                 if (status) {
                     if (isEMI) {
@@ -997,14 +1000,14 @@ class VFTransactionActivity : BaseActivity() {
             WindowManager.LayoutParams.MATCH_PARENT
         )
 
-        dialog.findViewById<CardView>(R.id.cardsaleButton).setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.cardsaleButton).setOnClickListener {
             dialog.dismiss()
             cardProcessedDataModal.setTransType(TransactionType.SALE.type)
             transactionCallback(cardProcessedDataModal)
 
         }
 
-        dialog.findViewById<CardView>(R.id.cardemiButton).setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.cardemiButton).setOnClickListener {
             dialog.dismiss()
             cardProcessedDataModal.setTransType(TransactionType.EMI_SALE.type)
             cardProcessedDataModal.setEmiType(1)  //1 for insta emi
@@ -1022,6 +1025,7 @@ class VFTransactionActivity : BaseActivity() {
         try {
             if (!dialog.isShowing && !(this as Activity).isFinishing) {
                 dialog.show()
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             }
 
         } catch (ex: WindowManager.BadTokenException) {

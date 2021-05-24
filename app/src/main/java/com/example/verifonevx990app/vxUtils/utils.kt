@@ -7,6 +7,8 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.*
@@ -65,17 +67,19 @@ open class OnTextChange(private val cb: (String) -> Unit) : TextWatcher {
 
 enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawable.ic_sad) {
     INIT, KEY_EXCHANGE, INIT_WITH_KEY_EXCHANGE, START_SALE("Sale", R.drawable.ic_bbg), SETTLEMENT, APP_UPDATE, PRE_AUTH(
-            title = "Pre-Auth"
+        title = "Pre-Auth"
     ),
     REFUND("Refund", R.drawable.ic_refund),
     BANK_EMI(title = "Bank EMI"), OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS(title = "Cash Advance"), SALE_WITH_CASH(
-            title = "Sale With Cash"
+        title = "Sale With Cash"
     ),
-    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(title = "Emi Enquiry"), BRAND_EMI("Brand EMI", R.drawable.ic_brand_emi
+    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(title = "Emi Enquiry"), BRAND_EMI(
+        "Brand EMI", R.drawable.ic_brand_emi
     ),
     TEST_EMI(title = "Test EMI"),
     FLEXI_PAY(title = "Flexi Pay"),
-    DEFAUTL("Not Declared", R.drawable.ic_sad)
+    DEFAUTL("Not Declared", R.drawable.ic_sad),
+    BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE")
 }
 
 
@@ -2060,6 +2064,11 @@ private fun getHDFCTPTAdminPasswordDialog(
                     requestWindowFeature(Window.FEATURE_NO_TITLE)
                     setContentView(R.layout.item_get_invoice_no)
                     setCancelable(false)
+                    val window = window
+                    window?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT
+                    )
 
                     val enterPasswordET = this.findViewById<BHEditText>(R.id.invoice_no_et)
                     enterPasswordET.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(4))
@@ -2099,6 +2108,8 @@ private fun getHDFCTPTAdminPasswordDialog(
                         }
                         //endregion
                     }
+
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 }.show()
             }
         } catch (ex: NullPointerException) {

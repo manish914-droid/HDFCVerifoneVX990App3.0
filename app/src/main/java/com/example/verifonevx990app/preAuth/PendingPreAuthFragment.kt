@@ -1,17 +1,25 @@
 package com.example.verifonevx990app.preAuth
 
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPendingPreAuthBinding
+import com.example.verifonevx990app.databinding.ItemPendingPreauthBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.BHTextView
+import com.example.verifonevx990app.vxUtils.BaseActivity
+import com.example.verifonevx990app.vxUtils.VFService
 import com.example.verifonevx990app.vxUtils.invoiceWithPadding
 
 class PendingPreAuthFragment : Fragment() {
@@ -26,7 +34,9 @@ class PendingPreAuthFragment : Fragment() {
 
     //creating our adapter
     val mAdapter by lazy {
-        PendingPreauthAdapter(preAuthDataList)
+        PendingPreauthAdapter(preAuthDataList) {
+            onTouchViewShowDialog(it)
+        }
     }
 
     private var binding: FragmentPendingPreAuthBinding? = null
@@ -46,24 +56,7 @@ class PendingPreAuthFragment : Fragment() {
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.pending_pre_auth)
 
         binding?.pendingPreAuthPrintBtn?.setOnClickListener {
-            PrintUtil(context).printPendingPreauth(
-                cardProcessData,
-                context,
-                preAuthDataList
-            ) { printCB ->
-                if (!printCB) {
-                    //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
-                    //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
-                    /*   if (!TextUtils.isEmpty(autoSettlementCheck))
-                           syncOfflineSaleAndAskAutoSettlement(
-                               autoSettlementCheck.substring(
-                                   0,
-                                   1
-                               ), context as BaseActivity
-                           )*/
-                }
-
-            }
+            printReceipt(preAuthDataList)
 
 
         }
@@ -74,9 +67,84 @@ class PendingPreAuthFragment : Fragment() {
         }
     }
 
+    private fun printReceipt(
+        preauthDatalist: ArrayList<PendingPreauthData>,
+        dialog: Dialog? = null
+    ): Boolean {
+        (activity as BaseActivity).showProgress(getString(R.string.printing))
+        var printsts = false
+        PrintUtil(context).printPendingPreauth(
+            cardProcessData,
+            context,
+            preauthDatalist
+        ) { printCB ->
+            (activity as BaseActivity).hideProgress()
+            if (printCB) {
+                printsts = printCB
+                dialog?.dismiss()
+            } else {
+                VFService.showToast(getString(R.string.printer_error))
+            }
+        }
+        return printsts
+    }
+
+    private fun onTouchViewShowDialog(pendingPreauthData: PendingPreauthData): Boolean {
+        var isSuccess = false
+        val dialogBuilder = Dialog(requireActivity())
+        //  builder.setTitle(title)
+        //  builder.setMessage(msg)
+        val bindingg = ItemPendingPreauthBinding.inflate(LayoutInflater.from(context))
+
+        dialogBuilder.setContentView(bindingg.root)
+
+        dialogBuilder.setCancelable(true)
+        val window = dialogBuilder.window
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+        bindingg.preautnPendingBtnsView.visibility = View.VISIBLE
+        val batchNo = "BATCH NO : " + invoiceWithPadding(pendingPreauthData.batch.toString())
+        bindingg.batchNoTv.text = batchNo
+        val roc = "ROC : " + invoiceWithPadding(pendingPreauthData.roc.toString())
+        bindingg.rocTv.text = roc
+        val pan = "PAN : " + pendingPreauthData.pan
+        bindingg.panNoTv.text = pan
+        val amt = "AMT : " + "%.2f".format(pendingPreauthData.amount)
+        bindingg.amtTv.text = amt
+        val date = "DATE : " + pendingPreauthData.date
+        bindingg.dateTv.text = date
+        val time = "TIME : " + pendingPreauthData.time
+        bindingg.timeTv.text = time
+
+        bindingg.printBtnn.setOnClickListener {
+            val arList = arrayListOf<PendingPreauthData>()
+            arList.add(pendingPreauthData)
+
+            printReceipt(arList, dialogBuilder)
+
+        }
+
+        bindingg.completeBtnn.setOnClickListener {
+
+        }
+
+        dialogBuilder.show()
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+
+
+        return isSuccess
+    }
+
+
 }
 
-class PendingPreauthAdapter(val pendPreauthData: ArrayList<PendingPreauthData>) :
+class PendingPreauthAdapter(
+    val pendPreauthData: ArrayList<PendingPreauthData>,
+    var ontouchView: (PendingPreauthData) -> Boolean
+) :
     RecyclerView.Adapter<PendingPreauthAdapter.PendingPreAuthViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PendingPreAuthViewHolder {
@@ -105,6 +173,10 @@ class PendingPreauthAdapter(val pendPreauthData: ArrayList<PendingPreauthData>) 
         val time = "TIME : " + pendPreauthData[position].time
         holder.timeTv?.text = time
 
+        holder.cardView.setOnClickListener {
+            ontouchView(pendPreauthData[position])
+        }
+
     }
 
     class PendingPreAuthViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
@@ -114,5 +186,6 @@ class PendingPreauthAdapter(val pendPreauthData: ArrayList<PendingPreauthData>) 
         var amtTv = view.findViewById<BHTextView>(R.id.amt_tv)
         var dateTv = view.findViewById<BHTextView>(R.id.date_tv)
         var timeTv = view.findViewById<BHTextView>(R.id.time_tv)
+        var cardView = view.findViewById<NeumorphCardView>(R.id.pending_pre_auth_crdView)
     }
 }

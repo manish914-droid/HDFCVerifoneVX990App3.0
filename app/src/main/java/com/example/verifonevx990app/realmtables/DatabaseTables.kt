@@ -1291,6 +1291,20 @@ open class IssuerParameterTable() : RealmObject(), Parcelable {
             result
         }
 
+        fun selectFromIssuerParameterTableOnConditionBase(): List<IssuerParameterTable> =
+            runBlocking {
+                var result = listOf<IssuerParameterTable>()
+                getRealm {
+                    result = it.copyFromRealm(
+                        it.where(IssuerParameterTable::class.java)
+                            .equalTo("isActive", "1")
+                            .notEqualTo("issuerId", "50")
+                            .findAll()
+                    )
+                }.await()
+                result
+            }
+
         fun selectFromIssuerParameterTableList(issuerId: String): List<IssuerParameterTable> =
             runBlocking {
                 var result = listOf<IssuerParameterTable>()
@@ -3889,6 +3903,15 @@ open class IssuerTAndCTable() : RealmObject(), Parcelable {
             result
         }
         //endregion
+
+        fun clear() =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        IssuerTAndCTable::class.java
+                    )
+                }
+            }
     }
 }
 //endregion
@@ -3942,6 +3965,15 @@ open class BrandTAndCTable() : RealmObject(), Parcelable {
             result
         }
         //endregion
+
+        fun clear() =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BrandTAndCTable::class.java
+                    )
+                }
+            }
     }
 }
 //endregion
@@ -4009,6 +4041,95 @@ open class BrandEMIMasterTimeStamps() : RealmObject(), Parcelable {
                 it.executeTransaction { i ->
                     i.delete(
                         BrandEMIMasterTimeStamps::class.java
+                    )
+                }
+            }
+    }
+}
+//endregion
+
+// region===============Brand EMI Sub-Category Data Table:-
+@RealmClass
+open class BrandEMISubCategoryTable() : RealmObject(), Parcelable {
+    var brandID: String = ""
+
+    @PrimaryKey
+    var categoryID: String = ""
+    var parentCategoryID: String = ""
+    var categoryName: String = ""
+
+    private constructor(parcel: Parcel) : this() {
+        brandID = parcel.readString().toString()
+        categoryID = parcel.readString().toString()
+        parentCategoryID = parcel.readString().toString()
+        categoryName = parcel.readString().toString()
+    }
+
+    override fun writeToParcel(p0: Parcel?, p1: Int) {
+        p0?.writeString(brandID)
+        p0?.writeString(categoryID)
+        p0?.writeString(parentCategoryID)
+        p0?.writeString(categoryName)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object {
+        private val TAG = BrandEMISubCategoryTable::class.java.simpleName
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<BrandEMISubCategoryTable> {
+            override fun createFromParcel(parcel: Parcel): BrandEMISubCategoryTable {
+                return BrandEMISubCategoryTable(parcel)
+            }
+
+            override fun newArray(size: Int): Array<BrandEMISubCategoryTable> {
+                return Array(size) { BrandEMISubCategoryTable() }
+            }
+        }
+
+        fun performOperation(param: BrandEMISubCategoryTable) =
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+
+        //region====================Method to Get All Sub-Category Table Data================
+        fun getAllSubCategoryTableData(): MutableList<BrandEMISubCategoryTable> =
+            runBlocking {
+                var result = mutableListOf<BrandEMISubCategoryTable>()
+                getRealm {
+                    val re =
+                        it.copyFromRealm(it.where(BrandEMISubCategoryTable::class.java).findAll())
+                    if (re != null) result = re
+
+                }.await()
+                result
+            }
+        //endregion
+
+        // region====================Method to Get All Sub-Category Table Data================
+        fun getAllSubCategoryTableDataByBrandID(brand_id: String): MutableList<BrandEMISubCategoryTable> =
+            runBlocking {
+                var result = mutableListOf<BrandEMISubCategoryTable>()
+                getRealm {
+                    val re =
+                        it.copyFromRealm(
+                            it.where(BrandEMISubCategoryTable::class.java)
+                                .equalTo("brandID", brand_id)
+                                .findAll()
+                        )
+                    if (re != null) result = re
+
+                }.await()
+                result
+            }
+        //endregion
+
+        suspend fun clear() =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BrandEMISubCategoryTable::class.java
                     )
                 }
             }
@@ -4458,6 +4579,7 @@ enum class EDashboardItem(
     MORE("View More", R.drawable.ic_arrow_down, 999),
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
     EMI_PRO("Brand EMI By Access Code", R.drawable.ic_sale, 16),
+    EMI_CATALOGUE("EMI Catalogue", R.drawable.ic_sale, 17),
 
     // just for handling the test emi not used in dashboard items
     TEST_EMI("Test Emi", R.drawable.ic_sale, 777),

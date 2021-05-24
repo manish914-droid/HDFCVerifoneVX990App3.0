@@ -134,7 +134,11 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
             activity?.let {
                 SyncAuthTransToHost(it as BaseActivity).checkReversalPerformAuthTransaction(
                     transactionISO, cardProcessedData
-                )
+                ) { isSuccess, msg ->
+                    showToast("$msg----------->  $isSuccess")
+                    logger("PREAUTHCOMP", "Is success --->  $isSuccess  Message  --->  $msg")
+
+                }
             }
         }
 

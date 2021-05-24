@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/themeBackground"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible" />
+
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/bank_emi_cv"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pad_80"
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="4dp"
+            app:neumorph_shapeType="pressed">
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/button_bank_emi"
+                style="@style/Widget.Neumorph.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/bankEmi"
+                android:textColor="@color/white"
+                android:textColorHint="@color/transparent_white"
+                android:textSize="@dimen/text_size_regular" />
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <com.example.customneumorphic.NeumorphCardView
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/pad_80"
+            app:layout_constraintTop_toBottomOf="@+id/bank_emi_cv"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="4dp"
+            app:neumorph_shapeType="pressed">
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/button_brand_emi"
+                style="@style/Widget.Neumorph.TextView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:gravity="center"
+                android:text="@string/brandEmi"
+                android:textColor="@color/white"
+                android:textColorHint="@color/transparent_white"
+                android:textSize="@dimen/text_size_regular" />
+        </com.example.customneumorphic.NeumorphCardView>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

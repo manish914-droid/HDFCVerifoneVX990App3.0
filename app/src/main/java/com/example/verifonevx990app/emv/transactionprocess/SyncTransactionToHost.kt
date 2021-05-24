@@ -172,7 +172,8 @@ class SyncTransactionToHost(
                                                     cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.SALE.type
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.SALE.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.PRE_AUTH.type
                                                 ) {
                                                     CompleteSecondGenAc(
                                                         responseIsoData,

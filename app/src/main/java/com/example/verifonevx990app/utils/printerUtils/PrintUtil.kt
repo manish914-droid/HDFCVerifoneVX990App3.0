@@ -3229,7 +3229,7 @@ class PrintUtil(context: Context?) {
                 override fun onFinish() {
                     logger("PRINTING", "Printing Success in Pending PreAuth")
                     //VFService.showToast("Customer Transaction Slip Printed Successfully")
-                    printerCallback(false)
+                    printerCallback(true)
                 }
 
                 override fun onError(error: Int) {

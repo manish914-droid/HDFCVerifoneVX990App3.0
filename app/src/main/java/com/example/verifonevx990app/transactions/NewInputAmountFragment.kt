@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.text.InputFilter
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -74,6 +75,7 @@ class NewInputAmountFragment : Fragment() {
         ///   (activity as NavigationActivity).showBottomNavigationBar(isShow = false)
         //    (activity as AppCompatActivity?)?.supportActionBar?.hide()
         //    (activity as MainActivity).isAppbarVisibleOrGone(false)
+
         val hdfcTPTData = getHDFCTptData()
         //todo change below
         val hdfcCDTData = HdfcCdt.selectAllHDFCCDTData() ///getHDFCDtData()
@@ -114,6 +116,18 @@ class NewInputAmountFragment : Fragment() {
         } else {
             cashAmount?.visibility = View.GONE
             //   binding?.enterCashAmountTv?.visibility = View.GONE
+        }
+
+        if (transactionType == EDashboardItem.BRAND_EMI) {
+            binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
+        }
+
+        if (transactionType == EDashboardItem.EMI_CATALOGUE && tpt?.reservedValues?.substring(
+                10,
+                11
+            ) == "0"
+        ) {
+            binding?.mobNoCrdView?.visibility = View.GONE
         }
 
         subHeaderText = view.findViewById(R.id.sub_header_text)
@@ -444,10 +458,11 @@ class NewInputAmountFragment : Fragment() {
                 }
 
                 EDashboardItem.BRAND_EMI -> {
-                    if (binding?.saleAmount?.text.toString()
-                                    .trim() >= brandEMIDataModal?.getProductMinAmount() ?: "0"
-                            && binding?.saleAmount?.text.toString()
-                                    .trim() <= brandEMIDataModal?.getProductMaxAmount() ?: "0"
+                    val checkSaleAmount = binding?.saleAmount?.text.toString().trim().toDouble()
+                    if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
+                            ?.toDouble() ?: 0.0
+                        && checkSaleAmount <= brandEMIDataModal?.getProductMaxAmount()
+                            ?.toDouble() ?: 0.0
                     ) {
                         enableDisableMobileAndInvoiceField()
                     } else {
@@ -457,11 +472,11 @@ class NewInputAmountFragment : Fragment() {
 
                 EDashboardItem.CASH_ADVANCE -> {
                     iFrReq?.onFragmentRequest(
-                            UiAction.CASH_AT_POS,
-                            Pair(
-                                    binding?.saleAmount?.text.toString().trim(),
-                                    binding?.saleAmount?.text.toString().trim()
-                            )
+                        UiAction.CASH_AT_POS,
+                        Pair(
+                            binding?.saleAmount?.text.toString().trim(),
+                            binding?.saleAmount?.text.toString().trim()
+                        )
                     )
                 }
                 EDashboardItem.SALE_WITH_CASH -> {
@@ -491,23 +506,70 @@ class NewInputAmountFragment : Fragment() {
                         showMobileBillDialog(activity, TransactionType.EMI_ENQUIRY.type) {
                             //  sendStartSale(inputAmountEditText?.text.toString(), extraPairData)
                             iFrReq?.onFragmentRequest(
-                                    UiAction.EMI_ENQUIRY,
-                                    Pair(binding?.saleAmount?.text.toString().trim(), "0"), it
+                                UiAction.EMI_ENQUIRY,
+                                Pair(binding?.saleAmount?.text.toString().trim(), "0"), it
                             )
                         }
                     } else {
                         iFrReq?.onFragmentRequest(
-                                UiAction.EMI_ENQUIRY,
-                                Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                            UiAction.EMI_ENQUIRY,
+                            Pair(binding?.saleAmount?.text.toString().trim(), "0")
                         )
                     }
                 }
                 EDashboardItem.FLEXI_PAY -> {
                     iFrReq?.onFragmentRequest(
-                            UiAction.FLEXI_PAY,
-                            Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                        UiAction.FLEXI_PAY,
+                        Pair(binding?.saleAmount?.text.toString().trim(), "0")
                     )
                 }
+                EDashboardItem.EMI_CATALOGUE -> {
+                    val checkSaleAmount = binding?.saleAmount?.text.toString().trim().toDouble()
+                    if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
+                            ?.toDouble() ?: 0.0
+                        && checkSaleAmount <= brandEMIDataModal?.getProductMaxAmount()
+                            ?.toDouble() ?: 0.0
+                    ) {
+                        GlobalScope.launch(Dispatchers.IO) {
+                            saveBrandEMIDataToDB("", "")
+                            withContext(Dispatchers.Main) {
+                                if (tpt?.reservedValues?.substring(10, 11) == "1") {
+                                    when {
+                                        TextUtils.isEmpty(
+                                            binding?.saleAmount?.text?.toString()?.trim()
+                                        ) -> VFService.showToast("Enter Sale Amount")
+                                        TextUtils.isEmpty(
+                                            binding?.mobNumbr?.text?.toString()?.trim()
+                                        ) -> VFService.showToast("Enter Mobile Number")
+                                        else -> iFrReq?.onFragmentRequest(
+                                            UiAction.BRAND_EMI_CATALOGUE,
+                                            Pair(
+                                                binding?.saleAmount?.text.toString().trim(),
+                                                cashAmount?.text.toString().trim()
+                                            )
+                                        )
+                                    }
+                                } else {
+                                    when {
+                                        TextUtils.isEmpty(
+                                            binding?.saleAmount?.text?.toString()?.trim()
+                                        ) -> VFService.showToast("Enter Sale Amount")
+                                        else -> iFrReq?.onFragmentRequest(
+                                            UiAction.BRAND_EMI_CATALOGUE,
+                                            Pair(
+                                                binding?.saleAmount?.text.toString().trim(),
+                                                cashAmount?.text.toString().trim()
+                                            )
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    } else {
+                        VFService.showToast("Entered Amount Should be in Product Min & Max Amount Range")
+                    }
+                }
+
                 else -> {
                 }
             }

@@ -38,6 +38,8 @@ import com.example.verifonevx990app.databinding.AuthCatogoryDialogBinding
 import com.example.verifonevx990app.disputetransaction.CreateSettlementPacket
 import com.example.verifonevx990app.disputetransaction.SettlementFragment
 import com.example.verifonevx990app.disputetransaction.VoidTransactionFragment
+import com.example.verifonevx990app.emiCatalogue.EMICatalogue
+import com.example.verifonevx990app.emiCatalogue.EMIIssuerList
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
 import com.example.verifonevx990app.init.*
@@ -897,6 +899,19 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 })
             }
 
+            UiAction.BRAND_EMI_CATALOGUE -> {
+                val amt = (data as Pair<*, *>).first.toString()
+                transactFragment(EMIIssuerList().apply {
+                    arguments = Bundle().apply {
+                        putSerializable("type", action)
+                        putString("proc_code", ProcessingCode.PRE_AUTH.code)
+                        putString("mobileNumber", extraPairData?.first)
+                        putString("enquiryAmt", amt)
+
+                    }
+                })
+            }
+
             UiAction.FLEXI_PAY -> {
                 if (checkInternetConnection()) {
                     val amt = (data as Pair<*, *>).first.toString()
@@ -1128,6 +1143,25 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
+                        transactFragment(EMICatalogue().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                putString(
+                                    INPUT_SUB_HEADING,
+                                    SubHeaderTitle.Brand_EMI_Master_Category.title
+                                )
+                            }
+                        })
+                    } else {
+                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                    }
+                } else {
+                    checkAndPerformOperation()
+                }
+                /*if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())) {
+                    if (checkInternetConnection()) {
                         transactFragment(
                             VoidOfRefund()
                                 .apply {
@@ -1145,7 +1179,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     }
                 } else {
                     checkAndPerformOperation()
-                }
+                }*/
             }
 
             EDashboardItem.BONUS_PROMO -> {
@@ -1234,6 +1268,25 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 )
                             }
                         })
+                    }
+                } else {
+                    checkAndPerformOperation()
+                }
+            }
+
+            EDashboardItem.EMI_CATALOGUE -> {
+                if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                ) {
+                    if (checkInternetConnection()) {
+                        transactFragment(EMICatalogue().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", action)
+                            }
+                        })
+                    } else {
+                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                     }
                 } else {
                     checkAndPerformOperation()
@@ -1958,7 +2011,7 @@ class SubCatagoryDashboardAdapter(
         holder.logoIV.background =
             ContextCompat.getDrawable(holder.view.context, mList[position].res)
         holder.titleTV.text = mList[position].title
-        holder.itemParent.setOnClickListener {
+        holder.logoIV.setOnClickListener {
             dialog.dismiss()
             fragReq?.onDashBoardItemClick(mList[position])
         }

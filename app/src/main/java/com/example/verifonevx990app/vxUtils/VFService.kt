@@ -131,7 +131,10 @@ object VFService {
                 }
             }
 
-            override fun onServiceDisconnected(name: ComponentName) {}
+            override fun onServiceDisconnected(name: ComponentName) {
+
+
+            }
         }
 
         /*Intent to Bind Service:-*/

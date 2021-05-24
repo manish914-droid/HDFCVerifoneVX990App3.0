@@ -13,6 +13,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_height="match_parent">
 
     <include
@@ -20,25 +21,35 @@
         layout="@layout/sub_header_layout"
         android:visibility="visible" />
 
-    <com.example.verifonevx990app.vxUtils.BHButton
+
+    <com.example.customneumorphic.NeumorphButton
         android:id="@+id/pending_pre_auth_print_btn"
+
+        style="@style/Widget.Neumorph.Button"
         android:layout_width="match_parent"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_below="@+id/sub_header_view"
-        android:layout_margin="@dimen/pad_8"
-        android:background="@drawable/basic_button_bg"
-        android:text="@string/print"
+        android:layout_marginStart="@dimen/pad_40"
+        android:layout_marginEnd="@dimen/pad_40"
+        android:text="@string/print_all"
         android:textColor="@color/white"
-        android:textSize="@dimen/text_size_regular"
+        android:textSize="@dimen/text_size_xsmall"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:neumorph_inset="@dimen/pad_14"
+        app:neumorph_lightSource="rightBottom"
+        app:neumorph_shadowColorDark="@color/upperShadow"
+        app:neumorph_shadowColorLight="@color/lowerShadow"
+        app:neumorph_shadowElevation="2dp"
 
-        app:fname="bold" />
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
 
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/pending_pre_rv"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-
+        tools:listitem="@layout/item_pending_preauth"
         android:layout_below="@+id/pending_pre_auth_print_btn"
 
         />

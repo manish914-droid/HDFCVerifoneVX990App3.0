@@ -148,13 +148,24 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         val dialogBuilder = Dialog(this)
         //  builder.setTitle(title)
         //  builder.setMessage(msg)
-        //   val bindingg = EnterOtpDialogBinding.inflate(LayoutInflater.from(activity))
+
         val bindingg = NewPrintCustomerCopyBinding.inflate(LayoutInflater.from(this))
 
         dialogBuilder.setContentView(bindingg.root)
-
+        if (msg == getString(R.string.print_customer_copy)) {
+            bindingg.imgPrinter.visibility = View.VISIBLE
+        } else {
+            bindingg.imgPrinter.visibility = View.GONE
+        }
         dialogBuilder.setCancelable(false)
+        val window = dialogBuilder.window
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
 
+
+        bindingg.dialogMsg.text = msg
         /* .setPositiveButton(positiveButtonText) { dialog, _ ->
              dialog.dismiss()
              alertCallback(true)

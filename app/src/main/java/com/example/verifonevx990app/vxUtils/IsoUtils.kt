@@ -143,7 +143,7 @@ enum class ProcessingCode(val code: String) {
 
     VOID("940001"),
     REFUND("941001"),
-    PRE_SALE_COMPLETE("925001"),
+    PRE_SALE_COMPLETE("925001"),//or ---> PRE Auth Complete
     SETTLEMENT("970001"),
     FORCE_SETTLEMENT("970002"),
     ZERO_SETTLEMENT("970003"),

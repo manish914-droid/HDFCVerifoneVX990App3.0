@@ -3,10 +3,14 @@ package com.example.verifonevx990app.vxUtils
 import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
 import android.text.InputType
+import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -46,7 +50,11 @@ private fun getPasswordDialog(
                     requestWindowFeature(Window.FEATURE_NO_TITLE)
                     setContentView(R.layout.item_get_invoice_no)
                     setCancelable(false)
-
+                    val window = window
+                    window?.setLayout(
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        WindowManager.LayoutParams.WRAP_CONTENT
+                    )
                     val enterPasswordET = this.findViewById<BHEditText>(R.id.invoice_no_et)
                     if (isSuperAdmin)
                         enterPasswordET.filters = arrayOf<InputFilter>(LengthFilter(6))
@@ -79,8 +87,8 @@ private fun getPasswordDialog(
                             enterPasswordET.error = activity.getString(R.string.invalid_password)
                         }
                     }
-
                     task.await()
+                    window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
                 }.show()
             }
         } catch (ex: NullPointerException) {
@@ -113,6 +121,11 @@ fun getInputDialog(
         requestWindowFeature(Window.FEATURE_NO_TITLE)
         setContentView(R.layout.item_get_invoice_no)
         setCancelable(false)
+        val window = window
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         val invoiceET = findViewById<EditText>(R.id.invoice_no_et)
         val okbtn = findViewById<Button>(R.id.invoice_ok_btn)
         if (_text == TerminalParameterTable.selectFromSchemeTable()?.terminalId.toString()) {
@@ -134,6 +147,6 @@ fun getInputDialog(
             dismiss()
             callback(invoiceET.text.toString())
         }
-
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }.show()
 }

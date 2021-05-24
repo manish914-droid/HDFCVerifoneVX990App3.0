@@ -40,6 +40,8 @@ object AppPreference {
 
     const val F48IdentifierAndSuccesssTxn = "f48id_txnDate"
 
+    const val BrandID = "brandID"
+
     @JvmStatic
     fun getBankCode(): String {
         val tBc = getString(BANK_CODE_KEY)

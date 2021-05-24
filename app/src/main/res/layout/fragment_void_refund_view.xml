@@ -13,65 +13,86 @@
             layout="@layout/sub_header_layout"
             android:visibility="visible" />
 
-        <androidx.cardview.widget.CardView
+
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="@dimen/pad_4"
             android:orientation="vertical"
-            app:cardCornerRadius="@dimen/pad_4"
+            android:padding="@dimen/pad_16"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+            app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
 
-            <LinearLayout
+            >
+
+            <com.example.customneumorphic.NeumorphCardView
+                android:id="@+id/invoice_crd_view"
+                style="@style/Widget.Neumorph.CardView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/pad_16">
+                android:layout_marginTop="@dimen/pad_8"
 
-                <!--TID-->
-                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
-                    android:id="@+id/tid_til"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/title_tv"
+                app:neumorph_inset="@dimen/pad_2"
+                app:neumorph_shadowColorDark="@color/lowerShadow"
+                app:neumorph_shadowColorLight="@color/upperShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                app:neumorph_shapeType="flat"
+                app:neumorph_strokeColor="@color/darkgray"
+                app:neumorph_strokeWidth="@dimen/pad_1">
+
+                <com.example.verifonevx990app.vxUtils.BHEditText
+                    android:id="@+id/invoiceNumberET"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pad_8">
 
-                    <com.example.verifonevx990app.vxUtils.BHEditText
-                        android:id="@+id/invoiceNumberET"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="match_parent"
-                        android:layout_height="@dimen/height_size_navigation_item"
-                        android:digits="0123456789"
-                        android:hint="@string/enter_invoice_number"
-                        android:imeOptions="actionNext"
-                        android:inputType="number"
-                        android:maxLength="11"
-                        android:paddingStart="@dimen/pad_16"
-                        android:paddingEnd="@dimen/pad_16"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_xregular"
-                        app:fname="bold" />
+                    android:cursorVisible="false"
+                    android:drawableStart="@drawable/ic_invoice_img"
+                    android:digits="0123456789"
+                    android:gravity="center"
+                    android:inputType="number"
+                    android:lines="1"
+                    android:maxLength="4"
+                    android:hint="@string/enter_invoice_number"
+                    android:padding="@dimen/pad_4"
+                    android:textColor="@color/white"
+                    android:textColorHint="@color/white"
+                    android:textSize="@dimen/text_size_regular"
 
-                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+            </com.example.customneumorphic.NeumorphCardView>
 
-                <com.example.verifonevx990app.vxUtils.BHButton
-                    android:id="@+id/voidRefundBT"
-                    style="@style/ActionButtonStyle"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/pad_16"
-                    android:background="@drawable/basic_button_bg"
-                    android:text="@string/search_void_refund"
-                    app:fname="bold" />
 
-            </LinearLayout>
+            <!--ok btn-->
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/voidRefundBT"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_margin="@dimen/pad_20"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
 
-        </androidx.cardview.widget.CardView>
+                android:padding="@dimen/pad_2"
+                android:text="@string/search_void_refund"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/invoice_crd_view"
+                app:neumorph_inset="@dimen/pad_14"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+
+        </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

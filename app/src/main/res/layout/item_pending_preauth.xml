@@ -1,17 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pending_pre_auth_crdView"
+    style="@style/Widget.Neumorph.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/pad_4"
-    android:elevation="@dimen/pad_8"
-    app:cardCornerRadius="@dimen/pad_4">
+
+    android:visibility="visible"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+    app:neumorph_backgroundColor="@color/themeBackground"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+    app:neumorph_shapeType="flat">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="@dimen/pad_10">
+
+        android:padding="@dimen/pad_20">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -21,13 +31,15 @@
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/batch_no_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/roc_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
+                android:textColor="@color/white"
                 android:layout_toEndOf="@+id/batch_no_tv"
                 android:gravity="end" />
         </RelativeLayout>
@@ -40,7 +52,8 @@
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/pan_no_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/amt_tv"
@@ -48,6 +61,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/pan_no_tv"
+                android:textColor="@color/white"
                 android:gravity="end" />
 
 
@@ -61,7 +75,8 @@
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/date_tv"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content" />
+                android:layout_height="wrap_content"
+                android:textColor="@color/white" />
 
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:id="@+id/time_tv"
@@ -69,12 +84,67 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_toEndOf="@+id/date_tv"
+                android:textColor="@color/white"
                 android:gravity="end" />
 
 
         </RelativeLayout>
 
 
-    </LinearLayout>
+        <!--Buttons-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/preautn_pending_btns_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_16"
+            android:orientation="horizontal"
+            android:visibility="gone"
 
-</androidx.cardview.widget.CardView>
+            >
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/complete_btnn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginStart="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/complete_txt"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/print_btnn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginEnd="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/print"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+    </LinearLayout>
+</com.example.customneumorphic.NeumorphCardView>

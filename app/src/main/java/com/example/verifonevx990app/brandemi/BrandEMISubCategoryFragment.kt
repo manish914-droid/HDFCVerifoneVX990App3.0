@@ -3,13 +3,17 @@ package com.example.verifonevx990app.brandemi
 import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
@@ -18,12 +22,14 @@ import com.example.verifonevx990app.databinding.ItemBrandEmiSubCategoryBinding
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
+import com.example.verifonevx990app.realmtables.BrandEMISubCategoryTable
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -44,6 +50,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     private var moreDataFlag = "0"
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
+    private var brandIDFromPref: String? = null
     private val brandEMIMasterSubCategoryAdapter by lazy {
         BrandEMIMasterSubCategoryAdapter(
             brandEmiMasterSubCategoryDataList,
@@ -69,21 +76,86 @@ class BrandEMISubCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_sub_category)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
+        if (action as EDashboardItem == EDashboardItem.EMI_CATALOGUE)
+            binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
+        else
+            binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
+        binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
-        brandEMIDataModal = arguments?.getSerializable("modal") as BrandEMIDataModal
+        brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
         Log.d("BrandID:- ", brandEMIDataModal?.getBrandID() ?: "")
 
-        //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
-        field57RequestData =
-                "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^${brandEMIDataModal?.getBrandID()}"
+        //Save brandID in Shared Preference to use when user back from sub-category by id screen to sub-category screen for data load:-
+        runBlocking(Dispatchers.IO) {
+            AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.getBrandID())
+            brandIDFromPref = AppPreference.getString(AppPreference.BrandID)
+        }
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
         setUpRecyclerView()
         brandEmiMasterSubCategoryDataList.clear()
-        fetchBrandEMIMasterSubCategoryDataFromHost()
+        checkAndLoadDataFromSourceCondition()
+        Log.d("BrandID:- ", brandIDFromPref ?: "")
+
+        //region================Search EditText TextChangeListener event:-
+        binding?.categorySearchET?.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                if (TextUtils.isEmpty(p0.toString())) {
+                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                        brandEmiMasterSubCategoryDataList
+                    )
+                    binding?.brandEmiMasterSubCategoryRV?.smoothScrollToPosition(0)
+                    hideSoftKeyboard(requireActivity())
+                }
+            }
+        })
+        //endregion
+
+        //region=================Search Button onClick event:-
+        binding?.searchButton?.setOnClickListener {
+            if (!TextUtils.isEmpty(binding?.categorySearchET?.text?.toString())) {
+                iDialog?.showProgress()
+                getSearchedSubCategory(binding?.categorySearchET?.text?.trim()?.toString())
+                hideSoftKeyboard(requireActivity())
+            } else
+                VFService.showToast(getString(R.string.please_enter_brand_name_to_search))
+        }
+        //endregion
     }
+
+    //region===================Get Searched Results from Brand List:-
+    private fun getSearchedSubCategory(searchText: String?) {
+        val searchedDataList = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
+        lifecycleScope.launch(Dispatchers.Default) {
+            if (!TextUtils.isEmpty(searchText)) {
+                val loopLength = brandEmiMasterSubCategoryDataList.size
+                for (i in 0 until loopLength) {
+                    val subCategoryData = brandEmiMasterSubCategoryDataList[i]
+                    //check whether sub category name contains letter which is inserted in search box:-
+                    if (subCategoryData.categoryName.toLowerCase(Locale.ROOT).trim()
+                            .contains(searchText?.toLowerCase(Locale.ROOT)?.trim()!!)
+                    )
+                        searchedDataList.add(
+                            BrandEMIMasterSubCategoryDataModal(
+                                subCategoryData.brandID, subCategoryData.categoryID,
+                                subCategoryData.parentCategoryID, subCategoryData.categoryName
+                            )
+                        )
+                }
+                withContext(Dispatchers.Main) {
+                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(searchedDataList)
+                    iDialog?.hideProgress()
+                }
+            } else
+                withContext(Dispatchers.Main) {
+                    iDialog?.hideProgress()
+                }
+        }
+    }
+    //endregion
 
     //region===============================Hit Host to Fetch BrandEMIMasterSubCategory Data:-
     private fun fetchBrandEMIMasterSubCategoryDataFromHost() {
@@ -99,7 +171,7 @@ class BrandEMISubCategoryFragment : Fragment() {
         //endregion
 
         //region==============================Host Hit To Fetch BrandEMIMasterSubCategory Data:-
-        GlobalScope.launch(Dispatchers.IO) {
+        lifecycleScope.launch(Dispatchers.IO) {
             if (brandEMIMasterSubCategoryISOData != null) {
                 val byteArrayRequest = brandEMIMasterSubCategoryISOData?.generateIsoByteRequest()
                 HitServer.hitServer(byteArrayRequest!!, { result, success ->
@@ -108,7 +180,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         logger("Transaction RESPONSE ", "---", "e")
                         logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
                         Log.e(
-                                "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
+                            "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
                                 .toString() + "---->" + responseIsoData.isoMap[58]?.parseRaw2String()
                                 .toString()
                         )
@@ -116,40 +188,46 @@ class BrandEMISubCategoryFragment : Fragment() {
                         val responseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
                         val hostMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                         val brandEMIMasterSubCategoryData =
-                                responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                            responseIsoData.isoMap[57]?.parseRaw2String().toString()
 
                         if (responseCode == "00") {
                             ROCProviderV2.incrementFromResponse(
-                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                    AppPreference.getBankCode()
+                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                AppPreference.getBankCode()
                             )
-                            GlobalScope.launch(Dispatchers.Main) {
-                                //Processing BrandEMIMasterSubCategoryData:-
-                                stubbingBrandEMIMasterSubCategoryDataToList(
-                                        brandEMIMasterSubCategoryData,
-                                        hostMsg
-                                )
-                            }
+                            //Processing BrandEMIMasterSubCategoryData:-
+                            stubbingBrandEMIMasterSubCategoryDataToList(
+                                brandEMIMasterSubCategoryData,
+                                hostMsg
+                            )
                         } else {
                             ROCProviderV2.incrementFromResponse(
-                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                    AppPreference.getBankCode()
+                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                AppPreference.getBankCode()
                             )
                         }
                     } else {
                         ROCProviderV2.incrementFromResponse(
-                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                AppPreference.getBankCode()
+                            ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                            AppPreference.getBankCode()
                         )
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             iDialog?.alertBoxWithAction(null, null,
-                                    getString(R.string.error), result,
-                                    false, getString(R.string.positive_button_ok),
-                                    { parentFragmentManager.popBackStackImmediate() }, {})
+                                getString(R.string.error), result,
+                                false, getString(R.string.positive_button_ok),
+                                { parentFragmentManager.popBackStackImmediate() }, {})
                         }
                     }
                 }, {})
+            } else {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    iDialog?.hideProgress()
+                    iDialog?.alertBoxWithAction(null, null,
+                        getString(R.string.error), "Something went wrong",
+                        false, getString(R.string.positive_button_ok),
+                        { parentFragmentManager.popBackStackImmediate() }, {})
+                }
             }
         }
         //endregion
@@ -161,14 +239,14 @@ class BrandEMISubCategoryFragment : Fragment() {
         brandEMIMasterSubCategoryData: String,
         hostMsg: String
     ) {
-        GlobalScope.launch(Dispatchers.Main) {
+        lifecycleScope.launch(Dispatchers.Default) {
             if (!TextUtils.isEmpty(brandEMIMasterSubCategoryData)) {
                 val dataList = parseDataListWithSplitter("|", brandEMIMasterSubCategoryData)
                 if (dataList.isNotEmpty()) {
                     moreDataFlag = dataList[0]
                     perPageRecord = dataList[1]
                     totalRecord =
-                            (totalRecord?.toInt()?.plus(perPageRecord?.toInt() ?: 0)).toString()
+                        (totalRecord?.toInt()?.plus(perPageRecord?.toInt() ?: 0)).toString()
                     //Store DataList in Temporary List and remove first 2 index values to get sublist from 2nd index till dataList size
                     // and iterate further on record data only:-
                     var tempDataList = mutableListOf<String>()
@@ -181,10 +259,10 @@ class BrandEMISubCategoryFragment : Fragment() {
                                 tempDataList[i]
                             )
                             brandEmiMasterSubCategoryDataList.add(
-                                    BrandEMIMasterSubCategoryDataModal(
-                                            splitData[0], splitData[1],
-                                            splitData[2], splitData[3]
-                                    )
+                                BrandEMIMasterSubCategoryDataModal(
+                                    splitData[0], splitData[1],
+                                    splitData[2], splitData[3]
+                                )
                             )
                         }
                     }
@@ -192,40 +270,96 @@ class BrandEMISubCategoryFragment : Fragment() {
                     //Notify RecyclerView DataList on UI with Category Data that has ParentCategoryID == 0 && BrandID = selected brandID :-
                     val totalDataList = brandEmiMasterSubCategoryDataList
                     Log.d("TotalDataList:- ", Gson().toJson(totalDataList))
-                    brandEmiMasterSubCategoryDataList = brandEmiMasterSubCategoryDataList.filter {
-                        it.parentCategoryID == "0" && it.brandID == brandEMIDataModal?.getBrandID()
-                    }
-                            as MutableList<BrandEMIMasterSubCategoryDataModal>
-                    if (brandEmiMasterSubCategoryDataList.isNotEmpty()) {
-                        brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                                brandEmiMasterSubCategoryDataList
-                        )
-                    }
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                                "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${
-                                    brandEMIDataModal?.getBrandID()
-                                }"
+                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^$brandIDFromPref"
                         fetchBrandEMIMasterSubCategoryDataFromHost()
                         Log.d("FullDataList:- ", brandEmiMasterSubCategoryDataList.toString())
                     } else {
-                        iDialog?.hideProgress()
-                        if (brandEmiMasterSubCategoryDataList.isEmpty()) {
-                            navigateToProductPage(isSubCategoryItem = false, -1)
+                        withContext(Dispatchers.Main) {
+                            if (brandEmiMasterSubCategoryDataList.isEmpty()) {
+                                navigateToProductPage(isSubCategoryItem = false, -1)
+                            } else {
+                                withContext(Dispatchers.IO) {
+                                    saveAllSubCategoryDataInDB(brandEmiMasterSubCategoryDataList)
+                                }
+                                Log.d(
+                                    "Sub Category Data:- ",
+                                    Gson().toJson(brandEmiMasterSubCategoryDataList)
+                                )
+                                brandEmiMasterSubCategoryDataList =
+                                    brandEmiMasterSubCategoryDataList.filter {
+                                        it.brandID == brandEMIDataModal?.getBrandID()
+                                    } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                                brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                                    brandEmiMasterSubCategoryDataList
+                                )
+                            }
+                            iDialog?.hideProgress()
                         }
                     }
                 }
             } else {
-                GlobalScope.launch(Dispatchers.Main) {
+                withContext(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    /* iDialog?.alertBoxWithAction(null, null,
-                         getString(R.string.error), hostMsg,
-                         false, getString(R.string.positive_button_ok),
-                         {}, {})*/
+                    iDialog?.alertBoxWithAction(null, null,
+                        getString(R.string.error), hostMsg,
+                        false, getString(R.string.positive_button_ok),
+                        {}, {})
                 }
             }
+        }
+    }
+    //endregion
+
+    //region======================save all sub-category data in DB:-
+    private suspend fun saveAllSubCategoryDataInDB(subCategoryDataList: MutableList<BrandEMIMasterSubCategoryDataModal>) {
+        val modal = BrandEMISubCategoryTable()
+        BrandEMISubCategoryTable.clear()
+        for (value in subCategoryDataList) {
+            modal.brandID = value.brandID
+            modal.categoryID = value.categoryID
+            modal.parentCategoryID = value.parentCategoryID
+            modal.categoryName = value.categoryName
+            BrandEMISubCategoryTable.performOperation(modal)
+        }
+    }
+    //endregion
+
+    //region=====================Condition to check whether sub-category data need to load from DB or Host based on Data Update TimeStamp:-
+    private fun checkAndLoadDataFromSourceCondition() {
+        val subCategoryDataFromDB = runBlocking {
+            BrandEMISubCategoryTable.getAllSubCategoryTableDataByBrandID(brandIDFromPref ?: "")
+        }
+        //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
+        field57RequestData = "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^$brandIDFromPref"
+        if (brandEMIDataModal?.getDataTimeStampChangedOrNot() == true) {
+            if (subCategoryDataFromDB.isNotEmpty()) {
+                lifecycleScope.launch(Dispatchers.Default) {
+                    for (value in subCategoryDataFromDB) {
+                        brandEmiMasterSubCategoryDataList.add(
+                            BrandEMIMasterSubCategoryDataModal(
+                                value.brandID, value.categoryID,
+                                value.parentCategoryID, value.categoryName
+                            )
+                        )
+                    }
+                    withContext(Dispatchers.Main) {
+                        brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                            brandEmiMasterSubCategoryDataList
+                        )
+                    }
+                }
+            } else {
+                //Data by Brand ID for Sub-Category is Not Found in Database Table , So we will show a Pop-UP:-
+                lifecycleScope.launch(Dispatchers.Main) {
+                    navigateToProductPage(isSubCategoryItem = false, -1)
+                }
+            }
+        } else {
+            fetchBrandEMIMasterSubCategoryDataFromHost()
         }
     }
     //endregion
@@ -263,7 +397,7 @@ class BrandEMISubCategoryFragment : Fragment() {
         position: Int,
         isSubCategoryItem: Boolean = false
     ) {
-        if (checkInternetConnection()) {
+        if (checkInternetConnection() && position > -1) {
             //region==========Adding BrandEMISubCategoryID , CategoryName in brandEMIDataModal:-
             if (isSubCategoryItem) {
                 brandEMIDataModal?.setCategoryID(brandEmiMasterSubCategoryDataList[position].categoryID)
@@ -276,8 +410,8 @@ class BrandEMISubCategoryFragment : Fragment() {
                     putSerializable("modal", brandEMIDataModal)
                     putBoolean("isSubCategoryItemPresent", isSubCategoryItem)
                     putParcelableArrayList(
-                            "subCategoryData",
-                            brandEmiMasterSubCategoryDataList as ArrayList<out Parcelable>
+                        "subCategoryData",
+                        brandEmiMasterSubCategoryDataList as ArrayList<out Parcelable>
                     )
                     putSerializable("type", action)
                 }
@@ -325,6 +459,14 @@ internal class BrandEMIMasterSubCategoryAdapter(
 ) :
     RecyclerView.Adapter<BrandEMIMasterSubCategoryAdapter.BrandEMIMasterSubCategoryViewHolder>() {
 
+    private val subCategoryDataList: MutableList<BrandEMIMasterSubCategoryDataModal> =
+        mutableListOf()
+
+    init {
+        if (dataList?.isNotEmpty() == true)
+            subCategoryDataList.addAll(dataList!!)
+    }
+
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
@@ -338,19 +480,19 @@ internal class BrandEMIMasterSubCategoryAdapter(
     }
 
     override fun getItemCount(): Int {
-        return dataList?.size ?: 0
+        return subCategoryDataList.size
     }
 
     override fun onBindViewHolder(holder: BrandEMIMasterSubCategoryViewHolder, p1: Int) {
-        holder.binding.tvBrandSubCategoryName.text = dataList?.get(p1)?.categoryName ?: ""
+        holder.binding.tvBrandSubCategoryName.text = subCategoryDataList[p1].categoryName
     }
 
     inner class BrandEMIMasterSubCategoryViewHolder(val binding: ItemBrandEmiSubCategoryBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
-            binding.brandEmiMasterSubCategoryParent.setOnClickListener {
+            binding.brandEmiSubCategoryLv.setOnClickListener {
                 onCategoryItemClick(
-                        adapterPosition
+                    absoluteAdapterPosition
                 )
             }
         }
@@ -358,8 +500,11 @@ internal class BrandEMIMasterSubCategoryAdapter(
 
     //region==========================Below Method is used to refresh Adapter New Data and Also
     fun refreshAdapterList(refreshList: MutableList<BrandEMIMasterSubCategoryDataModal>) {
-        this.dataList = refreshList
-        notifyDataSetChanged()
+        val diffUtilCallBack = BrandSubCategoryUpdateDiffUtil(this.subCategoryDataList, refreshList)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallBack)
+        this.subCategoryDataList.clear()
+        this.subCategoryDataList.addAll(refreshList)
+        diffResult.dispatchUpdatesTo(this)
     }
     //endregion
 }
@@ -373,3 +518,9 @@ data class BrandEMIMasterSubCategoryDataModal(
     var categoryName: String
 ) : Parcelable
 //endregion
+
+//when we start counting from 0:-
+//10th Field of Reserved Field TPT -> BrandEMI Catalogue ON/OFF
+//11th Field of Reserved Field TPT -> BrandEMI Catalogue Mobile Number ON/OFF
+//6th Field of Reserved Field TPT -> BankEMI Catalogue ON/OFF
+//7th Field of Reserved Field TPT -> BankEMI Catalogue Mobile Number ON/OFF
