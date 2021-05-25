@@ -24,7 +24,6 @@
 
     <com.example.customneumorphic.NeumorphButton
         android:id="@+id/pending_pre_auth_print_btn"
-
         style="@style/Widget.Neumorph.Button"
         android:layout_width="match_parent"
         android:layout_centerHorizontal="true"

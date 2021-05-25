@@ -9,10 +9,13 @@
     android:fitsSystemWindows="true"
     tools:openDrawer="start">
 
+    <!--main dashboard-->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:orientation="vertical"
+
+        >
 
         <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
@@ -52,19 +55,34 @@
 
         </androidx.coordinatorlayout.widget.CoordinatorLayout>
 
-      <!--  <View
-            android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:background="@drawable/top_shadow" />
+        <!--  <View
+              android:layout_width="match_parent"
+              android:layout_height="2dp"
+              android:background="@drawable/top_shadow" />
 
-        <com.google.android.material.bottomnavigation.BottomNavigationView
-            android:id="@+id/ma_bnv"
+          <com.google.android.material.bottomnavigation.BottomNavigationView
+              android:id="@+id/ma_bnv"
+              android:layout_width="match_parent"
+              android:layout_height="wrap_content"
+              android:layout_gravity="bottom"
+              android:background="@color/white"
+              app:menu="@menu/bottom_navigation_menu" />-->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:background="@color/white"
-            app:menu="@menu/bottom_navigation_menu" />-->
+            android:background="#25282D"
+            android:gravity="center">
 
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawableEnd="@drawable/ic_bonushub_logo"
+                android:gravity="center"
+                android:text="@string/powered_by"
+                android:textColor="@color/gray_bg"
+
+                android:textSize="@dimen/text_size_regular" />
+        </LinearLayout>
     </LinearLayout>
     <!--Sliding drawer-->
     <include

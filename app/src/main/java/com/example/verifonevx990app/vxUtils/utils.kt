@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.BitmapFactory
 import android.graphics.Color
@@ -18,6 +19,7 @@ import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.BuildConfig
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
@@ -2233,6 +2235,18 @@ fun String.terminalDate() = this.substring(0, 8)
 //region=================Get Terminal Date according to Passed Index Value:-
 fun String.terminalTime() = this.substring(8, this.length)
 //endregion
+
+fun selectEditText(
+    unselectedEditTextarray: Array<NeumorphCardView>,
+    selectedEditText: NeumorphCardView
+) {
+    for (i in unselectedEditTextarray) {
+        i.setStrokeColor(null)
+        i.setStrokeWidth(0f)
+    }
+    selectedEditText.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
+    selectedEditText.setStrokeWidth(1f)
+}
 
 /*
 App Update Through FTP Steps:-

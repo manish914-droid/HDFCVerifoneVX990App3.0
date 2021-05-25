@@ -19,6 +19,7 @@ import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.*
 
+
 class VoidPreAuthFragment : Fragment() {
 
     private val title: String by lazy { arguments?.getString(MainActivity.INPUT_SUB_HEADING) ?: "" }
@@ -43,10 +44,23 @@ class VoidPreAuthFragment : Fragment() {
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
         }
+
+        binding?.batchCrdView?.setOnClickListener {
+            selectEditText(arrayOf((binding?.rocCrdView!!)), binding?.batchCrdView!!)
+            it.requestFocus()
+
+        }
+        binding?.rocCrdView?.setOnClickListener {
+            selectEditText(arrayOf((binding?.batchCrdView!!)), binding?.rocCrdView!!)
+            it.requestFocus()
+        }
+
         binding?.authVoidBtn?.setOnClickListener {
 
             authData.authBatchNo = binding?.batchVoidEt?.text.toString()
             authData.authRoc = binding?.rocVoidEt?.text.toString()
+
+
             if (authData.authBatchNo.isNullOrBlank()) {
                 VFService.showToast("Invalid BatchNo")
                 return@setOnClickListener

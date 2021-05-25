@@ -17,6 +17,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.databinding.ItemOkBtnDialogBinding
 import com.example.verifonevx990app.databinding.NewPrintCustomerCopyBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
@@ -164,7 +165,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
 
-
+        bindingg.yesBtn.text = positiveButtonText
         bindingg.dialogMsg.text = msg
         /* .setPositiveButton(positiveButtonText) { dialog, _ ->
              dialog.dismiss()
@@ -188,6 +189,67 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
             bindingg.imgPrinter.visibility = View.GONE
             bindingg.noBtn.visibility = View.GONE
         }
+        //     val alert: androidx.appcompat.app.AlertDialog = dialogBuilder.create()
+        //Below Handler will execute to auto cancel Alert Dialog Pop-Up when positiveButtonText isEmpty:-
+        if (TextUtils.isEmpty(positiveButtonText)) {
+            Handler(Looper.getMainLooper()).postDelayed({
+                dialogBuilder.dismiss()
+                dialogBuilder.cancel()
+                startActivity(Intent(this, MainActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                })
+            }, 2000)
+        }
+
+        try {
+            if (!dialogBuilder.isShowing) {
+                dialogBuilder.show()
+            }
+        } catch (ex: WindowManager.BadTokenException) {
+            ex.printStackTrace()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        dialogBuilder.show()
+        dialogBuilder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+    }
+
+
+    override fun alertBoxWithOnlyOk(
+        printUtils: PrintUtil?, batchData: BatchFileDataTable?,
+        title: String, msg: String, showCancelButton: Boolean,
+        positiveButtonText: String, alertCallback: (Boolean) -> Unit,
+        cancelButtonCallback: (Boolean) -> Unit
+    ) {
+
+        val dialogBuilder = Dialog(this)
+        //  builder.setTitle(title)
+        //  builder.setMessage(msg)
+
+        val bindingg = ItemOkBtnDialogBinding.inflate(LayoutInflater.from(this))
+
+        dialogBuilder.setContentView(bindingg.root)
+
+        dialogBuilder.setCancelable(false)
+        val window = dialogBuilder.window
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
+
+        bindingg.msgTv.text = msg
+        /* .setPositiveButton(positiveButtonText) { dialog, _ ->
+             dialog.dismiss()
+             alertCallback(true)
+         }*/
+
+        bindingg.okBtn.setOnClickListener {
+            dialogBuilder.dismiss()
+            alertCallback(true)
+        }
+
         //     val alert: androidx.appcompat.app.AlertDialog = dialogBuilder.create()
         //Below Handler will execute to auto cancel Alert Dialog Pop-Up when positiveButtonText isEmpty:-
         if (TextUtils.isEmpty(positiveButtonText)) {
@@ -356,6 +418,12 @@ interface IDialog {
     fun alertBoxWithAction(
         printUtils: PrintUtil? = null, batchData: BatchFileDataTable? = null,
         title: String, msg: String, showCancelButton: Boolean, positiveButtonText: String,
+        alertCallback: (Boolean) -> Unit, cancelButtonCallback: (Boolean) -> Unit
+    )
+
+    fun alertBoxWithOnlyOk(
+        printUtils: PrintUtil? = null, batchData: BatchFileDataTable? = null,
+        title: String, msg: String, showCancelButton: Boolean = false, positiveButtonText: String,
         alertCallback: (Boolean) -> Unit, cancelButtonCallback: (Boolean) -> Unit
     )
 

@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
 import com.example.verifonevx990app.main.MainActivity
@@ -373,17 +374,7 @@ class TableEditHelper(
 class
 SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
-    /* companion object {
-         val onTouchListenerWithBorder = View.OnTouchListener { v, event ->
-             if (event?.action == MotionEvent.ACTION_UP) {
-                 v?.background = (ContextCompat.getDrawable(v.context, R.drawable.et_bottomline_bg))
-             } else {
-                 v?.background = (ContextCompat.getDrawable(v.context, R.drawable.touch_selected))
-                 v.performClick()
-             }
-             return@OnTouchListener v.onTouchEvent(event)
-         }
-     }*/
+
 
     private var iDiag: IDialog? = null
 
@@ -443,9 +434,11 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                 BankOptions.INITT -> {
                     iDiag?.onEvents(VxEvent.InitTerminal)
                 }
+
                 BankOptions.APPUPDATE -> {
                     iDiag?.onEvents(VxEvent.AppUpdate)
                 }
+
                 BankOptions.DOWNLOAD_TMK -> {
                     verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
                         if (correctPasswordSuccess) {
@@ -683,7 +676,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                     TransactionType.VOID_REFUND.type,
                                     EPrintCopyType.DUPLICATE,
                                     activity
-                                ) { printCB, printCBC ->
+                                ) { _, _ ->
                                     iDiag?.hideProgress()
                                 }
                             }
@@ -712,117 +705,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                         }
                     }
 
-                    /*
-                    GlobalScope.launch {
-                        //  val offList = OfflineSaleTable.selectFromProductCategoryTable()
-                        val batchData = BatchFileDataTable.selectBatchData()
-                        if (batchData.isNotEmpty()) {
-                            GlobalScope.launch(Dispatchers.Main) {
-                                iDiag?.showProgress(getString(R.string.printing_last_receipt))
-                            }
 
-                            var requiredBatchData: BatchFileDataTable? = null
-                            for (i in batchData.size - 1 downTo 0) {
-                                //offline data which was approved by terminal but not sent to server
-                                if (batchData[i].transactionType == TransactionType.OFFLINE_SALE.type && batchData[i].isOfflineSale) {
-                                    requiredBatchData = batchData[i]
-                                    break
-                                }
-                                //offline data which was approved by terminal and also sent to server
-                                else if (batchData[i].transactionType == TransactionType.OFFLINE_SALE.type && !batchData[i].isOfflineSale) {
-                                    continue
-                                } else
-                                //Other than offline data
-                                {
-                                    requiredBatchData = batchData[i]
-                                    break
-                                }
-                            }
-                            val b = requiredBatchData// batchData[batchData.lastIndex]
-                            when (b?.transactionType) {
-                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
-                                    PrintUtil(activity).startPrinting(
-                                        b,
-                                        EPrintCopyType.DUPLICATE,
-                                        activity
-                                    ) {
-                                        if (it) {
-                                            iDiag?.hideProgress()
-                                            Log.e("PRINTING", "LAST_RECEIPT")
-                                        } else {
-                                            iDiag?.hideProgress()
-                                        }
-                                    }
-                                }
-                                TransactionType.EMI_SALE.type -> {
-                                    PrintUtil(activity).printEMISale(
-                                        b,
-                                        EPrintCopyType.DUPLICATE,
-                                        activity
-                                    ) {
-                                        if (it) {
-                                            iDiag?.hideProgress()
-                                            Log.e("PRINTING", "LAST_RECEIPT")
-                                        } else {
-                                            iDiag?.hideProgress()
-                                        }
-                                    }
-                                }
-                                TransactionType.PRE_AUTH_COMPLETE.type -> {
-                                    PrintUtil(activity).printAuthCompleteChargeSlip(
-                                        b,
-                                        EPrintCopyType.DUPLICATE,
-                                        activity
-                                    ) {
-                                        if (it) {
-                                            iDiag?.hideProgress()
-                                            Log.e("PRINTING", "LAST_RECEIPT")
-                                        } else {
-                                            iDiag?.hideProgress()
-                                        }
-                                    }
-                                }
-                                TransactionType.OFFLINE_SALE.type -> {
-                                    activity?.let {
-                                        OfflineSalePrintReceipt().offlineSalePrint(b,EPrintCopyType.DUPLICATE,
-                                            it
-                                        ) {
-                                            if (it) {
-                                                iDiag?.hideProgress()
-                                                Log.e("PRINTING", "LAST_RECEIPT")
-                                            } else {
-                                                iDiag?.hideProgress()
-                                            }
-                                        }
-                                    }
-                                }
-                                else -> {
-                                    GlobalScope.launch(Dispatchers.Main) {
-                                    iDiag?.hideProgress()
-                                    VFService.showToast("Something wrong Transaction Not Defined")
-                                }
-                                }
-
-                            }
-
-                        } else {
-                            launch(Dispatchers.Main) {
-                                //    iDiag?.hideProgress()
-                                //    iDiag?.showToast(getString(R.string.empty_batch))
-                                //-
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    iDiag?.alertBoxWithAction(null,
-                                        null,
-                                        VerifoneApp.appContext.getString(R.string.empty_batch),
-                                        VerifoneApp.appContext.getString(R.string.last_receipt_not_available),
-                                        false,
-                                        VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                        {},
-                                        {})
-                                }
-                            }
-                        }
-                    }*/
                 } // End of Last Receipt case
 
                 BankOptions.ANY_RECEIPT -> {
@@ -1412,7 +1295,7 @@ class SubMenuFragmentAdapter(
 ) :
     RecyclerView.Adapter<SubMenuFragmentAdapter.SubMenuHolder>() {
 
-    private val mBg = TouchBackgroundD(R.drawable.et_bottomline_bg, R.drawable.bottom_line_et)
+    //private val mBg = TouchBackgroundD(R.drawable.et_bottomline_bg, R.drawable.bottom_line_et)
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): SubMenuHolder {
         return SubMenuHolder(
@@ -1433,12 +1316,13 @@ class SubMenuFragmentAdapter(
 
     inner class SubMenuHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val isfmTitleTV = view.findViewById<BHTextView>(R.id.ifsm_title_tv)
-        val icLock = view.findViewById<ImageView>(R.id.ic_lock)
+
+        // val icLock = view.findViewById<ImageView>(R.id.ic_lock)
         val ifsmIV = view.findViewById<ImageView>(R.id.ifsm_iv)
-        val ifsmParentLL = view.findViewById<LinearLayout>(R.id.ifsm_parent_ll)
+        val ifsmParentLL = view.findViewById<NeumorphCardView>(R.id.ifsm_parent_ll)
 
         init {
-            icLock.visibility = View.GONE
+            //    icLock.visibility = View.GONE
             ifsmParentLL.apply {
                 //    setOnTouchListener(SubMenuFragment.onTouchListenerWithBorder)
 

@@ -46,10 +46,7 @@ import com.example.verifonevx990app.init.*
 import com.example.verifonevx990app.merchantPromo.PromoFragment
 import com.example.verifonevx990app.nontransaction.EmiActivity
 import com.example.verifonevx990app.offlinemanualsale.OfflineManualSaleInputFragment
-import com.example.verifonevx990app.preAuth.PendingPreAuthFragment
-import com.example.verifonevx990app.preAuth.PendingPreauth
-import com.example.verifonevx990app.preAuth.PreAuthCompleteInputDetailFragment
-import com.example.verifonevx990app.preAuth.VoidPreAuthFragment
+import com.example.verifonevx990app.preAuth.*
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.tipAdjust.TipAdjustFragment
 import com.example.verifonevx990app.transactions.InputAmountFragment
@@ -1051,11 +1048,26 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             EDashboardItem.PRE_AUTH_CATAGORY -> {
                 if (!action.childList.isNullOrEmpty()) {
-                    dashBoardCatagoryDialog(action.childList!!)
-
+                    // dashBoardCatagoryDialog(action.childList!!)
+                    if (checkInternetConnection()) {
+                        (transactFragment(PreAuthFragment()
+                            .apply {
+                                arguments = Bundle().apply {
+                                    putSerializable(
+                                        "preAuthOptionList",
+                                        (action.childList) as ArrayList
+                                    )
+                                }
+                            }))
+                    } else {
+                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                    }
                 } else {
                     showToast("PreAuth Not Found")
+                    return
                 }
+
+
             }
 
             EDashboardItem.SALE_TIP -> {

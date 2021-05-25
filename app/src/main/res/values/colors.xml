@@ -53,6 +53,7 @@
 
     <color name="text_active">@color/heading</color>
     <color name="text_inactive">#777777</color>
+    <color name="hint_color">#777777</color>
     <color name="darkgreen">#006400</color>
     <color name="lightGreen">#13E113</color>
     <color name="darkgray">#A9A9A9</color>

@@ -14,6 +14,7 @@ import io.realm.annotations.RealmClass
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -4555,7 +4556,7 @@ enum class EDashboardItem(
     val res: Int,
     val rank: Int = 15,
     var childList: MutableList<EDashboardItem>? = null
-) {
+) : Serializable {
     NONE("No Option Found", R.drawable.ic_home),
     SALE("Sale", R.drawable.ic_bbg, 1),
     BANK_EMI("Bank EMI", R.drawable.ic_bbg, 2),

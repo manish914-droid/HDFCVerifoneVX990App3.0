@@ -128,6 +128,7 @@ fun getInputDialog(
         )
         val invoiceET = findViewById<EditText>(R.id.invoice_no_et)
         val okbtn = findViewById<Button>(R.id.invoice_ok_btn)
+        invoiceET.hint = title
         if (_text == TerminalParameterTable.selectFromSchemeTable()?.terminalId.toString()) {
             invoiceET.filters = arrayOf<InputFilter>(LengthFilter(8))
         } else {
