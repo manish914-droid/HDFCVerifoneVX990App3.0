@@ -2419,6 +2419,7 @@ class PrintUtil(context: Context?) {
     ) {
         try {
             //    var tenure= arrayListOf<TenureDataModel>()
+                val brandData = runBlocking { BrandEMIDataTable.getAllEMIData() }
             setLogoAndHeader()
             val terminalData = TerminalParameterTable.selectFromSchemeTable()
             val dateTime: Long = Calendar.getInstance().timeInMillis
@@ -2448,6 +2449,40 @@ class PrintUtil(context: Context?) {
             printer?.addText(textFormatBundle, "EMI CATALOGUE")
             printer?.addText(textFormatBundle, "BANK NAME   :  $bankName")
             //  centerText(textFormatBundle, "EMI CATALOGUE", true)
+            printSeperator(textFormatBundle)
+            //region=====================Printing Merchant Brand Purchase Details:-
+            if (brandData.emiType == EDashboardItem.BRAND_EMI_CATALOGUE.title) {
+                centerText(textFormatBundle, "-----**Product Details**-----", true)
+                if (brandData != null) {
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "Merch/Mfr Name",
+                        brandData.brandName,
+                        ":"
+                    )
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "Product Category",
+                        brandData.categoryName,
+                        ":"
+                    )
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "Product",
+                        brandData.productName,
+                        ":"
+                    )
+                    if (!TextUtils.isEmpty(brandData.imeiNumber)) {
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "Product IMEI No.",
+                            brandData.imeiNumber,
+                            ":"
+                        )
+                    }
+                }
+            }
+            //endregion
             fun printt(modelData: BankEMIDataModal) {
 
                 alignLeftRightText(
@@ -2475,6 +2510,31 @@ class PrintUtil(context: Context?) {
                     tenureDuration,
                     " :  "
                 )
+
+                if (!TextUtils.isEmpty(modelData.cashBackAmount) && modelData.cashBackAmount != "0") {
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "TOTAL CASHBACK AMOUNT",
+                        "%.2f".format(
+                            divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
+                                .toDouble()
+                        ),
+                        " :  INR"
+                    )
+                }
+
+                if (!TextUtils.isEmpty(modelData.discountAmount) && modelData.discountAmount != "0") {
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "TOTAL DISCOUNT AMOUNT",
+                        "%.2f".format(
+                            divideAmountBy100(modelData.discountAmount.toInt()).toString()
+                                .toDouble()
+                        ),
+                        " :  INR"
+                    )
+                }
+
                 alignLeftRightText(
                     textInLineFormatBundle,
                     "LOAN AMOUNT",
@@ -2499,22 +2559,6 @@ class PrintUtil(context: Context?) {
                     divideAmountBy100(modelData.totalEmiPay.toInt()).toString(),
                     " :  INR"
                 )
-
-                /*
-                   //If Discount Amount Available show this else if CashBack Amount show that:-
-                   if (modelData.discountAmount.toInt() != 0) {
-                       holder.discountAmount.text =
-                           divideAmountBy100(modelData.discountAmount.toInt()).toString()
-                       holder.discountLinearLayout.visibility = View.VISIBLE
-                       holder.cashBackLinearLayout.visibility = View.GONE
-                   }
-                   if (modelData.cashBackAmount.toInt() != 0) {
-                       holder.cashBackAmount.text =
-                           divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
-                       holder.cashBackLinearLayout.visibility = View.VISIBLE
-                       holder.discountLinearLayout.visibility = View.GONE
-                   }*/
-
             }
 
             for (data in issuerDataModelList) {

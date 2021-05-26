@@ -2,6 +2,7 @@ package com.example.verifonevx990app.preAuth
 
 import android.app.Dialog
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,13 +24,13 @@ import java.util.*
 class VoidPreAuthFragment : Fragment() {
 
     private val title: String by lazy { arguments?.getString(MainActivity.INPUT_SUB_HEADING) ?: "" }
-
     private val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
     private val authData: AuthCompletionData by lazy { AuthCompletionData() }
     private var binding: FragmentVoidPreAuthBinding? = null
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
+        inflater: LayoutInflater,
+        container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
@@ -43,17 +44,24 @@ class VoidPreAuthFragment : Fragment() {
 
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
+            hideSoftKeyboard(requireActivity())
         }
 
-        binding?.batchCrdView?.setOnClickListener {
-            selectEditText(arrayOf((binding?.rocCrdView!!)), binding?.batchCrdView!!)
-            it.requestFocus()
+        //region================VOID ROC OnClick Event:-
+        binding?.rocVoidEt?.setOnClickListener {
+            showEditTextSelected(binding?.rocVoidEt, binding?.rocCrdView, requireContext())
+            showEditTextUnSelected(binding?.batchVoidEt, binding?.batchCrdView, requireContext())
+            Log.d("RocET:- ", "Clicked")
+        }
+        //endregion
 
+        //region===============VOID BATCH OnClick Event:-
+        binding?.batchVoidEt?.setOnClickListener {
+            showEditTextSelected(binding?.batchVoidEt, binding?.batchCrdView, requireContext())
+            showEditTextUnSelected(binding?.rocVoidEt, binding?.rocCrdView, requireContext())
+            Log.d("BatchET:- ", "Clicked")
         }
-        binding?.rocCrdView?.setOnClickListener {
-            selectEditText(arrayOf((binding?.batchCrdView!!)), binding?.rocCrdView!!)
-            it.requestFocus()
-        }
+        //endregion
 
         binding?.authVoidBtn?.setOnClickListener {
 
@@ -61,18 +69,21 @@ class VoidPreAuthFragment : Fragment() {
             authData.authRoc = binding?.rocVoidEt?.text.toString()
 
 
-            if (authData.authBatchNo.isNullOrBlank()) {
-                VFService.showToast("Invalid BatchNo")
-                return@setOnClickListener
-            } else if (authData.authRoc.isNullOrBlank()) {
-                VFService.showToast("Invalid ROC")
-                return@setOnClickListener
-            } else {
-                // voidAuthDataCreation(authData)
-                confirmationDialog(authData)
+            when {
+                authData.authBatchNo.isNullOrBlank() -> {
+                    VFService.showToast("Invalid BatchNo")
+                    return@setOnClickListener
+                }
+                authData.authRoc.isNullOrBlank() -> {
+                    VFService.showToast("Invalid ROC")
+                    return@setOnClickListener
+                }
+                else -> {
+                    // voidAuthDataCreation(authData)
+                    confirmationDialog(authData)
+                }
             }
         }
-
     }
 
     private fun confirmationDialog(authData: AuthCompletionData) {
@@ -102,7 +113,6 @@ class VoidPreAuthFragment : Fragment() {
         )
         dialog.show()
     }
-
 
     private fun voidAuthDataCreation(authCompletionData: AuthCompletionData) {
         val transactionalAmount = 0L //authCompletionData.authAmt?.replace(".", "")?.toLong() ?: 0L

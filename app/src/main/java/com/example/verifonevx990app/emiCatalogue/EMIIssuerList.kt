@@ -3,6 +3,7 @@ package com.example.verifonevx990app.emiCatalogue
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.os.Parcelable
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,10 +11,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankEmiEnquiry.CreateEMIEnquiryTransactionPacket
+import com.example.verifonevx990app.bankEmiEnquiry.EMiEnquiryOnPosActivity
 import com.example.verifonevx990app.bankEmiEnquiry.SyncEmiEnquiryToHost
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.databinding.FragmentEmiIssuerListBinding
@@ -39,13 +40,14 @@ class EMIIssuerList : Fragment() {
     private var mobileNumberOnOff: Boolean = false
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val enquiryAmount by lazy { ((enquiryAmtStr.toFloat()) * 100).toLong() }
-    private val issuerListAdapter by lazy { IssuerListAdapter(allIssuers, mobileNumberOnOff) }
+    private val issuerListAdapter by lazy { IssuerListAdapter(allIssuers) }
     private var firstClick = true
     private var iDialog: IDialog? = null
     private var brandEmiData: BrandEMIDataTable? = null
     private var moreDataFlag = "0"
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
+    private var bankNameList = mutableListOf<String>()
     private var bankEMISchemesDataList: MutableList<BankEMIDataModal> = mutableListOf()
 
     override fun onAttach(context: Context) {
@@ -64,7 +66,7 @@ class EMIIssuerList : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mobileNumberOnOff = true//!TextUtils.isEmpty(mobileNumber)
+        mobileNumberOnOff = !TextUtils.isEmpty(mobileNumber)
 
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
@@ -84,23 +86,14 @@ class EMIIssuerList : Fragment() {
         //endregion
 
         //region=============Show/Hide Select All Button on basis of mobileNumberOnOff:-
-        if (mobileNumberOnOff) {
-            binding?.selectAllCV?.visibility = View.VISIBLE
-            binding?.headingText?.text =
-                getString(R.string.please_select_one_or_multiple_issuer_banks)
-        } else {
-            binding?.selectAllCV?.visibility = View.GONE
-            binding?.headingText?.text = getString(R.string.please_select_one_issuer_bank)
-        }
+        binding?.selectAllCV?.visibility = View.VISIBLE
+        binding?.headingText?.text = getString(R.string.please_select_one_or_multiple_issuer_banks)
         //endregion
 
 
         //region==========RecyclerView SetUp:-
         binding?.issuerRV?.apply {
-            layoutManager = if (mobileNumberOnOff)
-                GridLayoutManager(activity, 2)
-            else
-                LinearLayoutManager(activity)
+            layoutManager = GridLayoutManager(activity, 2)
             adapter = issuerListAdapter
         }
         //endregion
@@ -128,8 +121,10 @@ class EMIIssuerList : Fragment() {
             val dataLength = allIssuers.size
             var selectedIssuerIDS = ""
             for (i in 0 until dataLength) {
-                if (allIssuers[i].isIssuerSelected)
+                if (allIssuers[i].isIssuerSelected) {
                     selectedIssuerIDS = "$selectedIssuerIDS,${allIssuers[i].issuerId}"
+                    bankNameList.add(allIssuers[i].issuerName)
+                }
             }
             Log.d("IssuerSelected:- ", selectedIssuerIDS)
             proceedEMICatalogueWithIssuer(selectedIssuerIDS.substring(1, selectedIssuerIDS.length))
@@ -193,16 +188,19 @@ class EMIIssuerList : Fragment() {
                                         57
                                     )?.parseRaw2String().toString()
                                 ) { bankEmiEnquiryData ->
-                                    /*startActivity(
-                                        Intent(activity, EMiEnquiryOnPosActivity::class.java).apply {
-                                            putParcelableArrayListExtra(
-                                                "bankEnquiryData",
-                                                bankEmiEnquiryData as java.util.ArrayList<out Parcelable>
-                                            )
-                                            putExtra("enquiryAmt", enquiryAmtStr)
-                                            putExtra("bankName", selectedIssuers[0].issuerName)
-                                        })*/
-
+                                    (activity as MainActivity).transactFragment(
+                                        EMiEnquiryOnPosActivity().apply {
+                                            arguments = Bundle().apply {
+                                                putParcelableArrayList(
+                                                    "bankEnquiryData",
+                                                    bankEmiEnquiryData as ArrayList<out Parcelable>
+                                                )
+                                                putString("enquiryAmt", enquiryAmtStr)
+                                                putSerializable("type", action)
+                                                if (bankNameList.size == 1)
+                                                    putString("bankName", bankNameList[0])
+                                            }
+                                        })
                                 }
                             } catch (ex: Exception) {
                                 ex.printStackTrace()
@@ -277,11 +275,9 @@ class EMIIssuerList : Fragment() {
 }
 
 // Below adapter is used to show the Issuer lists available in issuer parameter table.
-class IssuerListAdapter(
-    var issuerList: ArrayList<IssuerParameterTable>, var mobileNumberOnOff: Boolean
-) :
+class IssuerListAdapter(var issuerList: ArrayList<IssuerParameterTable>) :
     RecyclerView.Adapter<IssuerListAdapter.IssuerListViewHolder>() {
-    var index = -1
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IssuerListViewHolder {
         val itemBinding = ItemEmiIssuerListBinding.inflate(
             LayoutInflater.from(parent.context),
@@ -296,37 +292,18 @@ class IssuerListAdapter(
         holder.viewBinding.issuerName.text = modal.issuerName
 
         //region===============Below Code will only execute in case of Multiple Selection:-
-        if (mobileNumberOnOff) {
             if (modal.isIssuerSelected) {
                 holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
             } else {
                 holder.viewBinding.issuerCheckedIV.visibility = View.GONE
             }
-        }
         //endregion
 
         holder.viewBinding.issuerNameCV.setOnClickListener {
-            if (mobileNumberOnOff) {
                 modal.isIssuerSelected = !modal.isIssuerSelected
                 holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
-            } else {
-                index = position
-            }
             notifyDataSetChanged()
         }
-
-        //region===================Below Code only Execute in case of Single Selection:-
-        if (!mobileNumberOnOff) {
-            if (index == position) {
-                holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
-                modal.isIssuerSelected = true
-                Log.d("IssuerName:- ", issuerList[position].issuerName)
-            } else {
-                modal.isIssuerSelected = false
-                holder.viewBinding.issuerCheckedIV.visibility = View.GONE
-            }
-        }
-        //endregion
     }
 
     override fun getItemCount(): Int = issuerList.size

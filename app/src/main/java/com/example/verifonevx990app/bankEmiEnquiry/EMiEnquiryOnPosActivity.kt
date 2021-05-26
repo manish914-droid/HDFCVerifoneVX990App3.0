@@ -1,76 +1,96 @@
 package com.example.verifonevx990app.bankEmiEnquiry
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
-import com.example.verifonevx990app.databinding.FragmentIssuerListBinding
+import com.example.verifonevx990app.databinding.EmiOnPosViewBinding
+import com.example.verifonevx990app.databinding.ItemEmiEnquiryOnPosBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
-import com.example.verifonevx990app.vxUtils.BaseActivity
+import com.example.verifonevx990app.vxUtils.IDialog
+import com.example.verifonevx990app.vxUtils.UiAction
 import com.example.verifonevx990app.vxUtils.VFService
-import com.example.verifonevx990app.vxUtils.VxEvent
 import com.example.verifonevx990app.vxUtils.divideAmountBy100
-import com.google.android.material.card.MaterialCardView
 
-class EMiEnquiryOnPosActivity : BaseActivity() {
-    var viewBinding: FragmentIssuerListBinding? = null
+class EMiEnquiryOnPosActivity : Fragment() {
+    var viewBinding: EmiOnPosViewBinding? = null
     private var emiEnquiryData: ArrayList<BankEMIDataModal> = arrayListOf()
+    private val action by lazy { arguments?.getSerializable("type") ?: "" }
+    private var iDialog: IDialog? = null
 
     //enquiryAmt
-    private val enquiryAmt by lazy {
-        intent?.getStringExtra("enquiryAmt") ?: "0"
-    }
-    private val bankName by lazy {
-        intent?.getStringExtra("bankName") ?: "UNKNOWN"
+    private val enquiryAmt by lazy { arguments?.getString("enquiryAmt") ?: "0" }
+    private val bankName by lazy { arguments?.getString("bankName") ?: "UNKNOWN" }
+
+    override fun onAttach(context: Context) {
+        super.onAttach(context)
+        if (context is IDialog) iDialog = context
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        viewBinding = FragmentIssuerListBinding.inflate(layoutInflater)
-        setContentView(viewBinding?.root)
-        emiEnquiryData = intent?.getParcelableArrayListExtra("bankEnquiryData") ?: arrayListOf()
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        viewBinding = EmiOnPosViewBinding.inflate(layoutInflater, container, false)
+        return viewBinding?.root
+    }
 
-        viewBinding?.doEnquiryBtn?.text = "PRINT"
-        viewBinding?.doEnquiryBtn?.setIconResource(R.drawable.ic_baseline_print_24)
-        viewBinding?.doEnquiryBtn?.setOnClickListener {
-            showProgress("Printing...")
-            PrintUtil(this).printEMIEnquiry(
-                this,
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        emiEnquiryData = arguments?.getParcelableArrayList("bankEnquiryData") ?: arrayListOf()
+        viewBinding?.subHeaderView?.backImageButton?.setOnClickListener { navigateToDashboard() }
+        viewBinding?.cancelButton?.setOnClickListener { navigateToDashboard() }
+
+        if (action == UiAction.BRAND_EMI_CATALOGUE) {
+            viewBinding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
+            viewBinding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
+        } else {
+            viewBinding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
+            viewBinding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
+        }
+
+        //region==============Print OnClick Event:-
+        viewBinding?.printButton?.setOnClickListener {
+            iDialog?.showProgress("Printing...")
+            PrintUtil(requireContext()).printEMIEnquiry(
+                requireContext(),
                 emiEnquiryData,
                 enquiryAmt,
                 bankName
             ) { isSuccess, msg ->
                 if (isSuccess) {
-                    hideProgress()
-                    finish()
-                    startActivity(
-                        Intent(this, MainActivity::class.java).apply {
-                            flags =
-                                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        })
+                    iDialog?.hideProgress()
+                    navigateToDashboard()
                 } else {
                     VFService.showToast(msg)
-                    hideProgress()
-
+                    iDialog?.hideProgress()
                 }
             }
         }
-        viewBinding?.issuerRV?.layoutManager = LinearLayoutManager(this)
+        viewBinding?.issuerRV?.layoutManager = LinearLayoutManager(requireContext())
         viewBinding?.issuerRV?.adapter =
             EMiEnquiryOnPosAdapter(emiEnquiryData, enquiryAmt)
     }
 
-    override fun onEvents(event: VxEvent) {
-        // Need to override because this method is present IDialog Interface and  BaseActivity extends IDialog
+    //region=============Navigate To Main Screen:-
+    private fun navigateToDashboard() =
+        requireActivity().startActivity(Intent(requireContext(), MainActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        })
+    //endregion
+
+    override fun onDetach() {
+        super.onDetach()
+        iDialog = null
     }
 }
 
@@ -79,17 +99,17 @@ class EMiEnquiryOnPosAdapter(
     private val enquiryAmt: String
 ) :
     RecyclerView.Adapter<EMiEnquiryOnPosAdapter.EMiEnquiryOnPosViewHolder>() {
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EMiEnquiryOnPosViewHolder {
-        val inflater =
-            LayoutInflater.from(parent.context)
-                .inflate(R.layout.item_emi_enquiry_on_pos, parent, false)
-        return EMiEnquiryOnPosViewHolder(inflater)
+        val itemBinding =
+            ItemEmiEnquiryOnPosBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return EMiEnquiryOnPosViewHolder(itemBinding)
     }
 
     override fun onBindViewHolder(holder: EMiEnquiryOnPosViewHolder, position: Int) {
         val modelData = emiSchemeDataList?.get(position)
         if (modelData != null) {
-            holder.transactionAmount.text = enquiryAmt
+            holder.view.tvTransactionAmount.text = enquiryAmt
             val tenureDuration = "${modelData.tenure} Months"
             val tenureHeadingDuration = "${modelData.tenure} Months Scheme"
             var roi = divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
@@ -97,28 +117,29 @@ class EMiEnquiryOnPosAdapter(
             roi = "%.2f".format(roi.toDouble()) + " %"
             loanamt = "%.2f".format(loanamt.toDouble())
 
-            holder.roi.text = roi
-            holder.tenure.text = tenureDuration
-            holder.tenureHeadingTV.text = tenureHeadingDuration
-            holder.loanAmount.text = loanamt
-            holder.emiAmount.text = divideAmountBy100(modelData.emiAmount.toInt()).toString()
+            holder.view.tvTotalRoi.text = roi
+            holder.view.tvTenure.text = tenureDuration
+            holder.view.tenureHeadingTv.text = tenureHeadingDuration
+            holder.view.tvLoanAmount.text = loanamt
+            holder.view.tvEmiAmount.text = divideAmountBy100(modelData.emiAmount.toInt()).toString()
 
             //If Discount Amount Available show this else if CashBack Amount show that:-
             if (modelData.discountAmount.toInt() != 0) {
-                holder.discountAmount.text =
+                holder.view.tvDiscountAmount.text =
                     divideAmountBy100(modelData.discountAmount.toInt()).toString()
-                holder.discountLinearLayout.visibility = View.VISIBLE
-                holder.cashBackLinearLayout.visibility = View.GONE
+                holder.view.discountLL.visibility = View.VISIBLE
+                holder.view.cashBackLL.visibility = View.GONE
             }
             if (modelData.cashBackAmount.toInt() != 0) {
-                holder.cashBackAmount.text =
+                holder.view.tvCashbackAmount.text =
                     divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
-                holder.cashBackLinearLayout.visibility = View.VISIBLE
-                holder.discountLinearLayout.visibility = View.GONE
+                holder.view.cashBackLL.visibility = View.VISIBLE
+                holder.view.discountLL.visibility = View.GONE
             }
 
-            holder.totalEmiPay.text = divideAmountBy100(modelData.totalEmiPay.toInt()).toString()
-            holder.totalIntrstRate.text =
+            holder.view.tvTotalEmiPay.text =
+                divideAmountBy100(modelData.totalEmiPay.toInt()).toString()
+            holder.view.tvTotalItrst.text =
                 divideAmountBy100(modelData.totalInterestPay.toInt()).toString()
         }
 
@@ -126,23 +147,6 @@ class EMiEnquiryOnPosAdapter(
 
     override fun getItemCount(): Int = emiSchemeDataList?.size ?: 0
 
-    class EMiEnquiryOnPosViewHolder(var view: View) : RecyclerView.ViewHolder(view) {
-        val transactionAmount = view.findViewById<TextView>(R.id.tv_transaction_amount)
-        val tenure = view.findViewById<TextView>(R.id.tv_tenure)
-        val emiAmount = view.findViewById<TextView>(R.id.tv_emi_amount)
-        val loanAmount = view.findViewById<TextView>(R.id.tv_loan_amount)
-        val discountAmount = view.findViewById<TextView>(R.id.tv_discount_amount)
-        val cashBackAmount = view.findViewById<TextView>(R.id.tv_cashback_amount)
-        val roi = view.findViewById<TextView>(R.id.tv_total_roi)
-        val totalEmiPay = view.findViewById<TextView>(R.id.tv_total_emi_pay)
-        val tenureHeadingTV = view.findViewById<TextView>(R.id.tenure_heading_tv)
-        val totalIntrstRate = view.findViewById<TextView>(R.id.tv_total_itrst)
-        val parentEmiLayout = view.findViewById<LinearLayout>(R.id.parent_emi_view_ll)
-        val discountLinearLayout = view.findViewById<LinearLayout>(R.id.discountLL)
-        val cashBackLinearLayout = view.findViewById<LinearLayout>(R.id.cashBackLL)
-        val cardView = view.findViewById<MaterialCardView>(R.id.cardView)
-        val schemeCheckIV = view.findViewById<ImageView>(R.id.scheme_check_iv)
-    }
-
-
+    class EMiEnquiryOnPosViewHolder(var view: ItemEmiEnquiryOnPosBinding) :
+        RecyclerView.ViewHolder(view.root)
 }

@@ -55,6 +55,7 @@
 
     <dimen name="pad_80">80dp</dimen>
     <dimen name="pad_1">1dp</dimen>
+    <dimen name="pad_100">100dp</dimen>
 
 
 </resources>

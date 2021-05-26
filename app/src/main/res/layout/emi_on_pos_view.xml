@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".bankEmiEnquiry.IssuerListFragment">
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/issuer_RV"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="@string/hello_blank_fragment" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/cancel_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginStart="8dp"
+            android:layout_marginEnd="@dimen/pad_100"
+            android:layout_marginBottom="@dimen/pad_60"
+            android:text="@string/cancel"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_xregular"
+            app:backgroundTint="@color/hdfc_red_color"
+            app:elevation="@dimen/pad_0"
+            app:icon="@drawable/ic_baseline_close_24"
+            app:iconPadding="@dimen/pad_5"
+            app:iconTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rippleColor="@color/colorAccent" />
+
+        <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+            android:id="@+id/print_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center|bottom"
+            android:layout_marginStart="@dimen/pad_100"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="@dimen/pad_60"
+            android:text="@string/print"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_xregular"
+            app:backgroundTint="@color/hdfc_red_color"
+            app:elevation="@dimen/pad_0"
+            app:icon="@drawable/ic_baseline_print_24"
+            app:iconPadding="@dimen/pad_5"
+            app:iconTint="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:rippleColor="@color/colorAccent" />
+    </FrameLayout>
+</LinearLayout>

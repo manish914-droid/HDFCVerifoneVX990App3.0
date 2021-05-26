@@ -17,6 +17,7 @@ import android.provider.Settings
 import android.text.*
 import android.util.Log
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import com.example.customneumorphic.NeumorphCardView
@@ -81,7 +82,8 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
     TEST_EMI(title = "Test EMI"),
     FLEXI_PAY(title = "Flexi Pay"),
     DEFAUTL("Not Declared", R.drawable.ic_sad),
-    BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE")
+    BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE"),
+    BANK_EMI_CATALOGUE(title = "BANK EMI CATALOGUE"),
 }
 
 
@@ -2234,6 +2236,31 @@ fun String.terminalDate() = this.substring(0, 8)
 
 //region=================Get Terminal Date according to Passed Index Value:-
 fun String.terminalTime() = this.substring(8, this.length)
+//endregion
+
+//region================Show Selected EditText:-
+fun showEditTextSelected(editText: BHEditText?, cardView: NeumorphCardView?, context: Context?) {
+    editText?.isFocusable = true
+    editText?.isFocusableInTouchMode = true
+    editText?.requestFocus()
+    val imm: InputMethodManager? =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    imm?.showSoftInput(editText, 0)
+    cardView?.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
+    cardView?.setStrokeWidth(1f)
+}
+//endregion
+
+//region================Show UnSelected EditText:-
+fun showEditTextUnSelected(editText: BHEditText?, cardView: NeumorphCardView?, context: Context?) {
+    editText?.isFocusable = false
+    editText?.isFocusableInTouchMode = false
+    val imm: InputMethodManager? =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    imm?.showSoftInput(editText, 0)
+    cardView?.setStrokeColor(null)
+    cardView?.setStrokeWidth(0f)
+}
 //endregion
 
 fun selectEditText(

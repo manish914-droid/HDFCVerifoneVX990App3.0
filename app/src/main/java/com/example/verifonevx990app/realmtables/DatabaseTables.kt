@@ -4156,6 +4156,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
     var inputDataType: String = ""
     var imeiNumber: String = ""
     var serialNumber: String = ""
+    var emiType: String = ""
 
     private constructor(parcel: Parcel) : this() {
         brandID = parcel.readString().toString()
@@ -4172,6 +4173,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         inputDataType = parcel.readString().toString()
         imeiNumber = parcel.readString().toString()
         serialNumber = parcel.readString().toString()
+        emiType = parcel.readString().toString()
     }
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
@@ -4189,6 +4191,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         p0?.writeString(inputDataType)
         p0?.writeString(imeiNumber)
         p0?.writeString(serialNumber)
+        p0?.writeString(emiType)
     }
 
     override fun describeContents(): Int {
@@ -4581,6 +4584,8 @@ enum class EDashboardItem(
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
     EMI_PRO("Brand EMI By Access Code", R.drawable.ic_sale, 16),
     EMI_CATALOGUE("EMI Catalogue", R.drawable.ic_sale, 17),
+    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
+    BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
 
     // just for handling the test emi not used in dashboard items
     TEST_EMI("Test Emi", R.drawable.ic_sale, 777),

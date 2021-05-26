@@ -432,8 +432,9 @@
     <string name="bankEmiCatalogue">BANK EMI CATALOGUE</string>
     <string name="checked">Checked</string>
     <string name="selectAll">Select All</string>
-    <string name="please_select_one_or_multiple_issuer_banks">Please Select 1 or Multiple Issuer\'s Bank</string>
+    <string name="please_select_one_or_multiple_issuer_banks">Please Select Issuer(s) Bank</string>
     <string name="please_select_one_issuer_bank">Please Select 1 Issuer Bank</string>
+    <string name="total_amount_with_interest">Total Amount \n (With Intrest)</string>
     <string name="pre_auth">PREAUTH</string>
     <string name="powered_by">Powered by</string>
     <string name="enter_batch_number">Enter Batch number</string>

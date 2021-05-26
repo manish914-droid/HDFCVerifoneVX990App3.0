@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -14,10 +9,8 @@
             layout="@layout/sub_header_layout"
             android:visibility="visible" />
 
-
-
-            <LinearLayout
-                android:layout_width="match_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="@dimen/pad_16"
@@ -33,7 +26,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/pad_8"
-                    android:descendantFocusability="beforeDescendants"
                     android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -48,36 +40,29 @@
                     app:neumorph_strokeWidth="@dimen/pad_1">
 
                     <com.example.verifonevx990app.vxUtils.BHEditText
-
                         android:layout_width="match_parent"
                         android:id="@+id/batch_void_et"
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:cursorVisible="false"
                         android:digits="0123456789"
-
+                        android:focusable="false"
                         android:drawableStart="@drawable/ic_batch_no_img"
                         android:gravity="center"
                         android:hint="@string/enter_batch_number"
                         android:lines="1"
                         android:textColor="@color/white"
-
                         android:textColorHint="@color/hint_color"
                         android:textSize="@dimen/text_size_regular"
                         app:fname="regular"
-
-
                         android:layout_marginTop="@dimen/pad_8"
                         android:layout_marginBottom="@dimen/pad_16"
                         android:ems="10"
-
-
                         android:imeOptions="actionDone"
                         android:inputType="number"
                         android:maxLength="8"
                         android:paddingStart="@dimen/pad_8"
                         android:paddingEnd="@dimen/pad_8"
-
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_tv" />
@@ -90,8 +75,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/pad_8"
-                    android:descendantFocusability="beforeDescendants"
-                    android:visibility="visible"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/title_tv"
@@ -103,13 +86,13 @@
                     app:neumorph_shapeType="flat">
 
                     <com.example.verifonevx990app.vxUtils.BHEditText
-
                         android:layout_width="match_parent"
                         android:id="@+id/roc_void_et"
                         android:layout_height="wrap_content"
                         android:background="@null"
                         android:cursorVisible="false"
                         android:digits="0123456789"
+                        android:focusable="false"
                         android:drawableStart="@drawable/ic_roc_img"
                         android:gravity="center"
                         android:hint="@string/enter_roc"
@@ -126,7 +109,6 @@
                         android:maxLength="8"
                         android:paddingStart="@dimen/pad_8"
                         android:paddingEnd="@dimen/pad_8"
-
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/title_tv" />
@@ -140,7 +122,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/pad_16"
                     android:layout_marginEnd="@dimen/pad_40"
-
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_xsmall"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -153,7 +134,4 @@
                     app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
 
             </LinearLayout>
-
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.core.widget.NestedScrollView>

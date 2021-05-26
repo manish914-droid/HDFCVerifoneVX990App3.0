@@ -77,7 +77,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
-        if (action as EDashboardItem == EDashboardItem.EMI_CATALOGUE)
+        if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE)
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
         else
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)

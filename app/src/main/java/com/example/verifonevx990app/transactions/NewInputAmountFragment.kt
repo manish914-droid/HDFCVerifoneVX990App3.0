@@ -122,9 +122,13 @@ class NewInputAmountFragment : Fragment() {
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
 
-        if (transactionType == EDashboardItem.EMI_CATALOGUE && tpt?.reservedValues?.substring(
+        if (transactionType == EDashboardItem.BRAND_EMI_CATALOGUE && tpt?.reservedValues?.substring(
                 10,
                 11
+            ) == "0" ||
+            transactionType == EDashboardItem.BANK_EMI_CATALOGUE && tpt?.reservedValues?.substring(
+                6,
+                7
             ) == "0"
         ) {
             binding?.mobNoCrdView?.visibility = View.GONE
@@ -501,7 +505,6 @@ class NewInputAmountFragment : Fragment() {
                     )
                 }
                 EDashboardItem.EMI_ENQUIRY -> {
-
                     if (TerminalParameterTable.selectFromSchemeTable()?.bankEnquiryMobNumberEntry == true) {
                         showMobileBillDialog(activity, TransactionType.EMI_ENQUIRY.type) {
                             //  sendStartSale(inputAmountEditText?.text.toString(), extraPairData)
@@ -523,7 +526,7 @@ class NewInputAmountFragment : Fragment() {
                         Pair(binding?.saleAmount?.text.toString().trim(), "0")
                     )
                 }
-                EDashboardItem.EMI_CATALOGUE -> {
+                EDashboardItem.BRAND_EMI_CATALOGUE -> {
                     val checkSaleAmount = binding?.saleAmount?.text.toString().trim().toDouble()
                     if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
                             ?.toDouble() ?: 0.0
@@ -567,6 +570,38 @@ class NewInputAmountFragment : Fragment() {
                         }
                     } else {
                         VFService.showToast("Entered Amount Should be in Product Min & Max Amount Range")
+                    }
+                }
+                EDashboardItem.BANK_EMI_CATALOGUE -> {
+                    if (tpt?.reservedValues?.substring(10, 11) == "1") {
+                        when {
+                            TextUtils.isEmpty(
+                                binding?.saleAmount?.text?.toString()?.trim()
+                            ) -> VFService.showToast("Enter Sale Amount")
+                            TextUtils.isEmpty(
+                                binding?.mobNumbr?.text?.toString()?.trim()
+                            ) -> VFService.showToast("Enter Mobile Number")
+                            else -> iFrReq?.onFragmentRequest(
+                                UiAction.BANK_EMI_CATALOGUE,
+                                Pair(
+                                    binding?.saleAmount?.text.toString().trim(),
+                                    cashAmount?.text.toString().trim()
+                                )
+                            )
+                        }
+                    } else {
+                        when {
+                            TextUtils.isEmpty(
+                                binding?.saleAmount?.text?.toString()?.trim()
+                            ) -> VFService.showToast("Enter Sale Amount")
+                            else -> iFrReq?.onFragmentRequest(
+                                UiAction.BANK_EMI_CATALOGUE,
+                                Pair(
+                                    binding?.saleAmount?.text.toString().trim(),
+                                    cashAmount?.text.toString().trim()
+                                )
+                            )
+                        }
                     }
                 }
 
@@ -715,6 +750,7 @@ class NewInputAmountFragment : Fragment() {
         modal.inputDataType = brandEMIDataModal?.getInputDataType() ?: ""
         modal.imeiNumber = imeiNumber ?: ""
         modal.serialNumber = serialNumber ?: ""
+        modal.emiType = transactionType.title
         runBlocking(Dispatchers.IO) { BrandEMIDataTable.performOperation(modal) }
     }
     //endregion
