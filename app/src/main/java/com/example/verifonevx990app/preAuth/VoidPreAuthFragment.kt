@@ -43,8 +43,8 @@ class VoidPreAuthFragment : Fragment() {
         binding?.subHeaderView?.subHeaderText?.text = title
 
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            parentFragmentManager.popBackStackImmediate()
             hideSoftKeyboard(requireActivity())
+            parentFragmentManager.popBackStackImmediate()
         }
 
         //region================VOID ROC OnClick Event:-

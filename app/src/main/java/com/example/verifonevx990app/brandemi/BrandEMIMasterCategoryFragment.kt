@@ -76,12 +76,13 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE)
+        if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
-        else
+            binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
+        } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
-
-        binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
+            binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
+        }
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             hideSoftKeyboard(requireActivity())
             parentFragmentManager.popBackStackImmediate()

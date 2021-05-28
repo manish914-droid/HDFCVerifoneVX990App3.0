@@ -1150,22 +1150,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             EDashboardItem.VOID_REFUND -> {
-                if (checkInternetConnection()) {
-                    transactFragment(
-                        VoidPreAuthFragment()
-                            .apply {
-                                arguments = Bundle().apply {
-                                    putSerializable("type", TransactionType.VOID_PREAUTH)
-                                    putString(
-                                        INPUT_SUB_HEADING,
-                                        SubHeaderTitle.VOID_PRE_AUTH.title
-                                    )
-                                }
-                            })
-                } else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
-                /*if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
@@ -1184,7 +1169,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     }
                 } else {
                     checkAndPerformOperation()
-                }*/
+                }
                 /*if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())) {

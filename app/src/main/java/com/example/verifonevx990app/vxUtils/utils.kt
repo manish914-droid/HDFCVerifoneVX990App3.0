@@ -2239,7 +2239,11 @@ fun String.terminalTime() = this.substring(8, this.length)
 //endregion
 
 //region================Show Selected EditText:-
-fun showEditTextSelected(editText: BHEditText?, cardView: NeumorphCardView?, context: Context?) {
+fun showEditTextSelected(
+    editText: BHEditText? = null,
+    cardView: NeumorphCardView?,
+    context: Context?
+) {
     editText?.isFocusable = true
     editText?.isFocusableInTouchMode = true
     editText?.requestFocus()
@@ -2252,7 +2256,11 @@ fun showEditTextSelected(editText: BHEditText?, cardView: NeumorphCardView?, con
 //endregion
 
 //region================Show UnSelected EditText:-
-fun showEditTextUnSelected(editText: BHEditText?, cardView: NeumorphCardView?, context: Context?) {
+fun showEditTextUnSelected(
+    editText: BHEditText? = null,
+    cardView: NeumorphCardView?,
+    context: Context?
+) {
     editText?.isFocusable = false
     editText?.isFocusableInTouchMode = false
     val imm: InputMethodManager? =

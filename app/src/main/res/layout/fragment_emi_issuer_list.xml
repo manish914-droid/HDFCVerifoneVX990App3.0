@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/themeBackground"
-        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
 
-        <include
-            android:id="@+id/sub_header_view"
-            layout="@layout/sub_header_layout"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/themeBackground"
+            app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+            <include
+                android:id="@+id/sub_header_view"
+                layout="@layout/sub_header_layout"
             android:visibility="visible" />
 
         <TextView
@@ -25,73 +32,166 @@
             android:gravity="center"
             android:textAllCaps="true"
             android:textColor="@color/white"
-            android:textSize="@dimen/text_size_medium"
+            android:textSize="@dimen/text_size_regular"
             android:textStyle="normal"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
 
-        <com.example.customneumorphic.NeumorphCardView
-            android:id="@+id/selectAllCV"
-            style="@style/Widget.Neumorph.CardView"
-            android:layout_width="180dp"
-            android:layout_height="@dimen/pad_80"
-            android:layout_marginEnd="@dimen/pad_16"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/headingText"
-            app:neumorph_shadowColorDark="@color/upperShadow"
-            app:neumorph_shadowColorLight="@color/lowerShadow"
-            app:neumorph_shadowElevation="4dp"
-            app:neumorph_shapeType="pressed">
-
-            <ImageView
-                android:id="@+id/selectAllIV"
-                android:layout_width="@dimen/pad_24"
-                android:layout_height="@dimen/pad_24"
-                android:layout_gravity="center_vertical"
-                android:clickable="false"
-                android:contentDescription="@string/checked"
-                android:src="@drawable/circle_with_tick_mark"
-                android:visibility="gone" />
-
-            <com.example.customneumorphic.NeumorphButton
-                android:id="@+id/selectAll"
-                style="@style/Widget.Neumorph.TextView"
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/compare_buttons_ll"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:layout_marginStart="@dimen/pad_4"
-                android:gravity="center"
-                android:text="@string/selectAll"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/headingText">
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/compareByTenureCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/pad_80"
+                    android:layout_weight="1"
+                    android:padding="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="4dp"
+                    app:neumorph_shapeType="pressed"
+                    app:neumorph_strokeColor="@color/darkgray"
+                    app:neumorph_strokeWidth="@dimen/pad_1">
+
+                    <com.example.verifonevx990app.vxUtils.BHEditText
+                        android:id="@+id/compareByTenure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:text="@string/compare_by_tenure"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="@dimen/text_size_regular"
+                        app:fname="regular"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </com.example.customneumorphic.NeumorphCardView>
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/compareByBankCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/pad_80"
+                    android:layout_weight="1"
+                    android:padding="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="4dp"
+                    app:neumorph_shapeType="pressed">
+
+                    <com.example.verifonevx990app.vxUtils.BHEditText
+                        android:id="@+id/compareByBank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:text="@string/compare_by_bank"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="@dimen/text_size_regular"
+                        app:fname="regular"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+                </com.example.customneumorphic.NeumorphCardView>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <TextView
+                android:id="@+id/tenureHeadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:fontFamily="sans-serif"
+                android:gravity="start"
+                android:text="@string/select_tenure"
+                android:textAllCaps="true"
                 android:textColor="@color/white"
-                android:textColorHint="@color/transparent_white"
-                android:textSize="@dimen/text_size_regular" />
-        </com.example.customneumorphic.NeumorphCardView>
+                android:textSize="@dimen/text_size_regular"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/compare_buttons_ll" />
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/issuer_RV"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/selectAllCV" />
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tenure_RV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginTop="@dimen/pad_4"
+                android:layout_marginEnd="@dimen/pad_16"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tenureHeadingText" />
 
-        <ImageView
-            android:id="@+id/empty_view_placeholder"
-            android:layout_width="@dimen/standard_placeholder_size"
-            android:layout_height="@dimen/standard_placeholder_size"
-            android:background="@drawable/no_data_found"
-            android:contentDescription="@string/app_name"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/selectBankHeadingText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginTop="@dimen/pad_4"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:visibility="gone"
+                android:fontFamily="sans-serif"
+                android:gravity="start"
+                android:text="@string/select_banks_to_compare"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_regular"
+                android:textStyle="normal"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tenure_RV" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            <CheckBox
+                android:id="@+id/selectAllBankCheckButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginTop="@dimen/pad_2"
+                android:buttonTint="@color/white"
+                android:text="@string/select_all_banks"
+                android:textAllCaps="true"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small"
+                android:visibility="gone"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectBankHeadingText" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/issuer_RV"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginStart="@dimen/pad_16"
+                android:layout_marginTop="@dimen/pad_4"
+                android:layout_marginEnd="@dimen/pad_16"
+                android:visibility="gone"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/selectAllBankCheckButton" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/proceedEMICatalogue"
@@ -113,5 +213,5 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:rippleColor="@color/colorAccent" />
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.core.widget.NestedScrollView>

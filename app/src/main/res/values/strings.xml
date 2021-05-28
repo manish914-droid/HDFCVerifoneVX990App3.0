@@ -439,6 +439,17 @@
     <string name="powered_by">Powered by</string>
     <string name="enter_batch_number">Enter Batch number</string>
     <string name="enter_roc">Enter ROC</string>
+    <string name="calculate_and_compare_emi_offers"><![CDATA[Calculate & Compare EMI Offers:]]></string>
+    <string name="compare_by_tenure">Compare by Tenure</string>
+    <string name="compare_by_bank">Compare By Bank</string>
+    <string name="issuer_icon">Issuer Bank Icon</string>
+    <string name="select_tenure">1. Select Tenure:</string>
+    <string name="select_banks_to_compare">2. Select Banks To Compare:</string>
+    <string name="select_all_banks">Select All Banks</string>
+    <string name="select_bank_to_compare_tenure">1. Select Bank To Compare Tenure</string>
+    <string name="select_bank_to_compare">2. Select Bank To Compare</string>
+    <string name="select_bank">Select Bank</string>
+    <string name="unselect_all_banks">UnSelect All Banks</string>
 
 
 </resources>
