@@ -14,7 +14,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/white"
+            android:background="@color/themeBackground"
             android:descendantFocusability="blocksDescendants">
 
             <include
@@ -29,7 +29,7 @@
                 android:gravity="center"
                 android:padding="@dimen/pad_4"
                 android:text="@string/emi_scheme_and_offer"
-                android:textColor="@color/black"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_xregular"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

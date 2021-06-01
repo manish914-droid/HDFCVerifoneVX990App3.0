@@ -330,7 +330,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                 val brandTAndCData =
                     runBlocking(Dispatchers.IO) { BrandTAndCTable.getAllBrandTAndCData() }
                 iDialog?.showProgress()
-                if (issuerTAndCData.isEmpty() || brandTAndCData.isEmpty() || !matchHostAndDBData()) {
+                if (issuerTAndCData?.isEmpty() == true || brandTAndCData.isEmpty() || !matchHostAndDBData()) {
                     getIssuerTAndCData { issuerTCDataSaved ->
                         if (issuerTCDataSaved) {
                             getBrandTAndCData { brandTCDataSaved ->

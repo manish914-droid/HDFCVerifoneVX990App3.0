@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/linearLayoutParent"
+    style="@style/Widget.Neumorph.CardView"
+    android:layout_width="150dp"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:id="@+id/sub_linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <FrameLayout
+                android:id="@+id/frame_banks"
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/pad_60"
+                android:orientation="horizontal">
+
+                <com.example.customneumorphic.NeumorphButton
+                    android:id="@+id/topHeaderBT"
+                    style="@style/Widget.Neumorph.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:clickable="false"
+                    android:focusable="false"
+                    android:text="@string/hdfc"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_xsmall"
+                    app:neumorph_lightSource="rightBottom"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                <ImageView
+                    android:id="@+id/issuerDeleteIV"
+                    android:layout_width="@dimen/pad_16"
+                    android:layout_height="@dimen/pad_16"
+                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/pad_36"
+                    android:layout_marginBottom="@dimen/pad_10"
+                    android:clickable="false"
+                    android:contentDescription="@string/checked"
+                    android:src="@drawable/ic_close_24" />
+            </FrameLayout>
+
+            <TextView
+                android:id="@+id/transactionAmountTV"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="400000"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/discountAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="1000"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/loanAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="400000"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/roi"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="9.9%"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/emiAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="1222"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/totalWithInterest"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="450000"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/cashbackAmount"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="0.00"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/netCost"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="450000"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/transparent_white" />
+
+            <TextView
+                android:id="@+id/additionalOffer"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="0.00"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

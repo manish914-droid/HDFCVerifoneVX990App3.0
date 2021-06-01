@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fitsSystemWindows="true">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/themeBackground">
+
+            <include
+                android:id="@+id/sub_header_view"
+                layout="@layout/sub_header_layout"
+                android:visibility="visible" />
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:id="@+id/compare_buttons_ll"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/compareByTenureCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/pad_80"
+                    android:layout_weight="1"
+                    android:padding="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="4dp"
+                    app:neumorph_shapeType="pressed">
+
+                    <com.example.verifonevx990app.vxUtils.BHEditText
+                        android:id="@+id/compareByTenure"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:text="@string/compare_by_tenure"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="@dimen/text_size_regular"
+                        app:fname="regular"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent" />
+                </com.example.customneumorphic.NeumorphCardView>
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/compareByBankCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="0dp"
+                    android:layout_height="@dimen/pad_80"
+                    android:layout_weight="1"
+                    android:padding="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="4dp"
+                    app:neumorph_shapeType="pressed">
+
+                    <com.example.verifonevx990app.vxUtils.BHEditText
+                        android:id="@+id/compareByBank"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:gravity="center"
+                        android:lines="1"
+                        android:text="@string/compare_by_bank"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="@dimen/text_size_regular"
+                        app:fname="regular"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+                </com.example.customneumorphic.NeumorphCardView>
+            </androidx.appcompat.widget.LinearLayoutCompat>
+
+            <androidx.appcompat.widget.LinearLayoutCompat
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/compare_buttons_ll">
+
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:id="@+id/side_heading_options"
+                    android:layout_width="150dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/pad_24"
+                    android:orientation="vertical">
+
+                    <androidx.appcompat.widget.AppCompatImageView
+                        android:id="@+id/issuerBankIcon"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:contentDescription="@string/issuer_icon"
+                        android:scaleType="centerCrop"
+                        android:visibility="gone"
+                        app:srcCompat="@drawable/hdfc_dc_issuer_icon" />
+
+                    <androidx.appcompat.widget.AppCompatTextView
+                        android:id="@+id/tenureText"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:gravity="center"
+                        android:hint="@string/tenure_hint"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/white"
+                        android:textSize="@dimen/text_size_medium"
+                        android:visibility="gone" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/transactionAmountBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/transactionAmountNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/discountAmountBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/discountAmountNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/loanBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/loanNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/roiBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/roiNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/emiBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/emiNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/totalWithInterestBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/totalWithInterestNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/cashbackBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/cashbackNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/netCostBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/netCostNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+                    <com.example.customneumorphic.NeumorphButton
+                        android:id="@+id/additionalOfferBT"
+                        style="@style/Widget.Neumorph.Button"
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/pad_60"
+                        android:layout_gravity="start"
+                        android:text="@string/additionalOfferNew"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/text_size_xsmall"
+                        app:neumorph_lightSource="rightBottom"
+                        app:neumorph_shadowColorDark="@color/upperShadow"
+                        app:neumorph_shadowColorLight="@color/lowerShadow"
+                        app:neumorph_shadowElevation="2dp"
+                        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+                </androidx.appcompat.widget.LinearLayoutCompat>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/compareRV"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginTop="@dimen/pad_4"
+                    android:layout_weight="1" />
+            </androidx.appcompat.widget.LinearLayoutCompat>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.core.widget.NestedScrollView>

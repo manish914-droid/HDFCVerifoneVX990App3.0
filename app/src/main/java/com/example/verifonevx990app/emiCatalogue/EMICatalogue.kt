@@ -11,7 +11,6 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.databinding.FragmentEmiCatalogueBinding
 import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.transactions.NewInputAmountFragment
@@ -64,10 +63,7 @@ class EMICatalogue : Fragment() {
             (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("type", EDashboardItem.BANK_EMI_CATALOGUE)
-                    putString(
-                        MainActivity.INPUT_SUB_HEADING,
-                        SubHeaderTitle.Brand_EMI_Master_Category.title
-                    )
+                    putString(MainActivity.INPUT_SUB_HEADING, "")
                 }
             })
         }
@@ -78,10 +74,7 @@ class EMICatalogue : Fragment() {
             (activity as MainActivity).transactFragment(BrandEMIMasterCategoryFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("type", EDashboardItem.BRAND_EMI_CATALOGUE)
-                    putString(
-                        MainActivity.INPUT_SUB_HEADING,
-                        SubHeaderTitle.Brand_EMI_Master_Category.title
-                    )
+                    putString(MainActivity.INPUT_SUB_HEADING, "")
                 }
             })
         }

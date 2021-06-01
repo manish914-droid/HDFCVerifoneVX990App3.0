@@ -70,7 +70,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     var appBarLayout: AppBarLayout? = null
 
     //  private val bottomNavigationView by lazy { findViewById<BottomNavigationView>(R.id.ma_bnv) }
-    var merchantName = "X990 EMV Demo"
+    private var merchantName = "X990 EMV Demo"
     private var appUpdateProcCode = ProcessingCode.APP_UPDATE.code
     private var totalAppUpdateBytes = 0
     private var APP_UPDATE_REQUEST = 200
@@ -708,7 +708,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     transType = TransactionType.TEST_EMI.type
                 }
                 val data = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
-                if (data.isEmpty()) {
+                if (data?.isEmpty() == true) {
                     if (checkInternetConnection()) {
                         Log.d("Bank EMI Clicked:- ", "Clicked")
                         showProgress()
@@ -1158,12 +1158,18 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(
-                                    INPUT_SUB_HEADING,
-                                    SubHeaderTitle.Brand_EMI_Master_Category.title
-                                )
+                                putString(INPUT_SUB_HEADING, "")
                             }
                         })
+                        /*transactFragment(EMIIssuerList().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                putString("proc_code", ProcessingCode.PRE_AUTH.code)
+                                putString("mobileNumber", "")
+                                putString("enquiryAmt", "325")
+
+                            }
+                        })*/
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                     }
@@ -1221,7 +1227,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 ) {
                     val data =
                         runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
-                    if (data.isEmpty()) {
+                    if (data?.isEmpty() == true) {
                         if (checkInternetConnection()) {
                             showProgress()
                             Log.d("Bank EMI Clicked:- ", "Clicked")

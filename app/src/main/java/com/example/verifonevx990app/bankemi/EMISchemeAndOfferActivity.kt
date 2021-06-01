@@ -2,6 +2,7 @@ package com.example.verifonevx990app.bankemi
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -28,6 +29,7 @@ class EMISchemeAndOfferActivity : BaseActivity() {
     private var cardProcessedDataModal: CardProcessedDataModal? = null
     private var selectedSchemeUpdatedPosition = -1
     private var brandEMIData: BrandEMIDataTable? = null
+    private val transactionType by lazy { intent?.getIntExtra("transactionType", -1947) }
     private val emiSchemeAndOfferAdapter: EMISchemeAndOfferAdapter by lazy {
         EMISchemeAndOfferAdapter(
             emiSchemeOfferDataList,
@@ -39,7 +41,7 @@ class EMISchemeAndOfferActivity : BaseActivity() {
         super.onCreate(savedInstanceState)
         binding = EmiSchemeOfferViewBinding.inflate(layoutInflater)
         setContentView(binding?.root)
-        binding?.toolbarTxn?.mainToolbarStart?.setBackgroundResource(R.drawable.ic_back_arrow)
+        binding?.toolbarTxn?.mainToolbarStart?.setBackgroundResource(R.drawable.ic_back_arrow_white)
         ROCProviderV2.refreshToolbarLogos(this)
         binding?.toolbarTxn?.mainToolbarStart?.setOnClickListener {
             navigateControlBackToTransaction(
@@ -47,6 +49,10 @@ class EMISchemeAndOfferActivity : BaseActivity() {
             )
         }
         showProgress()
+
+        //region==============Below Code will only execute in case of Insta EMI sale to fetch IssuerTAndC Data:-
+        if (transactionType == TransactionType.EMI_SALE.type) runBlocking(Dispatchers.IO) { fetchAndSaveIssuerTCData() }
+        //endregion
 
         /*region====================Checking Condition whether Previous Transaction Flow Comes from Brand EMI:-
         if(true)-------> Fetch Selected Brand EMI Data for IMEI and Other Validations if bits are on
@@ -181,11 +187,11 @@ internal class EMISchemeAndOfferAdapter(
 
         //region==========================Checked Particular Row of RecyclerView Logic:-
         if (index == position) {
-            holder.binding.cardView.strokeColor = Color.parseColor("#13E113")
+            holder.binding.cardView.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#13E113")))
             holder.binding.schemeCheckIv.visibility = View.VISIBLE
             schemeSelectCB(position)
         } else {
-            holder.binding.cardView.strokeColor = Color.parseColor("#FFFFFF")
+            holder.binding.cardView.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#FFFFFF")))
             holder.binding.schemeCheckIv.visibility = View.GONE
         }
         //endregion

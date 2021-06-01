@@ -450,6 +450,14 @@
     <string name="select_bank_to_compare">2. Select Bank To Compare</string>
     <string name="select_bank">Select Bank</string>
     <string name="unselect_all_banks">UnSelect All Banks</string>
-
-
+    <string name="transactionAmountNew">Transaction \n Amount(\u20B9)</string>
+    <string name="discountAmountNew">Discount \n Amount(\u20B9)</string>
+    <string name="loanNew">Loan(\u20B9)</string>
+    <string name="roiNew">Roi(%)</string>
+    <string name="emiNew">Emi(\u20B9)</string>
+    <string name="totalWithInterestNew">Total \n (With Int.)</string>
+    <string name="cashbackNew">Cashback(\u20B9)</string>
+    <string name="netCostNew">Net Cost(\u20B9)</string>
+    <string name="additionalOfferNew">Add. Offer</string>
+    <string name="tenure_hint">3 MONTHS</string>
 </resources>

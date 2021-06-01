@@ -23,7 +23,9 @@ import androidx.appcompat.app.AlertDialog
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.BuildConfig
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
+import com.example.verifonevx990app.emiCatalogue.IssuerBankModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.init.getEditorActionListener
 import com.example.verifonevx990app.main.CardAid
@@ -2282,6 +2284,62 @@ fun selectEditText(
     selectedEditText.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
     selectedEditText.setStrokeWidth(1f)
 }
+
+//region============================IssuerTAndC Data Call:-
+fun fetchAndSaveIssuerTCData() {
+    val data = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+    if (data?.isEmpty() == true) {
+        GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
+            val issuerTAndCData = issuerTermsAndConditionData.first
+            val responseBool = issuerTermsAndConditionData.second
+            if (issuerTAndCData.isNotEmpty() && responseBool) {
+                //region================Insert IssuerTAndC and Brand TAndC in DB:-
+                //Issuer TAndC Inserting:-
+                for (i in 0 until issuerTAndCData.size) {
+                    val issuerModel = IssuerTAndCTable()
+                    if (!TextUtils.isEmpty(issuerTAndCData[i])) {
+                        val splitData = parseDataListWithSplitter(
+                            SplitterTypes.CARET.splitter,
+                            issuerTAndCData[i]
+                        )
+
+                        if (splitData.size > 2) {
+                            issuerModel.issuerId = splitData[0]
+                            issuerModel.headerTAndC = splitData[1]
+                            issuerModel.footerTAndC = splitData[2]
+                        } else {
+                            issuerModel.issuerId = splitData[0]
+                            issuerModel.headerTAndC = splitData[1]
+                        }
+
+                        runBlocking(Dispatchers.IO) {
+                            IssuerTAndCTable.performOperation(issuerModel)
+                        }
+                    }
+                }
+            }
+        }
+    } else
+        Log.d("IssuerTCData:- ", Gson().toJson(data))
+}
+//endregion
+
+//region===============Convert Map Data To MutableList:-
+fun convertMapToList(dataMap: MutableMap<String, IssuerBankModal>): MutableList<IssuerBankModal> {
+    val dataList = mutableListOf<IssuerBankModal>()
+    for ((_, value) in dataMap.entries) {
+        dataList.add(
+            IssuerBankModal(
+                value.issuerBankName,
+                value.issuerBankTenure,
+                value.issuerID,
+                value.bankLogo
+            )
+        )
+    }
+    return dataList
+}
+//endregion
 
 /*
 App Update Through FTP Steps:-

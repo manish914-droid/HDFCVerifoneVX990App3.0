@@ -693,6 +693,10 @@ class ProcessCard(
                                                                                 "cardProcessedData",
                                                                                 it
                                                                             )
+                                                                            putExtra(
+                                                                                "transactionType",
+                                                                                it.getTransType()
+                                                                            )
                                                                         },
                                                                         EIntentRequest.BankEMISchemeOffer.code
                                                                     )

@@ -3878,7 +3878,7 @@ open class IssuerTAndCTable() : RealmObject(), Parcelable {
             withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All IssuerTAndC Data================
-        fun getAllIssuerTAndCData(): MutableList<IssuerTAndCTable> = runBlocking {
+        fun getAllIssuerTAndCData(): MutableList<IssuerTAndCTable>? = runBlocking {
             var result = mutableListOf<IssuerTAndCTable>()
             getRealm {
                 val re = it.copyFromRealm(it.where(IssuerTAndCTable::class.java).findAll())

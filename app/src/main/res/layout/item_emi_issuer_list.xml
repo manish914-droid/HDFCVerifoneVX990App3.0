@@ -5,11 +5,11 @@
     android:layout_height="@dimen/pad_80"
     android:orientation="horizontal">
 
-        <ImageView
-            android:id="@+id/issuerBankLogo"
-            android:layout_width="80dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/pad_4"
+    <ImageView
+        android:id="@+id/issuerBankLogo"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pad_4"
             android:contentDescription="@string/issuer_icon"
             android:scaleType="centerCrop"
             android:src="@drawable/kotak_issuer_icon" />
