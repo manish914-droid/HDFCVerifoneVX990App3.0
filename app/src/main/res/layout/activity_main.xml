@@ -68,6 +68,7 @@
               android:background="@color/white"
               app:menu="@menu/bottom_navigation_menu" />-->
         <LinearLayout
+            android:id="@+id/powereBy_footer_LL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="#25282D"
@@ -76,9 +77,10 @@
             <com.example.verifonevx990app.vxUtils.BHTextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:drawableEnd="@drawable/ic_bonushub_logo"
+                android:drawableEnd="@drawable/ic_bonushub_white_logo"
                 android:gravity="center"
                 android:text="@string/powered_by"
+                android:drawablePadding="@dimen/pad_4"
                 android:textColor="@color/gray_bg"
 
                 android:textSize="@dimen/text_size_regular" />

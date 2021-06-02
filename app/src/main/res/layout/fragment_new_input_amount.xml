@@ -10,6 +10,7 @@
         android:id="@+id/parent_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+
         android:orientation="vertical"
         android:layout_marginBottom="@dimen/pad_4">
 
@@ -54,9 +55,9 @@
                 android:paddingEnd="@dimen/pad_16"
                 android:paddingTop="@dimen/pad_8"
                 android:paddingBottom="@dimen/pad_8"
-                android:text="@string/default_amount"
+                android:hint="@string/enter_amount"
                 android:textSize="@dimen/key_text_size"
-                android:textColorHint="@color/white"
+                android:textColorHint="@color/colorGrey"
                 android:textColor="@color/white" />
 
         </com.example.customneumorphic.NeumorphCardView>
@@ -99,11 +100,11 @@
                 android:drawableStart="@drawable/ic_indian_rupee"
                 android:paddingTop="@dimen/pad_8"
                 android:paddingEnd="@dimen/pad_16"
-                android:text="@string/default_amount"
+                android:hint="@string/enter_cash_amount"
                 android:textSize="@dimen/key_text_size"
                 android:paddingBottom="@dimen/pad_8"
                 android:textColor="@color/white"
-
+                android:textColorHint="@color/colorGrey"
                 />
         </com.example.customneumorphic.NeumorphCardView>
 
@@ -116,7 +117,7 @@
             app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
             app:neumorph_shadowColorDark="@color/lowerShadow"
             app:neumorph_shadowColorLight="@color/upperShadow"
-            android:visibility="visible"
+            android:visibility="gone"
             app:neumorph_shadowElevation="4dp"
 
             app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
@@ -133,16 +134,16 @@
                 android:layout_margin="@dimen/pad_12"
                 android:background="@null"
                 android:cursorVisible="false"
-                android:ems="9"
+
                 android:focusable="false"
                 android:focusableInTouchMode="false"
 
-                android:gravity="center"
+                android:drawableStart="@drawable/ic_mobile_icon"
                 android:inputType="none"
                 android:maxLength="13"
                 android:maxLines="1"
-
-                android:drawableStart="@drawable/ic_indian_rupee"
+                android:gravity="end"
+                android:textColorHint="@color/colorGrey"
                 android:textSize="@dimen/key_text_size"
                 android:hint="@string/enter_mobile_number"
                 android:textColor="@color/white"
@@ -155,14 +156,12 @@
             android:id="@+id/main_keyBoard"
             layout="@layout/new_enter_amount_keyboard"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-
+            android:layout_height="0dp"
+            android:layout_marginBottom="52dp"
             android:visibility="visible"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mob_no_crdView" />
+            app:layout_constraintStart_toStartOf="parent" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

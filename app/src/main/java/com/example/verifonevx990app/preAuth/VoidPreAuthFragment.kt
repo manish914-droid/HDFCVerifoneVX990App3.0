@@ -1,6 +1,8 @@
 package com.example.verifonevx990app.preAuth
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +11,7 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentVoidPreAuthBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
@@ -38,13 +41,18 @@ class VoidPreAuthFragment : Fragment() {
         return binding?.root
     }
 
+    override fun onDetach() {
+        super.onDetach()
+        hideSoftKeyboard(requireActivity())
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = title
 
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            hideSoftKeyboard(requireActivity())
             parentFragmentManager.popBackStackImmediate()
+
         }
 
         //region================VOID ROC OnClick Event:-
@@ -91,6 +99,14 @@ class VoidPreAuthFragment : Fragment() {
         // dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
         dialog.setCancelable(false)
         dialog.setContentView(R.layout.auth_complete_confirm_dialog)
+
+        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+        var window = dialog.window
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
+
         dialog.findViewById<LinearLayout>(R.id.tid_ll)?.visibility = View.GONE
         dialog.findViewById<LinearLayout>(R.id.amount_ll)?.visibility = View.GONE
         dialog.findViewById<BHTextView>(R.id.roc_auth)?.text =
@@ -98,20 +114,15 @@ class VoidPreAuthFragment : Fragment() {
         dialog.findViewById<BHTextView>(R.id.batchno_auth)?.text =
             authData.authBatchNo?.let { invoiceWithPadding(it) }
 
-        dialog.findViewById<BHButton>(R.id.cancel_btnn)?.setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.cancel_btnn)?.setOnClickListener {
             dialog.dismiss()
         }
-        dialog.findViewById<BHButton>(R.id.ok_btnn)?.setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.ok_btnn)?.setOnClickListener {
             voidAuthDataCreation(authData)
             dialog.dismiss()
         }
-        dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
-        val window = dialog.window
-        window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
         dialog.show()
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     private fun voidAuthDataCreation(authCompletionData: AuthCompletionData) {

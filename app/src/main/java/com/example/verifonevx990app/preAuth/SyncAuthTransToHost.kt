@@ -75,7 +75,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                 stubbedData, autoSettlementCheck,
                                 it
                             ) { isSuccess, msg ->
-                                cb(isSuccess, msg)
+                                cb(true, msg)
 
                             }
                         }
@@ -102,8 +102,14 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                                                 autoSettlementCheck.substring(
                                                     0,
                                                     1
-                                                ), activityContext!!, cb
-                                            )
+                                                ), activityContext!!
+                                            ) { isucc, msg ->
+                                                cb(
+                                                    false,
+                                                    responseIsoData.isoMap[58]?.parseRaw2String()
+                                                        .toString()
+                                                )
+                                            }
                                         else {
                                             // activityContext?.startActivity(Intent((activityContext as BaseActivity), MainActivity::class.java).apply { flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK })
                                             cb(
@@ -286,6 +292,12 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()
+                    syncAuthTransactionCallback(
+                        false,
+                        "Something went wrong",
+                        result
+                    )
+                    Log.e("EXCEPTION", "Something went wrong")
                 }
             }, {
                 //backToCalled(it, false, true)

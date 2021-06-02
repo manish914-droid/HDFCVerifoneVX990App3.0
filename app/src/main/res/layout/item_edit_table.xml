@@ -1,13 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ifsm_parent_ll"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Neumorph.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_margin="@dimen/pad_8"
-    android:elevation="@dimen/pad_4"
-    app:cardBackgroundColor="@color/item_background_color"
-    app:cardCornerRadius="@dimen/pad_4">
+    android:layout_marginTop="@dimen/pad_6"
+    android:padding="@dimen/pad_6"
+    app:neumorph_inset="@dimen/pad_6"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+    app:neumorph_shapeType="flat"
+
+    >
+
 
     <RelativeLayout
         android:layout_width="match_parent"
@@ -29,7 +38,7 @@
                 android:padding="@dimen/pad_4"
                 android:text="ADMIN PASSWORD OF TERMINAL"
                 android:textAllCaps="true"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_regular" />
 
             <TextView
@@ -39,7 +48,7 @@
                 android:gravity="center"
                 android:padding="@dimen/pad_4"
                 android:text="112222366673623626326"
-                android:textColor="@color/colorPrimary"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_regular" />
 
         </LinearLayout>
@@ -67,7 +76,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:text="Edit"
-
+                android:textColor="@color/gray_bg"
                 android:textSize="@dimen/text_size_small"
 
                 />
@@ -76,4 +85,4 @@
 
     </RelativeLayout>
 
-</androidx.cardview.widget.CardView>
+</com.example.customneumorphic.NeumorphCardView>

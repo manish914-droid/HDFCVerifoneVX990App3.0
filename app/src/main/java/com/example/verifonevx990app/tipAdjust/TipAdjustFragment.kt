@@ -1,13 +1,22 @@
 package com.example.verifonevx990app.tipAdjust
 
+import android.app.Dialog
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
+import android.widget.Button
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphButton
+import com.example.customneumorphic.ShapeType
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentTipAdjustBinding
 import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
@@ -18,12 +27,14 @@ import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.IssuerParameterTable
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.HexStringConverter
+import com.example.verifonevx990app.utils.KeyboardModel
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.utils.printerUtils.checkForPrintReversalReceipt
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import kotlinx.coroutines.*
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -37,6 +48,23 @@ class TipAdjustFragment : Fragment() {
 
     private val tpt by lazy { TerminalParameterTable.selectFromSchemeTable() }
     private var binding: FragmentTipAdjustBinding? = null
+
+    private val keyModelTipAmount: KeyboardModel by lazy {
+        KeyboardModel()
+    }
+    private val keyModelInvoiceNumber: KeyboardModel by lazy {
+        KeyboardModel()
+    }
+
+    var inputInTipAmount = false
+    var inputInInvoiceNumber = false
+    private var animShow: Animation? = null
+    private var animHide: Animation? = null
+
+    private fun initAnimation() {
+        animShow = AnimationUtils.loadAnimation(activity, R.anim.view_show)
+        animHide = AnimationUtils.loadAnimation(activity, R.anim.view_hide)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,18 +80,224 @@ class TipAdjustFragment : Fragment() {
         itemType = arguments?.getSerializable("action") as EDashboardItem
         binding?.subHeaderView?.subHeaderText?.text = title
         itemType?.res?.let { binding?.subHeaderView?.headerImage?.setBackgroundResource(it) }
-        binding?.tipOnInvoiceEt?.isFocusableInTouchMode = true
-        binding?.tipOnInvoiceEt?.requestFocus()
+        initAnimation()
+        binding?.mainKeyBoard?.root?.visibility = View.VISIBLE
+        binding?.mainKeyBoard?.root?.startAnimation(animShow)
+        keyModelInvoiceNumber.view = binding?.tipOnInvoiceEt
+        keyModelInvoiceNumber.callback = ::onOKClicked
+        keyModelInvoiceNumber.isInutSimpleDigit = true
+        inputInTipAmount = false
+        inputInInvoiceNumber = true
+
+        binding?.tipAmtCrdView?.setShapeType(ShapeType.FLAT)
+        binding?.invoiceCrdView?.setShapeType(ShapeType.BASIN)
+
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
         }
-        binding?.authVoidBtn?.setOnClickListener {
+        /*binding?.authVoidBtn?.setOnClickListener {
             validate()
+        }*/
+
+        binding?.tipAmountEt?.setOnClickListener {
+            keyModelTipAmount.view = it
+            keyModelTipAmount.callback = ::onOKClicked
+            inputInTipAmount = true
+            inputInInvoiceNumber = false
+
+
+            binding?.tipAmtCrdView?.setShapeType(ShapeType.BASIN)
+            binding?.invoiceCrdView?.setShapeType(ShapeType.FLAT)
+
         }
 
 
+        binding?.tipOnInvoiceEt?.setOnClickListener {
+            keyModelInvoiceNumber.view = it
+            keyModelInvoiceNumber.callback = ::onOKClicked
+            keyModelInvoiceNumber.isInutSimpleDigit = true
+            inputInTipAmount = false
+            inputInInvoiceNumber = true
+
+            binding?.tipAmtCrdView?.setShapeType(ShapeType.FLAT)
+            binding?.invoiceCrdView?.setShapeType(ShapeType.BASIN)
+        }
+        onSetKeyBoardButtonClick()
     }
 
+    private fun onSetKeyBoardButtonClick() {
+        binding?.mainKeyBoard?.key0?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("0")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("0")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key00?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("00")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("00")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key000?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("000")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("000")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key1?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("1")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("1")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key2?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    Log.e("SALE", "KEY 2")
+                    keyModelTipAmount.onKeyClicked("2")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("2")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key3?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("3")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("3")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key4?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("4")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("4")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key5?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("5")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("5")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key6?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("6")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("6")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key7?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("7")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("7")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key8?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("8")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("8")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key9?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("9")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("9")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyClr?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("c")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("c")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("d")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("d")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyOK?.setOnClickListener {
+            when {
+                inputInTipAmount -> {
+                    keyModelTipAmount.onKeyClicked("o")
+                }
+                inputInInvoiceNumber -> {
+                    keyModelInvoiceNumber.onKeyClicked("o")
+                }
+
+            }
+        }
+
+    }
+
+    private fun onOKClicked(str: String) {
+
+        validate()
+    }
 
     private fun validate() {
         if (tpt != null) {
@@ -82,7 +316,6 @@ class TipAdjustFragment : Fragment() {
                     VFService.showToast(msg)
                     return
                 }
-
                 val maxTipPercent =
                     if (tpt?.maxTipPercent?.isEmpty() == true) 0f else (tpt?.maxTipPercent?.toFloat())?.div(
                         100
@@ -96,15 +329,19 @@ class TipAdjustFragment : Fragment() {
 
                 if (maxTipLimit != 0f) { // flat tip check is applied
                     if (amount <= maxTipLimit) {
-                        (activity as BaseActivity).showProgress()
-                        GlobalScope.launch { createSendISOtoServer(amount, batch) }
+                        /*(activity as BaseActivity).showProgress()
+                        GlobalScope.launch { createSendISOtoServer(amount, batch) }*/
+                        tipAdjustConfirmationDialog(batch, amount)
+
                     } else {
                         val msg = "Maximum tip allowed on this terminal is \u20B9 ${
                             "%.2f".format(
                                 maxTipLimit
                             )
                         }."
-                        (activity as BaseActivity).getInfoDialog("Tip Sale Error", msg) {}
+                        GlobalScope.launch(Dispatchers.Main) {
+                            (activity as BaseActivity).getInfoDialog("Tip Sale Error", msg) {}
+                        }
                     }
                 } else { // percent tip check is applied
                     val saleAmt = batch.transactionalAmmount.toFloat() / 100
@@ -114,8 +351,14 @@ class TipAdjustFragment : Fragment() {
                     val maxAmountTip = (maxTipPercent / 100) * saleAmt
                     val formatMaxTipAmount = "%.2f".format(maxAmountTip)
                     if (amount <= maxAmountTip) {
-                        (activity as BaseActivity).showProgress()
-                        GlobalScope.launch { createSendISOtoServer(amount, batch) }
+                        /* GlobalScope.launch {
+                             withContext(Dispatchers.Main) {
+                                 (activity as BaseActivity).showProgress()
+                             }
+                             createSendISOtoServer(amount, batch)
+                         }*/
+                        tipAdjustConfirmationDialog(batch, amount)
+
                     } else {
                         //    val tipAmt = saleAmt * per / 100
                         val msg =
@@ -128,20 +371,92 @@ class TipAdjustFragment : Fragment() {
                                     formatMaxTipAmount.toDouble()
                                 )
                             }"
-                        (activity as BaseActivity).getInfoDialog("Tip Sale Error", msg) {}
+                        GlobalScope.launch(Dispatchers.Main) {
+                            (activity as BaseActivity).getInfoDialog("Tip Sale Error", msg) {}
+
+                        }
                     }
                 }
 
             } else if (batch == null) {
-                binding?.tipOnInvoiceEt?.error = "No Invoice Found."
+
+                VFService.showToast("No Invoice Found.")
+                //    binding?.tipOnInvoiceEt?.error = "No Invoice Found."
+
             } else if (amount == 0f) {
+                VFService.showToast("Enter Amount.")
                 binding?.tipAmountEt?.error = "Enter Amount."
+
             } else if (batch.transactionType != TransactionType.SALE.ordinal) {
                 val msg = "Tip sale is not valid for ${batch.getTransactionType()}"
                 VFService.showToast(msg)
             }
         }
     }
+
+    //Below method is used to show confirmation pop up for Void Offline Sale:-
+    private fun tipAdjustConfirmationDialog(batchData: BatchFileDataTable, tipAmount: Float) {
+        GlobalScope.launch(Dispatchers.Main) {
+            val dialog = Dialog(requireActivity())
+            dialog.setCancelable(false)
+            dialog.setContentView(R.layout.void_offline_confirmation_dialog_view)
+
+            dialog.window?.attributes?.windowAnimations = R.style.DialogAnimation
+            val window = dialog.window
+            window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            val transactionName = "TIP ADJUST"
+            dialog.findViewById<NeumorphButton>(R.id.transType)?.text = transactionName
+            dialog.findViewById<BHTextView>(R.id.dateET)?.text = batchData.transactionDate
+            dialog.findViewById<BHTextView>(R.id.confirmation_txt).visibility = View.VISIBLE
+            val time = batchData.time
+            val timeFormat = SimpleDateFormat("HHmmss", Locale.getDefault())
+            val timeFormat2 = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+            var formattedTime = ""
+            try {
+                val t1 = timeFormat.parse(time)
+                formattedTime = timeFormat2.format(t1)
+                Log.e("Time", formattedTime)
+            } catch (e: ParseException) {
+                e.printStackTrace()
+            }
+
+            dialog.findViewById<BHTextView>(R.id.timeET)?.text = formattedTime
+            dialog.findViewById<BHTextView>(R.id.tidET)?.text = batchData.tid
+            dialog.findViewById<BHTextView>(R.id.invoiceET)?.text =
+                invoiceWithPadding(batchData.invoiceNumber)
+            val amt = batchData.totalAmmount.toFloat() / 100f
+
+            dialog.findViewById<BHTextView>(R.id.amountTV)?.text = "%.2f".format(amt)
+            //  }
+            dialog.findViewById<Button>(R.id.cancel_btnn).apply {
+                text = "No"
+                setOnClickListener {
+                    // voidRefundBT?.isEnabled = true
+                    dialog.dismiss()
+                }
+            }
+            dialog.findViewById<Button>(R.id.ok_btnn).apply {
+                setOnClickListener {
+                    text = "Yes"
+                    dialog.dismiss()
+                    GlobalScope.launch {
+                        withContext(Dispatchers.Main) {
+                            (activity as BaseActivity).showProgress()
+                        }
+                        createSendISOtoServer(tipAmount, batchData)
+                    }
+
+                }
+            }
+            dialog.show()
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        }
+    }
+
 
     private suspend fun checkReversalPerformTipAdjustTransaction(
         transactionISOByteArray: IsoDataWriter,
@@ -405,6 +720,7 @@ class TipAdjustFragment : Fragment() {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
     }
+
 
     private suspend fun createSendISOtoServer(tipAmt: Float, batch: BatchFileDataTable) {
         val tipAdjustISO = createTipAdjustISO(tipAmt, batch)

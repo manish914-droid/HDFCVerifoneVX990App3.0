@@ -1503,6 +1503,7 @@ fun showMobileBillDialog(
                         ) == "1"
                     ) {
                         when {
+                            //  when mobile number entered
                             !TextUtils.isEmpty(mobileNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
                                 dialog.dismiss()
                                 dialogCB(Triple(mobileNumberET?.text.toString(), "", third = true))
@@ -2259,7 +2260,7 @@ fun showEditTextSelected(
 
 //region================Show UnSelected EditText:-
 fun showEditTextUnSelected(
-    editText: BHEditText? = null,
+    editText: EditText? = null,
     cardView: NeumorphCardView?,
     context: Context?
 ) {
@@ -2270,6 +2271,14 @@ fun showEditTextUnSelected(
     imm?.showSoftInput(editText, 0)
     cardView?.setStrokeColor(null)
     cardView?.setStrokeWidth(0f)
+}
+
+fun showOtherEditTextUnSelected(hm: HashMap<NeumorphCardView?, EditText?>, context: Context?) {
+    for (i in hm) {
+        val cardView = i.key
+        val editText = i.value
+        showEditTextUnSelected(editText, cardView, context)
+    }
 }
 //endregion
 

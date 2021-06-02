@@ -554,7 +554,8 @@ class KeyExchanger(
                         if (tpt != null) {
                             getPromotionData(
                                 "000000000000",
-                                ProcessingCode.INITIALIZE_PROMOTION.code, tpt
+                                ProcessingCode.INITIALIZE_PROMOTION.code,
+                                tpt
                             ) { isSuccess, responseMsg, responsef57, fullResponse ->
                                 if (isSuccess) {
                                     val spliter = responsef57.split("|")
@@ -584,6 +585,8 @@ class KeyExchanger(
                                     }
                                 }
                             }
+                            getDidiPosStatus()
+
                         }
                     }
                     // endregion================
@@ -940,4 +943,9 @@ suspend fun getPromotionData(
             }
         }, {})
     }
+}
+
+suspend fun getDidiPosStatus() {
+
+
 }

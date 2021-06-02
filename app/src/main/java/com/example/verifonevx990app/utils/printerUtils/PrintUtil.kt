@@ -599,6 +599,8 @@ class PrintUtil(context: Context?) {
                     )
                 }
                 TransactionType.TIP_SALE.type -> {
+                    saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
+
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "SALE AMOUNT  :    Rs  ${

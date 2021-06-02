@@ -1,6 +1,6 @@
-
 package com.example.verifonevx990app.transactions
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -33,14 +33,21 @@ import kotlinx.coroutines.*
 import java.util.*
 
 class NewInputAmountFragment : Fragment() {
+
+    val tpt = TerminalParameterTable.selectFromSchemeTable()
+
     private val keyModelSaleAmount: KeyboardModel by lazy {
         KeyboardModel()
     }
     private val keyModelCashAmount: KeyboardModel by lazy {
         KeyboardModel()
     }
+    private val keyModelMobNumber: KeyboardModel by lazy {
+        KeyboardModel()
+    }
     var inputInSaleAmount = false
     var inputInCashAmount = false
+    var inputInMobilenumber = false
     private lateinit var transactionType: EDashboardItem
     private var iFrReq: IFragmentRequest? = null
     private var subHeaderText: TextView? = null
@@ -53,28 +60,44 @@ class NewInputAmountFragment : Fragment() {
     private var binding: FragmentNewInputAmountBinding? = null
     private var brandEMIDataModal: BrandEMIDataModal? = null
 
+    private var animShow: Animation? = null
+    private var animHide: Animation? = null
+
+    override fun onAttach(activity: Activity) {
+        super.onAttach(activity)
+        if (activity is MainActivity) {
+            activity.hidePoweredByFooter()
+        }
+
+    }
 
     override fun onCreateView(
-            inflater: LayoutInflater,
-            container: ViewGroup?,
-            savedInstanceState: Bundle?
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentNewInputAmountBinding.inflate(inflater, container, false)
         return binding?.root
     }
 
-    private var animShow: Animation? = null
-    private var animHide: Animation? = null
+
     private fun initAnimation() {
         animShow = AnimationUtils.loadAnimation(activity, R.anim.view_show)
         animHide = AnimationUtils.loadAnimation(activity, R.anim.view_hide)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        ///   (activity as NavigationActivity).showBottomNavigationBar(isShow = false)
-        //    (activity as AppCompatActivity?)?.supportActionBar?.hide()
-        //    (activity as MainActivity).isAppbarVisibleOrGone(false)
+
+        transactionType = arguments?.getSerializable("type") as EDashboardItem
+        isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
+            if (isMobileNeeded) {
+                binding?.mobNoCrdView?.visibility = View.VISIBLE
+            } else {
+                binding?.mobNoCrdView?.visibility = View.GONE
+            }
+        }
 
         val hdfcTPTData = getHDFCTptData()
         //todo change below
@@ -91,13 +114,12 @@ class NewInputAmountFragment : Fragment() {
 
         cashAmount = view.findViewById(R.id.cashAmount)
         ///  navController = Navigation.findNavController(view)
-        transactionType = arguments?.getSerializable("type") as EDashboardItem
         subHeaderImage = view.findViewById(R.id.header_Image)
         subHeaderImage?.visibility = View.VISIBLE
         subHeaderImage?.setImageResource(transactionType.res)
         if (transactionType == EDashboardItem.SALE_WITH_CASH) {
             //  binding?.enterCashAmountTv?.visibility = View.VISIBLE
-            cashAmount?.visibility = View.VISIBLE
+            binding?.cashAmtCrdView?.visibility = View.VISIBLE
             cashAmount?.hint = VerifoneApp.appContext.getString(R.string.cash_amount)
             //   binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.cash_amount)
 
@@ -110,11 +132,13 @@ class NewInputAmountFragment : Fragment() {
 
             } else {
                 cashAmount?.visibility = View.GONE
+                binding?.cashAmtCrdView?.visibility = View.GONE
                 //  binding?.enterCashAmountTv?.visibility = View.GONE
 
             }
         } else {
             cashAmount?.visibility = View.GONE
+            binding?.cashAmtCrdView?.visibility = View.GONE
             //   binding?.enterCashAmountTv?.visibility = View.GONE
         }
 
@@ -144,66 +168,55 @@ class NewInputAmountFragment : Fragment() {
         keyModelSaleAmount.callback = ::onOKClicked
         inputInSaleAmount = true
         inputInCashAmount = false
+        inputInMobilenumber = false
         // binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_selected)
         binding?.saleAmtCrdView?.setShapeType(ShapeType.BASIN)
 
         if (hdfcTPTData != null) {
             binding?.saleAmount?.filters = arrayOf<InputFilter>(
-                    InputFilter.LengthFilter(
-                            hdfcTPTData.transAmountDigit.toInt()
-                    )
+                InputFilter.LengthFilter(
+                    hdfcTPTData.transAmountDigit.toInt()
+                )
             )
         }
-        /*  binding?.enterSaleAmtTv?.setTextColor(
-              ContextCompat.getColor(
-                  VerifoneApp.appContext,
-                  R.color.colorPrimary
-              )
-          )*/
+
         binding?.saleAmount?.setOnClickListener {
             keyModelSaleAmount.view = it
             keyModelSaleAmount.callback = ::onOKClicked
             inputInSaleAmount = true
             inputInCashAmount = false
-            //    it.setBackgroundResource(R.drawable.et_bg_selected)
-            //  cashAmount?.setBackgroundResource(R.drawable.et_bg_un)
-            /* binding?.enterSaleAmtTv?.setTextColor(
-                 ContextCompat.getColor(
-                     VerifoneApp.appContext,
-                     R.color.colorPrimary
-                 )
-             )
-             binding?.enterCashAmountTv?.setTextColor(
-                 ContextCompat.getColor(
-                     VerifoneApp.appContext,
-                     R.color.black
-                 )
-             )*/
+            inputInMobilenumber = false
+
             binding?.saleAmtCrdView?.setShapeType(ShapeType.BASIN)
             binding?.cashAmtCrdView?.setShapeType(ShapeType.FLAT)
+            binding?.mobNoCrdView?.setShapeType(ShapeType.FLAT)
         }
+
         cashAmount?.setOnClickListener {
             keyModelCashAmount.view = it
             keyModelCashAmount.callback = ::onOKClicked
             inputInSaleAmount = false
             inputInCashAmount = true
-            //   it.setBackgroundResource(R.drawable.et_bg_selected)
-            // binding?.saleAmount?.setBackgroundResource(R.drawable.et_bg_un)
-            /* binding?.enterSaleAmtTv?.setTextColor(
-                 ContextCompat.getColor(
-                     VerifoneApp.appContext,
-                     R.color.colorPrimary
-                 )
-             )
-             binding?.enterSaleAmtTv?.setTextColor(
-                 ContextCompat.getColor(
-                     VerifoneApp.appContext,
-                     R.color.black
-                 )
-             )*/
+            inputInMobilenumber = false
+
             binding?.saleAmtCrdView?.setShapeType(ShapeType.FLAT)
             binding?.cashAmtCrdView?.setShapeType(ShapeType.BASIN)
+            binding?.mobNoCrdView?.setShapeType(ShapeType.FLAT)
         }
+
+        binding?.mobNumbr?.setOnClickListener {
+            keyModelMobNumber.view = it
+            keyModelMobNumber.callback = ::onOKClicked
+            keyModelMobNumber.isInutSimpleDigit = true
+            inputInSaleAmount = false
+            inputInCashAmount = false
+            inputInMobilenumber = true
+
+            binding?.saleAmtCrdView?.setShapeType(ShapeType.FLAT)
+            binding?.cashAmtCrdView?.setShapeType(ShapeType.FLAT)
+            binding?.mobNoCrdView?.setShapeType(ShapeType.BASIN)
+        }
+
         onSetKeyBoardButtonClick()
 
     }
@@ -226,114 +239,205 @@ class NewInputAmountFragment : Fragment() {
         super.onDetach()
         iFrReq = null
         iDialog = null
+        (activity as MainActivity).showPoweredByFooter()
     }
 
     private fun onSetKeyBoardButtonClick() {
         binding?.mainKeyBoard?.key0?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("0")
-            } else {
-                keyModelCashAmount.onKeyClicked("0")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("0")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("0")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("0")
+                }
             }
         }
         binding?.mainKeyBoard?.key00?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("00")
-            } else {
-                keyModelCashAmount.onKeyClicked("00")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("00")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("00")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("00")
+                }
             }
         }
         binding?.mainKeyBoard?.key000?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("000")
-            } else {
-                keyModelCashAmount.onKeyClicked("000")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("000")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("000")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("000")
+                }
             }
         }
         binding?.mainKeyBoard?.key1?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("1")
-            } else {
-                keyModelCashAmount.onKeyClicked("1")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("1")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("1")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("1")
+                }
             }
         }
         binding?.mainKeyBoard?.key2?.setOnClickListener {
-            if (inputInSaleAmount) {
-                Log.e("SALE", "KEY 2")
-                keyModelSaleAmount.onKeyClicked("2")
-            } else {
-                Log.e("CASH", "KEY 2")
-                keyModelCashAmount.onKeyClicked("2")
+            when {
+                inputInSaleAmount -> {
+                    Log.e("SALE", "KEY 2")
+                    keyModelSaleAmount.onKeyClicked("2")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("2")
+                }
+                else -> {
+                    Log.e("CASH", "KEY 2")
+                    keyModelCashAmount.onKeyClicked("2")
+                }
             }
         }
         binding?.mainKeyBoard?.key3?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("3")
-            } else {
-                keyModelCashAmount.onKeyClicked("3")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("3")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("3")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("3")
+                }
             }
         }
         binding?.mainKeyBoard?.key4?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("4")
-            } else {
-                keyModelCashAmount.onKeyClicked("4")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("4")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("4")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("4")
+                }
             }
         }
         binding?.mainKeyBoard?.key5?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("5")
-            } else {
-                keyModelCashAmount.onKeyClicked("5")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("5")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("5")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("5")
+                }
             }
         }
         binding?.mainKeyBoard?.key6?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("6")
-            } else {
-                keyModelCashAmount.onKeyClicked("6")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("6")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("6")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("6")
+                }
             }
         }
         binding?.mainKeyBoard?.key7?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("7")
-            } else {
-                keyModelCashAmount.onKeyClicked("7")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("7")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("7")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("7")
+                }
             }
         }
         binding?.mainKeyBoard?.key8?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("8")
-            } else {
-                keyModelCashAmount.onKeyClicked("8")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("8")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("8")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("8")
+                }
             }
         }
         binding?.mainKeyBoard?.key9?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("9")
-            } else {
-                keyModelCashAmount.onKeyClicked("9")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("9")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("9")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("9")
+                }
             }
         }
         binding?.mainKeyBoard?.keyClr?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("c")
-            } else {
-                keyModelCashAmount.onKeyClicked("c")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("c")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("c")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("c")
+                }
             }
         }
         binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("d")
-            } else {
-                keyModelCashAmount.onKeyClicked("d")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("d")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("d")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("d")
+                }
             }
         }
         binding?.mainKeyBoard?.keyOK?.setOnClickListener {
-            if (inputInSaleAmount) {
-                keyModelSaleAmount.onKeyClicked("o")
-            } else {
-                keyModelCashAmount.onKeyClicked("o")
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("o")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("o")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("o")
+                }
             }
         }
 
@@ -343,38 +447,101 @@ class NewInputAmountFragment : Fragment() {
         Log.e("SALE", "OK CLICKED  ${binding?.saleAmount?.text.toString()}")
         Log.e("CASh", "OK CLICKED  ${cashAmount?.text}")
         Log.e("AMT", "OK CLICKED  $amt")
-        if ((binding?.saleAmount?.text.toString()).toDouble() < 1) {
+        try {
+            (binding?.saleAmount?.text.toString()).toDouble()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
             VFService.showToast("Sale Amount should be greater than Rs 1")
             return
-        } else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmount?.text.toString()).toDouble() < 1) {
+        }
+        val cashAmtStr = (cashAmount?.text.toString())
+        var cashAmt = 0.toDouble()
+        if (cashAmtStr != "") {
+            cashAmt = (cashAmount?.text.toString()).toDouble()
+        }
+        val saleAmountStr = binding?.saleAmount?.text.toString()
+        var saleAmount = 0.toDouble()
+        if (saleAmountStr != "") {
+            saleAmount = (binding?.saleAmount?.text.toString()).toDouble()
+        }
+
+        if (saleAmount < 1) {
+            VFService.showToast("Sale Amount should be greater than Rs 1")
+            return
+        } else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
             VFService.showToast("Cash Amount should be greater than Rs 1")
             return
         } else {
             when (transactionType) {
                 EDashboardItem.SALE -> {
-                    val saleAmt = binding?.saleAmount?.text.toString().trim().toFloat()
-                    val saleTipAmt = cashAmount?.text.toString().trim().toFloat()
+                    val saleAmt = saleAmount.toString().trim().toFloat()
+                    val saleTipAmt = cashAmt.toString().trim().toFloat()
                     val trnsAmt = saleAmt + saleTipAmt
                     if (saleTipAmt > 0) {
-                        validateTIP(trnsAmt, saleAmt)
-                    } else {
-                        if (tpt?.reservedValues?.substring(0, 1) == "1")
-                            showMobileBillDialog(
-                                    activity,
-                                    TransactionType.SALE.type
-                            ) { extraPairData ->
-                                iFrReq?.onFragmentRequest(
-                                        UiAction.START_SALE,
-                                        Pair(
-                                                trnsAmt.toString().trim(),
-                                                cashAmount?.text.toString().trim()
-                                        ), extraPairData
-                                )
+                        when {
+                            !TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) -> if (binding?.mobNumbr?.text.toString().length in 10..13) {
+                                val extraPairData =
+                                    Triple(binding?.mobNumbr?.text.toString(), "", third = true)
+                                validateTIP(trnsAmt, saleAmt, extraPairData)
                             } else
-                            iFrReq?.onFragmentRequest(
+                                context?.getString(R.string.enter_valid_mobile_number)
+                                    ?.let { VFService.showToast(it) }
+
+                            TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) -> {
+                                val extraPairData = Triple("", "", third = true)
+                                validateTIP(trnsAmt, saleAmt, extraPairData)
+                            }
+                        }
+
+
+                    } else {
+                        /* if (tpt?.reservedValues?.substring(0, 1) == "1")
+                             showMobileBillDialog(activity, TransactionType.SALE.type) { extraPairData ->
+                                 iFrReq?.onFragmentRequest(UiAction.START_SALE, Pair(trnsAmt.toString().trim(), cashAmt.toString().trim()), extraPairData)
+                             } else
+                             iFrReq?.onFragmentRequest(
+                                 UiAction.START_SALE,
+                                 Pair(trnsAmt.toString().trim(), cashAmt.toString().trim())
+                             )*/
+
+                        isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
+                            if (isMobileNeeded) {
+                                when {
+                                    !TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) -> if (binding?.mobNumbr?.text.toString().length in 10..13) {
+                                        val extraPairData = Triple(
+                                            binding?.mobNumbr?.text.toString(),
+                                            "",
+                                            third = true
+                                        )
+                                        iFrReq?.onFragmentRequest(
+                                            UiAction.START_SALE,
+                                            Pair(
+                                                trnsAmt.toString().trim(),
+                                                cashAmt.toString().trim()
+                                            ),
+                                            extraPairData
+                                        )
+                                    } else
+                                        context?.getString(R.string.enter_valid_mobile_number)
+                                            ?.let { VFService.showToast(it) }
+
+                                    TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) -> {
+                                        iFrReq?.onFragmentRequest(
+                                            UiAction.START_SALE,
+                                            Pair(
+                                                trnsAmt.toString().trim(),
+                                                cashAmt.toString().trim()
+                                            )
+                                        )
+                                    }
+                                }
+                            } else {
+                                iFrReq?.onFragmentRequest(
                                     UiAction.START_SALE,
-                                    Pair(trnsAmt.toString().trim(), cashAmount?.text.toString().trim())
-                            )
+                                    Pair(trnsAmt.toString().trim(), cashAmt.toString().trim())
+                                )
+                            }
+                        }
                     }
                 }
                 EDashboardItem.BANK_EMI, EDashboardItem.TEST_EMI -> {
@@ -383,86 +550,86 @@ class NewInputAmountFragment : Fragment() {
                         uiAction = UiAction.TEST_EMI
                     }
                     if (tpt?.reservedValues?.substring(1, 2) == "1" && tpt.reservedValues.substring(
-                                    2,
-                                    3
-                            ) == "1"
+                            2,
+                            3
+                        ) == "1"
                     ) {
                         showMobileBillDialog(
-                                activity,
-                                TransactionType.EMI_SALE.type
+                            activity,
+                            TransactionType.EMI_SALE.type
                         ) { extraPairData ->
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
-                                        uiAction,
-                                        Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                        extraPairData
+                                    uiAction,
+                                    Pair(saleAmount.toString().trim(), "0"),
+                                    extraPairData
                                 )
                             } else {
                                 startActivity(
-                                        Intent(
-                                                requireActivity(),
-                                                MainActivity::class.java
-                                        ).apply {
-                                            flags =
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        })
+                                    Intent(
+                                        requireActivity(),
+                                        MainActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    })
                             }
                         }
                     } else if (tpt?.reservedValues?.substring(1, 2) == "1") {
                         showMobileBillDialog(
-                                activity,
-                                TransactionType.EMI_SALE.type
+                            activity,
+                            TransactionType.EMI_SALE.type
                         ) { extraPairData ->
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
-                                        uiAction,
-                                        Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                        extraPairData
+                                    uiAction,
+                                    Pair(saleAmount.toString().trim(), "0"),
+                                    extraPairData
                                 )
                             } else {
                                 startActivity(
-                                        Intent(
-                                                requireActivity(),
-                                                MainActivity::class.java
-                                        ).apply {
-                                            flags =
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        })
+                                    Intent(
+                                        requireActivity(),
+                                        MainActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    })
                             }
                         }
                     } else if (tpt?.reservedValues?.substring(2, 3) == "1") {
                         showMobileBillDialog(
-                                activity,
-                                TransactionType.EMI_SALE.type
+                            activity,
+                            TransactionType.EMI_SALE.type
                         ) { extraPairData ->
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
-                                        uiAction,
-                                        Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                        extraPairData
+                                    uiAction,
+                                    Pair(saleAmount.toString().trim(), "0"),
+                                    extraPairData
                                 )
                             } else {
                                 startActivity(
-                                        Intent(
-                                                requireActivity(),
-                                                MainActivity::class.java
-                                        ).apply {
-                                            flags =
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        })
+                                    Intent(
+                                        requireActivity(),
+                                        MainActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    })
                             }
                         }
                     } else {
                         iFrReq?.onFragmentRequest(
-                                uiAction,
-                                Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                Triple("", "", true)
+                            uiAction,
+                            Pair(saleAmount.toString().trim(), "0"),
+                            Triple("", "", true)
                         )
                     }
                 }
 
                 EDashboardItem.BRAND_EMI -> {
-                    val checkSaleAmount = binding?.saleAmount?.text.toString().trim().toDouble()
+                    val checkSaleAmount = saleAmount.toString().trim().toDouble()
                     if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
                             ?.toDouble() ?: 0.0
                         && checkSaleAmount <= brandEMIDataModal?.getProductMaxAmount()
@@ -478,30 +645,30 @@ class NewInputAmountFragment : Fragment() {
                     iFrReq?.onFragmentRequest(
                         UiAction.CASH_AT_POS,
                         Pair(
-                            binding?.saleAmount?.text.toString().trim(),
-                            binding?.saleAmount?.text.toString().trim()
+                            saleAmount.toString().trim(),
+                            saleAmount.toString().trim()
                         )
                     )
                 }
                 EDashboardItem.SALE_WITH_CASH -> {
                     iFrReq?.onFragmentRequest(
-                            UiAction.SALE_WITH_CASH,
-                            Pair(
-                                    binding?.saleAmount?.text.toString().trim(),
-                                    cashAmount?.text.toString().trim()
-                            )
+                        UiAction.SALE_WITH_CASH,
+                        Pair(
+                            saleAmount.toString().trim(),
+                            cashAmt.toString().trim()
+                        )
                     )
                 }
                 EDashboardItem.REFUND -> {
                     iFrReq?.onFragmentRequest(
-                            UiAction.REFUND,
-                            Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                        UiAction.REFUND,
+                        Pair(saleAmount.toString().trim(), "0")
                     )
                 }
                 EDashboardItem.PREAUTH -> {
                     iFrReq?.onFragmentRequest(
-                            UiAction.PRE_AUTH,
-                            Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                        UiAction.PRE_AUTH,
+                        Pair(saleAmount.toString().trim(), "0")
                     )
                 }
                 EDashboardItem.EMI_ENQUIRY -> {
@@ -510,20 +677,20 @@ class NewInputAmountFragment : Fragment() {
                             //  sendStartSale(inputAmountEditText?.text.toString(), extraPairData)
                             iFrReq?.onFragmentRequest(
                                 UiAction.EMI_ENQUIRY,
-                                Pair(binding?.saleAmount?.text.toString().trim(), "0"), it
+                                Pair(saleAmount.toString().trim(), "0"), it
                             )
                         }
                     } else {
                         iFrReq?.onFragmentRequest(
                             UiAction.EMI_ENQUIRY,
-                            Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                            Pair(saleAmount.toString().trim(), "0")
                         )
                     }
                 }
                 EDashboardItem.FLEXI_PAY -> {
                     iFrReq?.onFragmentRequest(
                         UiAction.FLEXI_PAY,
-                        Pair(binding?.saleAmount?.text.toString().trim(), "0")
+                        Pair(saleAmount.toString().trim(), "0")
                     )
                 }
                 EDashboardItem.BRAND_EMI_CATALOGUE -> {
@@ -539,7 +706,7 @@ class NewInputAmountFragment : Fragment() {
                                 if (tpt?.reservedValues?.substring(10, 11) == "1") {
                                     when {
                                         TextUtils.isEmpty(
-                                            binding?.saleAmount?.text?.toString()?.trim()
+                                            saleAmount.toString().trim()
                                         ) -> VFService.showToast("Enter Sale Amount")
                                         TextUtils.isEmpty(
                                             binding?.mobNumbr?.text?.toString()?.trim()
@@ -547,21 +714,21 @@ class NewInputAmountFragment : Fragment() {
                                         else -> iFrReq?.onFragmentRequest(
                                             UiAction.BRAND_EMI_CATALOGUE,
                                             Pair(
-                                                binding?.saleAmount?.text.toString().trim(),
-                                                cashAmount?.text.toString().trim()
+                                                saleAmount.toString().trim(),
+                                                cashAmt.toString().trim()
                                             )
                                         )
                                     }
                                 } else {
                                     when {
                                         TextUtils.isEmpty(
-                                            binding?.saleAmount?.text?.toString()?.trim()
+                                            saleAmount.toString().trim()
                                         ) -> VFService.showToast("Enter Sale Amount")
                                         else -> iFrReq?.onFragmentRequest(
                                             UiAction.BRAND_EMI_CATALOGUE,
                                             Pair(
-                                                binding?.saleAmount?.text.toString().trim(),
-                                                cashAmount?.text.toString().trim()
+                                                saleAmount.toString().trim(),
+                                                cashAmt.toString().trim()
                                             )
                                         )
                                     }
@@ -576,7 +743,7 @@ class NewInputAmountFragment : Fragment() {
                     if (tpt?.reservedValues?.substring(10, 11) == "1") {
                         when {
                             TextUtils.isEmpty(
-                                binding?.saleAmount?.text?.toString()?.trim()
+                                saleAmount.toString().trim()
                             ) -> VFService.showToast("Enter Sale Amount")
                             TextUtils.isEmpty(
                                 binding?.mobNumbr?.text?.toString()?.trim()
@@ -584,21 +751,21 @@ class NewInputAmountFragment : Fragment() {
                             else -> iFrReq?.onFragmentRequest(
                                 UiAction.BANK_EMI_CATALOGUE,
                                 Pair(
-                                    binding?.saleAmount?.text.toString().trim(),
-                                    cashAmount?.text.toString().trim()
+                                    saleAmount.toString().trim(),
+                                    cashAmt.toString().trim()
                                 )
                             )
                         }
                     } else {
                         when {
                             TextUtils.isEmpty(
-                                binding?.saleAmount?.text?.toString()?.trim()
+                                saleAmount.toString().trim()
                             ) -> VFService.showToast("Enter Sale Amount")
                             else -> iFrReq?.onFragmentRequest(
                                 UiAction.BANK_EMI_CATALOGUE,
                                 Pair(
-                                    binding?.saleAmount?.text.toString().trim(),
-                                    cashAmount?.text.toString().trim()
+                                    saleAmount.toString().trim(),
+                                    cashAmt.toString().trim()
                                 )
                             )
                         }
@@ -620,9 +787,9 @@ class NewInputAmountFragment : Fragment() {
                 brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "2"
             ) {
                 showMobileBillDialog(
-                        activity,
-                        TransactionType.BRAND_EMI.type,
-                        brandEMIDataModal
+                    activity,
+                    TransactionType.BRAND_EMI.type,
+                    brandEMIDataModal
                 ) { extraPairData ->
                     GlobalScope.launch(Dispatchers.Main) {
                         if (extraPairData.third) {
@@ -633,24 +800,24 @@ class NewInputAmountFragment : Fragment() {
                                             saveBrandEMIDataToDB(cbData.first, cbData.second)
                                             withContext(Dispatchers.Main) {
                                                 iFrReq?.onFragmentRequest(
-                                                        UiAction.BRAND_EMI,
-                                                        Pair(
-                                                                binding?.saleAmount?.text.toString().trim(),
-                                                                "0"
-                                                        ),
-                                                        extraPairData
+                                                    UiAction.BRAND_EMI,
+                                                    Pair(
+                                                        binding?.saleAmount?.text.toString().trim(),
+                                                        "0"
+                                                    ),
+                                                    extraPairData
                                                 )
                                             }
                                         }
                                     } else {
                                         startActivity(
-                                                Intent(
-                                                        requireActivity(),
-                                                        MainActivity::class.java
-                                                ).apply {
-                                                    flags =
-                                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                })
+                                            Intent(
+                                                requireActivity(),
+                                                MainActivity::class.java
+                                            ).apply {
+                                                flags =
+                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                            })
                                     }
                                 }
                             } else {
@@ -658,22 +825,22 @@ class NewInputAmountFragment : Fragment() {
                                     saveBrandEMIDataToDB("", "")
                                     withContext(Dispatchers.Main) {
                                         iFrReq?.onFragmentRequest(
-                                                UiAction.BRAND_EMI,
-                                                Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                                extraPairData
+                                            UiAction.BRAND_EMI,
+                                            Pair(binding?.saleAmount?.text.toString().trim(), "0"),
+                                            extraPairData
                                         )
                                     }
                                 }
                             }
                         } else {
                             startActivity(
-                                    Intent(
-                                            requireActivity(),
-                                            MainActivity::class.java
-                                    ).apply {
-                                        flags =
-                                                Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    })
+                                Intent(
+                                    requireActivity(),
+                                    MainActivity::class.java
+                                ).apply {
+                                    flags =
+                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                })
                         }
                     }
                 }
@@ -686,21 +853,21 @@ class NewInputAmountFragment : Fragment() {
                                     saveBrandEMIDataToDB(cbData.first, cbData.second)
                                     withContext(Dispatchers.Main) {
                                         iFrReq?.onFragmentRequest(
-                                                UiAction.BRAND_EMI,
-                                                Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                                Triple("", "", true)
+                                            UiAction.BRAND_EMI,
+                                            Pair(binding?.saleAmount?.text.toString().trim(), "0"),
+                                            Triple("", "", true)
                                         )
                                     }
                                 }
                             } else {
                                 startActivity(
-                                        Intent(
-                                                requireActivity(),
-                                                MainActivity::class.java
-                                        ).apply {
-                                            flags =
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                        })
+                                    Intent(
+                                        requireActivity(),
+                                        MainActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    })
                             }
                         }
                     } else {
@@ -708,9 +875,9 @@ class NewInputAmountFragment : Fragment() {
                             saveBrandEMIDataToDB("", "")
                             withContext(Dispatchers.Main) {
                                 iFrReq?.onFragmentRequest(
-                                        UiAction.BRAND_EMI,
-                                        Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                        Triple("", "", true)
+                                    UiAction.BRAND_EMI,
+                                    Pair(binding?.saleAmount?.text.toString().trim(), "0"),
+                                    Triple("", "", true)
                                 )
                             }
                         }
@@ -755,7 +922,11 @@ class NewInputAmountFragment : Fragment() {
     }
     //endregion
 
-    private fun validateTIP(totalTransAmount: Float, saleAmt: Float) {
+    private fun validateTIP(
+        totalTransAmount: Float,
+        saleAmt: Float,
+        extraPair: Triple<String, String, Boolean>
+    ) {
         val tpt = TerminalParameterTable.selectFromSchemeTable()
         if (tpt != null) {
             val tipAmount = try {
@@ -765,29 +936,30 @@ class NewInputAmountFragment : Fragment() {
             }
             val maxTipPercent =
                 if (tpt.maxTipPercent.isEmpty()) 0f else (tpt.maxTipPercent.toFloat()).div(
-                        100
+                    100
                 )
             val maxTipLimit =
                 if (tpt.maxTipLimit.isEmpty()) 0f else (tpt.maxTipLimit.toFloat()).div(
-                        100
+                    100
                 )
             if (maxTipLimit != 0f) { // flat tip check is applied
                 if (tipAmount <= maxTipLimit) {
                     // iDialog?.showProgress()
                     GlobalScope.launch {
+
                         iFrReq?.onFragmentRequest(
-                                UiAction.START_SALE,
-                                Pair(
-                                        totalTransAmount.toString().trim(),
-                                        cashAmount?.text.toString().trim()
-                                )
+                            UiAction.START_SALE,
+                            Pair(
+                                totalTransAmount.toString().trim(),
+                                cashAmount?.text.toString().trim()
+                            ), extraPair
                         )
                     }
                 } else {
                     val msg =
                         "Maximum tip allowed on this terminal is \u20B9 ${
                             "%.2f".format(
-                                    maxTipLimit
+                                maxTipLimit
                             )
                         }."
                     GlobalScope.launch(Dispatchers.Main) {
@@ -801,19 +973,20 @@ class NewInputAmountFragment : Fragment() {
                 if (tipAmount <= maxAmountTip) {
                     //   iDialog?.showProgress()
                     GlobalScope.launch {
+
                         iFrReq?.onFragmentRequest(
-                                UiAction.START_SALE,
-                                Pair(
-                                        totalTransAmount.toString().trim(),
-                                        cashAmount?.text.toString().trim()
-                                )
+                            UiAction.START_SALE,
+                            Pair(
+                                totalTransAmount.toString().trim(),
+                                cashAmount?.text.toString().trim()
+                            ), extraPair
                         )
                     }
                 } else {
                     //    val tipAmt = saleAmt * per / 100
                     val msg = "Tip limit for this transaction is \n \u20B9 ${
                         "%.2f".format(
-                                formatMaxTipAmount.toDouble()
+                            formatMaxTipAmount.toDouble()
                         )
                     }"
                     /* "Maximum ${"%.2f".format(
@@ -831,7 +1004,18 @@ class NewInputAmountFragment : Fragment() {
         }
     }
 
-    val tpt = TerminalParameterTable.selectFromSchemeTable()
+
+    // fun for checking mobile number on sale
+    /*
+    first Boolean--> Is mobile number field needed
+    second Boolean --> Is mobile number mandatory
+     */
+    private fun isMobileNumberEntryOnsale(cb: (Boolean, Boolean) -> Unit) {
+        if (transactionType == EDashboardItem.SALE && tpt?.reservedValues?.substring(0, 1) == "1")
+            cb(true, false)
+        else
+            cb(false, false)
+    }
 
 
 }

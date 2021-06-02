@@ -16,6 +16,7 @@ class KeyboardModel {
 
     var view: View? = null
     var callback: ((String) -> Unit)? = null
+    var isInutSimpleDigit = false
 
     fun onKeyClicked(str: String) {
         GlobalScope.launch(Dispatchers.IO) {
@@ -32,7 +33,7 @@ class KeyboardModel {
 
                             when (str) {
                                 "c" -> {  // c stands for clr
-                                    setEt(et, "0.00")//et.setText("0.00")
+                                    setEt(et, "")//et.setText("0.00")
                                 }
                                 "o" -> {  // o stands for ok
                                     sendCallback(et.text.toString())
@@ -41,20 +42,34 @@ class KeyboardModel {
                                 "d" -> {  // d stands for delete
                                     var s: String = et.text.toString()
                                     s = try {
-                                        getFormattedAmount(
-                                            s.subSequence(
-                                                0,
-                                                s.lastIndex
-                                            ) as String
-                                        )
+                                        var sst = ""
+                                        sst = if (isInutSimpleDigit) {
+                                            s.subSequence(0, s.lastIndex) as String
+                                        } else {
+                                            getFormattedAmount(
+                                                s.subSequence(
+                                                    0,
+                                                    s.lastIndex
+                                                ) as String
+                                            )
+                                        }
+                                        if (sst == "0.00") {
+                                            ""
+                                        } else {
+                                            sst
+                                        }
                                     } catch (ex: Exception) {
-                                        "0.00"
+                                        ""
                                     }
                                     setEt(et, s)//et.setText(s)
                                 }
                                 else -> {  // concatenate the num
                                     var s = "${et.text}$str"
-                                    s = getFormattedAmount(s)
+                                    s = if (isInutSimpleDigit) {
+                                        "${et.text}$str"
+                                    } else {
+                                        getFormattedAmount(s)
+                                    }
                                     setEt(et, s)//et.setText(s)
                                 }
                             }

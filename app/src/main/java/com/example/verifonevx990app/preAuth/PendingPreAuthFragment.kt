@@ -16,13 +16,18 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPendingPreAuthBinding
 import com.example.verifonevx990app.databinding.ItemPendingPreauthBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
+import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
-import com.example.verifonevx990app.vxUtils.BHTextView
-import com.example.verifonevx990app.vxUtils.BaseActivity
-import com.example.verifonevx990app.vxUtils.VFService
-import com.example.verifonevx990app.vxUtils.invoiceWithPadding
+import com.example.verifonevx990app.vxUtils.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import java.text.SimpleDateFormat
+import java.util.*
 
 class PendingPreAuthFragment : Fragment() {
+
+    private val authData: AuthCompletionData by lazy { AuthCompletionData() }
 
     val preAuthDataList by lazy {
         arguments?.getSerializable("PreAuthData") as ArrayList<PendingPreauthData>
@@ -34,8 +39,9 @@ class PendingPreAuthFragment : Fragment() {
 
     //creating our adapter
     val mAdapter by lazy {
-        PendingPreauthAdapter(preAuthDataList) {
-            onTouchViewShowDialog(it)
+        PendingPreauthAdapter(preAuthDataList) { data, position ->
+
+            onTouchViewShowDialog(data, position)
         }
     }
 
@@ -53,12 +59,11 @@ class PendingPreAuthFragment : Fragment() {
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
         }
+
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.pending_pre_auth)
 
         binding?.pendingPreAuthPrintBtn?.setOnClickListener {
             printReceipt(preAuthDataList)
-
-
         }
 
         binding?.pendingPreRv?.apply {
@@ -89,8 +94,8 @@ class PendingPreAuthFragment : Fragment() {
         return printsts
     }
 
-    private fun onTouchViewShowDialog(pendingPreauthData: PendingPreauthData): Boolean {
-        var isSuccess = false
+    private fun onTouchViewShowDialog(pendingPreauthData: PendingPreauthData, position: Int) {
+
         val dialogBuilder = Dialog(requireActivity())
         //  builder.setTitle(title)
         //  builder.setMessage(msg)
@@ -105,6 +110,7 @@ class PendingPreAuthFragment : Fragment() {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
         bindingg.preautnPendingBtnsView.visibility = View.VISIBLE
+        bindingg.enterAmountView.visibility = View.VISIBLE
         val batchNo = "BATCH NO : " + invoiceWithPadding(pendingPreauthData.batch.toString())
         bindingg.batchNoTv.text = batchNo
         val roc = "ROC : " + invoiceWithPadding(pendingPreauthData.roc.toString())
@@ -117,6 +123,27 @@ class PendingPreAuthFragment : Fragment() {
         bindingg.dateTv.text = date
         val time = "TIME : " + pendingPreauthData.time
         bindingg.timeTv.text = time
+        var isClicablebtn = false
+
+        /*  bindingg.amountEt.addTextChangedListener(OnTextChange {
+              //  binding?.ifProceedBtn?.isEnabled = it.length == 8
+               if(it.toFloat()>=1) {
+                   bindingg.completeBtnn.setShapeType(ShapeType.FLAT)
+                   isClicablebtn=true
+                   bindingg.completeBtnn.setTextColor(Color.WHITE)
+               }else{
+                   bindingg.completeBtnn.setShapeType(ShapeType.PRESSED)
+                 isClicablebtn=false
+                   bindingg.completeBtnn.setTextColor(Color.WHITE)
+
+               }
+              //actionDone( view.if_et)
+          })*/
+
+        bindingg.amountEt.setOnClickListener {
+            showEditTextSelected(bindingg.amountEt, bindingg.enterAmountView, requireContext())
+        }
+
 
         bindingg.printBtnn.setOnClickListener {
             val arList = arrayListOf<PendingPreauthData>()
@@ -127,15 +154,81 @@ class PendingPreAuthFragment : Fragment() {
         }
 
         bindingg.completeBtnn.setOnClickListener {
+            //  VFService.showToast("COMP")
+            if (bindingg.amountEt.text.toString().toFloat() >= 1) {
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                authData.authTid = tpt?.terminalId
 
+                authData.authAmt = bindingg.amountEt.text.toString()
+                //   authData.authAmt = "%.2f".format(pendingPreauthData.amount)
+                authData.authBatchNo = invoiceWithPadding(pendingPreauthData.batch.toString())
+                authData.authRoc = invoiceWithPadding(pendingPreauthData.roc.toString())
+                GlobalScope.async(Dispatchers.IO) {
+                    confirmCompletePreAuth(authData, position)
+
+                }
+                dialogBuilder.hide()
+            } else {
+                VFService.showToast("Amount should be greater than 1 rs")
+
+            }
         }
-
         dialogBuilder.show()
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
 
+    }
 
 
-        return isSuccess
+    private suspend fun confirmCompletePreAuth(
+        authCompletionData: AuthCompletionData,
+        position: Int
+    ) {
+        var isSuccessComp = false
+        val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
+        val transactionalAmount = authCompletionData.authAmt?.replace(".", "")?.toLong() ?: 0L
+        cardProcessedData.apply {
+            setTransactionAmount(transactionalAmount)
+            setTransType(TransactionType.PRE_AUTH_COMPLETE.type)
+            setProcessingCode(ProcessingCode.PRE_SALE_COMPLETE.code)
+            setAuthBatch(authCompletionData.authBatchNo.toString())
+            setAuthRoc(authCompletionData.authRoc.toString())
+            setAuthTid(authCompletionData.authTid.toString())
+        }
+        val transactionISO = CreateAuthPacket().createPreAuthCompleteAndVoidPreauthISOPacket(
+            authCompletionData,
+            cardProcessedData
+        )
+        //Here we are Saving Date , Time and TimeStamp in CardProcessedDataModal:-
+        try {
+            val date2: Long = Calendar.getInstance().timeInMillis
+            val timeFormater = SimpleDateFormat("HHmmss", Locale.getDefault())
+            cardProcessedData.setTime(timeFormater.format(date2))
+            val dateFormater = SimpleDateFormat("MMdd", Locale.getDefault())
+            cardProcessedData.setDate(dateFormater.format(date2))
+            cardProcessedData.setTimeStamp(date2.toString())
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
+        //    logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")
+        //  runOnUiThread { showProgress(getString(R.string.sale_data_sync)) }
+        var gg = GlobalScope.async(Dispatchers.IO) {
+            activity?.let {
+                SyncAuthTransToHost(it as BaseActivity).checkReversalPerformAuthTransaction(
+                    transactionISO, cardProcessedData
+                ) { isSuccess, msg ->
+
+                    if (isSuccess) {
+                        mAdapter.refreshListRemoveAt(position)
+                    }
+                    VFService.showToast("$msg----------->  $isSuccess")
+                    logger("PREAUTHCOMP", "Is success --->  $isSuccess  Msg --->  $msg")
+                    //   parentFragmentManager.popBackStackImmediate()
+                }
+            }
+        }
+        gg.await()
+
+
     }
 
 
@@ -143,7 +236,7 @@ class PendingPreAuthFragment : Fragment() {
 
 class PendingPreauthAdapter(
     val pendPreauthData: ArrayList<PendingPreauthData>,
-    var ontouchView: (PendingPreauthData) -> Boolean
+    var ontouchView: (PendingPreauthData, Int) -> Unit
 ) :
     RecyclerView.Adapter<PendingPreauthAdapter.PendingPreAuthViewHolder>() {
 
@@ -174,9 +267,22 @@ class PendingPreauthAdapter(
         holder.timeTv?.text = time
 
         holder.cardView.setOnClickListener {
-            ontouchView(pendPreauthData[position])
+            ontouchView(pendPreauthData[position], position)
+
+            /* if( ontouchView(pendPreauthData[position])) {
+                 pendPreauthData.removeAt(position);
+                 notifyItemRemoved(position);
+                 notifyItemRangeChanged(position, pendPreauthData.size);
+             }*/
         }
 
+    }
+
+
+    fun refreshListRemoveAt(position: Int) {
+        pendPreauthData.removeAt(position)
+        notifyItemRemoved(position)
+        notifyItemRangeChanged(position, pendPreauthData.size)
     }
 
     class PendingPreAuthViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

@@ -1,12 +1,18 @@
 package com.example.verifonevx990app.preAuth
 
 import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.EditText
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphButton
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPreAuthCompleteDetailBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
@@ -23,9 +29,7 @@ import java.util.*
 class PreAuthCompleteInputDetailFragment : Fragment() {
 
     private val title: String by lazy { arguments?.getString(MainActivity.INPUT_SUB_HEADING) ?: "" }
-
     private val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
-
     private val authData: AuthCompletionData by lazy { AuthCompletionData() }
     private var binding: FragmentPreAuthCompleteDetailBinding? = null
 
@@ -38,8 +42,68 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
         return binding?.root
     }
 
+    /*  var tidEt:BHEditText?=null
+      var rocEt:BHEditText?=null
+      var tidEt:BHEditText?=null
+      var tidEt:BHEditText?=null
+      var tidEt:BHEditText?=null*/
+    override fun onDetach() {
+        super.onDetach()
+        hideSoftKeyboard(requireActivity())
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        binding?.tidEt?.setOnClickListener {
+            showEditTextSelected(binding?.tidEt, binding?.tidCrdView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.batchCrdView] = binding?.batchEt
+            hm[binding?.rocCrdView] = binding?.rocEt
+            hm[binding?.batchCrdView] = binding?.batchEt
+            hm[binding?.enterAmountView] = binding?.amountEt
+
+            showOtherEditTextUnSelected(hm, requireContext())
+            Log.d("RocET:- ", "Clicked")
+        }
+
+        binding?.batchEt?.setOnClickListener {
+            showEditTextSelected(binding?.batchEt, binding?.batchCrdView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.tidCrdView] = binding?.tidEt
+            hm[binding?.rocCrdView] = binding?.rocEt
+            hm[binding?.enterAmountView] = binding?.amountEt
+
+            showOtherEditTextUnSelected(hm, requireContext())
+            Log.d("RocET:- ", "Clicked")
+        }
+
+        binding?.rocEt?.setOnClickListener {
+            showEditTextSelected(binding?.rocEt, binding?.rocCrdView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.tidCrdView] = binding?.tidEt
+
+            hm[binding?.batchCrdView] = binding?.batchEt
+            hm[binding?.enterAmountView] = binding?.amountEt
+
+            showOtherEditTextUnSelected(hm, requireContext())
+            Log.d("RocET:- ", "Clicked")
+        }
+
+        binding?.amountEt?.setOnClickListener {
+            showEditTextSelected(binding?.amountEt, binding?.enterAmountView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.tidCrdView] = binding?.tidEt
+            hm[binding?.rocCrdView] = binding?.rocEt
+            hm[binding?.batchCrdView] = binding?.batchEt
+
+
+            showOtherEditTextUnSelected(hm, requireContext())
+            Log.d("RocET:- ", "Clicked")
+        }
+
+
+
+
         binding?.subHeaderView?.subHeaderText?.text = title
         binding?.tidEt?.isFocusableInTouchMode = true
         binding?.tidEt?.requestFocus()
@@ -85,11 +149,11 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
         dialog.findViewById<BHTextView>(R.id.batchno_auth)?.text =
             authCompletionData.authBatchNo?.let { invoiceWithPadding(it) }
 
-        dialog.findViewById<BHButton>(R.id.cancel_btnn)?.setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.cancel_btnn)?.setOnClickListener {
             dialog.dismiss()
             //  doProcessCard()
         }
-        dialog.findViewById<BHButton>(R.id.ok_btnn)?.setOnClickListener {
+        dialog.findViewById<NeumorphButton>(R.id.ok_btnn)?.setOnClickListener {
             confirmCompletePreAuth(authCompletionData)
             dialog.dismiss()
         }
@@ -100,6 +164,7 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
             WindowManager.LayoutParams.WRAP_CONTENT
         )
         dialog.show()
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     private fun confirmCompletePreAuth(authCompletionData: AuthCompletionData) {
@@ -136,8 +201,8 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
                     transactionISO, cardProcessedData
                 ) { isSuccess, msg ->
                     showToast("$msg----------->  $isSuccess")
-                    logger("PREAUTHCOMP", "Is success --->  $isSuccess  Message  --->  $msg")
-
+                    logger("PREAUTHCOMP", "Is success --->  $isSuccess  Msg --->  $msg")
+                    parentFragmentManager.popBackStackImmediate()
                 }
             }
         }

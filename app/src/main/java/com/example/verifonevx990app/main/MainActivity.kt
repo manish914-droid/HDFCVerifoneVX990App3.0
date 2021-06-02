@@ -171,6 +171,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         alert?.show()
     }
 
+    fun hidePoweredByFooter() {
+        binding?.powereByFooterLL?.visibility = View.GONE
+    }
+
+    fun showPoweredByFooter() {
+        binding?.powereByFooterLL?.visibility = View.VISIBLE
+    }
+
     private fun onInitResponse(res: String, success: Boolean, progress: Boolean) {
         if (progress) {
             progressTitleMsg.text = res
@@ -1209,7 +1217,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 "PROMO",
                                 "PRMO VERSION --->  ${tpt.promoVersionNo} , PRMO AVAILABLE --->  ${tpt.isPromoAvailable} ,PRMO AVAILABLE SALE --->  ${tpt.isPromoAvailableOnPayment} "
                             )
-                            // todo options on next screen 1. Redeem Promo ,2. Send Promo , Add Customer
+
                             transactFragment(PromoFragment())
                         }
 

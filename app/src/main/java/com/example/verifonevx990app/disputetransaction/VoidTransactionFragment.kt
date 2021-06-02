@@ -158,7 +158,6 @@ class VoidTransactionFragment : Fragment() {
         }
         dialog.show()
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
     }
 
     private fun onContinueClicked(voidData: BatchFileDataTable) {

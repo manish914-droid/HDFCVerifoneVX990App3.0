@@ -31,7 +31,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_gravity="start|center_vertical"
-                android:background="@drawable/ic_menu"
+                android:background="@drawable/hover_icon"
                 android:contentDescription="@string/app_name" />
 
             <LinearLayout

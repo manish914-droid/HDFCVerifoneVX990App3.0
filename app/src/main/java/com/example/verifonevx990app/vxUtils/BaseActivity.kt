@@ -309,7 +309,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     ) {
         alertBoxWithAction(
             printerUtil, batchData, getString(R.string.print_customer_copy),
-            getString(R.string.do_you_want_to_print_customer_copy),
+            getString(R.string.print_customer_copy),
             true, getString(R.string.positive_button_yes), { status ->
                 if (status) {
                     printerUtil.printAuthCompleteChargeSlip(
@@ -341,7 +341,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     ) {
         alertBoxWithAction(
             printerUtil, batchData, getString(R.string.print_customer_copy),
-            getString(R.string.do_you_want_to_print_customer_copy),
+            getString(R.string.print_customer_copy),
             true, getString(R.string.positive_button_yes), { status ->
                 if (status) {
                     printerUtil.startPrinting(

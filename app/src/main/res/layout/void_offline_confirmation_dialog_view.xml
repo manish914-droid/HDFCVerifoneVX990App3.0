@@ -44,7 +44,7 @@
             app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
             app:neumorph_shapeType="flat"
             app:neumorph_strokeColor="@color/white"
-            app:neumorph_strokeWidth="@dimen/pad_2"></com.example.customneumorphic.NeumorphButton>
+            app:neumorph_strokeWidth="@dimen/pad_2" />
 
 
         <LinearLayout
@@ -176,6 +176,19 @@
                 android:hint="@string/hint_amount" />
 
         </LinearLayout>
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/confirmation_txt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:gravity="center"
+            android:text="@string/do_you_want_to_adjust_tip_on_this_transaction"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular"
+            android:visibility="gone" />
 
         <!--Buttons-->
         <androidx.constraintlayout.widget.ConstraintLayout

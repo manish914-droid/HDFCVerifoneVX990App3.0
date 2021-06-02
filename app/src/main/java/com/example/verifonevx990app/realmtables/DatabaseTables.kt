@@ -1837,7 +1837,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
 
     @field:BHFieldParseIndex(38)
     @field:BHFieldName("Void Refund")
-    @field:BHDashboardItem(EDashboardItem.VOID_REFUND)
+  //  @field:BHDashboardItem(EDashboardItem.VOID_REFUND)
     var voidRefund: String = ""
 
     @field:BHFieldParseIndex(39)
@@ -4561,29 +4561,29 @@ enum class EDashboardItem(
     var childList: MutableList<EDashboardItem>? = null
 ) : Serializable {
     NONE("No Option Found", R.drawable.ic_home),
-    SALE("Sale", R.drawable.ic_bbg, 1),
-    BANK_EMI("Bank EMI", R.drawable.ic_bbg, 2),
-    PREAUTH("Pre-Auth", R.drawable.ic_preauth, 3),
-    EMI_ENQUIRY("EMI Enquiry", R.drawable.ic_meeting, 4),
+    SALE("Sale", R.drawable.sale_icon, 1),
+    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 2),
+    PREAUTH("Pre-Auth", R.drawable.pre_auth, 3),
+    EMI_ENQUIRY("EMI Enquiry", R.drawable.emi_catalog_icon, 4),
     PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
     PENDING_PREAUTH("Pending Preauth", R.drawable.ic_pending_preauth, 6),
-    OFFLINE_SALE("Offline Sale", R.drawable.ic_sale, 7),
-    VOID_OFFLINE_SALE("Void Offline Sale", R.drawable.ic_void, 8),
-    SALE_TIP("Tip Adjust", R.drawable.ic_tip, 9),
-    VOID_PREAUTH("Void Preauth", R.drawable.ic_void_preauth, 10),
-    REFUND("Refund", R.drawable.ic_refund, 11),
-    VOID_REFUND("Void Refund", R.drawable.ic_void_refund, 12),
-    VOID_SALE("Void", R.drawable.ic_void, 13),
-    CROSS_SELL("Cross Sell", R.drawable.ic_sale, 14),
-    SALE_WITH_CASH("Sale With Cash", R.drawable.ic_sale_with_cash),
-    CASH_ADVANCE("Cash Advance", R.drawable.ic_cash_advance),
-    BRAND_EMI("Brand EMI", R.drawable.ic_brand_emi),
+    OFFLINE_SALE("Offline Sale", R.drawable.sale_icon, 7),
+    VOID_OFFLINE_SALE("Void Offline Sale", R.drawable.void_icon, 8),
+    SALE_TIP("Tip Adjust", R.drawable.tip_adjust_icon, 9),
+    VOID_PREAUTH("Void Preauth", R.drawable.void_icon, 10),
+    REFUND("Refund", R.drawable.refund_icon, 11),
+    VOID_REFUND("Void Refund", R.drawable.void_icon, 12),
+    VOID_SALE("Void", R.drawable.void_icon, 13),
+    CROSS_SELL("Cross Sell", R.drawable.cross_sell_icon, 14),
+    SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
+    CASH_ADVANCE("Cash Advance", R.drawable.ic_cash_at_pos_icon),
+    BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon),
     PENDING_OFFLINE_SALE("View Offline Sale", R.drawable.ic_pending_preauth),
-    PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.ic_preauth, 9),
+    PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.pre_auth, 9),
     MORE("View More", R.drawable.ic_arrow_down, 999),
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
-    EMI_PRO("Brand EMI By Access Code", R.drawable.ic_sale, 16),
-    EMI_CATALOGUE("EMI Catalogue", R.drawable.ic_sale, 17),
+    EMI_PRO("Brand EMI By Access Code", R.drawable.emi_catalog_icon, 16),
+    EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
     BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
     BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
 
