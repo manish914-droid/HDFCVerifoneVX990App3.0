@@ -464,4 +464,18 @@
     <string name="netCostNew">Net Cost(\u20B9)</string>
     <string name="additionalOfferNew">Add. Offer</string>
     <string name="tenure_hint">3 MONTHS</string>
+    <string name="upi_collect">UPI Collect</string>
+    <string name="dynamic_qr">Dynamic Qr</string>
+    <string name="static_qr">Static Qr</string>
+    <string name="sms_pay">SMS Pay</string>
+    <string name="pending_txn">Pending Txn</string>
+    <string name="txn_list">TXN list</string>
+    <string name="enter_description_optional">Enter Description (optional)</string>
+    <string name="enter_mobile_number_optional">Mobile number(optional)</string>
+    <string name="vpa">VPA</string>
+    <string name="sms_upi_pay">SMS/UPI Pay</string>
+    <string name="upi_payment_link_sent">"Payment link has been sent \n \n Would you like to check payment status now."</string>
+    <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
+
+
 </resources>

@@ -1,0 +1,36 @@
+package com.example.verifonevx990app.digiPOS.mvvm.util
+
+enum class LOG_TAG(val tag:String){
+    DIGIPOS("DIGI_POS_TAG")
+
+}
+
+enum class EnumDigiPosProcess(val code:String){
+    InitializeDigiPOS("1"),
+    UPIDigiPOS("2"),
+   SMS_PAYDigiPOS("5"),
+
+
+}
+enum class EnumDigiPosProcessingCode(val code: String) {
+    DIGIPOSPROCODE("982003")
+}
+
+enum class EnumDigiPosTerminalStatusCode(val code: String, val description:String){
+    TerminalStatusCodeE106("E106","Decryption Failed"),
+    TerminalStatusCodeP101("P101","Invalid Request"),
+   // StatusCodeP101("P101","Terminal ID is null or Invalid"),
+    TerminalStatusCodeS102("S102","Failed"),
+    TerminalStatusCodeS101("S101","Success")
+}
+enum class EDigiPosTerminalStatusResponseCodes(val statusCode:String){
+    SuccessString("Success"),
+    FailString("Failed"),
+    ActiveString("Active"),
+    DeactiveString("Deactive"),
+}
+
+
+
+
+

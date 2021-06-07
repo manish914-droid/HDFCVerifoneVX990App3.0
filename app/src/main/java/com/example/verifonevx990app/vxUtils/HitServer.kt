@@ -99,6 +99,69 @@ object HitServer {
         }
     }
 
+
+    @Synchronized
+    suspend fun hitDigiPosServer( isoWriterData: IsoDataWriter,isSaveTransactionAsPending:Boolean,
+                                  callback: ServerMessageCallback) {
+        this@HitServer.callback = callback
+
+        try {
+            if (checkInternetConnection()) {
+                with(ConnectionTimeStamps) {
+                    reset()
+                    dialStart = getF48TimeStamp()
+                }
+                Log.d("OpenSocket:- ", "Socket Start")
+                logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
+                // var responseStr : String? = null
+                openSocket { socket ->
+                    //    try {
+                    logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
+                    ConnectionTimeStamps.dialConnected = getF48TimeStamp()
+                   // progressMsg("Please wait sending data to Bonushub server")
+                    //println("Data send" + data.byteArr2HexStr())
+
+                    val data=  isoWriterData.generateIsoByteRequest()
+                    logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
+                    ConnectionTimeStamps.startTransaction = getF48TimeStamp()
+                    val sos = socket.getOutputStream()
+                    sos?.write(data)
+                    sos.flush()
+
+                  //  progressMsg("Please wait receiving data from Bonushub server")
+                    val dis = DataInputStream(socket.getInputStream())
+                    val len = dis.readShort().toInt()
+                    val response = ByteArray(len)
+                    dis.readFully(response)
+                    ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+
+                    //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+
+                    val responseStr = response.byteArr2HexStr()
+                    val reader = readIso(responseStr, false)
+                    Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
+                        reader.isoMap[48]?.parseRaw2String() ?: ""
+                    )
+
+                    //println("Data Recieve" + response.byteArr2HexStr())
+                    logger(TAG, "len=$len, data received = $responseStr")
+
+                    socket.close()
+                    callback(responseStr, true)
+                    this@HitServer.callback = null
+                }
+
+            } else {
+                callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
+                this@HitServer.callback = null
+            }
+
+        } catch (ex: Exception) {
+            callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
+            this@HitServer.callback = null
+        }
+    }
+
     @Synchronized
     suspend fun hitServersale(
         data: ByteArray,

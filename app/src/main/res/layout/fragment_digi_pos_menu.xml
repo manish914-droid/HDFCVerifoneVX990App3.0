@@ -1,14 +1,192 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".digiPOS.mvvm.view.DigiPosMenuFragment">
+    android:layout_height="match_parent">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <LinearLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+        android:orientation="vertical"
+        tools:context=".digiPOS.DigiPosMenuFragment">
 
-</FrameLayout>
+        <include
+            android:id="@+id/sub_header_view"
+            layout="@layout/sub_header_layout"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/upi_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_8"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/upi_icon"
+android:visibility="gone"
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/upi_collect"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/dynamicQr_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_4"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/ic_mobile_icon"
+            android:visibility="gone"
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/dynamic_qr"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/static_qr_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_4"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/ic_mobile_icon"
+android:visibility="gone"
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/static_qr"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/sms_pay_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_4"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/sms_icon"
+            android:visibility="gone"
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/sms_pay"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/pending_txn_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_4"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/pending_txn"
+
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/pending_txn"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/txn_list_btn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_4"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:drawableStart="@drawable/ic_mobile_icon"
+            android:visibility="visible"
+            android:gravity="center"
+            android:padding="@dimen/pad_20"
+            android:text="@string/txn_list"
+
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+
+            app:layout_constraintTop_toTopOf="parent"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+            app:neumorph_shapeType="flat" />
+
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

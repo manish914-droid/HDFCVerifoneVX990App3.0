@@ -2250,8 +2250,7 @@ fun showEditTextSelected(
     editText?.isFocusable = true
     editText?.isFocusableInTouchMode = true
     editText?.requestFocus()
-    val imm: InputMethodManager? =
-        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
     imm?.showSoftInput(editText, 0)
     cardView?.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
     cardView?.setStrokeWidth(1f)
@@ -2264,21 +2263,26 @@ fun showEditTextUnSelected(
     cardView: NeumorphCardView?,
     context: Context?
 ) {
-    editText?.isFocusable = false
-    editText?.isFocusableInTouchMode = false
-    val imm: InputMethodManager? =
-        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-    imm?.showSoftInput(editText, 0)
-    cardView?.setStrokeColor(null)
-    cardView?.setStrokeWidth(0f)
-}
+    runBlocking {
+        editText?.isFocusable = false
+        editText?.isFocusableInTouchMode = false
+      /*  val imm: InputMethodManager? =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.showSoftInput(editText, 0)*/
+        cardView?.setStrokeColor(null)
+        cardView?.setStrokeWidth(0f)
+    }
+
+    }
 
 fun showOtherEditTextUnSelected(hm: HashMap<NeumorphCardView?, EditText?>, context: Context?) {
-    for (i in hm) {
-        val cardView = i.key
-        val editText = i.value
-        showEditTextUnSelected(editText, cardView, context)
-    }
+  runBlocking {
+      for (i in hm) {
+          val cardView = i.key
+          val editText = i.value
+          showEditTextUnSelected(editText, cardView, context)
+      }
+  }
 }
 //endregion
 

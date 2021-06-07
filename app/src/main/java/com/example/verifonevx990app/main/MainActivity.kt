@@ -35,6 +35,8 @@ import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIByAccessCodeFra
 import com.example.verifonevx990app.crosssell.HDFCCrossSellFragment
 import com.example.verifonevx990app.databinding.ActivityMainBinding
 import com.example.verifonevx990app.databinding.AuthCatogoryDialogBinding
+import com.example.verifonevx990app.digiPOS.DigiPosMenuFragment
+import com.example.verifonevx990app.digiPOS.mvvm.util.*
 import com.example.verifonevx990app.disputetransaction.CreateSettlementPacket
 import com.example.verifonevx990app.disputetransaction.SettlementFragment
 import com.example.verifonevx990app.disputetransaction.VoidTransactionFragment
@@ -58,9 +60,11 @@ import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.saveBatchInPreference
 import com.google.android.material.appbar.AppBarLayout
+import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.Exception
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -942,19 +946,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         isDashboardOpen = false
         when (action) {
             EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
-                /* val bundle = Bundle()
-                bundle.putSerializable("type", action)
-                navHostFragment?.navController?.navigate(R.id.inputAmountFragment, bundle)*/
                 if (checkInternetConnection()) {
                     inflateInputFragment(
                         NewInputAmountFragment(),
                         SubHeaderTitle.SALE_SUBHEADER_VALUE.title,
-                        action
-                    )
+                        action)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
-
             }
 
             EDashboardItem.VOID_SALE -> {
@@ -1169,44 +1168,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 putString(INPUT_SUB_HEADING, "")
                             }
                         })
-                        /*transactFragment(EMIIssuerList().apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString("proc_code", ProcessingCode.PRE_AUTH.code)
-                                putString("mobileNumber", "")
-                                putString("enquiryAmt", "325")
 
-                            }
-                        })*/
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                     }
                 } else {
                     checkAndPerformOperation()
                 }
-                /*if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())) {
-                    if (checkInternetConnection()) {
-                        transactFragment(
-                            VoidOfRefund()
-                                .apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("trans_type", TransactionType.VOID_REFUND)
-                                        putSerializable("type", action)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.VOID_REFUND_SUBHEADER_VALUE.title
-                                        )
-                                    }
-                                })
-                    } else {
-                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                    }
-                } else {
-                    checkAndPerformOperation()
-                }*/
-            }
+          }
 
             EDashboardItem.BONUS_PROMO -> {
                 if (checkInternetConnection()) {
@@ -1317,6 +1286,28 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 } else {
                     checkAndPerformOperation()
                 }
+            }
+
+            EDashboardItem.DIGI_POS ->{
+                if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                ) {
+                    if (checkInternetConnection()) {
+                        transactFragment(DigiPosMenuFragment().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", EDashboardItem.DIGI_POS)
+                               // putString(INPUT_SUB_HEADING, "")
+                            }
+                        })
+
+                    } else {
+                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                    }
+                } else {
+                    checkAndPerformOperation()
+                }
+
             }
 
             else -> showToast("To be implemented...")
@@ -2276,7 +2267,8 @@ enum class SETTLEMENT(val type: String) {
 //endregion
 
 interface IFragmentRequest {
-    fun onFragmentRequest(
+    fun
+            onFragmentRequest(
         action: UiAction,
         data: Any,
         extraPair: Triple<String, String, Boolean>? = Triple("", "", third = true)

@@ -547,19 +547,27 @@ class TipAdjustFragment : Fragment() {
                     val autoSettlementCheck =
                         responseIsoData.isoMap[60]?.parseRaw2String().toString()
                     AppPreference.clearReversal()
-                    if (!TextUtils.isEmpty(autoSettlementCheck)) {
-                        context.runOnUiThread {
-                            syncOfflineSaleAndAskAutoSettlement(autoSettlementCheck.substring(0, 1))
-                        }
-                    }
+
                     ROCProviderV2.incrementFromResponse(
                         ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                         AppPreference.getBankCode()
                     )
                     GlobalScope.launch(Dispatchers.Main) {
-                        // VFService.showToast("$responseCode ------> $transactionMsg")
+                        //todo add error dialog here
+                        try {
+                            val msg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
+                            VFService.showToast(msg)
+                            if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                                context.runOnUiThread {
+                                    syncOfflineSaleAndAskAutoSettlement(autoSettlementCheck.substring(0, 1))
+                                }
+                            }
+                        }catch(ex:Exception){
+                            ex.printStackTrace()
+                        }
                     }
-                } else {
+                }
+                else {
                     VFService.showToast(transactionMsg)
                     ROCProviderV2.incrementFromResponse(
                         ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
@@ -823,8 +831,6 @@ fun createTipAdjustISO(tipAmt: Float, batch: BatchFileDataTable): IsoDataWriter 
             ex.printStackTrace()
 
         }
-
-
         // mti = Mti.PRE_AUTH_COMPLETE_MTI.mti
         addField(3, ProcessingCode.TIP_SALE.code)
         addField(4, amtStr)

@@ -68,7 +68,6 @@ class NewInputAmountFragment : Fragment() {
         if (activity is MainActivity) {
             activity.hidePoweredByFooter()
         }
-
     }
 
     override fun onCreateView(
@@ -242,206 +241,7 @@ class NewInputAmountFragment : Fragment() {
         (activity as MainActivity).showPoweredByFooter()
     }
 
-    private fun onSetKeyBoardButtonClick() {
-        binding?.mainKeyBoard?.key0?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("0")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("0")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("0")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key00?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("00")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("00")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("00")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key000?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("000")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("000")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("000")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key1?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("1")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("1")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("1")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key2?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    Log.e("SALE", "KEY 2")
-                    keyModelSaleAmount.onKeyClicked("2")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("2")
-                }
-                else -> {
-                    Log.e("CASH", "KEY 2")
-                    keyModelCashAmount.onKeyClicked("2")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key3?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("3")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("3")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("3")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key4?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("4")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("4")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("4")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key5?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("5")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("5")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("5")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key6?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("6")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("6")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("6")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key7?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("7")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("7")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("7")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key8?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("8")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("8")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("8")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.key9?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("9")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("9")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("9")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.keyClr?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("c")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("c")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("c")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("d")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("d")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("d")
-                }
-            }
-        }
-        binding?.mainKeyBoard?.keyOK?.setOnClickListener {
-            when {
-                inputInSaleAmount -> {
-                    keyModelSaleAmount.onKeyClicked("o")
-                }
-                inputInMobilenumber -> {
-                    keyModelMobNumber.onKeyClicked("o")
-                }
-                else -> {
-                    keyModelCashAmount.onKeyClicked("o")
-                }
-            }
-        }
 
-    }
 
     private fun onOKClicked(amt: String) {
         Log.e("SALE", "OK CLICKED  ${binding?.saleAmount?.text.toString()}")
@@ -1017,5 +817,205 @@ class NewInputAmountFragment : Fragment() {
             cb(false, false)
     }
 
+    private fun onSetKeyBoardButtonClick() {
+        binding?.mainKeyBoard?.key0?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("0")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("0")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("0")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key00?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("00")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("00")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("00")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key000?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("000")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("000")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("000")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key1?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("1")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("1")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("1")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key2?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    Log.e("SALE", "KEY 2")
+                    keyModelSaleAmount.onKeyClicked("2")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("2")
+                }
+                else -> {
+                    Log.e("CASH", "KEY 2")
+                    keyModelCashAmount.onKeyClicked("2")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key3?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("3")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("3")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("3")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key4?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("4")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("4")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("4")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key5?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("5")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("5")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("5")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key6?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("6")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("6")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("6")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key7?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("7")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("7")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("7")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key8?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("8")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("8")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("8")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.key9?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("9")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("9")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("9")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.keyClr?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("c")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("c")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("c")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("d")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("d")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("d")
+                }
+            }
+        }
+        binding?.mainKeyBoard?.keyOK?.setOnClickListener {
+            when {
+                inputInSaleAmount -> {
+                    keyModelSaleAmount.onKeyClicked("o")
+                }
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("o")
+                }
+                else -> {
+                    keyModelCashAmount.onKeyClicked("o")
+                }
+            }
+        }
+
+    }
 
 }

@@ -32,7 +32,9 @@
             android:theme="@style/Theme.AppCompat.Transparent.NoActionBar" />
         <activity
             android:name=".main.MainActivity"
-            android:windowSoftInputMode="adjustPan|stateAlwaysHidden">
+
+            android:windowSoftInputMode="adjustResize"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

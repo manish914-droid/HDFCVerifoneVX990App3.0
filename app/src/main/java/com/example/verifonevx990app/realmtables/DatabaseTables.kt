@@ -14,6 +14,7 @@ import io.realm.annotations.RealmClass
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
+import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -1837,7 +1838,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
 
     @field:BHFieldParseIndex(38)
     @field:BHFieldName("Void Refund")
-  //  @field:BHDashboardItem(EDashboardItem.VOID_REFUND)
+    //  @field:BHDashboardItem(EDashboardItem.VOID_REFUND)
     var voidRefund: String = ""
 
     @field:BHFieldParseIndex(39)
@@ -1960,12 +1961,26 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
     @field:BHDashboardItem(EDashboardItem.BONUS_PROMO)
     var hasPromo: String = ""
 
+    @field:BHDashboardItem(EDashboardItem.DIGI_POS)
+    var isDigiposActive:String=""
+
     var isPromoAvailable = false
     var isPromoAvailableOnPayment = false
     var promoVersionNo: String = "000000000000"
-
     var bankEnquiryMobNumberEntry: Boolean = false
 
+    // region =======
+    // Digi POS Data
+    var digiPosResponseType: String = ""
+    var digiPosStatus: String = ""
+    var digiPosStatusMessage: String = ""
+    var digiPosStatusCode: String = ""
+    var digiPosTerminalStatus: String = ""
+    var digiPosBQRStatus: String = ""
+    var digiPosUPIStatus: String = ""
+    var digiPosSMSpayStatus: String = ""
+    var digiPosStaticQrDownloadRequired: String = ""
+    var digiPosCardCallBackRequired: String = ""
 
     //endregion
 
@@ -2052,6 +2067,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         isPromoAvailableOnPayment = parcel.readByte() != 0.toByte()
         promoVersionNo = parcel.readString().toString()
 
+
     }
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
@@ -2134,6 +2150,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         parcel.writeByte(if (isPromoAvailable) 1 else 0)
         parcel.writeByte(if (isPromoAvailableOnPayment) 1 else 0)
         parcel.writeString(promoVersionNo)
+
     }
 
     override fun describeContents(): Int {
@@ -4387,6 +4404,96 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
 //endregion
 
 
+/**
+ * Table for DigiPos
+ * */
+//region================DigiPosTable Table:-\
+@RealmClass
+open class DigiPosDataTable() : RealmObject(),Parcelable {
+    // Digi POS Data
+    var digiPosResponseType: String = ""
+    var digiPosStatus: String = ""
+    var digiPosStatusMessage: String = ""
+    var digiPosStatusCode: String = ""
+    var digiPosTerminalStatus: String = ""
+    var digiPosBQRStatus: String = ""
+    var digiPosUPIStatus: String = ""
+    var digiPosSMSpayStatus: String = ""
+    var digiPosStaticQrDownloadRequired: String = ""
+    var digiPosCardCallBackRequired: String = ""
+
+    private constructor(parcel: Parcel) : this() {
+
+    }
+
+    override fun writeToParcel(p0: Parcel?, p1: Int) {
+
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+    companion object {
+        private val TAG: String = DigiPosDataTable::class.java.simpleName
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<DigiPosDataTable> {
+            override fun createFromParcel(parcel: Parcel): DigiPosDataTable {
+                return DigiPosDataTable(
+                    parcel
+                )
+            }
+
+            override fun newArray(size: Int): Array<DigiPosDataTable> {
+                return Array(size) { DigiPosDataTable() }
+            }
+        }
+
+        fun performOperation(param: DigiPosDataTable) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
+                }
+            }
+
+        fun performOperation(param: DigiPosDataTable, callback: () -> Unit) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
+                }
+                callback()
+            }
+
+        fun selectBatchData(): MutableList<DigiPosDataTable> = runBlocking {
+            var result = mutableListOf<DigiPosDataTable>()
+            getRealm {
+                val re = it.copyFromRealm(it.where(DigiPosDataTable::class.java).findAll())
+                if (re != null) result = re
+
+            }.await()
+            result
+        }
+
+        fun clear() =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BatchFileDataTable::class.java
+                    )
+                }
+            }
+
+    }// end of companion block/////
+
+
+
+}
+
+
+//endregion
+
+
+
 @RealmClass
 open class OfflineSaleTable() : RealmObject(), Parcelable {
     var maskedPan = ""
@@ -4586,11 +4693,16 @@ enum class EDashboardItem(
     EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
     BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
     BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
+    DIGI_POS("Digi POS", R.drawable.digipos_icon, 20),
 
     // just for handling the test emi not used in dashboard items
     TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
     FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance, 666),
-    LESS("View Less", R.drawable.ic_arrow_up, 888);
+    LESS("View Less", R.drawable.ic_arrow_up, 888),
+
+    UPI("UPI COLLECT", R.drawable.upi_icon, 901),
+    SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
+
 }
 
 //region========================push bill table for sms pay=======================

@@ -145,18 +145,25 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         positiveButtonText: String, alertCallback: (Boolean) -> Unit,
         cancelButtonCallback: (Boolean) -> Unit
     ) {
-
         val dialogBuilder = Dialog(this)
         //  builder.setTitle(title)
         //  builder.setMessage(msg)
-
         val bindingg = NewPrintCustomerCopyBinding.inflate(LayoutInflater.from(this))
 
         dialogBuilder.setContentView(bindingg.root)
-        if (msg == getString(R.string.print_customer_copy)) {
+        if (title == getString(R.string.print_customer_copy)|| title == getString(R.string.sms_upi_pay)) {
+            if(title==getString(R.string.sms_upi_pay)){
+                bindingg.imgPrinter.setImageResource(R.drawable.upi_icon)
+            } else if(title==getString(R.string.print_customer_copy)){
+                bindingg.imgPrinter.setImageResource(R.drawable.ic_printer)
+            }
             bindingg.imgPrinter.visibility = View.VISIBLE
         } else {
             bindingg.imgPrinter.visibility = View.GONE
+        }
+        if(positiveButtonText==""){
+            bindingg.yesBtn.visibility=View.GONE
+
         }
         dialogBuilder.setCancelable(false)
         val window = dialogBuilder.window
@@ -167,20 +174,13 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
 
         bindingg.yesBtn.text = positiveButtonText
         bindingg.dialogMsg.text = msg
-        /* .setPositiveButton(positiveButtonText) { dialog, _ ->
-             dialog.dismiss()
-             alertCallback(true)
-         }*/
+
         bindingg.yesBtn.setOnClickListener {
             dialogBuilder.dismiss()
             alertCallback(true)
         }
         //Below condition check is to show Cancel Button in Alert Dialog on condition base:-
         if (showCancelButton) {
-            /*  builder.setNegativeButton("No") { dialog, _ ->
-                  dialog.cancel()
-                  cancelButtonCallback(true)
-              }*/
             bindingg.noBtn.setOnClickListener {
                 dialogBuilder.cancel()
                 cancelButtonCallback(true)
@@ -212,7 +212,6 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         }
         dialogBuilder.show()
         dialogBuilder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
     }
 
 
