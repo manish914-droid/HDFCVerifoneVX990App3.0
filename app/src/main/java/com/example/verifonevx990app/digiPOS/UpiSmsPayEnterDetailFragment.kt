@@ -1,22 +1,25 @@
 package com.example.verifonevx990app.digiPOS
 
+import android.content.Context
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentUpiEnterDetailBinding
-import com.example.verifonevx990app.digiPOS.mvvm.util.EnumDigiPosProcess
-import com.example.verifonevx990app.digiPOS.mvvm.util.EnumDigiPosProcessingCode
-import com.example.verifonevx990app.digiPOS.mvvm.util.LOG_TAG
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
+import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.*
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -46,6 +49,19 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
         binding?.subHeaderView?.headerImage?.visibility = View.VISIBLE
         binding?.subHeaderView?.headerImage?.setImageResource(transactionType.res)
         binding?.subHeaderView?.subHeaderText?.text = transactionType.title
+        activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
+        when (transactionType) {
+            EDashboardItem.SMS_PAY -> {
+                binding?.mobilenoEt?.hint=getString(R.string.enter_mobile_number)
+            }
+            EDashboardItem.UPI -> {
+                binding?.mobilenoEt?.hint=getString(R.string.enter_mobile_number_optional)
+
+            }
+            else -> {
+
+            }
+        }
         setOnClickListeners()
     }
 
@@ -112,20 +128,15 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
             amtValue <= 0 -> {
                 VFService.showToast("Amount should be greater than 0 Rs")
             }
-/*
-            TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && transactionType == EDashboardItem.SMS_PAY  -> if (binding?.mobilenoEt?.text.toString().length in 10..13) {
+            transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString())   ->  context?.getString(R.string.enter_valid_mobile_number)
+                ?.let { VFService.showToast(it) }
 
-               // validateTIP(trnsAmt, saleAmt, extraPairData)
-            } else
-                context?.getString(R.string.enter_valid_mobile_number)
-                    ?.let { VFService.showToast(it) }
-            */
-            binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
+            transactionType == EDashboardItem.SMS_PAY &&  binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
             }
             TextUtils.isEmpty(binding?.vpaEt?.text.toString()) && transactionType == EDashboardItem.UPI -> {
-                    VFService.showToast("Enter Valid VPA")
+                VFService.showToast("Enter Valid VPA")
             }
             else -> {
                 //   "5^1.08^^8287305603^064566935811302^:"
@@ -167,6 +178,7 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                 logger("DigiPOS", "AGAIN HIT HERE", "e")
                                             }
                                         }, {
+
                                             logger("DigiPOS", "SAVE AS PENDING", "e")
                                         })
                                 }
@@ -174,16 +186,132 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                             }
                             EDashboardItem.SMS_PAY -> {
                                 lifecycleScope.launch(Dispatchers.Main) {
-                                    (activity as BaseActivity).alertBoxWithAction(
-                                        null, null, getString(R.string.sms_upi_pay),
-                                        getString(R.string.upi_payment_link_sent),
-                                        true, getString(R.string.positive_button_yes), { status ->
-                                            if (status) {
-                                                logger("DigiPOS", "AGAIN HIT HERE", "e")
-                                            }
-                                        }, {
-                                            logger("DigiPOS", "SAVE AS PENDING", "e")
-                                        })
+                                    val respDataList = responsef57.split("^")
+                                    if (respDataList[4] == EnumDigiPosTerminalStatusCode.TerminalStatusCodeS101.code) {
+                                        (activity as BaseActivity).alertBoxWithAction(
+                                            null,
+                                            null,
+                                            getString(R.string.sms_upi_pay),
+                                            getString(R.string.upi_payment_link_sent),
+                                            true,
+                                            getString(R.string.positive_button_yes),
+                                            { status ->
+                                                if (status) {
+                                                    lifecycleScope.launch(Dispatchers.IO) {
+                                                        withContext(Dispatchers.Main) {
+                                                            (activity as BaseActivity).showProgress()
+                                                        }
+
+                                                        val req57 = EnumDigiPosProcess.GET_STATUS.code + "^" + respDataList[1] + "^"
+
+                                                        getDigiPosStatus(req57, EnumDigiPosProcessingCode.DIGIPOSPROCODE.code, false) { isSuccess, responseMsg, responsef57, fullResponse ->
+                                                            try {
+                                                                (activity as BaseActivity).hideProgress()
+                                                                if (isSuccess) {
+                                                                    val statusRespDataList = responsef57.split("^")
+
+
+                                                                    val tabledata = DigiPosDataTable()
+                                                                    tabledata.requestType = statusRespDataList[0].toInt()
+                                                                    //  tabledata.partnerTxnId = statusRespDataList[1]
+                                                                    tabledata.status = statusRespDataList[1]
+                                                                    tabledata.statusMsg = statusRespDataList[2]
+                                                                    tabledata.statusCode = statusRespDataList[3]
+                                                                    tabledata.mTxnId = statusRespDataList[4]
+                                                                    tabledata.partnerTxnId = statusRespDataList[6]
+                                                                    tabledata.transactionTimeStamp = statusRespDataList[7]
+                                                                    val dateTime = statusRespDataList[7].split(" ")
+                                                                    tabledata.txnDate = dateTime[0]
+                                                                    tabledata.txnTime = dateTime[1]
+                                                                    tabledata.amount = statusRespDataList[8]
+                                                                    tabledata.paymentMode = statusRespDataList[9]
+                                                                    tabledata.customerMobileNumber = statusRespDataList[10]
+                                                                    tabledata.description = statusRespDataList[11]
+                                                                    tabledata.pgwTxnId = statusRespDataList[12]
+                                                                    when (statusRespDataList[5]) {
+                                                                        EDigiPosPaymentStatus.Pending.desciption -> {
+                                                                            tabledata.txnStatus =
+                                                                                EDigiPosPaymentStatus.Pending.code
+                                                                        }
+                                                                        EDigiPosPaymentStatus.Failed.desciption -> {
+                                                                            tabledata.txnStatus =
+                                                                                EDigiPosPaymentStatus.Failed.code
+                                                                        }
+                                                                        EDigiPosPaymentStatus.Approved.desciption -> {
+                                                                            tabledata.txnStatus =
+                                                                                EDigiPosPaymentStatus.Approved.code
+                                                                            txnSuccessToast(activity as Context)
+                                                                            PrintUtil(context).printSMSUPIChagreSlip(
+                                                                                tabledata,
+                                                                                EPrintCopyType.MERCHANT,
+                                                                                context
+                                                                            ) { alertCB, printingFail ->
+                                                                                //context.hideProgress()
+                                                                                if (!alertCB) {
+                                                                                    parentFragmentManager.popBackStack()
+
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                    DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                                                    val dp = DigiPosDataTable.selectAllDigiPosData()
+                                                                    val dpObj = Gson().toJson(dp)
+                                                                    logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                                                    Log.e("F56->>", responsef57)
+                                                                } else {
+                                                                    // todo for not success
+
+                                                                }
+
+                                                            } catch (ex: java.lang.Exception) {
+                                                                ex.printStackTrace()
+                                                                logger(
+                                                                    LOG_TAG.DIGIPOS.tag,
+                                                                    "Somethig wrong... in response data field 57"
+                                                                )
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            },
+                                            {
+                                                val tabledata = DigiPosDataTable()
+                                                val reqList = field57.split("^")
+                                                tabledata.amount = reqList[1]
+                                                tabledata.description = reqList[2]
+                                                tabledata.customerMobileNumber = reqList[3]
+                                                val respDataList = responsef57.split("^")
+                                                tabledata.requestType = respDataList[0].toInt()
+                                                tabledata.partnerTxnId = respDataList[1]
+                                                tabledata.status = respDataList[2]
+                                                tabledata.statusMsg = respDataList[3]
+                                                tabledata.statusCode = respDataList[4]
+                                                tabledata.mTxnId = respDataList[5]
+                                                val txnstatus = respDataList[6]
+                                                when (txnstatus) {
+                                                    EDigiPosPaymentStatus.Pending.desciption -> {
+                                                        tabledata.txnStatus =
+                                                            EDigiPosPaymentStatus.Pending.code
+                                                    }
+                                                    EDigiPosPaymentStatus.Failed.desciption -> {
+                                                        tabledata.txnStatus =
+                                                            EDigiPosPaymentStatus.Failed.code
+                                                    }
+                                                    EDigiPosPaymentStatus.Approved.desciption -> {
+                                                        tabledata.txnStatus =
+                                                            EDigiPosPaymentStatus.Approved.code
+                                                    }
+                                                }
+                                                DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                                val dp = DigiPosDataTable.selectAllDigiPosData()
+                                                val dpObj = Gson().toJson(dp)
+                                                logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                            })
+                                    }else{
+                                        // todo received other than S101
+
+                                    }
                                 }
                             }
                             else -> {
@@ -195,9 +323,12 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                         val responsF57List = responsef57.split("^")
                         Log.e("F56->>", responsef57)
                     } else {
-                        VFService.showToast(responseMsg)
+
+                            VFService.showToast(responseMsg)
+                        }
+
                     }
-                } catch (ex: Exception) {
+                 catch (ex: Exception) {
                     ex.printStackTrace()
                     logger(LOG_TAG.DIGIPOS.tag, "Something wrong... in response data field 57")
                 }

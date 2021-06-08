@@ -14,7 +14,6 @@ import io.realm.annotations.RealmClass
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.runBlocking
-import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -1962,7 +1961,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
     var hasPromo: String = ""
 
     @field:BHDashboardItem(EDashboardItem.DIGI_POS)
-    var isDigiposActive:String=""
+    var isDigiposActive: String = ""
 
     var isPromoAvailable = false
     var isPromoAvailableOnPayment = false
@@ -4409,18 +4408,26 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
  * */
 //region================DigiPosTable Table:-\
 @RealmClass
-open class DigiPosDataTable() : RealmObject(),Parcelable {
+open class DigiPosDataTable() : RealmObject(), Parcelable {
     // Digi POS Data
-    var digiPosResponseType: String = ""
-    var digiPosStatus: String = ""
-    var digiPosStatusMessage: String = ""
-    var digiPosStatusCode: String = ""
-    var digiPosTerminalStatus: String = ""
-    var digiPosBQRStatus: String = ""
-    var digiPosUPIStatus: String = ""
-    var digiPosSMSpayStatus: String = ""
-    var digiPosStaticQrDownloadRequired: String = ""
-    var digiPosCardCallBackRequired: String = ""
+  var requestType:Int=0
+    var amount = ""
+    var description = ""
+    var vpa = ""
+    var mTxnId = ""
+
+    @PrimaryKey
+    var partnerTxnId = ""
+    var status = ""
+    var statusMsg = ""
+    var statusCode = ""
+    var customerMobileNumber = ""
+    var transactionTimeStamp = ""
+    var txnStatus=0
+    var paymentMode=""
+    var pgwTxnId=""
+    var txnDate=""
+    var txnTime=""
 
     private constructor(parcel: Parcel) : this() {
 
@@ -4433,6 +4440,7 @@ open class DigiPosDataTable() : RealmObject(),Parcelable {
     override fun describeContents(): Int {
         return 0
     }
+
     companion object {
         private val TAG: String = DigiPosDataTable::class.java.simpleName
 
@@ -4449,14 +4457,14 @@ open class DigiPosDataTable() : RealmObject(),Parcelable {
             }
         }
 
-        fun performOperation(param: DigiPosDataTable) =
+        fun insertOrUpdateDigiposData(param: DigiPosDataTable) =
             withRealm {
                 it.executeTransaction { i ->
                     i.insertOrUpdate(param)
                 }
             }
 
-        fun performOperation(param: DigiPosDataTable, callback: () -> Unit) =
+        fun insertOrUpdateDigiposDataWithCB(param: DigiPosDataTable, callback: () -> Unit) =
             withRealm {
                 it.executeTransaction { i ->
                     i.insertOrUpdate(param)
@@ -4464,10 +4472,24 @@ open class DigiPosDataTable() : RealmObject(),Parcelable {
                 callback()
             }
 
-        fun selectBatchData(): MutableList<DigiPosDataTable> = runBlocking {
+        fun selectAllDigiPosData(): MutableList<DigiPosDataTable> = runBlocking {
             var result = mutableListOf<DigiPosDataTable>()
             getRealm {
                 val re = it.copyFromRealm(it.where(DigiPosDataTable::class.java).findAll())
+                if (re != null) result = re
+
+            }.await()
+            result
+        }
+
+        fun selectDigiPosDataAccordingToTxnStatus(status:Int): MutableList<DigiPosDataTable> = runBlocking {
+            var result = mutableListOf<DigiPosDataTable>()
+            getRealm {
+                val re = it.copyFromRealm(
+                    it.where(DigiPosDataTable::class.java)
+                        .equalTo("txnStatus", status)
+                        .findAll()
+                )
                 if (re != null) result = re
 
             }.await()
@@ -4478,7 +4500,7 @@ open class DigiPosDataTable() : RealmObject(),Parcelable {
             withRealm {
                 it.executeTransaction { i ->
                     i.delete(
-                        BatchFileDataTable::class.java
+                        DigiPosDataTable::class.java
                     )
                 }
             }
@@ -4486,12 +4508,10 @@ open class DigiPosDataTable() : RealmObject(),Parcelable {
     }// end of companion block/////
 
 
-
 }
 
 
 //endregion
-
 
 
 @RealmClass

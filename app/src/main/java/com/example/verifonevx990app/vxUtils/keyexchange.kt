@@ -4,10 +4,10 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import com.example.verifonevx990app.R
-import com.example.verifonevx990app.digiPOS.mvvm.util.EDigiPosTerminalStatusResponseCodes
-import com.example.verifonevx990app.digiPOS.mvvm.util.EnumDigiPosProcess
-import com.example.verifonevx990app.digiPOS.mvvm.util.EnumDigiPosProcessingCode
-import com.example.verifonevx990app.digiPOS.mvvm.util.LOG_TAG
+import com.example.verifonevx990app.digiPOS.EDigiPosTerminalStatusResponseCodes
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcessingCode
+import com.example.verifonevx990app.digiPOS.LOG_TAG
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.realmtables.TerminalParameterTable

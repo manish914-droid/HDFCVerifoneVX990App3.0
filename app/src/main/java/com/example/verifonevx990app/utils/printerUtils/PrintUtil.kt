@@ -17,6 +17,7 @@ import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.crosssell.CrossSellReportWithType
 import com.example.verifonevx990app.crosssell.ReportDownloadedModel
 import com.example.verifonevx990app.crosssell.TotalCrossellRep
+import com.example.verifonevx990app.digiPOS.EDigiPosPaymentStatus
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
 import com.example.verifonevx990app.main.MainActivity
@@ -1519,6 +1520,176 @@ class PrintUtil(context: Context?) {
         }
     }
 
+    fun printSMSUPIChagreSlip(
+        digiPosData: DigiPosDataTable,
+        copyType: EPrintCopyType,
+        context: Context?,
+        printerCallback: (Boolean, Int) -> Unit
+    ) {
+        //  printer=null
+        try {
+            val terminalData = TerminalParameterTable.selectFromSchemeTable()
+            val format = Bundle()
+            // bundle formate for AddTextInLine
+            val fmtAddTextInLine = Bundle()
+
+            printLogo("hdfc_print_logo.bmp")
+
+            format.putInt(
+                PrinterConfig.addText.FontSize.BundleName,
+                PrinterConfig.addText.FontSize.NORMAL_24_24
+            )
+            format.putInt(
+                PrinterConfig.addText.Alignment.BundleName,
+                PrinterConfig.addText.Alignment.CENTER
+            )
+            //  logger("PS_H1", (printer?.status).toString(), "e")
+            printer?.addText(format, terminalData?.receiptHeaderOne) // header1
+            //   logger("PS_H2", (printer?.status).toString(), "e")
+            printer?.addText(format, terminalData?.receiptHeaderTwo) //header2
+            //   logger("PS_H3", (printer?.status).toString(), "e")
+            printer?.addText(format, terminalData?.receiptHeaderThree) //header3
+            printSeperator(format)
+
+
+            var txnStatus = ""
+            when (digiPosData.txnStatus) {
+                EDigiPosPaymentStatus.Pending.code -> {
+                    txnStatus = EDigiPosPaymentStatus.Pending.desciption
+                }
+                EDigiPosPaymentStatus.Failed.code -> {
+                    txnStatus = EDigiPosPaymentStatus.Failed.desciption
+                }
+                EDigiPosPaymentStatus.Approved.code -> {
+                    txnStatus = EDigiPosPaymentStatus.Approved.desciption
+                }
+            }
+            val str = "STATUS : $txnStatus"
+            centerText(fmtAddTextInLine, str, true)
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
+
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "TID : ${terminalData?.terminalId}",
+                "",
+                "BATCH NO : ${terminalData?.batchNumber?.let { addPad(it, "0", 6) }}",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+             printer?.addTextInLine(
+                fmtAddTextInLine,
+                "DATE : ${digiPosData.txnDate}",
+                "",
+                "TIME : ${digiPosData.txnTime}",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "MTXN_ID : ${digiPosData.mTxnId}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "PTXN_ID :  ${digiPosData.partnerTxnId}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+            printSeperator(format)
+
+            alignLeftRightText(
+                fmtAddTextInLine,
+                "TXN AMOUNT :  ",
+                 digiPosData.amount,
+                "Rs.",
+
+            )
+
+            printSeperator(format)
+
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "Mob. : ${digiPosData.customerMobileNumber}",
+                "",
+                "Mode  :  ${digiPosData.paymentMode}",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "Track_ID : ${digiPosData.pgwTxnId}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+            printer?.addText(format, footerText[0])
+            printer?.addText(format, footerText[1])
+
+            printLogo("BH.bmp")
+
+            format.putInt(
+                PrinterConfig.addText.FontSize.BundleName,
+                PrinterConfig.addText.FontSize.NORMAL_24_24
+            )
+            format.putInt(
+                PrinterConfig.addText.Alignment.BundleName,
+                PrinterConfig.addText.Alignment.CENTER
+            )
+            printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
+
+            printer?.addText(format, "---------X-----------X----------")
+            printer?.feedLine(4)
+
+            // start print here
+            printer?.startPrint(
+                ISmSUpiPrintListener(
+                    this,
+                    context,
+                    copyType,
+                    digiPosData,
+                    printerCallback
+                )
+            )
+        } catch (ex: DeadObjectException) {
+            ex.printStackTrace()
+            failureImpl(
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
+            )
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+            failureImpl(
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            failureImpl(
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
+            )
+        } finally {
+            //   VFService.connectToVFService(VerifoneApp.appContext)
+        }
+    }
+
+
     private fun setHeaderWithLogo(
         format: Bundle,
         img: String,
@@ -2421,7 +2592,7 @@ class PrintUtil(context: Context?) {
     ) {
         try {
             //    var tenure= arrayListOf<TenureDataModel>()
-                val brandData = runBlocking { BrandEMIDataTable.getAllEMIData() }
+            val brandData = runBlocking { BrandEMIDataTable.getAllEMIData() }
             setLogoAndHeader()
             val terminalData = TerminalParameterTable.selectFromSchemeTable()
             val dateTime: Long = Calendar.getInstance().timeInMillis
@@ -3665,6 +3836,54 @@ internal open class IPrintListener(
                             isSuccess(dialogCB, 1)
                         }
                     }
+                }
+
+            }
+            EPrintCopyType.CUSTOMER -> {
+                //VFService.showToast("Customer Transaction Slip Printed Successfully")
+                isSuccess(false, 1)
+            }
+            EPrintCopyType.DUPLICATE -> {
+                isSuccess(true, 1)
+            }
+        }
+    }
+}
+
+
+internal open class ISmSUpiPrintListener(
+    var printerUtil: PrintUtil,
+    var context: Context?,
+    var copyType: EPrintCopyType,
+    var digiPosData: DigiPosDataTable,
+    var isSuccess: (Boolean, Int) -> Unit
+) : PrinterListener.Stub() {
+    @Throws(RemoteException::class)
+    override fun onError(error: Int) {
+        if (error == 240)
+        //VFService.showToast("Printing roll not available..")
+            isSuccess(true, 0)
+        else
+        //VFService.showToast("Printer Error------> $error")
+            isSuccess(false, 0)
+    }
+
+    @Throws(RemoteException::class)
+    override fun onFinish() {
+        val msg = Message()
+        msg.data.putString("msg", "print finished")
+        // VFService.showToast("Printing Successfully")
+        when (copyType) {
+            EPrintCopyType.MERCHANT -> {
+                GlobalScope.launch(Dispatchers.Main) {
+
+                    (context as BaseActivity).showMerchantAlertBoxSMSUpiPay(
+                        printerUtil,
+                        digiPosData
+                    ) { dialogCB ->
+                        isSuccess(dialogCB, 1)
+                    }
+
                 }
 
             }

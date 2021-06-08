@@ -21,7 +21,7 @@
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="wrap_content"
             android:background="#BECFFF"
             android:gravity="bottom"
             android:orientation="vertical"
@@ -33,8 +33,10 @@
                 android:id="@+id/dialog_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+          android:gravity="center"
                 android:layout_gravity="center"
-                android:padding="@dimen/pad_8"
+                android:layout_marginTop="26dp"
+               android:padding="@dimen/pad_8"
                 android:textColor="@color/themeBackground"
                 android:textSize="@dimen/text_size_regular" />
 
@@ -91,8 +93,8 @@
 
     <ImageView
         android:id="@+id/img_printer"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/ic_printer"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/custom_layout"

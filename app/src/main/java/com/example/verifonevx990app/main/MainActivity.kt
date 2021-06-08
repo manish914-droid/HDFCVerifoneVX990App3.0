@@ -36,7 +36,7 @@ import com.example.verifonevx990app.crosssell.HDFCCrossSellFragment
 import com.example.verifonevx990app.databinding.ActivityMainBinding
 import com.example.verifonevx990app.databinding.AuthCatogoryDialogBinding
 import com.example.verifonevx990app.digiPOS.DigiPosMenuFragment
-import com.example.verifonevx990app.digiPOS.mvvm.util.*
+
 import com.example.verifonevx990app.disputetransaction.CreateSettlementPacket
 import com.example.verifonevx990app.disputetransaction.SettlementFragment
 import com.example.verifonevx990app.disputetransaction.VoidTransactionFragment
@@ -1295,6 +1295,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 ) {
                     if (checkInternetConnection()) {
                         transactFragment(DigiPosMenuFragment().apply {
+                         //   DigiPosDataTable.clear()
+
+                            val dp = DigiPosDataTable.selectAllDigiPosData()
+                            val dpObj = Gson().toJson(dp)
+                            logger("UPDATEDIGI", dpObj,"e")
+
                             arguments = Bundle().apply {
                                 putSerializable("type", EDashboardItem.DIGI_POS)
                                // putString(INPUT_SUB_HEADING, "")

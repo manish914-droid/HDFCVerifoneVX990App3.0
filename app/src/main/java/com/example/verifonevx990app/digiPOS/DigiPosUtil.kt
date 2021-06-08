@@ -1,4 +1,4 @@
-package com.example.verifonevx990app.digiPOS.mvvm.util
+package com.example.verifonevx990app.digiPOS
 
 enum class LOG_TAG(val tag:String){
     DIGIPOS("DIGI_POS_TAG")
@@ -9,6 +9,7 @@ enum class EnumDigiPosProcess(val code:String){
     InitializeDigiPOS("1"),
     UPIDigiPOS("2"),
    SMS_PAYDigiPOS("5"),
+   GET_STATUS("6"),
 
 
 }
@@ -29,6 +30,15 @@ enum class EDigiPosTerminalStatusResponseCodes(val statusCode:String){
     ActiveString("Active"),
     DeactiveString("Deactive"),
 }
+
+enum class EDigiPosPaymentStatus(val code: Int,val desciption:String){
+    Pending(0,"InProgress"),
+    Approved(1,"Success"),
+    Failed(2,"Failed"),
+    UNKnown(3,"Something went wrong"),
+
+}
+
 
 
 

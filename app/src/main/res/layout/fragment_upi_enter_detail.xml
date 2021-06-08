@@ -153,10 +153,8 @@
                 android:digits="0123456789"
                 android:drawableStart="@drawable/ic_mobile_icon"
                 android:ems="10"
-
                 android:focusable="false"
                 android:gravity="center"
-                android:hint="@string/enter_mobile_number_optional"
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:lines="1"

@@ -4,7 +4,10 @@ import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.main.ConnectionError
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
 import java.io.DataInputStream
 import java.io.FileOutputStream
 import java.net.ConnectException
@@ -101,8 +104,10 @@ object HitServer {
 
 
     @Synchronized
-    suspend fun hitDigiPosServer( isoWriterData: IsoDataWriter,isSaveTransactionAsPending:Boolean,
-                                  callback: ServerMessageCallback) {
+    suspend fun hitDigiPosServer(
+        isoWriterData: IsoDataWriter, isSaveTransactionAsPending: Boolean,
+        callback: ServerMessageCallback
+    ) {
         this@HitServer.callback = callback
 
         try {
@@ -116,19 +121,35 @@ object HitServer {
                 // var responseStr : String? = null
                 openSocket { socket ->
                     //    try {
+                    // todo save data as pending in digipostable
+
+                        if (isSaveTransactionAsPending) {
+                            val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
+                            logger(TAG, "SAVED TO DIGIPOS -->$datatosave", "e")
+                            val datalist = datatosave?.split("^")
+                            //        EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
+                            val digiposData = DigiPosDataTable()
+                            digiposData.requestType = datalist[0].toInt()
+                            digiposData.amount = datalist[1]
+                            digiposData.description = datalist[2]
+                            digiposData.customerMobileNumber = datalist[3]
+                          //  digiposData.vpa = datalist[4]
+                            digiposData.partnerTxnId = datalist[4]
+                            DigiPosDataTable.insertOrUpdateDigiposData(digiposData)
+                        }
+
                     logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
                     ConnectionTimeStamps.dialConnected = getF48TimeStamp()
-                   // progressMsg("Please wait sending data to Bonushub server")
+                    // progressMsg("Please wait sending data to Bonushub server")
                     //println("Data send" + data.byteArr2HexStr())
-
-                    val data=  isoWriterData.generateIsoByteRequest()
+                    val data = isoWriterData.generateIsoByteRequest()
                     logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
                     ConnectionTimeStamps.startTransaction = getF48TimeStamp()
                     val sos = socket.getOutputStream()
                     sos?.write(data)
                     sos.flush()
 
-                  //  progressMsg("Please wait receiving data from Bonushub server")
+                    //  progressMsg("Please wait receiving data from Bonushub server")
                     val dis = DataInputStream(socket.getInputStream())
                     val len = dis.readShort().toInt()
                     val response = ByteArray(len)
@@ -156,7 +177,13 @@ object HitServer {
                 this@HitServer.callback = null
             }
 
-        } catch (ex: Exception) {
+        }
+        catch (ex: SocketTimeoutException) {
+          //  println("CHECK EXCEPTION SOCKET")
+            callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
+            this@HitServer.callback = null
+        }
+        catch (ex: Exception) {
             callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
             this@HitServer.callback = null
         }
@@ -489,7 +516,8 @@ object HitServer {
 
         } catch (ex: Exception) {
             ex.printStackTrace()
-            callback?.invoke(ex.message ?: "Connection Error", false)
+            println("SOCKET CONNECT EXCEPTION")
+            callback?.invoke(VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error", false)
         } finally {
             Log.d("Finally Call:- ", "Final Block Runs Here.....")
         }

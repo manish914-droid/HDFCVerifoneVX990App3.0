@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.databinding.FragmentDigiPosMenuBinding
-import com.example.verifonevx990app.digiPOS.mvvm.util.EDigiPosTerminalStatusResponseCodes
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable

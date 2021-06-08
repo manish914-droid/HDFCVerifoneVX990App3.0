@@ -22,6 +22,7 @@ import com.example.verifonevx990app.databinding.NewPrintCustomerCopyBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.TenureDataModel
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -381,6 +382,34 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
                      Intent(this, MainActivity::class.java).apply {
                          flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                      })*/
+                dialogCB(false)
+            })
+    }
+
+
+    fun showMerchantAlertBoxSMSUpiPay(
+        printerUtil: PrintUtil,
+        digiposData: DigiPosDataTable,
+        dialogCB: (Boolean) -> Unit
+    ) {
+        alertBoxWithAction(
+            printerUtil, null, getString(R.string.print_customer_copy),
+            getString(R.string.print_customer_copy),
+            true, getString(R.string.positive_button_yes), { status ->
+                if (status) {
+                    printerUtil.printSMSUPIChagreSlip(
+                        digiposData,
+                        EPrintCopyType.CUSTOMER,
+                        this
+                    ) { customerCopyPrintSuccess, printingFail ->
+                        if (!customerCopyPrintSuccess) {
+                            //  VFService.showToast(getString(R.string.customer_copy_print_success))
+                            dialogCB(false)
+                        }
+                    }
+
+                }
+            }, {
                 dialogCB(false)
             })
     }

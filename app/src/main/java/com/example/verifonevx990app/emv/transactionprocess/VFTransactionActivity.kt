@@ -836,6 +836,8 @@ class VFTransactionActivity : BaseActivity() {
             })
     }
 
+
+
     //Below function is used to deal with EMV Card Fallback when we insert EMV Card from other side then chip side:-
     fun handleEMVFallbackFromError(
         title: String,
