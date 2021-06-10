@@ -57,6 +57,10 @@
     <dimen name="pad_1">1dp</dimen>
     <dimen name="pad_100">100dp</dimen>
     <dimen name="pad_70">70dp</dimen>
+    <dimen name="pad_50">50dp</dimen>
+    <dimen name="pad_42">42dp</dimen>
+    <dimen name="pad_44">44dp</dimen>
+    <dimen name="pad_120">120dp</dimen>
 
 
 </resources>

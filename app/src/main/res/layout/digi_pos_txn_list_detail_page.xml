@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
+
+        <androidx.appcompat.widget.LinearLayoutCompat
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@color/themeBackground">
+
+                <include
+                    android:id="@+id/sub_header_view"
+                    layout="@layout/sub_header_layout"
+                    android:visibility="visible" />
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/subHeaderOneCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/pad_16"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
+                    app:neumorph_inset="@dimen/pad_8"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                    app:neumorph_shapeType="flat"
+                    app:neumorph_strokeWidth="@dimen/pad_1">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/pad_16">
+
+                        <TextView
+                            android:id="@+id/transactionMessageTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pad_16"
+                            android:layout_marginEnd="@dimen/pad_24"
+                            android:gravity="end|center_vertical"
+                            android:padding="@dimen/pad_8"
+                            android:text="@string/transaction_success"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <ImageView
+                            android:id="@+id/transactionIV"
+                            android:layout_width="@dimen/pad_30"
+                            android:layout_height="@dimen/pad_30"
+                            android:layout_marginStart="@dimen/pad_30"
+                            android:layout_marginTop="@dimen/pad_24"
+                            android:contentDescription="@string/transaction_success"
+                            android:src="@drawable/circle_with_tick_mark_green"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/transactionMessageTV" />
+
+                        <TextView
+                            android:id="@+id/transactionAmountTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pad_40"
+                            android:gravity="end|center_vertical"
+                            android:padding="@dimen/pad_8"
+                            android:text="@string/_500_00"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_medium"
+                            app:layout_constraintStart_toEndOf="@+id/transactionIV"
+                            app:layout_constraintTop_toBottomOf="@+id/transactionMessageTV" />
+
+                        <TextView
+                            android:id="@+id/transactionDateTime"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pad_30"
+                            android:gravity="end|center_vertical"
+                            android:padding="@dimen/pad_8"
+                            android:text="@string/date_hint"
+                            android:textColor="@color/white"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toEndOf="@+id/transactionIV"
+                            app:layout_constraintTop_toBottomOf="@+id/transactionAmountTV" />
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.example.customneumorphic.NeumorphCardView>
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/subHeaderTwoCV"
+                    style="@style/Widget.Neumorph.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/pad_16"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subHeaderOneCV"
+                    app:neumorph_inset="@dimen/pad_8"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                    app:neumorph_shapeType="flat"
+                    app:neumorph_strokeWidth="@dimen/pad_1">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/pad_16">
+
+                        <TextView
+                            android:id="@+id/headingModeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pad_30"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:text="@string/mode"
+                            android:textColor="@color/colorGrey"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/paymentModeTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_2"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:hint="@string/sms_pay"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_regular"
+                            app:drawableLeftCompat="@drawable/sms_icon"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/headingModeTV" />
+
+                        <TextView
+                            android:id="@+id/headingMobileNumberTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/pad_24"
+                            android:layout_marginTop="@dimen/pad_30"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:text="@string/mobileNumber"
+                            android:textColor="@color/colorGrey"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/paymentModeTV" />
+
+                        <TextView
+                            android:id="@+id/mobileNumberTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_2"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:hint="@string/mobilNumberHint"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_regular"
+                            app:drawableLeftCompat="@drawable/ic_mobile_icon_white"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/headingMobileNumberTV" />
+
+                        <TextView
+                            android:id="@+id/headingPTXNIDTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_30"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:text="@string/ptxnID"
+                            android:textColor="@color/colorGrey"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/mobileNumberTV" />
+
+                        <TextView
+                            android:id="@+id/ptxnTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_2"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:hint="@string/ptxnID_hint"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_regular"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/headingPTXNIDTV" />
+
+                        <TextView
+                            android:id="@+id/headingMTXNIDTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_30"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:text="@string/mtxnID"
+                            android:textColor="@color/colorGrey"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/ptxnTV" />
+
+                        <TextView
+                            android:id="@+id/mtxnTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_2"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:hint="@string/ptxnID_hint"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_regular"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/headingMTXNIDTV" />
+
+                        <TextView
+                            android:id="@+id/headingTXNStatusTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_30"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:text="@string/txnStatus"
+                            android:textColor="@color/colorGrey"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_small"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/mtxnTV" />
+
+                        <TextView
+                            android:id="@+id/txnStatusTV"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/pad_2"
+                            android:drawablePadding="@dimen/pad_4"
+                            android:hint="@string/success_message"
+                            android:textColor="@color/white"
+                            android:textColorHint="@color/white"
+                            android:textSize="@dimen/text_size_regular"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@+id/headingTXNStatusTV" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </com.example.customneumorphic.NeumorphCardView>
+
+                <Button
+                    android:id="@+id/printButton"
+                    android:layout_width="180dp"
+                    android:layout_height="@dimen/pad_60"
+                    android:layout_marginTop="@dimen/pad_16"
+                    android:backgroundTint="@color/red"
+                    android:text="@string/print"
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_xsmall"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/subHeaderTwoCV" />
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.appcompat.widget.LinearLayoutCompat>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

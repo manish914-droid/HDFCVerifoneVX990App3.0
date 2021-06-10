@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/bottom_layout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:behavior_hideable="true"
+    app:behavior_peekHeight="0dp"
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="420dp"
+        android:layout_marginBottom="@dimen/pad_30"
+        android:background="@drawable/bottom_sheet_rounded_rectangle"
+        android:backgroundTint="@color/white"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <ImageView
+            android:id="@+id/closeIconBottom"
+            android:layout_width="@dimen/pad_30"
+            android:layout_height="@dimen/pad_30"
+            android:layout_gravity="end"
+            android:layout_marginTop="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_24"
+            android:contentDescription="@string/cancel"
+            android:src="@drawable/ic_cirlce_close_icon" />
+
+        <TextView
+            android:id="@+id/filterByBottomTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_24"
+            android:gravity="start|center_vertical"
+            android:text="@string/filterBy"
+            android:textColor="@color/themeBackground"
+            android:textSize="@dimen/text_size_xregular"
+            android:textStyle="bold"
+            app:drawableRightCompat="@drawable/ic_arrow_down" />
+
+        <Button
+            android:id="@+id/applyFilter"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:layout_marginEnd="@dimen/pad_16"
+            android:background="@drawable/rounded_rectangle"
+            android:backgroundTint="@color/themeBackground"
+            android:text="@string/apply"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_small" />
+
+        <RadioGroup
+            android:id="@+id/radioGroup"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/upiCollectBottomRB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorGrey"
+                    android:text="@string/upi_collect"
+                    android:textColor="@color/colorGrey" />
+
+                <RadioButton
+                    android:id="@+id/dynamicQRBottomRB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pad_32"
+                    android:buttonTint="@color/colorGrey"
+                    android:text="@string/dynamic_qr"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="@dimen/text_size_small" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content">
+
+                <RadioButton
+                    android:id="@+id/smsPayBottomRB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:buttonTint="@color/colorGrey"
+                    android:text="@string/sms_pay"
+                    android:textColor="@color/colorGrey" />
+
+                <RadioButton
+                    android:id="@+id/staticQRBottomRB"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pad_44"
+                    android:buttonTint="@color/colorGrey"
+                    android:text="@string/static_qr"
+                    android:textColor="@color/colorGrey" />
+            </LinearLayout>
+        </RadioGroup>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_120"
+            android:background="@color/colorPrimary" />
+
+        <RadioGroup
+            android:id="@+id/txnIDRG"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_16"
+            android:orientation="horizontal">
+
+            <RadioButton
+                android:id="@+id/ptxnIDBottomRB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/colorGrey"
+                android:text="@string/ptxnID"
+                android:textColor="@color/colorGrey" />
+
+            <RadioButton
+                android:id="@+id/mtxnIDBottomRB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/pad_44"
+                android:buttonTint="@color/colorGrey"
+                android:text="@string/mtxnID"
+                android:textColor="@color/colorGrey" />
+
+        </RadioGroup>
+
+        <androidx.appcompat.widget.AppCompatEditText
+            android:id="@+id/transactionIDET"
+            android:layout_width="220dp"
+            android:layout_height="40dp"
+            android:layout_gravity="start"
+            android:layout_marginStart="@dimen/pad_24"
+            android:background="@drawable/rounded_rectangle_theme"
+            android:inputType="text"
+            android:paddingStart="@dimen/pad_4"
+            android:textColor="@color/themeBackground"
+            tools:ignore="RtlSymmetry" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginTop="@dimen/pad_10"
+            android:layout_marginEnd="@dimen/pad_120"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:id="@+id/amountBottomTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_24"
+            android:layout_marginTop="@dimen/pad_10"
+            android:layout_marginEnd="@dimen/pad_24"
+            android:text="@string/amount"
+            android:textColor="@color/colorGrey"
+            android:textSize="@dimen/text_size_small"
+            app:drawableRightCompat="@drawable/ic_arrow_down" />
+
+        <com.example.verifonevx990app.vxUtils.AmountEditText
+            android:id="@+id/amountBottomET"
+            android:layout_width="220dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="@dimen/pad_24"
+            android:background="@drawable/rounded_rectangle_theme"
+            android:clickable="true"
+            android:cursorVisible="false"
+            android:digits="0123456789"
+            android:drawableStart="@drawable/ic_indian_rupee"
+            android:ems="10"
+            android:focusable="true"
+            android:gravity="start|center_vertical"
+            android:hint="@string/enter_amount"
+            android:imeOptions="actionDone"
+            android:inputType="number"
+            android:lines="1"
+            android:maxLength="11"
+            android:paddingStart="@dimen/pad_4"
+            android:textColor="@color/themeBackground"
+            android:textColorHint="@color/colorGrey"
+            android:textSize="@dimen/text_size_small"
+            app:fname="bold"
+            tools:ignore="RtlSymmetry" />
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

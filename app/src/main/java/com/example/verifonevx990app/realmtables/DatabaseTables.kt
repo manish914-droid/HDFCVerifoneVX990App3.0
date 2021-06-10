@@ -4429,9 +4429,7 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
     var txnDate = ""
     var txnTime = ""
 
-    private constructor(parcel: Parcel) : this() {
-
-    }
+    private constructor(parcel: Parcel) : this()
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
 
@@ -4734,6 +4732,7 @@ enum class EDashboardItem(
 
     UPI("UPI COLLECT", R.drawable.upi_icon, 901),
     SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
+    TXN_LIST("TXN LIST", R.drawable.sms_icon, 903),
     PENDING_TXN("Pending Txn", R.drawable.sms_icon, 903),
 
 }

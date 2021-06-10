@@ -57,7 +57,6 @@ public class DRLUtil {
         byte[] clssFloorLimit = null;
         byte[] clssTransLimit = null;
         byte[] clssRequiredLimit = null;
-        drlDataList.clear();
 
         drlID = new byte[]{(byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
                 (byte) 0xFF, (byte) 0xFF, (byte) 0xFF, (byte) 0xFF,
@@ -67,10 +66,10 @@ public class DRLUtil {
         clssFloorLimit = new byte[]{0, 0, 0, 0, 0, 0}; // Default value cls floor limit
 
         //CTLS Transaction Limit ByteArray:-
-        clssTransLimit = str2NibbleArr(ctlsVal); //Here we are creating a Nibble Array of CTLS value coming from host end
+        clssTransLimit = str2NibbleArr(ctlsVal, true); //Here we are creating a Nibble Array of CTLS value coming from host end
 
         //CVM Transaction Limit ByteArray:-
-        clssRequiredLimit = str2NibbleArr(cvmVal); //Here we are creating a Nibble Array of CVM value coming from host end
+        clssRequiredLimit = str2NibbleArr(cvmVal, true); //Here we are creating a Nibble Array of CVM value coming from host end
 
         drlData = new DRLData(drlID, clssFloorLimit, clssTransLimit, clssRequiredLimit);
         drlDataList.add(drlData);

@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -112,6 +113,11 @@ class EMICompareFragment : Fragment() {
     private fun onItemDeleteClick(position: Int) {
         if (position > -1) {
             Log.d("PositionClicked:- ", position.toString())
+            dataList.removeAt(position)
+            emiCompareAdapter.refreshAdapterList(dataList)
+
+            if (dataList.isEmpty())
+                parentFragmentManager.popBackStackImmediate()
         }
     }
     //endregion
@@ -130,6 +136,13 @@ class EMICompareAdapter(
 ) :
     RecyclerView.Adapter<EMICompareAdapter.EMICompareViewHolder>() {
 
+    private var compareDataList = mutableListOf<IssuerBankModal>()
+
+    init {
+        if (dataList.isNotEmpty())
+            compareDataList.addAll(dataList)
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): EMICompareViewHolder {
         val itemBinding =
             ItemEmiCompareViewBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -137,7 +150,7 @@ class EMICompareAdapter(
     }
 
     override fun onBindViewHolder(holder: EMICompareViewHolder, position: Int) {
-        val modal = dataList[position]
+        val modal = compareDataList[position]
         when (compareActionName) {
             CompareActionType.COMPARE_BY_BANK.compareType -> {
                 holder.viewBinding.topHeaderBT.text = modal.issuerBankTenure
@@ -148,7 +161,7 @@ class EMICompareAdapter(
         }
     }
 
-    override fun getItemCount(): Int = dataList.size
+    override fun getItemCount(): Int = compareDataList.size
 
     inner class EMICompareViewHolder(var viewBinding: ItemEmiCompareViewBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
@@ -156,5 +169,15 @@ class EMICompareAdapter(
             viewBinding.issuerDeleteIV.setOnClickListener { cb(absoluteAdapterPosition) }
         }
     }
+
+    //region==========================Below Method is used to refresh Adapter New Data after Delete Cell:-
+    fun refreshAdapterList(refreshList: MutableList<IssuerBankModal>) {
+        val diffUtilCallBack = EMICompareDiffUtil(this.compareDataList, refreshList)
+        val diffResult = DiffUtil.calculateDiff(diffUtilCallBack)
+        this.compareDataList.clear()
+        this.compareDataList.addAll(refreshList)
+        diffResult.dispatchUpdatesTo(this)
+    }
+    //endregion
 }
 //endregion

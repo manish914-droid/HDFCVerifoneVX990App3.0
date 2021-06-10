@@ -546,6 +546,18 @@ fun dateFormater(date: Long): String =
 fun timeFormater(date: Long): String =
     SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date)
 
+fun formatDateTime(dateTime: String): Date? {
+    val dateFormatter = SimpleDateFormat("ddMMMHHmm", Locale.getDefault())
+
+    /*try {
+        date = inputFormat.parse(dateTime)
+        str = dateFormatter.format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }*/
+    return null
+}
+
 @Deprecated("User ROCproviderV2 for multiple bank related roc.")
 object ROCProvider {
 
@@ -1756,7 +1768,7 @@ fun convertStr2Nibble2Str(data: String): String {
         }
         tempData += splitData[i]
     }
-    return tempData
+    return tempData + "0"
 }
 
 fun getCurrentDate(): String {

@@ -30,13 +30,11 @@ import com.example.verifonevx990app.appupdate.*
 import com.example.verifonevx990app.appupdate.SystemService.systemManager
 import com.example.verifonevx990app.bankEmiEnquiry.IssuerListFragment
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
-import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIByAccessCodeFragment
 import com.example.verifonevx990app.crosssell.HDFCCrossSellFragment
 import com.example.verifonevx990app.databinding.ActivityMainBinding
 import com.example.verifonevx990app.databinding.AuthCatogoryDialogBinding
 import com.example.verifonevx990app.digiPOS.DigiPosMenuFragment
-
 import com.example.verifonevx990app.disputetransaction.CreateSettlementPacket
 import com.example.verifonevx990app.disputetransaction.SettlementFragment
 import com.example.verifonevx990app.disputetransaction.VoidTransactionFragment
@@ -64,7 +62,6 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.Exception
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -1139,13 +1136,24 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                        transactFragment(BrandEMIMasterCategoryFragment().apply {
+                        /*transactFragment(BrandEMIMasterCategoryFragment().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                                 putString(
                                     INPUT_SUB_HEADING,
                                     SubHeaderTitle.Brand_EMI_Master_Category.title
                                 )
+                            }
+                        })*/
+
+                        transactFragment(DigiPosMenuFragment().apply {
+                            val dp = DigiPosDataTable.selectAllDigiPosData()
+                            val dpObj = Gson().toJson(dp)
+                            logger("UPDATEDIGI", dpObj, "e")
+
+                            arguments = Bundle().apply {
+                                putSerializable("type", EDashboardItem.DIGI_POS)
+                                // putString(INPUT_SUB_HEADING, "")
                             }
                         })
                     } else {

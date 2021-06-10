@@ -8,8 +8,11 @@ enum class LOG_TAG(val tag:String){
 enum class EnumDigiPosProcess(val code:String){
     InitializeDigiPOS("1"),
     UPIDigiPOS("2"),
-   SMS_PAYDigiPOS("5"),
-   GET_STATUS("6"),
+    SMS_PAYDigiPOS("5"),
+    GET_STATUS("6"),
+    TXN_LIST("7"),
+    DYNAMIC_QR("3"),
+    STATIC_QR("4"),
 
 
 }

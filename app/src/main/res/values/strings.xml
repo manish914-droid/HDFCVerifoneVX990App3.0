@@ -478,6 +478,17 @@
     <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
     <string name="socket_timeout">Socket Not Connected</string>
     <string name="txn_id">Txn ID</string>
-
-
+    <string name="date_hint">April 2021</string>
+    <string name="filter">Filters</string>
+    <string name="filterBy">Filter By</string>
+    <string name="apply">Apply</string>
+    <string name="ptxnID">PTXN ID</string>
+    <string name="mtxnID">MTXN ID</string>
+    <string name="mobilNumberHint">******3211</string>
+    <string name="getStatus">Get Status</string>
+    <string name="mode">MODE:</string>
+    <string name="mobileNumber">Mobile Number</string>
+    <string name="ptxnID_hint">123456</string>
+    <string name="txnStatus">TXN STATUS</string>
+    <string name="txn_detail_page">TXN Detail Page</string>
 </resources>

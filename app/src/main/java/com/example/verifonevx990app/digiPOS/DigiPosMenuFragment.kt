@@ -54,6 +54,8 @@ class DigiPosMenuFragment : Fragment() {
         if (tpt?.digiPosSMSpayStatus == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
             binding?.smsPayBtn?.visibility = View.VISIBLE
         }
+
+        binding?.smsPayBtn?.visibility = View.VISIBLE
         setClickListener()
     }
 
@@ -93,6 +95,17 @@ class DigiPosMenuFragment : Fragment() {
                 }
             })
         }
+
+        //region===========txn List Click:-
+        binding?.txnListBtn?.setOnClickListener {
+            (activity as MainActivity).transactFragment(DigiPosTxnListFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("type", EDashboardItem.TXN_LIST)
+                    // putString(INPUT_SUB_HEADING, "")
+                }
+            })
+        }
+        //endregion
 
     }
 

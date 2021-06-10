@@ -396,14 +396,17 @@ fun ByteArray.byteArr2IntStr(): String {
 }
 
 
-fun str2NibbleArr(numString: String): ByteArray {
-    val len = numString.length / 2
+fun str2NibbleArr(numString: String, cvmLimitStatus: Boolean = false): ByteArray {
+    var data = numString
+    if (cvmLimitStatus) {
+        data = "0${data}0"
+    }
+    val len = data.length / 2
     val result = ByteArray(len)
     var pointer = 0
 
     while (pointer < len) {
-        val n = numString.substring(pointer * 2, (pointer * 2) + 2)
-
+        val n = data.substring(pointer * 2, (pointer * 2) + 2)
         val high = (n[0].toInt() shl 4).toByte()
         val low = n[1].toByte() and 0xf
         result[pointer] = high or low

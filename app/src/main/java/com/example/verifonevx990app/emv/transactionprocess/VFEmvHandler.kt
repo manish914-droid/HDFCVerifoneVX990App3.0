@@ -287,7 +287,7 @@ class VFEmvHandler(
 
         //region========================Scheme AID==============
         val tlvaid = iemv?.getCardData("84")   // card issuer country code  TAG
-        if (null != tlvaid && !(tlvaid.isEmpty())) {
+        if (null != tlvaid && tlvaid.isNotEmpty()) {
             var aid = Utility.byte2HexStr(tlvaid)
 
             var aidstr = aid.subSequence(0, 10).toString()
