@@ -6,9 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.databinding.FragmentDigiPosMenuBinding
+import com.example.verifonevx990app.digiPOS.pendingTxn.PendingTxnFragment
 import com.example.verifonevx990app.main.MainActivity
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
+import com.example.verifonevx990app.vxUtils.logger
+import com.google.gson.Gson
 
 
 class DigiPosMenuFragment : Fragment() {
@@ -68,6 +72,23 @@ class DigiPosMenuFragment : Fragment() {
             (activity as MainActivity).transactFragment(UpiSmsPayEnterDetailFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("type", EDashboardItem.SMS_PAY)
+                    // putString(INPUT_SUB_HEADING, "")
+                }
+            })
+        }
+
+        binding?.dynamicQrBtn?.setOnClickListener {
+            DigiPosDataTable.clear()
+            val dd=DigiPosDataTable.selectAllDigiPosData()
+            val jsonData=Gson().toJson(dd)
+            logger("DIGI EMPTY",jsonData,"e")
+
+        }
+// pending transaction
+        binding?.pendingTxnBtn?.setOnClickListener {
+            (activity as MainActivity).transactFragment(PendingTxnFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("type", EDashboardItem.PENDING_TXN)
                     // putString(INPUT_SUB_HEADING, "")
                 }
             })

@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/pad_16"
+    tools:context=".digiPOS.pendingTxn.SearchTxnFragment">
+
+    <!--Description-->
+    <com.example.customneumorphic.NeumorphCardView
+        android:id="@+id/descr_crd_view"
+        style="@style/Widget.Neumorph.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:neumorph_inset="@dimen/pad_8"
+        app:neumorph_shadowColorDark="@color/lowerShadow"
+        app:neumorph_shadowColorLight="@color/upperShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+        app:neumorph_shapeType="flat"
+        app:neumorph_strokeColor="@color/darkgray"
+
+        app:neumorph_strokeWidth="@dimen/pad_2">
+
+        <com.example.verifonevx990app.vxUtils.BHEditText
+            android:id="@+id/txn_id_searchET"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+
+            android:layout_marginTop="@dimen/pad_8"
+            android:layout_marginBottom="@dimen/pad_16"
+            android:background="@null"
+            android:cursorVisible="false"
+
+
+            android:ems="10"
+
+            android:hint="@string/enter_description_optional"
+            android:imeOptions="actionDone"
+            android:inputType="text"
+            android:paddingStart="@dimen/pad_8"
+
+            android:paddingEnd="@dimen/pad_8"
+            android:text="@string/txn_id"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:textColorHint="@color/hint_color"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular" />
+    </com.example.customneumorphic.NeumorphCardView>
+
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/search_txn_btn"
+        style="@style/Widget.Neumorph.Button"
+        android:layout_width="240dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="24dp"
+
+        android:text="@string/search"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xsmall"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/descr_crd_view"
+        app:neumorph_inset="@dimen/pad_14"
+        app:neumorph_lightSource="rightBottom"
+        app:neumorph_shadowColorDark="@color/upperShadow"
+        app:neumorph_shadowColorLight="@color/lowerShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

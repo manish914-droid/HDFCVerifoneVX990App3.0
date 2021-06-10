@@ -4410,7 +4410,7 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
 @RealmClass
 open class DigiPosDataTable() : RealmObject(), Parcelable {
     // Digi POS Data
-  var requestType:Int=0
+    var requestType: Int = 0
     var amount = ""
     var description = ""
     var vpa = ""
@@ -4423,11 +4423,11 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
     var statusCode = ""
     var customerMobileNumber = ""
     var transactionTimeStamp = ""
-    var txnStatus=0
-    var paymentMode=""
-    var pgwTxnId=""
-    var txnDate=""
-    var txnTime=""
+    var txnStatus = 0
+    var paymentMode = ""
+    var pgwTxnId = ""
+    var txnDate = ""
+    var txnTime = ""
 
     private constructor(parcel: Parcel) : this() {
 
@@ -4482,19 +4482,31 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
             result
         }
 
-        fun selectDigiPosDataAccordingToTxnStatus(status:Int): MutableList<DigiPosDataTable> = runBlocking {
-            var result = mutableListOf<DigiPosDataTable>()
-            getRealm {
-                val re = it.copyFromRealm(
-                    it.where(DigiPosDataTable::class.java)
-                        .equalTo("txnStatus", status)
-                        .findAll()
-                )
-                if (re != null) result = re
+        fun selectDigiPosDataAccordingToTxnStatus(status: Int): MutableList<DigiPosDataTable> =
+            runBlocking {
+                var result = mutableListOf<DigiPosDataTable>()
+                getRealm {
+                    val re = it.copyFromRealm(
+                        it.where(DigiPosDataTable::class.java)
+                            .equalTo("txnStatus", status)
+                            .findAll()
+                    )
+                    if (re != null) result = re
 
-            }.await()
-            result
-        }
+                }.await()
+                result
+            }
+
+        fun deletRecord(partnerTxnId: String) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.where(DigiPosDataTable::class.java)
+                        .equalTo(
+                            "partnerTxnId",
+                            partnerTxnId
+                        ).findAll()?.deleteAllFromRealm()
+                }
+            }
 
         fun clear() =
             withRealm {
@@ -4722,6 +4734,7 @@ enum class EDashboardItem(
 
     UPI("UPI COLLECT", R.drawable.upi_icon, 901),
     SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
+    PENDING_TXN("Pending Txn", R.drawable.sms_icon, 903),
 
 }
 

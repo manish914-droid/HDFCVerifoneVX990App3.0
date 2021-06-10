@@ -477,6 +477,7 @@
     <string name="upi_payment_link_sent">"Payment link has been sent \n \n Would you like to check payment status now."</string>
     <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
     <string name="socket_timeout">Socket Not Connected</string>
+    <string name="txn_id">Txn ID</string>
 
 
 </resources>

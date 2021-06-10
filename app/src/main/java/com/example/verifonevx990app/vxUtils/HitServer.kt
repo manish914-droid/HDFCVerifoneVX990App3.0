@@ -120,21 +120,27 @@ object HitServer {
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
                 openSocket { socket ->
-                    //    try {
-                    // todo save data as pending in digipostable
 
                         if (isSaveTransactionAsPending) {
                             val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
                             logger(TAG, "SAVED TO DIGIPOS -->$datatosave", "e")
-                            val datalist = datatosave?.split("^")
-                            //        EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
+                            val datalist = datatosave.split("^")
+                            // EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
+                            // EnumDigiPosProcess.SMS_PAYDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
+
                             val digiposData = DigiPosDataTable()
                             digiposData.requestType = datalist[0].toInt()
                             digiposData.amount = datalist[1]
                             digiposData.description = datalist[2]
                             digiposData.customerMobileNumber = datalist[3]
-                          //  digiposData.vpa = datalist[4]
-                            digiposData.partnerTxnId = datalist[4]
+                            if(datalist[0].toInt()==2){
+                                digiposData.vpa = datalist[4]
+                                digiposData.partnerTxnId=datalist[5]
+                            }else{
+                                digiposData.partnerTxnId = datalist[4]
+                            }
+                          //
+
                             DigiPosDataTable.insertOrUpdateDigiposData(digiposData)
                         }
 

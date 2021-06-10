@@ -52,10 +52,10 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         when (transactionType) {
             EDashboardItem.SMS_PAY -> {
-                binding?.mobilenoEt?.hint=getString(R.string.enter_mobile_number)
+                binding?.mobilenoEt?.hint = getString(R.string.enter_mobile_number)
             }
             EDashboardItem.UPI -> {
-                binding?.mobilenoEt?.hint=getString(R.string.enter_mobile_number_optional)
+                binding?.mobilenoEt?.hint = getString(R.string.enter_mobile_number_optional)
 
             }
             else -> {
@@ -128,13 +128,13 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
             amtValue <= 0 -> {
                 VFService.showToast("Amount should be greater than 0 Rs")
             }
-            transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString())   ->  context?.getString(R.string.enter_valid_mobile_number)
-                ?.let { VFService.showToast(it) }
+            transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString())  &&  binding?.mobilenoEt?.text.toString().length !in 10..13 ->
+                context?.getString(R.string.enter_valid_mobile_number)?.let { VFService.showToast(it) }
 
-            transactionType == EDashboardItem.SMS_PAY &&  binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
-                context?.getString(R.string.enter_valid_mobile_number)
-                    ?.let { VFService.showToast(it) }
+            transactionType == EDashboardItem.SMS_PAY && binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
+                context?.getString(R.string.enter_valid_mobile_number)?.let { VFService.showToast(it) }
             }
+
             TextUtils.isEmpty(binding?.vpaEt?.text.toString()) && transactionType == EDashboardItem.UPI -> {
                 VFService.showToast("Enter Valid VPA")
             }
@@ -168,31 +168,24 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                 try {
                     if (isSuccess) {
                         when (transactionType) {
-                            EDashboardItem.UPI -> {
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    (activity as BaseActivity).alertBoxWithAction(
-                                        null, null, getString(R.string.sms_upi_pay),
-                                        getString(R.string.upi_payment_link_sent),
-                                        true, getString(R.string.positive_button_yes), { status ->
-                                            if (status) {
-                                                logger("DigiPOS", "AGAIN HIT HERE", "e")
-                                            }
-                                        }, {
-
-                                            logger("DigiPOS", "SAVE AS PENDING", "e")
-                                        })
-                                }
-
-                            }
-                            EDashboardItem.SMS_PAY -> {
+                            EDashboardItem.SMS_PAY, EDashboardItem.UPI -> {
                                 lifecycleScope.launch(Dispatchers.Main) {
                                     val respDataList = responsef57.split("^")
+                                    // condition checks for status is success or fail
                                     if (respDataList[4] == EnumDigiPosTerminalStatusCode.TerminalStatusCodeS101.code) {
+                                        var msg = ""
+                                        if (transactionType == EDashboardItem.UPI) {
+                                            msg = getString(R.string.upi_payment_link_sent)
+                                        }
+                                        if (transactionType == EDashboardItem.SMS_PAY) {
+                                            msg = getString(R.string.sms_payment_link_sent)
+                                        }
+
                                         (activity as BaseActivity).alertBoxWithAction(
                                             null,
                                             null,
                                             getString(R.string.sms_upi_pay),
-                                            getString(R.string.upi_payment_link_sent),
+                                            msg,
                                             true,
                                             getString(R.string.positive_button_yes),
                                             { status ->
@@ -201,33 +194,52 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                         withContext(Dispatchers.Main) {
                                                             (activity as BaseActivity).showProgress()
                                                         }
+                                                        val req57 =
+                                                            EnumDigiPosProcess.GET_STATUS.code + "^" + respDataList[1] + "^"
 
-                                                        val req57 = EnumDigiPosProcess.GET_STATUS.code + "^" + respDataList[1] + "^"
-
-                                                        getDigiPosStatus(req57, EnumDigiPosProcessingCode.DIGIPOSPROCODE.code, false) { isSuccess, responseMsg, responsef57, fullResponse ->
+                                                        getDigiPosStatus(
+                                                            req57,
+                                                            EnumDigiPosProcessingCode.DIGIPOSPROCODE.code,
+                                                            false
+                                                        ) { isSuccess, responseMsg, responsef57, fullResponse ->
                                                             try {
                                                                 (activity as BaseActivity).hideProgress()
                                                                 if (isSuccess) {
-                                                                    val statusRespDataList = responsef57.split("^")
-
-
-                                                                    val tabledata = DigiPosDataTable()
-                                                                    tabledata.requestType = statusRespDataList[0].toInt()
+                                                                    val statusRespDataList =
+                                                                        responsef57.split("^")
+                                                                    val tabledata =
+                                                                        DigiPosDataTable()
+                                                                    tabledata.requestType =
+                                                                        statusRespDataList[0].toInt()
                                                                     //  tabledata.partnerTxnId = statusRespDataList[1]
-                                                                    tabledata.status = statusRespDataList[1]
-                                                                    tabledata.statusMsg = statusRespDataList[2]
-                                                                    tabledata.statusCode = statusRespDataList[3]
-                                                                    tabledata.mTxnId = statusRespDataList[4]
-                                                                    tabledata.partnerTxnId = statusRespDataList[6]
-                                                                    tabledata.transactionTimeStamp = statusRespDataList[7]
-                                                                    val dateTime = statusRespDataList[7].split(" ")
+                                                                    tabledata.status =
+                                                                        statusRespDataList[1]
+                                                                    tabledata.statusMsg =
+                                                                        statusRespDataList[2]
+                                                                    tabledata.statusCode =
+                                                                        statusRespDataList[3]
+                                                                    tabledata.mTxnId =
+                                                                        statusRespDataList[4]
+                                                                    tabledata.partnerTxnId =
+                                                                        statusRespDataList[6]
+                                                                    tabledata.transactionTimeStamp =
+                                                                        statusRespDataList[7]
+                                                                    val dateTime =
+                                                                        statusRespDataList[7].split(
+                                                                            " "
+                                                                        )
                                                                     tabledata.txnDate = dateTime[0]
                                                                     tabledata.txnTime = dateTime[1]
-                                                                    tabledata.amount = statusRespDataList[8]
-                                                                    tabledata.paymentMode = statusRespDataList[9]
-                                                                    tabledata.customerMobileNumber = statusRespDataList[10]
-                                                                    tabledata.description = statusRespDataList[11]
-                                                                    tabledata.pgwTxnId = statusRespDataList[12]
+                                                                    tabledata.amount =
+                                                                        statusRespDataList[8]
+                                                                    tabledata.paymentMode =
+                                                                        statusRespDataList[9]
+                                                                    tabledata.customerMobileNumber =
+                                                                        statusRespDataList[10]
+                                                                    tabledata.description =
+                                                                        statusRespDataList[11]
+                                                                    tabledata.pgwTxnId =
+                                                                        statusRespDataList[12]
                                                                     when (statusRespDataList[5]) {
                                                                         EDigiPosPaymentStatus.Pending.desciption -> {
                                                                             tabledata.txnStatus =
@@ -254,22 +266,40 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                                             }
                                                                         }
                                                                     }
-                                                                    DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
-                                                                    val dp = DigiPosDataTable.selectAllDigiPosData()
+                                                                    DigiPosDataTable.insertOrUpdateDigiposData(
+                                                                        tabledata
+                                                                    )
+                                                                    val dp =
+                                                                        DigiPosDataTable.selectAllDigiPosData()
                                                                     val dpObj = Gson().toJson(dp)
-                                                                    logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                                                    logger(
+                                                                        LOG_TAG.DIGIPOS.tag,
+                                                                        "--->      $dpObj "
+                                                                    )
                                                                     Log.e("F56->>", responsef57)
-                                                                } else {
-                                                                    // todo for not success
-
+                                                                }
+                                                                else {
+                                                                    lifecycleScope.launch(Dispatchers.Main) {
+                                                                        (activity as BaseActivity).alertBoxWithAction(null,
+                                                                            null,
+                                                                            getString(R.string.transaction_failed_msg),
+                                                                            responseMsg,
+                                                                            false,
+                                                                            getString(R.string.positive_button_ok),
+                                                                            { alertPositiveCallback ->
+                                                                                if (alertPositiveCallback) {
+                                                                                    DigiPosDataTable.deletRecord(
+                                                                                        field57.split("^").last())
+                                                                                    parentFragmentManager.popBackStack()
+                                                                                }
+                                                                            },
+                                                                            {})
+                                                                    }
                                                                 }
 
                                                             } catch (ex: java.lang.Exception) {
                                                                 ex.printStackTrace()
-                                                                logger(
-                                                                    LOG_TAG.DIGIPOS.tag,
-                                                                    "Somethig wrong... in response data field 57"
-                                                                )
+                                                                logger(LOG_TAG.DIGIPOS.tag, "Somethig wrong... in response data field 57")
                                                             }
                                                         }
                                                     }
@@ -307,9 +337,26 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                 val dp = DigiPosDataTable.selectAllDigiPosData()
                                                 val dpObj = Gson().toJson(dp)
                                                 logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                                parentFragmentManager.popBackStack()
                                             })
-                                    }else{
-                                        // todo received other than S101
+                                    } else {
+                                        // received other than S101(show Fail info dialog here)
+                                        withContext(Dispatchers.Main) {
+                                            (activity as BaseActivity).alertBoxWithAction(null,
+                                                null,
+                                                getString(R.string.transaction_failed_msg),
+                                                getString(R.string.transaction_failed_msg),
+                                                false,
+                                                getString(R.string.positive_button_ok),
+                                                { alertPositiveCallback ->
+                                                    if (alertPositiveCallback) {
+                                                        DigiPosDataTable.deletRecord(
+                                                            field57.split("^").last())
+                                                        parentFragmentManager.popBackStack()
+                                                    }
+                                                },
+                                                {})
+                                        }
 
                                     }
                                 }
@@ -318,17 +365,12 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                 logger("DigiPOS", "Unknown trans", "e")
                             }
                         }
-
-                        //1^Success^Success^S101^Active^Active^Active^Active^0^1
-                        val responsF57List = responsef57.split("^")
-                        Log.e("F56->>", responsef57)
                     } else {
 
-                            VFService.showToast(responseMsg)
-                        }
-
+                        VFService.showToast(responseMsg)
                     }
-                 catch (ex: Exception) {
+
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                     logger(LOG_TAG.DIGIPOS.tag, "Something wrong... in response data field 57")
                 }

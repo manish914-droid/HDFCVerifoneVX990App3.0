@@ -61,7 +61,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     }
 
     override fun showProgress(progressMsg: String) {
-        if (null != progressDialog && !progressDialog.isShowing && !(this as Activity).isFinishing) {
+        if (!progressDialog.isShowing && !(this as Activity).isFinishing) {
             progressTitleMsg.text = progressMsg
             progressDialog.show()
         }
@@ -69,7 +69,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
 
 
     override fun hideProgress() {
-        if (null != progressDialog && progressDialog.isShowing && !(this as Activity).isFinishing)
+        if (progressDialog.isShowing && !(this as Activity).isFinishing)
             progressDialog.dismiss()
     }
 
