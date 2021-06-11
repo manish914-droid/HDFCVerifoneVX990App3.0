@@ -44,13 +44,13 @@
 
             android:ems="10"
 
-            android:hint="@string/enter_description_optional"
+            android:hint="@string/txn_id"
             android:imeOptions="actionDone"
             android:inputType="text"
             android:paddingStart="@dimen/pad_8"
 
             android:paddingEnd="@dimen/pad_8"
-            android:text="@string/txn_id"
+
             android:textAllCaps="true"
             android:textColor="@color/white"
             android:textColorHint="@color/hint_color"

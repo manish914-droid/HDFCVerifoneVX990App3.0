@@ -53,8 +53,8 @@ class PendingTxnFragment : Fragment(), IPendingTxnListner {
             binding?.searchBtnn?.setStrokeColor(null)
             binding?.searchBtnn?.setStrokeWidth(0f)
 // endregion
-            val fr: Fragment = PendingTxnListFragment()
-            replaceFragment(fr)
+            val fr1: Fragment = PendingTxnListFragment()
+            replaceFragment(fr1)
         }
         binding?.searchBtnn?.setOnClickListener {
             //--region --- Managing view appearance on click
@@ -63,8 +63,8 @@ class PendingTxnFragment : Fragment(), IPendingTxnListner {
             binding?.pendingTxnBtnn?.setStrokeColor(null)
             binding?.pendingTxnBtnn?.setStrokeWidth(0f)
             // endregion
-            val fr: Fragment = SearchTxnFragment()
-            replaceFragment(fr)
+            val fr2: Fragment = SearchTxnFragment()
+            replaceFragment(fr2)
         }
     }
 

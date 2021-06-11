@@ -1,0 +1,238 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mob_no_crdView"
+    style="@style/Widget.Neumorph.CardView"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:visibility="visible"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+    app:neumorph_backgroundColor="@color/themeBackground"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+    app:neumorph_shapeType="flat">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="@dimen/pad_16">
+
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/transType"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="@dimen/pad_24"
+            android:layout_marginEnd="@dimen/pad_24"
+android:text="Status : Success"
+            android:textColor="@color/white"
+            android:visibility="visible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="3dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+            app:neumorph_strokeColor="@color/white"
+            app:neumorph_strokeWidth="@dimen/pad_1" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/amount" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/amtET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/mode_samll" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/modeET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:text="@string/txn_id" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/txnIDET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/_50006758" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/mTxnID" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/mtxnIdEt"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/invoice_hint" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:text="@string/mobile" />
+
+            <com.example.verifonevx990app.vxUtils.BHTextView
+                android:id="@+id/mobileET"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:textColor="@color/white"
+                android:layout_weight="1"
+                android:gravity="center"
+                android:hint="@string/hint_amount" />
+
+        </LinearLayout>
+
+
+        <!--Buttons-->
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_16"
+            android:orientation="horizontal"
+
+            >
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/okBtn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginStart="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/key_ok"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/print_btnn"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/print_btnn"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="45dp"
+
+                android:layout_marginEnd="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/print"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintStart_toEndOf="@+id/okBtn"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
+</com.example.customneumorphic.NeumorphCardView>

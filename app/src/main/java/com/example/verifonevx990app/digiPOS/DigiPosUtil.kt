@@ -1,5 +1,8 @@
 package com.example.verifonevx990app.digiPOS
 
+import java.text.SimpleDateFormat
+import java.util.*
+
 enum class LOG_TAG(val tag:String){
     DIGIPOS("DIGI_POS_TAG")
 
@@ -37,10 +40,31 @@ enum class EDigiPosTerminalStatusResponseCodes(val statusCode:String){
 enum class EDigiPosPaymentStatus(val code: Int,val desciption:String){
     Pending(0,"InProgress"),
     Approved(1,"Success"),
-    Failed(2,"Failed"),
+    Failed(2,"SaleFailed"),
     UNKnown(3,"Something went wrong"),
 
 }
+
+fun saveDateInServerFormatDigipos(): String {
+    val dateNow = Date()
+    val ft4 = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault())
+    return ft4.format(dateNow)
+}
+fun getDateInDisplayFormatDigipos(dateStr:String): String {
+    //val dateStr = "2021-06-11 11:00:45"//Date()
+    val ft = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateStr)
+    val ft2 = SimpleDateFormat("dd MMMM, h:mm aa", Locale.getDefault())
+    return ft2.format(ft)
+}
+
+fun getCurrentDateInDisplayFormatDigipos(): String
+{
+    val dNow =Date()
+    val fttt = SimpleDateFormat("dd MMMM, h:mm aa", Locale.getDefault())
+    return fttt.format(dNow)
+}
+
+
 
 
 

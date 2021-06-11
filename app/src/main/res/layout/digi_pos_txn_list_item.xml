@@ -16,7 +16,7 @@
         android:text="@string/date_hint"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_regular"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -30,7 +30,7 @@
         android:layout_marginTop="@dimen/pad_40"
         android:contentDescription="@string/transaction_success"
         android:src="@drawable/circle_with_tick_mark_green"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/headerTV" />
 
@@ -39,7 +39,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/transactionIV"
         app:layout_constraintTop_toBottomOf="@+id/headerTV">
@@ -116,7 +116,7 @@
         android:text="@string/mobilNumberHint"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_small"
-        android:visibility="gone"
+        android:visibility="visible"
         app:drawableLeftCompat="@drawable/ic_mobile_icon_white"
         app:layout_constraintStart_toEndOf="@+id/transactionIV"
         app:layout_constraintTop_toBottomOf="@+id/parentSubHeader" />
@@ -131,7 +131,7 @@
         android:text="@string/getStatus"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_small"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/parentSubHeader" />
 
@@ -143,7 +143,7 @@
         android:layout_marginTop="@dimen/pad_8"
         android:layout_marginEnd="@dimen/pad_16"
         android:background="@color/white"
-        android:visibility="gone"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

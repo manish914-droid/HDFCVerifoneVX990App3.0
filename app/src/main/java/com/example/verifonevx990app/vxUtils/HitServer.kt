@@ -3,6 +3,9 @@ package com.example.verifonevx990app.vxUtils
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.getCurrentDateInDisplayFormatDigipos
+import com.example.verifonevx990app.digiPOS.saveDateInServerFormatDigipos
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
@@ -15,6 +18,9 @@ import java.net.Socket
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.nio.channels.ServerSocketChannel
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 interface IReversalHandler {
     suspend fun saveReversal()
@@ -133,11 +139,15 @@ object HitServer {
                             digiposData.amount = datalist[1]
                             digiposData.description = datalist[2]
                             digiposData.customerMobileNumber = datalist[3]
-                            if(datalist[0].toInt()==2){
+                            digiposData.displayFormatedDate= getCurrentDateInDisplayFormatDigipos()
+
+                            if(datalist[0].toInt()== EnumDigiPosProcess.UPIDigiPOS.code.toInt()){
                                 digiposData.vpa = datalist[4]
                                 digiposData.partnerTxnId=datalist[5]
+                                digiposData.paymentMode="UPI Pay"
                             }else{
                                 digiposData.partnerTxnId = datalist[4]
+                                digiposData.paymentMode="SMS Pay"
                             }
                           //
 

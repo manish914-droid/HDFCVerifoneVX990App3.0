@@ -1550,21 +1550,7 @@ class PrintUtil(context: Context?) {
             //   logger("PS_H3", (printer?.status).toString(), "e")
             printer?.addText(format, terminalData?.receiptHeaderThree) //header3
             printSeperator(format)
-
-
-            var txnStatus = ""
-            when (digiPosData.txnStatus) {
-                EDigiPosPaymentStatus.Pending.code -> {
-                    txnStatus = EDigiPosPaymentStatus.Pending.desciption
-                }
-                EDigiPosPaymentStatus.Failed.code -> {
-                    txnStatus = EDigiPosPaymentStatus.Failed.desciption
-                }
-                EDigiPosPaymentStatus.Approved.code -> {
-                    txnStatus = EDigiPosPaymentStatus.Approved.desciption
-                }
-            }
-            val str = "STATUS : $txnStatus"
+            val str = "STATUS : ${digiPosData.txnStatus}"
             centerText(fmtAddTextInLine, str, true)
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -1980,6 +1966,288 @@ class PrintUtil(context: Context?) {
 
                 }
                 //    sb.appendln(getChar(LENGTH, '='))
+
+                printSeperator(textFormatBundle)
+                if (isSettlementSuccess) {
+                    centerText(textInLineFormatBundle, "SETTLEMENT SUCCESSFUL")
+                    centerText(textFormatBundle, "Bonushub")
+                }
+                centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
+
+                centerText(textFormatBundle, "---------X-----------X----------")
+                printer?.feedLine(4)
+
+                // start print here
+                printer?.startPrint(object : PrinterListener.Stub() {
+                    override fun onFinish() {
+                        callBack(true)
+                        Log.e("Settle_RECEIPT", "SUCESS__")
+                    }
+
+                    override fun onError(error: Int) {
+                        callBack(false)
+                        Log.e("Settle_RECEIPT", "FAIL__")
+                    }
+
+
+                })
+            } catch (ex: DeadObjectException) {
+                ex.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            }
+        }
+    }
+
+    fun test1printSettlementReport(
+        context: Context?,
+        batch: MutableList<BatchFileDataTable>,
+        isSettlementSuccess: Boolean = false,
+        isLastSummary: Boolean = false,
+        callBack: (Boolean) -> Unit
+    ) {
+        //  val format = Bundle()
+        //   val fmtAddTextInLine = Bundle()
+
+//below if condition is for zero settlement
+        if (batch.size <= 0) {
+            try {
+                centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
+
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
+
+
+                val td = System.currentTimeMillis()
+                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                val date = formatdate.format(td)
+                val time = formattime.format(td)
+
+                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+                if (isLastSummary) {
+                    centerText(textFormatBundle, "LAST SUMMARY REPORT")
+                } else {
+                    centerText(textFormatBundle, "SUMMARY REPORT")
+                }
+
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "TID : ${tpt?.terminalId}",
+                    "MID : ${tpt?.merchantId}"
+                )
+                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
+                printSeperator(textFormatBundle)
+                alignLeftRightText(textInLineFormatBundle, "TOTAL TXN    =  0", "Rs.         0.00")
+
+                centerText(textFormatBundle, "ZERO SETTLEMENT SUCCESSFUL")
+                centerText(textFormatBundle, "BonusHub")
+                centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
+                printer?.feedLine(4)
+
+                printer?.startPrint(object : PrinterListener.Stub() {
+                    override fun onFinish() {
+                        callBack(true)
+                        Log.e("Settle_RECEIPT", "SUCESS__")
+                    }
+
+                    override fun onError(error: Int) {
+                        callBack(false)
+                        Log.e("Settle_RECEIPT", "FAIL__")
+                    }
+
+
+                })
+            } catch (ex: DeadObjectException) {
+                ex.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+                )
+            }
+        }
+        ////below if condition is for settlement(Other than zero settlement)
+        else {
+            try {
+                var map = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                val headers = arrayListOf<String>()
+                tpt?.receiptHeaderOne?.let { headers.add(it) }
+                tpt?.receiptHeaderTwo?.let { headers.add(it) }
+                tpt?.receiptHeaderThree?.let { headers.add(it) }
+
+                setHeaderWithLogo(textFormatBundle, "hdfc_print_logo.bmp", headers)
+
+                val td = System.currentTimeMillis()
+                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                val date = formatdate.format(td)
+                val time = formattime.format(td)
+
+                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+
+                //  alignLeftRightText(fmtAddTextInLine,"DATE : ${batch.date}","TIME : ${batch.time}")
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "MID : ${tpt?.merchantId}",
+                    "TID : ${tpt?.terminalId}"
+                )
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "BATCH NO  : ${tpt?.batchNumber}",
+                    ""
+                )
+
+                if (isLastSummary) {
+                    centerText(textFormatBundle, "LAST SUMMARY REPORT")
+                } else {
+                    centerText(textFormatBundle, "SUMMARY REPORT")
+                }
+
+// region ======loop start here===============
+                 val requiredMap =   mutableMapOf<String, ArrayList<BatchFileDataTable>>()
+
+                for (i in batch) {
+                    val sortItemToAdd = arrayListOf<BatchFileDataTable>()
+                    for (j in batch) {
+                        // matching the same mid types and put it into hash map key
+                        if (i.tid == j.tid) {
+                            // adding object the the Sort arraylist
+                            sortItemToAdd.add(j)
+                            // adding same mid object into the hashmap whose key is mid key as MID
+                            requiredMap[i.tid] = sortItemToAdd
+                        }
+                    }
+                }
+
+                for((hashkey,value) in requiredMap){
+                    map = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
+                    for (it in value) {  // Do not count preauth transaction
+
+                        if (it.transactionType == TransactionType.PRE_AUTH.type) continue
+
+                        val transAmt = try {
+                            it.transactionalAmmount.toLong()
+                        } catch (ex: Exception) {
+                            0L
+                        }
+                        if (map.containsKey(it.cardType)) {
+                            val ma = map[it.cardType] as MutableMap<Int, SummeryModel>
+                            if (ma.containsKey(it.transactionType)) {
+                                val m = ma[it.transactionType] as SummeryModel
+                                m.count += 1
+                                m.total += transAmt
+                            } else {
+                                val sm =
+                                    SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                                ma[it.transactionType] = sm
+                            }
+                        } else {
+                            val hm = HashMap<Int, SummeryModel>().apply {
+                                this[it.transactionType] =
+                                    SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                            }
+                            map[it.cardType] = hm
+                        }
+                    }
+                    val totalMap = mutableMapOf<Int, SummeryTotalType>()
+
+                    for ((key, _map) in map) {
+                        if (key.isNotBlank()) {
+                            printSeperator(textFormatBundle)
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                "CARD ISSUER:  ",
+                                "",
+                                key.toUpperCase(Locale.ROOT)
+                            )
+                            // if(ind==0){
+                            alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
+                            //   ind=1
+                            //  }
+                        }
+                        for ((k, m) in _map) {
+                            val amt = "Rs  " + "%.2f".format(((m.total).toDouble() / 100))
+                            if (k == TransactionType.PRE_AUTH_COMPLETE.type || k == TransactionType.VOID_PREAUTH.type) {
+                                // need Not to show
+                            } else {
+                                alignLeftRightText(
+                                    textInLineFormatBundle,
+                                    m.type.toUpperCase(Locale.ROOT),
+                                    amt,
+                                    m.count.toString()
+                                )
+                            }
+                            if (totalMap.containsKey(k)) {
+                                val x = totalMap[k]
+                                if (x != null) {
+                                    x.count += m.count
+                                    x.total += m.total
+                                }
+                            } else {
+                                totalMap[k] = SummeryTotalType(m.count, m.total)
+                            }
+
+                        }
+                        //  sb.appendln()
+                    }
+                    printSeperator(textFormatBundle)
+                    centerText(textInLineFormatBundle, "*** TOTAL TRANSACTION ***")
+                    val sortedMap = totalMap.toSortedMap(compareByDescending { it })
+                    for ((k, m) in sortedMap) {
+                        /* alignLeftRightText(
+                             textInLineFormatBundle,
+                             "${transactionType2Name(k).toUpperCase(Locale.ROOT)}${"     =" + m.count}",
+                             "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}"
+
+                         )*/
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            transactionType2Name(k).toUpperCase(Locale.ROOT),
+                            "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}", "  =  " + m.count
+
+                        )
+
+                    }
+                    printSeperator(textFormatBundle)
+                }
+                //endregion=====================LOOP END===================
 
                 printSeperator(textFormatBundle)
                 if (isSettlementSuccess) {

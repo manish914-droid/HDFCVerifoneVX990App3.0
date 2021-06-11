@@ -222,8 +222,9 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                                         statusRespDataList[4]
                                                                     tabledata.partnerTxnId =
                                                                         statusRespDataList[6]
-                                                                    tabledata.transactionTimeStamp =
-                                                                        statusRespDataList[7]
+                                                                    tabledata.transactionTimeStamp = statusRespDataList[7]
+                                                                    tabledata.displayFormatedDate=
+                                                                        getDateInDisplayFormatDigipos(statusRespDataList[7])
                                                                     val dateTime =
                                                                         statusRespDataList[7].split(
                                                                             " "
@@ -240,18 +241,20 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                                         statusRespDataList[11]
                                                                     tabledata.pgwTxnId =
                                                                         statusRespDataList[12]
+
+
                                                                     when (statusRespDataList[5]) {
                                                                         EDigiPosPaymentStatus.Pending.desciption -> {
-                                                                            tabledata.txnStatus =
-                                                                                EDigiPosPaymentStatus.Pending.code
+                                                                            tabledata.txnStatus =statusRespDataList[5]
+
                                                                         }
                                                                         EDigiPosPaymentStatus.Failed.desciption -> {
                                                                             tabledata.txnStatus =
-                                                                                EDigiPosPaymentStatus.Failed.code
+                                                                                statusRespDataList[5]
                                                                         }
                                                                         EDigiPosPaymentStatus.Approved.desciption -> {
                                                                             tabledata.txnStatus =
-                                                                                EDigiPosPaymentStatus.Approved.code
+                                                                                statusRespDataList[5]
                                                                             txnSuccessToast(activity as Context)
                                                                             PrintUtil(context).printSMSUPIChagreSlip(
                                                                                 tabledata,
@@ -266,16 +269,10 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                                             }
                                                                         }
                                                                     }
-                                                                    DigiPosDataTable.insertOrUpdateDigiposData(
-                                                                        tabledata
-                                                                    )
-                                                                    val dp =
-                                                                        DigiPosDataTable.selectAllDigiPosData()
+                                                                    DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                                                    val dp = DigiPosDataTable.selectAllDigiPosData()
                                                                     val dpObj = Gson().toJson(dp)
-                                                                    logger(
-                                                                        LOG_TAG.DIGIPOS.tag,
-                                                                        "--->      $dpObj "
-                                                                    )
+                                                                    logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
                                                                     Log.e("F56->>", responsef57)
                                                                 }
                                                                 else {
@@ -288,8 +285,8 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                                             getString(R.string.positive_button_ok),
                                                                             { alertPositiveCallback ->
                                                                                 if (alertPositiveCallback) {
-                                                                                    DigiPosDataTable.deletRecord(
-                                                                                        field57.split("^").last())
+                                                                                   /* DigiPosDataTable.deletRecord(
+                                                                                        field57.split("^").last())*/
                                                                                     parentFragmentManager.popBackStack()
                                                                                 }
                                                                             },
@@ -306,34 +303,6 @@ class UpiSmsPayEnterDetailFragment : Fragment() {
                                                 }
                                             },
                                             {
-                                                val tabledata = DigiPosDataTable()
-                                                val reqList = field57.split("^")
-                                                tabledata.amount = reqList[1]
-                                                tabledata.description = reqList[2]
-                                                tabledata.customerMobileNumber = reqList[3]
-                                                val respDataList = responsef57.split("^")
-                                                tabledata.requestType = respDataList[0].toInt()
-                                                tabledata.partnerTxnId = respDataList[1]
-                                                tabledata.status = respDataList[2]
-                                                tabledata.statusMsg = respDataList[3]
-                                                tabledata.statusCode = respDataList[4]
-                                                tabledata.mTxnId = respDataList[5]
-                                                val txnstatus = respDataList[6]
-                                                when (txnstatus) {
-                                                    EDigiPosPaymentStatus.Pending.desciption -> {
-                                                        tabledata.txnStatus =
-                                                            EDigiPosPaymentStatus.Pending.code
-                                                    }
-                                                    EDigiPosPaymentStatus.Failed.desciption -> {
-                                                        tabledata.txnStatus =
-                                                            EDigiPosPaymentStatus.Failed.code
-                                                    }
-                                                    EDigiPosPaymentStatus.Approved.desciption -> {
-                                                        tabledata.txnStatus =
-                                                            EDigiPosPaymentStatus.Approved.code
-                                                    }
-                                                }
-                                                DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
                                                 val dp = DigiPosDataTable.selectAllDigiPosData()
                                                 val dpObj = Gson().toJson(dp)
                                                 logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")

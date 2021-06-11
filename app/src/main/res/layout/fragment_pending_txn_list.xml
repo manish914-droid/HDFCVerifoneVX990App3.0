@@ -7,12 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".digiPOS.pendingTxn.PendingTxnListFragment">
 
-    <TextView
+    <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-tools:listitem="@layout/item_sub_menu"
-android:text="HAHAHAHAHHAHAHA"
+tools:listitem="@layout/item_pending_txn"
+
         android:textSize="80sp"
         android:textColor="@color/hdfc_red_color"
         android:gravity="center"

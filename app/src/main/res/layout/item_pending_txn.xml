@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:id="@+id/parentSubHeader"
+    android:padding="@dimen/pad_8">
+
+
+    <ImageView
+        android:id="@+id/transactionIV"
+        android:layout_width="@dimen/pad_50"
+        android:layout_height="@dimen/pad_40"
+
+        android:contentDescription="@string/transaction_success"
+        android:src="@drawable/circle_with_tick_mark_green"
+        android:visibility="visible"
+        app:layout_constraintBottom_toTopOf="@+id/seprater_line_view"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <TextView
+        android:id="@+id/smsPay"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:drawablePadding="@dimen/pad_4"
+        android:gravity="start|center_vertical"
+        android:padding="@dimen/pad_8"
+        android:text="@string/sms_pay"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        app:drawableLeftCompat="@drawable/sms_icon"
+        app:layout_constraintStart_toEndOf="@+id/transactionIV"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/smsPayTransactionAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end"
+        android:drawablePadding="@dimen/pad_4"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/pad_8"
+        android:text="@string/_500"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        app:layout_constraintBottom_toBottomOf="@+id/smsPay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/smsPay" />
+
+
+    <TextView
+        android:id="@+id/dateTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/pad_4"
+        android:gravity="start|center_vertical"
+        android:padding="@dimen/pad_8"
+        android:text="@string/date_hint"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        app:drawableLeftCompat="@drawable/ic_calendar_today_24_white"
+        app:layout_constraintStart_toStartOf="@+id/smsPay"
+        app:layout_constraintTop_toBottomOf="@+id/smsPay" />
+
+    <TextView
+        android:id="@+id/mobileNumberTV"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawablePadding="@dimen/pad_4"
+        android:gravity="end|center_vertical"
+        android:padding="@dimen/pad_8"
+        android:text="@string/mobilNumberHint"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_small"
+        android:visibility="visible"
+        app:drawableLeftCompat="@drawable/ic_mobile_icon_white"
+        app:layout_constraintBottom_toBottomOf="@+id/dateTV"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/dateTV" />
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/getStatusButton"
+        style="@style/Widget.Neumorph.Button"
+        android:layout_width="wrap_content"
+        android:layout_height="38dp"
+        android:layout_margin="@dimen/pad_2"
+
+        android:text="@string/getStatus"
+        android:textColor="@color/white"
+        android:textSize="@dimen/text_size_xsmall"
+
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/mobileNumberTV"
+        app:neumorph_backgroundColor="@color/hdfc_red_color"
+        app:neumorph_inset="@dimen/pad_1"
+        app:neumorph_lightSource="rightBottom"
+        app:neumorph_shadowColorDark="@color/upperShadow"
+        app:neumorph_shadowColorLight="@color/lowerShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+    <View
+        android:id="@+id/seprater_line_view"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginStart="@dimen/pad_32"
+        android:layout_marginTop="8dp"
+        android:background="@color/hint_color"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/getStatusButton"
+        tools:layout_editor_absoluteX="8dp" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

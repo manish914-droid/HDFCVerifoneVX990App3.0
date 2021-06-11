@@ -3,6 +3,8 @@ package com.example.verifonevx990app.realmtables
 import android.os.Parcel
 import android.os.Parcelable
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.EDigiPosPaymentStatus
+import com.example.verifonevx990app.digiPOS.EnumDigiPosTerminalStatusCode
 import com.example.verifonevx990app.transactions.EAccountType
 import com.example.verifonevx990app.vxUtils.TransactionType
 import com.example.verifonevx990app.vxUtils.addPad
@@ -4423,11 +4425,12 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
     var statusCode = ""
     var customerMobileNumber = ""
     var transactionTimeStamp = ""
-    var txnStatus = 0
+    var txnStatus = EDigiPosPaymentStatus.Pending.desciption
     var paymentMode = ""
     var pgwTxnId = ""
     var txnDate = ""
     var txnTime = ""
+    var displayFormatedDate = ""
 
     private constructor(parcel: Parcel) : this()
 
@@ -4480,7 +4483,7 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
             result
         }
 
-        fun selectDigiPosDataAccordingToTxnStatus(status: Int): MutableList<DigiPosDataTable> =
+        fun selectDigiPosDataAccordingToTxnStatus(status: String): MutableList<DigiPosDataTable> =
             runBlocking {
                 var result = mutableListOf<DigiPosDataTable>()
                 getRealm {
@@ -4733,7 +4736,7 @@ enum class EDashboardItem(
     UPI("UPI COLLECT", R.drawable.upi_icon, 901),
     SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
     TXN_LIST("TXN LIST", R.drawable.sms_icon, 903),
-    PENDING_TXN("Pending Txn", R.drawable.sms_icon, 903),
+    PENDING_TXN("Pending Txn", R.drawable.pending_txn, 903),
 
 }
 
