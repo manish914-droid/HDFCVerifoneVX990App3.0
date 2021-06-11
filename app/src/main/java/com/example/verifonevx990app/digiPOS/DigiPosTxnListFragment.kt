@@ -397,6 +397,7 @@ class DigiPosTxnListFragment : Fragment() {
                         )
                         txnDataList.add(
                             DigiPosTxnModal(
+                                requestTypeID,
                                 splitData[0], splitData[1],
                                 splitData[2], splitData[3],
                                 splitData[4], splitData[5],
@@ -446,7 +447,7 @@ class DigiPosTxnListFragment : Fragment() {
                 iDialog?.showProgress()
                 lifecycleScope.launch(Dispatchers.IO) {
                     val req57 =
-                        EnumDigiPosProcess.GET_STATUS.code + "^" + txnDataList[position].partnerTXNID + "^" + txnDataList[position].partnerTXNID + "^"
+                        "${EnumDigiPosProcess.GET_STATUS.code}^${txnDataList[position].partnerTXNID}^^"
                     Log.d("Field57:- ", req57)
                     getDigiPosStatus(
                         req57,
@@ -457,10 +458,12 @@ class DigiPosTxnListFragment : Fragment() {
                             if (isSuccess) {
                                 val statusRespDataList = responsef57.split("^")
                                 val modal = txnDataList[position]
+                                modal.transactionType = statusRespDataList[0]
                                 modal.status = statusRespDataList[1]
                                 modal.statusMessage = statusRespDataList[2]
                                 modal.statusCode = statusRespDataList[3]
                                 modal.mTXNID = statusRespDataList[4]
+                                modal.txnStatus = statusRespDataList[5]
                                 modal.partnerTXNID = statusRespDataList[6]
                                 modal.transactionTime = statusRespDataList[7]
                                 modal.amount = statusRespDataList[8]
@@ -475,6 +478,7 @@ class DigiPosTxnListFragment : Fragment() {
                                     digiPosTxnListAdapter.notifyItemInserted(position)
                                     digiPosTxnListAdapter.refreshAdapterList(txnDataList)
                                     iDialog?.hideProgress()
+                                    binding?.transactionListRV?.smoothScrollToPosition(0)
                                 }
                             } else {
                                 lifecycleScope.launch(Dispatchers.Main) {
@@ -544,14 +548,41 @@ internal class DigiPosTxnListAdapter(
         val modal = adapterTXNList[p1]
         if (!TextUtils.isEmpty(modal.partnerTXNID)) {
             holder.binding.smsPay.text = modal.paymentMode
+            when {
+                modal.paymentMode.toLowerCase(Locale.ROOT).equals("sms pay", true) -> {
+                    holder.binding.smsPay.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.sms_icon,
+                        0,
+                        0,
+                        0
+                    )
+                }
+                modal.paymentMode.toLowerCase(Locale.ROOT).equals("upi", true) -> {
+                    holder.binding.smsPay.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.upi_icon,
+                        0,
+                        0,
+                        0
+                    )
+                }
+                else -> {
+                    holder.binding.smsPay.setCompoundDrawablesWithIntrinsicBounds(
+                        R.drawable.ic_qr_code,
+                        0,
+                        0,
+                        0
+                    )
+                }
+            }
             val amountData = "\u20B9${modal.amount}"
             holder.binding.smsPayTransactionAmount.text = amountData
             holder.binding.dateTV.text = modal.transactionTime
             holder.binding.mobileNumberTV.text = modal.customerMobileNumber
 
             when {
-                modal.status.toLowerCase(Locale.ROOT).equals("success", true) -> {
+                modal.txnStatus.toLowerCase(Locale.ROOT).equals("success", true) -> {
                     holder.binding.transactionIV.setImageResource(R.drawable.circle_with_tick_mark_green)
+                    holder.binding.getStatusButton.visibility = View.GONE
                 }
                 else -> {
                     holder.binding.transactionIV.setImageResource(R.drawable.ic_exclaimation_mark_circle_error)
@@ -600,6 +631,7 @@ internal class DigiPosTxnListAdapter(
 //region=============================DigiPos Txn List Data Modal==========================
 @Parcelize
 data class DigiPosTxnModal(
+    var transactionType: String,
     var status: String,
     var statusMessage: String,
     var statusCode: String,

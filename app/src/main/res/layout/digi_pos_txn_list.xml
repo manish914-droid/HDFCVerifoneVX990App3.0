@@ -41,7 +41,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/pad_8"
-                android:layout_marginBottom="@dimen/pad_30"
+                android:layout_marginBottom="@dimen/pad_60"
                 android:scrollbars="none"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

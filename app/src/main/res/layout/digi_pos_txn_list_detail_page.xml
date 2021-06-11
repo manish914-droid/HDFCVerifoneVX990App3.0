@@ -146,7 +146,6 @@
                             android:textColor="@color/white"
                             android:textColorHint="@color/white"
                             android:textSize="@dimen/text_size_regular"
-                            app:drawableLeftCompat="@drawable/sms_icon"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/headingModeTV" />
 
