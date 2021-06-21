@@ -86,6 +86,7 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
     DEFAUTL("Not Declared", R.drawable.ic_sad),
     BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE"),
     BANK_EMI_CATALOGUE(title = "BANK EMI CATALOGUE"),
+    DYNAMIC_QR(title="Dynamic QR")
 }
 
 

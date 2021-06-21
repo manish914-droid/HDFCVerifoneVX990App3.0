@@ -13,11 +13,14 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.lifecycleScope
 import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
 import com.example.verifonevx990app.databinding.ActivityTransactionBinding
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcessingCode
 import com.example.verifonevx990app.emv.VFEmv
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.main.DetectCardType
@@ -29,6 +32,7 @@ import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.transactions.EmiCustomerDetails
 import com.example.verifonevx990app.transactions.getMaskedPan
+import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.TransactionTypeValues
 import com.example.verifonevx990app.utils.Utility
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -133,58 +137,58 @@ class VFTransactionActivity : BaseActivity() {
             if (printer?.status != 0) {
                 GlobalScope.launch(Dispatchers.Main) {
                     alertBoxWithAction(
-                            null,
-                            null,
-                            getString(R.string.printer_error),
-                            "Want to Proceed SALE with no charge slip",
-                            true,
-                            getString(R.string.yes),
-                            { alertPositiveCallback ->
-                                if (alertPositiveCallback)
-                                    ProcessCard(
-                                            this@VFTransactionActivity,
-                                            pinHandler,
-                                            globalCardProcessedModel,
-                                    ) { localCardProcessedData ->
-                                        localCardProcessedData.setProcessingCode(
-                                                transactionProcessingCode
+                        null,
+                        null,
+                        getString(R.string.printer_error),
+                        "Want to Proceed SALE with no charge slip",
+                        true,
+                        getString(R.string.yes),
+                        { alertPositiveCallback ->
+                            if (alertPositiveCallback)
+                                ProcessCard(
+                                    this@VFTransactionActivity,
+                                    pinHandler,
+                                    globalCardProcessedModel,
+                                ) { localCardProcessedData ->
+                                    localCardProcessedData.setProcessingCode(
+                                        transactionProcessingCode
+                                    )
+                                    localCardProcessedData.setTransactionAmount(transactionalAmount)
+                                    localCardProcessedData.setOtherAmount(otherTransAmount)
+                                    localCardProcessedData.setMobileBillExtraData(
+                                        Pair(mobileNumber, billNumber)
+                                    )
+                                    //    localCardProcessedData.setTransType(transactionType)
+                                    globalCardProcessedModel = localCardProcessedData
+                                    Log.d(
+                                        "CardProcessedData:- ",
+                                        Gson().toJson(localCardProcessedData)
+                                    )
+                                    val maskedPan = localCardProcessedData.getPanNumberData()?.let {
+                                        getMaskedPan(
+                                            TerminalParameterTable.selectFromSchemeTable(),
+                                            it
                                         )
-                                        localCardProcessedData.setTransactionAmount(transactionalAmount)
-                                        localCardProcessedData.setOtherAmount(otherTransAmount)
-                                        localCardProcessedData.setMobileBillExtraData(
-                                                Pair(mobileNumber, billNumber)
-                                        )
-                                        //    localCardProcessedData.setTransType(transactionType)
-                                        globalCardProcessedModel = localCardProcessedData
-                                        Log.d(
-                                                "CardProcessedData:- ",
-                                                Gson().toJson(localCardProcessedData)
-                                        )
-                                        val maskedPan = localCardProcessedData.getPanNumberData()?.let {
-                                            getMaskedPan(
-                                                    TerminalParameterTable.selectFromSchemeTable(),
-                                                    it
-                                            )
-                                        }
-                                        runOnUiThread {
-                                            binding?.atCardNoTv?.text = maskedPan
-                                            cardView_l.visibility = View.VISIBLE
-                                            //tv_card_number_heading.visibility = View.VISIBLE
-                                            tv_insert_card.visibility = View.INVISIBLE
-                                            //   binding?.paymentGif?.visibility = View.INVISIBLE
-                                        }
-                                        //Below Different Type of Transaction check Based ISO Packet Generation happening:-
-                                        processAccordingToCardType(localCardProcessedData)
                                     }
-
-
-                            },
-                            { cancelButtonCallback ->
-                                if (cancelButtonCallback) {
-                                    finish()
+                                    runOnUiThread {
+                                        binding?.atCardNoTv?.text = maskedPan
+                                        cardView_l.visibility = View.VISIBLE
+                                        //tv_card_number_heading.visibility = View.VISIBLE
+                                        tv_insert_card.visibility = View.INVISIBLE
+                                        //   binding?.paymentGif?.visibility = View.INVISIBLE
+                                    }
+                                    //Below Different Type of Transaction check Based ISO Packet Generation happening:-
+                                    processAccordingToCardType(localCardProcessedData)
                                 }
 
-                            })
+
+                        },
+                        { cancelButtonCallback ->
+                            if (cancelButtonCallback) {
+                                finish()
+                            }
+
+                        })
                 }
             } else {
                 ProcessCard(this, pinHandler, globalCardProcessedModel) { localCardProcessedData ->
@@ -355,7 +359,7 @@ class VFTransactionActivity : BaseActivity() {
         val amountValue = "${getString(R.string.rupees_symbol)} $transactionAmountValue"
         if (transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
             val brandEMIAccessAmount =
-                    getString(R.string.rupees_symbol) + (((transactionAmountValue).toFloat()).div(100)).toString()
+                getString(R.string.rupees_symbol) + (((transactionAmountValue).toFloat()).div(100)).toString()
             binding?.baseAmtTv?.text = brandEMIAccessAmount
         } else {
             binding?.baseAmtTv?.text = amountValue
@@ -474,7 +478,7 @@ class VFTransactionActivity : BaseActivity() {
                         )
                     ) {
                         //Below we are saving batch data and print the receipt of transaction:-
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             if (cardProcessedDataModal.getReadCardType() == DetectCardType.EMV_CARD_TYPE)
                                 txnSuccessToast(
                                     this@VFTransactionActivity,
@@ -484,10 +488,12 @@ class VFTransactionActivity : BaseActivity() {
                                 txnSuccessToast(this@VFTransactionActivity)
                             // delay(4000)
                         }
+
                         StubBatchData(
                             cardProcessedDataModal.getTransType(),
                             cardProcessedDataModal,
-                            printExtraData, autoSettlementCheck
+                            printExtraData,
+                            autoSettlementCheck
                         )
                         { stubbedData ->
                             if (cardProcessedDataModal.getTransType() == TransactionType.EMI_SALE.type ||
@@ -525,6 +531,9 @@ class VFTransactionActivity : BaseActivity() {
                                     }
                                 }
                             }
+
+
+
                         }
                     } else if (syncStatus && responseCode != "00") {
                         GlobalScope.launch(Dispatchers.Main) {
@@ -835,7 +844,6 @@ class VFTransactionActivity : BaseActivity() {
                 dialogCB(false)
             })
     }
-
 
 
     //Below function is used to deal with EMV Card Fallback when we insert EMV Card from other side then chip side:-
@@ -1217,7 +1225,7 @@ class VFTransactionActivity : BaseActivity() {
 
             EIntentRequest.BankEMISchemeOffer.code -> {
                 val cardProcessedData =
-                        data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
+                    data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
                 val maskedPan = cardProcessedData.getPanNumberData()?.let {
                     getMaskedPan(TerminalParameterTable.selectFromSchemeTable(), it)
                 }
@@ -1250,7 +1258,7 @@ class VFTransactionActivity : BaseActivity() {
 
                 //region===============Check Transaction Type and Perform Action Accordingly:-
                 if (cardProcessedData.getReadCardType() == DetectCardType.MAG_CARD_TYPE &&
-                        cardProcessedData.getTransType() != TransactionType.TEST_EMI.type
+                    cardProcessedData.getTransType() != TransactionType.TEST_EMI.type
                 ) {
                     val isPin = cardProcessedData.getIsOnline() == 1
                     cardProcessedData.setProcessingCode(transactionProcessingCode)
@@ -1261,17 +1269,17 @@ class VFTransactionActivity : BaseActivity() {
                         Log.e("WWW", "-----")
                         cardProcessedData.setTransactionAmount(100)
                         DoEmv(
-                                this, pinHandler, cardProcessedData,
-                                ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
+                            this, pinHandler, cardProcessedData,
+                            ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
                         ) { cardProcessedDataModal ->
                             cardProcessedDataModal.setProcessingCode(transactionProcessingCode)
                             cardProcessedDataModal.setTransactionAmount(100)
                             cardProcessedDataModal.setOtherAmount(otherTransAmount)
                             cardProcessedDataModal.setMobileBillExtraData(
-                                    Pair(
-                                            mobileNumber,
-                                            billNumber
-                                    )
+                                Pair(
+                                    mobileNumber,
+                                    billNumber
+                                )
                             )
                             //    localCardProcessedData.setTransType(transactionType)
                             globalCardProcessedModel = cardProcessedDataModal
@@ -1291,20 +1299,20 @@ class VFTransactionActivity : BaseActivity() {
                         }
                     } else {
                         DoEmv(
-                                this, pinHandler, cardProcessedData,
-                                ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
+                            this, pinHandler, cardProcessedData,
+                            ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
                         ) { cardProcessedDataModal ->
                             Log.d("CardEMIData:- ", cardProcessedDataModal.toString())
                             cardProcessedDataModal.setProcessingCode(transactionProcessingCode)
                             cardProcessedDataModal.setTransactionAmount(
-                                    emiSelectedTransactionAmount ?: 0L
+                                emiSelectedTransactionAmount ?: 0L
                             )
                             cardProcessedDataModal.setOtherAmount(otherTransAmount)
                             cardProcessedDataModal.setMobileBillExtraData(
-                                    Pair(
-                                            mobileNumber,
-                                            billNumber
-                                    )
+                                Pair(
+                                    mobileNumber,
+                                    billNumber
+                                )
                             )
                             globalCardProcessedModel = cardProcessedDataModal
                             Log.d("CardProcessedData:- ", Gson().toJson(cardProcessedDataModal))

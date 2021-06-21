@@ -6,6 +6,7 @@ package com.example.verifonevx990app.vxUtils
  * @usedFor BonusHub
  * */
 
+import android.util.Log
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
@@ -490,7 +491,6 @@ class IsoDataWriter : IsoParent(), IWriter, Serializable {
         else
             addField(fieldNo, data.byteArr2Str())
     }
-
 
     override fun generateIsoByteRequest(): ByteArray {
         val request = mutableListOf<Byte>()

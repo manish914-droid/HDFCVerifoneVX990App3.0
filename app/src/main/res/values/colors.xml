@@ -86,4 +86,7 @@
     <color name="purple_d">@color/white</color>
     <color name="hdfc_red_color">#ED1C24</color>
     <color name="dark_gray">#b9939191</color>
+
+    <color name="qr_code_reader_square">#FFFFFFFF</color>
+    <color name="scanqrdialogcolor">#070030</color>
 </resources>

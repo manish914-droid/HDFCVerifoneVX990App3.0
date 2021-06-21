@@ -1533,7 +1533,7 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            printLogo("hdfc_print_logo.bmp")
+            printLogo("smart_hub.bmp")
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
@@ -1550,8 +1550,7 @@ class PrintUtil(context: Context?) {
             //   logger("PS_H3", (printer?.status).toString(), "e")
             printer?.addText(format, terminalData?.receiptHeaderThree) //header3
             printSeperator(format)
-            val str = "STATUS : ${digiPosData.txnStatus}"
-            centerText(fmtAddTextInLine, str, true)
+
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
                 PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
@@ -1562,25 +1561,18 @@ class PrintUtil(context: Context?) {
             )
 
 
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "TID : ${terminalData?.terminalId}",
-                "",
-                "BATCH NO : ${terminalData?.batchNumber?.let { addPad(it, "0", 6) }}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
 
-             printer?.addTextInLine(
+
+            printer?.addTextInLine(
                 fmtAddTextInLine,
                 "DATE : ${digiPosData.txnDate}",
                 "",
                 "TIME : ${digiPosData.txnTime}",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
             )
-
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "MTXN_ID : ${digiPosData.mTxnId}",
+                "TID : ${terminalData?.terminalId}",
                 "",
                 "",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
@@ -1588,20 +1580,34 @@ class PrintUtil(context: Context?) {
 
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "PTXN_ID :  ${digiPosData.partnerTxnId}",
+                "Partner Txn Id :  ${digiPosData.partnerTxnId}",
                 "",
                 "",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
             )
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "mTxnId : ${digiPosData.mTxnId}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "PgwTxnId : ${digiPosData.pgwTxnId}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
+
+
             printSeperator(format)
 
-            alignLeftRightText(
-                fmtAddTextInLine,
-                "TXN AMOUNT :  ",
-                 digiPosData.amount,
-                "Rs.",
-
-            )
+            val str = "Txn Status : ${digiPosData.txnStatus}"
+            centerText(fmtAddTextInLine, str, true)
+            centerText(fmtAddTextInLine, "Txn Amount :  Rs. ${digiPosData.amount}" , true)
 
             printSeperator(format)
 
@@ -1613,14 +1619,8 @@ class PrintUtil(context: Context?) {
                 "Mode  :  ${digiPosData.paymentMode}",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
             )
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "Track_ID : ${digiPosData.pgwTxnId}",
-                "",
-                "",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
 
+            printer?.addText(format, copyType.pName)
             printer?.addText(format, footerText[0])
             printer?.addText(format, footerText[1])
 
@@ -2141,7 +2141,7 @@ class PrintUtil(context: Context?) {
                 }
 
 // region ======loop start here===============
-                 val requiredMap =   mutableMapOf<String, ArrayList<BatchFileDataTable>>()
+                val requiredMap = mutableMapOf<String, ArrayList<BatchFileDataTable>>()
 
                 for (i in batch) {
                     val sortItemToAdd = arrayListOf<BatchFileDataTable>()
@@ -2156,7 +2156,7 @@ class PrintUtil(context: Context?) {
                     }
                 }
 
-                for((hashkey,value) in requiredMap){
+                for ((hashkey, value) in requiredMap) {
                     map = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
                     for (it in value) {  // Do not count preauth transaction
 
@@ -2175,13 +2175,21 @@ class PrintUtil(context: Context?) {
                                 m.total += transAmt
                             } else {
                                 val sm =
-                                    SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                                    SummeryModel(
+                                        transactionType2Name(it.transactionType),
+                                        1,
+                                        transAmt
+                                    )
                                 ma[it.transactionType] = sm
                             }
                         } else {
                             val hm = HashMap<Int, SummeryModel>().apply {
                                 this[it.transactionType] =
-                                    SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                                    SummeryModel(
+                                        transactionType2Name(it.transactionType),
+                                        1,
+                                        transAmt
+                                    )
                             }
                             map[it.cardType] = hm
                         }
@@ -2240,7 +2248,8 @@ class PrintUtil(context: Context?) {
                         alignLeftRightText(
                             textInLineFormatBundle,
                             transactionType2Name(k).toUpperCase(Locale.ROOT),
-                            "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}", "  =  " + m.count
+                            "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}",
+                            "  =  " + m.count
 
                         )
 
@@ -3930,6 +3939,39 @@ class PrintUtil(context: Context?) {
             throw ex
         }
 
+    }
+
+    private fun printDigiPosReport(callBack: (Boolean) -> Unit) {
+        val digiPosDataList =
+            DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption) as ArrayList<DigiPosDataTable>
+        if (digiPosDataList.size == 0) {
+            Log.e("UPLOAD DIGI", " ----------------------->  NO SUCCESS TXN FOUND")
+            // cb(true)
+            return
+        }
+        centerText(textInLineFormatBundle, "Digi POS Report")
+        centerText(textInLineFormatBundle, "TID : ${TerminalParameterTable.selectAll()[0].terminalId}")
+        printSeperator(textFormatBundle)
+        alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
+        printSeperator(textFormatBundle)
+        // txn
+
+        printSeperator(textFormatBundle)
+
+        // start print here
+        printer?.startPrint(object : PrinterListener.Stub() {
+            override fun onFinish() {
+                callBack(true)
+                Log.e("Settle_RECEIPT", "SUCESS__")
+            }
+
+            override fun onError(error: Int) {
+                callBack(false)
+                Log.e("Settle_RECEIPT", "FAIL__")
+            }
+
+
+        })
     }
 
     private fun bHLogoWithAppVersion(format: Bundle) {

@@ -4,10 +4,7 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import com.example.verifonevx990app.R
-import com.example.verifonevx990app.digiPOS.EDigiPosTerminalStatusResponseCodes
-import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
-import com.example.verifonevx990app.digiPOS.EnumDigiPosProcessingCode
-import com.example.verifonevx990app.digiPOS.LOG_TAG
+import com.example.verifonevx990app.digiPOS.*
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
@@ -109,7 +106,7 @@ class KeyExchanger(
         }
     }
 
-    fun startExchange() {
+    fun startExchange( isfreshInit:Boolean=true) {
         GlobalScope.launch {
             val isoW = createKeyExchangeIso()
             val bData = isoW.generateIsoByteRequest()
@@ -591,55 +588,69 @@ class KeyExchanger(
                                 }
                             }
 
-                                getDigiPosStatus(
-                                    EnumDigiPosProcess.InitializeDigiPOS.code,
-                                    EnumDigiPosProcessingCode.DIGIPOSPROCODE.code,false
-                                ) { isSuccess, responseMsg, responsef57, fullResponse ->
-                                    try{
-                                        if (isSuccess) {
-                                            //1^Success^Success^S101^Active^Active^Active^Active^0^1
-                                            val responsF57List = responsef57.split("^")
-                                            Log.e("F56->>", responsef57)
-                                            if (responsF57List[4] == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
-                                                val tpt = TerminalParameterTable.selectFromSchemeTable()
-                                                tpt?.isDigiposActive="1"
-                                                tpt?. digiPosResponseType=responsF57List[0].toString()
-                                                tpt?.digiPosStatus = responsF57List[1].toString()
-                                                tpt?.digiPosStatusMessage = responsF57List[2].toString()
-                                                tpt?.digiPosStatusCode = responsF57List[3].toString()
-                                                tpt?.digiPosTerminalStatus = responsF57List[4].toString()
-                                                tpt?.digiPosBQRStatus = responsF57List[5].toString()
-                                                tpt?.digiPosUPIStatus = responsF57List[6].toString()
-                                                tpt?.digiPosSMSpayStatus = responsF57List[7].toString()
-                                                tpt?.digiPosStaticQrDownloadRequired = responsF57List[8].toString()
-                                                tpt?.digiPosCardCallBackRequired = responsF57List[9].toString()
-                                                if (tpt != null) {
-                                                    TerminalParameterTable.performOperation(tpt) {
-                                                        logger(
-                                                            LOG_TAG.DIGIPOS.tag,
-                                                            "Terminal parameter Table updated successfully $tpt "
-                                                        )
-                                                        val ttp=TerminalParameterTable.selectFromSchemeTable()
-                                                        val tptObj= Gson().toJson(ttp)
-                                                        logger(
-                                                            LOG_TAG.DIGIPOS.tag,
-                                                            "After success      $tptObj "
-                                                        )
+                            getDigiPosStatus(
+                                EnumDigiPosProcess.InitializeDigiPOS.code,
+                                EnumDigiPosProcessingCode.DIGIPOSPROCODE.code, false
+                            ) { isSuccess, responseMsg, responsef57, fullResponse ->
+                                try {
+                                    if (isSuccess) {
+                                        //1^Success^Success^S101^Active^Active^Active^Active^0^1
+                                        val responsF57List = responsef57.split("^")
+                                        Log.e("F56->>", responsef57)
+                                        if (responsF57List[4] == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
+                                            val tpt1 =
+                                                TerminalParameterTable.selectFromSchemeTable()
+                                            tpt1?.isDigiposActive = "1"
+                                            tpt1?.digiPosResponseType = responsF57List[0].toString()
+                                            tpt1?.digiPosStatus = responsF57List[1].toString()
+                                            tpt1?.digiPosStatusMessage =
+                                                responsF57List[2].toString()
+                                            tpt1?.digiPosStatusCode = responsF57List[3].toString()
+                                            tpt1?.digiPosTerminalStatus =
+                                                responsF57List[4].toString()
+                                            tpt1?.digiPosBQRStatus = responsF57List[5].toString()
+                                            tpt1?.digiPosUPIStatus = responsF57List[6].toString()
+                                            tpt1?.digiPosSMSpayStatus = responsF57List[7].toString()
+                                            tpt1?.digiPosStaticQrDownloadRequired =
+                                                responsF57List[8].toString()
+                                            tpt1?.digiPosCardCallBackRequired =
+                                                responsF57List[9].toString()
+                                            if (tpt1 != null) {
+                                                TerminalParameterTable.performOperation(tpt1) {
+                                                    logger(
+                                                        LOG_TAG.DIGIPOS.tag,
+                                                        "Terminal parameter Table updated successfully $tpt1 "
+                                                    )
+                                                    val ttp =
+                                                        TerminalParameterTable.selectFromSchemeTable()
+                                                    val tptObj = Gson().toJson(ttp)
+                                                    logger(
+                                                        LOG_TAG.DIGIPOS.tag,
+                                                        "After success      $tptObj "
+                                                    )
+                                                }
+                                                if (tpt1.digiPosBQRStatus == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
+                                                    runBlocking {
+                                                        getStaticQrFromServerAndSaveToFile(context as BaseActivity){
+                                                            // FAIL AND SUCCESS HANDELED IN FUNCTION getStaticQrFromServerAndSaveToFile itself
+                                                        }
                                                     }
                                                 }
-                                            } else {
-                                                logger("DIGI_POS", "DIGI_POS_UNAVAILABLE")
-                                            }
-                                        }
 
-                                    }catch (ex: java.lang.Exception){
-                                        ex.printStackTrace()
-                                        logger(
-                                            LOG_TAG.DIGIPOS.tag,
-                                            "Somethig wrong... in response data field 57"
-                                        )
+                                            }
+                                        } else {
+                                            logger("DIGI_POS", "DIGI_POS_UNAVAILABLE")
+                                        }
                                     }
+
+                                } catch (ex: java.lang.Exception) {
+                                    ex.printStackTrace()
+                                    logger(
+                                        LOG_TAG.DIGIPOS.tag,
+                                        "Somethig wrong... in response data field 57"
+                                    )
                                 }
+                            }
 
                         }
                     }
@@ -1001,7 +1012,7 @@ suspend fun getPromotionData(
 
 suspend fun getDigiPosStatus(
     field57RequestData: String,
-    processingCode: String,isSaveTransAsPending:Boolean,
+    processingCode: String, isSaveTransAsPending: Boolean = false,
     cb: (Boolean, String, String, String) -> Unit
 ) {
 
@@ -1057,12 +1068,12 @@ suspend fun getDigiPosStatus(
 
     logger("DIGIPOS REQ1>>", idw.isoMap, "e")
 
-   // val idwByteArray = idw.generateIsoByteRequest()
+    // val idwByteArray = idw.generateIsoByteRequest()
 
     var responseField57 = ""
     var responseMsg = ""
     var isBool = false
-    HitServer.hitDigiPosServer(idw,isSaveTransAsPending) { result, success ->
+    HitServer.hitDigiPosServer(idw, isSaveTransAsPending) { result, success ->
         responseMsg = result
         if (success) {
             ROCProviderV2.incrementFromResponse(

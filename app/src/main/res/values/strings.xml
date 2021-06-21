@@ -496,4 +496,6 @@
     <string name="ptxnID_hint">123456</string>
     <string name="txnStatus">TXN STATUS</string>
     <string name="txn_detail_page">TXN Detail Page</string>
+    <string name="scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now">Scan QR code to pay.\nWould you like to check payment status now.</string>
+<string name="scan_qr_pay">Scan QR code to pay.</string>
 </resources>

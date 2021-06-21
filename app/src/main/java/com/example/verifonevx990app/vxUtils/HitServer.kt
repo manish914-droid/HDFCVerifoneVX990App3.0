@@ -5,12 +5,9 @@ import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
 import com.example.verifonevx990app.digiPOS.getCurrentDateInDisplayFormatDigipos
-import com.example.verifonevx990app.digiPOS.saveDateInServerFormatDigipos
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
 import java.io.DataInputStream
 import java.io.FileOutputStream
 import java.net.ConnectException
@@ -18,9 +15,9 @@ import java.net.Socket
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.nio.channels.ServerSocketChannel
-import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.experimental.and
 
 interface IReversalHandler {
     suspend fun saveReversal()
@@ -141,13 +138,20 @@ object HitServer {
                             digiposData.customerMobileNumber = datalist[3]
                             digiposData.displayFormatedDate= getCurrentDateInDisplayFormatDigipos()
 
-                            if(datalist[0].toInt()== EnumDigiPosProcess.UPIDigiPOS.code.toInt()){
-                                digiposData.vpa = datalist[4]
-                                digiposData.partnerTxnId=datalist[5]
-                                digiposData.paymentMode="UPI Pay"
-                            }else{
-                                digiposData.partnerTxnId = datalist[4]
-                                digiposData.paymentMode="SMS Pay"
+                            when {
+                                datalist[0].toInt()== EnumDigiPosProcess.UPIDigiPOS.code.toInt() -> {
+                                    digiposData.vpa = datalist[4]
+                                    digiposData.partnerTxnId=datalist[5]
+                                    digiposData.paymentMode="UPI Pay"
+                                }
+                                datalist[0].toInt()== EnumDigiPosProcess.DYNAMIC_QR.code.toInt() -> {
+                                    digiposData.partnerTxnId = datalist[4]
+                                    digiposData.paymentMode="Bhqr Pay"
+                                }
+                                else -> {
+                                    digiposData.partnerTxnId = datalist[4]
+                                    digiposData.paymentMode="SMS Pay"
+                                }
                             }
                           //
 
@@ -204,6 +208,23 @@ object HitServer {
             this@HitServer.callback = null
         }
     }
+
+    /**
+     * Added by lucky (to convert byte[] to hesString)
+     */
+    @Synchronized
+    fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (j in bytes.indices) {
+            val v = bytes[j].toInt() and 0xFF
+
+            hexChars[j * 2] = hexArray[v ushr 4]
+            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+        }
+        return String(hexChars)
+    }
+    private val hexArray = "0123456789ABCDEF".toCharArray()
+
 
     @Synchronized
     suspend fun hitServersale(
@@ -533,7 +554,10 @@ object HitServer {
         } catch (ex: Exception) {
             ex.printStackTrace()
             println("SOCKET CONNECT EXCEPTION")
-            callback?.invoke(VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error", false)
+            callback?.invoke(
+                VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error",
+                false
+            )
         } finally {
             Log.d("Finally Call:- ", "Final Block Runs Here.....")
         }

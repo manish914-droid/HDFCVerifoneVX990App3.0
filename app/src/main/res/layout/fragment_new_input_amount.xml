@@ -73,7 +73,7 @@
             app:neumorph_shadowColorLight="@color/upperShadow"
             app:neumorph_inset="@dimen/pad_8"
             app:neumorph_shadowElevation="4dp"
-
+android:visibility="gone"
             app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
 
             app:layout_constraintStart_toStartOf="parent"
@@ -150,6 +150,50 @@
 
                 />
         </com.example.customneumorphic.NeumorphCardView>
+
+
+        <!--Description-->
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/descr_crd_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+           app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            android:visibility="gone"
+            app:neumorph_shadowElevation="4dp"
+
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+
+
+            app:neumorph_shapeType="flat"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mob_no_crdView"
+         >
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/description_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/pad_12"
+                android:background="@null"
+                android:cursorVisible="false"
+
+                android:focusable="false"
+                android:focusableInTouchMode="false"
+
+                android:drawableStart="@drawable/ic_mobile_icon"
+                android:inputType="none"
+                android:maxLength="13"
+                android:maxLines="1"
+                android:gravity="end"
+                android:textColorHint="@color/colorGrey"
+                android:textSize="@dimen/key_text_size"
+                android:hint="@string/enter_description_optional"
+                android:textColor="@color/white"/>
+        </com.example.customneumorphic.NeumorphCardView>
+
 
 
         <include

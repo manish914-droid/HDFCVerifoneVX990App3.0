@@ -3,6 +3,7 @@ package com.example.verifonevx990app.disputetransaction
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,11 +11,13 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.uploadPendingDigiPosTxn
 import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleSettlementToHost
@@ -59,7 +62,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
 
         settlement_batch_btn?.setOnClickListener {
             enableDisableSettlementButton(false)
-            //Condition to check for Reversal Sale Case:-
+            //when no reversal found:-
             if (TextUtils.isEmpty(AppPreference.getString(GENERIC_REVERSAL_KEY))) {
                 (activity as MainActivity).showProgress(getString(R.string.please_wait_offline_sale_sync))
                 SyncOfflineSaleSettlementToHost { offlineSaleStatus, responseValidationMsg ->
@@ -77,130 +80,10 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
                                     getString(R.string.positive_button_yes),
                                     {
                                         (activity as MainActivity).showProgress()
-                                        PrintUtil(activity).printDetailReport(
-                                            batchList,
-                                            activity
-                                        ) { detailPrintStatus ->
-                                            if (detailPrintStatus) {
-                                                GlobalScope.launch(Dispatchers.IO) {
-                                                    val data = CreateSettlementPacket(
-                                                        ProcessingCode.SETTLEMENT.code,
-                                                        batchList
-                                                    ).createSettlementISOPacket()
-                                                    settlementByteArray =
-                                                        data.generateIsoByteRequest()
-                                                    try {
-                                                        (activity as MainActivity).hideProgress()
-                                                        (activity as MainActivity).settleBatch(
-                                                            settlementByteArray
-                                                        ) {
-                                                            if (!it)
-                                                                runBlocking(Dispatchers.Main) {
-                                                                    enableDisableSettlementButton(
-                                                                        true
-                                                                    )
-                                                                }
-                                                        }
-                                                    } catch (ex: Exception) {
-                                                        (activity as MainActivity).hideProgress()
-                                                        enableDisableSettlementButton(true)
-                                                        ex.printStackTrace()
-                                                    }
-                                                }
-                                            } else {
-                                                (activity as MainActivity).hideProgress()
-                                                GlobalScope.launch(Dispatchers.Main) {
-                                                    (activity as MainActivity).alertBoxWithAction(
-                                                        null,
-                                                        null,
-                                                        getString(R.string.printer_error),
-                                                        getString(R.string.please_check_printing_roll),
-                                                        true,
-                                                        getString(R.string.positive_button_ok),
-                                                        {
-                                                            val data = CreateSettlementPacket(
-                                                                ProcessingCode.SETTLEMENT.code,
-                                                                batchList
-                                                            ).createSettlementISOPacket()
-                                                            settlementByteArray =
-                                                                data.generateIsoByteRequest()
-                                                            try {
-                                                                (activity as MainActivity).hideProgress()
-                                                                GlobalScope.launch(Dispatchers.IO) {
-                                                                    (activity as MainActivity).settleBatch(
-                                                                        settlementByteArray
-                                                                    ) {
-                                                                        if (!it)
-                                                                            enableDisableSettlementButton(
-                                                                                true
-                                                                            )
-                                                                    }
-                                                                }
-                                                            } catch (ex: Exception) {
-                                                                (activity as MainActivity).hideProgress()
-                                                                enableDisableSettlementButton(
-                                                                    true
-                                                                )
-                                                                ex.printStackTrace()
-                                                            }
-                                                        },
-                                                        {})
-                                                }
-                                            }
-                                        }
-                                    },
-                                    { navigateToMain() })
-                                /* } else
-                                     GlobalScope.launch(Dispatchers.Main) {
-                                         enableDisableSettlementButton(true)
-                                         VFService.showToast(getString(R.string.empty_batch_data))
-                                     }*/
-                            } else {
-                                enableDisableSettlementButton(true)
-                                VFService.showToast(getString(R.string.printing_roll_error))
-                            }
-                        }
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            enableDisableSettlementButton(true)
-                            (activity as MainActivity).hideProgress()
-                            VFService.showToast(getString(R.string.offline_sale_upload_fails_please_try_again) + "\n" + responseValidationMsg)
-                            (activity as MainActivity).alertBoxWithAction(null,
-                                null,
-                                getString(R.string.offline_upload),
-                                getString(R.string.offline_sale_failed_to_upload),
-                                false,
-                                getString(R.string.positive_button_ok),
-                                {},
-                                {})
-                        }
-                    }
-                }
-
-            } else {
-                //Send Reversal Data to Server First Then Settle Batch will happen:-
-                (activity as MainActivity).showProgress("Sending Reversal.....")
-                SyncReversalToHost(AppPreference.getReversal()) { status, msg ->
-                    if (status) {
-                        AppPreference.clearReversal()
-                        GlobalScope.launch(Dispatchers.Main) {
-                            (activity as MainActivity).hideProgress()
-                            (activity as MainActivity).showProgress(getString(R.string.please_wait_offline_sale_sync))
-                        }
-                        SyncOfflineSaleSettlementToHost { offlineSaleStatus, responseValidationMsg ->
-                            if (offlineSaleStatus) {
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    (activity as MainActivity).hideProgress()
-                                    if (VFService.vfPrinter?.status != 240 && VFService.vfPrinter?.status == 0) {
-                                        /* if (batchList.size > 0) {*/
-                                        (activity as MainActivity).alertBoxWithAction(
-                                            null,
-                                            null,
-                                            getString(R.string.settlement),
-                                            getString(R.string.settle_batch_hint),
-                                            true,
-                                            getString(R.string.positive_button_yes),
-                                            {
+                                       viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                                            Log.e("UPLOAD DIGI"," ----------------------->  START")
+                                            uploadPendingDigiPosTxn(activity as BaseActivity) {
+                                                Log.e("UPLOAD DIGI"," ----------------------->  BEFOR PRINT")
                                                 PrintUtil(activity).printDetailReport(
                                                     batchList,
                                                     activity
@@ -277,6 +160,148 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
                                                         }
                                                     }
                                                 }
+
+                                            }
+
+                                        }
+                                    },
+                                    { navigateToMain() })
+                                /* } else
+                                     GlobalScope.launch(Dispatchers.Main) {
+                                         enableDisableSettlementButton(true)
+                                         VFService.showToast(getString(R.string.empty_batch_data))
+                                     }*/
+                            } else {
+                                enableDisableSettlementButton(true)
+                                VFService.showToast(getString(R.string.printing_roll_error))
+                            }
+                        }
+                    } else {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            enableDisableSettlementButton(true)
+                            (activity as MainActivity).hideProgress()
+                            VFService.showToast(getString(R.string.offline_sale_upload_fails_please_try_again) + "\n" + responseValidationMsg)
+                            (activity as MainActivity).alertBoxWithAction(null,
+                                null,
+                                getString(R.string.offline_upload),
+                                getString(R.string.offline_sale_failed_to_upload),
+                                false,
+                                getString(R.string.positive_button_ok),
+                                {},
+                                {})
+                        }
+                    }
+                }
+
+            } else {
+                //Send Reversal Data to Server First Then Settle Batch will happen:-
+                (activity as MainActivity).showProgress("Sending Reversal.....")
+                SyncReversalToHost(AppPreference.getReversal()) { status, msg ->
+                    if (status) {
+                        AppPreference.clearReversal()
+                        GlobalScope.launch(Dispatchers.Main) {
+                            (activity as MainActivity).hideProgress()
+                            (activity as MainActivity).showProgress(getString(R.string.please_wait_offline_sale_sync))
+                        }
+                        SyncOfflineSaleSettlementToHost { offlineSaleStatus, responseValidationMsg ->
+                            if (offlineSaleStatus) {
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    (activity as MainActivity).hideProgress()
+                                    if (VFService.vfPrinter?.status != 240 && VFService.vfPrinter?.status == 0) {
+                                        /* if (batchList.size > 0) {*/
+                                        (activity as MainActivity).alertBoxWithAction(
+                                            null,
+                                            null,
+                                            getString(R.string.settlement),
+                                            getString(R.string.settle_batch_hint),
+                                            true,
+                                            getString(R.string.positive_button_yes),
+                                            {
+                                                viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
+                                                    Log.e("UPLOAD DIGI"," ----------------------->  START")
+                                                    uploadPendingDigiPosTxn(activity as BaseActivity) {
+                                                        PrintUtil(activity).printDetailReport(
+                                                            batchList,
+                                                            activity
+                                                        ) { detailPrintStatus ->
+                                                            if (detailPrintStatus) {
+                                                                GlobalScope.launch(
+                                                                    Dispatchers.IO
+                                                                ) {
+                                                                    val data =
+                                                                        CreateSettlementPacket(
+                                                                            ProcessingCode.SETTLEMENT.code,
+                                                                            batchList
+                                                                        ).createSettlementISOPacket()
+                                                                    settlementByteArray =
+                                                                        data.generateIsoByteRequest()
+                                                                    try {
+                                                                        (activity as MainActivity).settleBatch(
+                                                                            settlementByteArray
+                                                                        ) {
+                                                                            if (!it)
+                                                                                enableDisableSettlementButton(
+                                                                                    true
+                                                                                )
+                                                                        }
+                                                                    } catch (ex: Exception) {
+                                                                        (activity as MainActivity).hideProgress()
+                                                                        enableDisableSettlementButton(
+                                                                            true
+                                                                        )
+                                                                        ex.printStackTrace()
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                (activity as MainActivity).hideProgress()
+                                                                GlobalScope.launch(Dispatchers.Main) {
+                                                                    (activity as MainActivity).alertBoxWithAction(
+                                                                        null,
+                                                                        null,
+                                                                        getString(R.string.printer_error),
+                                                                        getString(R.string.please_check_printing_roll),
+                                                                        true,
+                                                                        getString(R.string.yes),
+                                                                        {
+                                                                            val data =
+                                                                                CreateSettlementPacket(
+                                                                                    ProcessingCode.SETTLEMENT.code,
+                                                                                    batchList
+                                                                                ).createSettlementISOPacket()
+                                                                            settlementByteArray =
+                                                                                data.generateIsoByteRequest()
+                                                                            try {
+                                                                                (activity as MainActivity).hideProgress()
+                                                                                GlobalScope.launch(
+                                                                                    Dispatchers.IO
+                                                                                ) {
+                                                                                    (activity as MainActivity).settleBatch(
+                                                                                        settlementByteArray
+                                                                                    ) {
+                                                                                        if (!it)
+                                                                                            enableDisableSettlementButton(
+                                                                                                true
+                                                                                            )
+                                                                                    }
+                                                                                }
+                                                                            } catch (ex: Exception) {
+                                                                                (activity as MainActivity).hideProgress()
+                                                                                enableDisableSettlementButton(
+                                                                                    true
+                                                                                )
+                                                                                ex.printStackTrace()
+                                                                            }
+                                                                        },
+                                                                        {})
+                                                                }
+                                                            }
+                                                        }
+
+                                                    }
+
+                                                }
+
+
                                             },
                                             { navigateToMain() })
                                         /* } else

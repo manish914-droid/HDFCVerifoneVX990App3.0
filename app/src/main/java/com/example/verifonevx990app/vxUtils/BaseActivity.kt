@@ -154,7 +154,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         dialogBuilder.setContentView(bindingg.root)
         if (title == getString(R.string.print_customer_copy)|| title == getString(R.string.sms_upi_pay)) {
             if(title==getString(R.string.sms_upi_pay)){
-                bindingg.imgPrinter.setImageResource(R.drawable.upi_icon)
+                bindingg.imgPrinter.setImageResource(R.drawable.ic_link_icon)
             } else if(title==getString(R.string.print_customer_copy)){
                 bindingg.imgPrinter.setImageResource(R.drawable.ic_printer)
             }

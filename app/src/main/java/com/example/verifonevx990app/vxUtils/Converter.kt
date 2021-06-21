@@ -440,3 +440,16 @@ fun addBytePad(src: ByteArray, len: Int, dest: Byte = 0, isLeft: Boolean = true)
 
 
 }
+
+
+/**
+ * Convert hex String to byte array  (Added by lucky)
+ *
+ */
+fun String.decodeHexStringToByteArray(): ByteArray {
+    require(length % 2 == 0) { "Must have an even length" }
+
+    return chunked(2)
+        .map { it.toInt(16).toByte() }
+        .toByteArray()
+}

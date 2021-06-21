@@ -1,18 +1,23 @@
 package com.example.verifonevx990app.digiPOS
 
+import android.graphics.Bitmap
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.databinding.FragmentDigiPosMenuBinding
+import com.example.verifonevx990app.digiPOS.BitmapUtils.convertBitmapToByteArray
 import com.example.verifonevx990app.digiPOS.pendingTxn.PendingTxnFragment
 import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
+import com.example.verifonevx990app.vxUtils.BaseActivity
 import com.example.verifonevx990app.vxUtils.logger
-import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 
 class DigiPosMenuFragment : Fragment() {
@@ -62,16 +67,18 @@ class DigiPosMenuFragment : Fragment() {
     private fun setClickListener() {
         //UPI CLICK
         binding?.upiBtn?.setOnClickListener {
-            (activity as MainActivity).transactFragment(UpiSmsPayEnterDetailFragment().apply {
+            (activity as MainActivity).transactFragment(UpiSmsDynamicPayQrInputDetailFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("type", EDashboardItem.UPI)
                     // putString(INPUT_SUB_HEADING, "")
                 }
             })
+
+
         }
         //sms click
         binding?.smsPayBtn?.setOnClickListener {
-            (activity as MainActivity).transactFragment(UpiSmsPayEnterDetailFragment().apply {
+            (activity as MainActivity).transactFragment(UpiSmsDynamicPayQrInputDetailFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable("type", EDashboardItem.SMS_PAY)
                     // putString(INPUT_SUB_HEADING, "")
@@ -79,13 +86,7 @@ class DigiPosMenuFragment : Fragment() {
             })
         }
 
-        binding?.dynamicQrBtn?.setOnClickListener {
-            DigiPosDataTable.clear()
-            val dd=DigiPosDataTable.selectAllDigiPosData()
-            val jsonData=Gson().toJson(dd)
-            logger("DIGI EMPTY",jsonData,"e")
 
-        }
 // pending transaction
         binding?.pendingTxnBtn?.setOnClickListener {
             (activity as MainActivity).transactFragment(PendingTxnFragment().apply {
@@ -104,6 +105,69 @@ class DigiPosMenuFragment : Fragment() {
                     // putString(INPUT_SUB_HEADING, "")
                 }
             })
+        }
+        //endregion
+
+        //region==========Static_QR  Click:-
+        binding?.staticQrBtn?.setOnClickListener {
+            var imgbm: Bitmap? = null
+            runBlocking(Dispatchers.IO) {
+                imgbm = loadStaticQrFromInternalStorage() // it return null when file not exist
+                if(imgbm!=null) {
+                    val bmBytes = convertBitmapToByteArray(imgbm)
+                    logger("StaticQr", "Already parsed Bitmap", "e")
+                    (activity as MainActivity).transactFragment(QrScanFragment().apply {
+                        arguments = Bundle().apply {
+                            putByteArray("QrByteArray", bmBytes)
+                            putSerializable("type",transactionType)
+                            putSerializable("type", EDashboardItem.STATIC_QR)
+                           // putParcelable("tabledata",tabledata)
+                        }
+                    })
+                }
+                else {
+                  getStaticQrFromServerAndSaveToFile(activity as BaseActivity) {
+                      if (it) {
+                          logger("StaticQr", "Get Static Qr from server and  saves to file success ", "e")
+                          lifecycleScope.launch(Dispatchers.IO) {
+                              imgbm = loadStaticQrFromInternalStorage() // it return null when file not exist
+                          if (imgbm != null) {
+                              val bmBytes = convertBitmapToByteArray(imgbm)
+                              logger("StaticQr", "Already parsed Bitmap", "e")
+                              (activity as MainActivity).transactFragment(QrScanFragment().apply {
+                                  arguments = Bundle().apply {
+                                      putByteArray("QrByteArray", bmBytes)
+                                      putSerializable("type", transactionType)
+                                      putSerializable("type", EDashboardItem.STATIC_QR)
+                                      // putParcelable("tabledata",tabledata)
+                                  }
+                              })
+                          }
+                      }
+
+                  }else{
+                          logger("StaticQr", "Get Static Qr from server and  file not successfully saved", "e")
+
+                      }
+
+                  }
+                }
+            }
+
+
+
+        }
+        //endregion
+
+        //region==========Dynamic QR  Click:-
+        binding?.dynamicQrBtn?.setOnClickListener {
+            (activity as MainActivity).transactFragment(UpiSmsDynamicPayQrInputDetailFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("type", EDashboardItem.DYNAMIC_QR)
+                    // putString(INPUT_SUB_HEADING, "")
+                }
+            },true)
+
         }
         //endregion
 

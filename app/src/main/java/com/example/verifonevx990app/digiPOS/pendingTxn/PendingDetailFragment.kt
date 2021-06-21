@@ -30,7 +30,7 @@ class PendingDetailFragment :Fragment() {
     private var iDialog: IDialog? = null
     private var binding: DigiPosTxnListDetailPageBinding? = null
     private var detailPageData: DigiPosDataTable? = null
-
+   private var dataToPrintAfterSuccess : DigiPosDataTable?=null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is IDialog) iDialog = context
@@ -77,12 +77,10 @@ class PendingDetailFragment :Fragment() {
         binding?.mtxnTV?.text = detailPageData?.mTxnId
         binding?.txnStatusTV?.text = detailPageData?.txnStatus
 
-
-
         //OnClick event of Bottom Button:-
         binding?.printButton?.setOnClickListener {
-            if ( binding?.printButton?.text.toString()==getString(R.string.print)) {
-                detailPageData?.let { it1 ->
+            if (binding?.printButton?.text.toString()==getString(R.string.print)) {
+                dataToPrintAfterSuccess?.let { it1 ->
                     PrintUtil(context).printSMSUPIChagreSlip(
                         it1,
                         EPrintCopyType.MERCHANT,
@@ -169,9 +167,11 @@ class PendingDetailFragment :Fragment() {
                                 EDigiPosPaymentStatus.Approved.desciption -> {
                                     tabledata.txnStatus = statusRespDataList[5]
                                         binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
-                                        val message = "Transaction ${detailPageData?.txnStatus}"
+                                        val message = "Transaction ${tabledata.txnStatus}"
                                         binding?.transactionMessageTV?.text = message
+                                    binding?.txnStatusTV?.text=tabledata.txnStatus
                                     binding?.printButton?.text = getString(R.string.print)
+dataToPrintAfterSuccess=tabledata
                                 }
                             }
                             DigiPosDataTable.insertOrUpdateDigiposData(tabledata)

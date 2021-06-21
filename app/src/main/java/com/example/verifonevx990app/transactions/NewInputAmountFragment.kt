@@ -88,7 +88,6 @@ class NewInputAmountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         transactionType = arguments?.getSerializable("type") as EDashboardItem
         isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
             if (isMobileNeeded) {
@@ -116,29 +115,38 @@ class NewInputAmountFragment : Fragment() {
         subHeaderImage = view.findViewById(R.id.header_Image)
         subHeaderImage?.visibility = View.VISIBLE
         subHeaderImage?.setImageResource(transactionType.res)
-        if (transactionType == EDashboardItem.SALE_WITH_CASH) {
-            //  binding?.enterCashAmountTv?.visibility = View.VISIBLE
-            binding?.cashAmtCrdView?.visibility = View.VISIBLE
-            cashAmount?.hint = VerifoneApp.appContext.getString(R.string.cash_amount)
-            //   binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.cash_amount)
-
-        } else if (transactionType == EDashboardItem.SALE) {
-            if (checkHDFCTPTFieldsBitOnOff(TransactionType.TIP_SALE)) {
-                //   binding?.enterCashAmountTv?.visibility = View.VISIBLE
-                cashAmount?.visibility = View.VISIBLE
-                cashAmount?.hint = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
-                //    binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
-
-            } else {
-                cashAmount?.visibility = View.GONE
-                binding?.cashAmtCrdView?.visibility = View.GONE
-                //  binding?.enterCashAmountTv?.visibility = View.GONE
+        when (transactionType) {
+            EDashboardItem.SALE_WITH_CASH -> {
+                //  binding?.enterCashAmountTv?.visibility = View.VISIBLE
+                binding?.cashAmtCrdView?.visibility = View.VISIBLE
+                cashAmount?.hint = VerifoneApp.appContext.getString(R.string.cash_amount)
+                //   binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.cash_amount)
 
             }
-        } else {
-            cashAmount?.visibility = View.GONE
-            binding?.cashAmtCrdView?.visibility = View.GONE
-            //   binding?.enterCashAmountTv?.visibility = View.GONE
+            EDashboardItem.SALE -> {
+                if (checkHDFCTPTFieldsBitOnOff(TransactionType.TIP_SALE)) {
+                    //   binding?.enterCashAmountTv?.visibility = View.VISIBLE
+                    cashAmount?.visibility = View.VISIBLE
+                    cashAmount?.hint = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
+                    //    binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
+
+                } else {
+                    cashAmount?.visibility = View.GONE
+                    binding?.cashAmtCrdView?.visibility = View.GONE
+                    //  binding?.enterCashAmountTv?.visibility = View.GONE
+
+                }
+            }
+
+            EDashboardItem.DYNAMIC_QR->{
+                binding?.mobNoCrdView?.visibility=View.VISIBLE
+                binding?.descrCrdView?.visibility=View.VISIBLE
+            }
+            else -> {
+                cashAmount?.visibility = View.GONE
+                binding?.cashAmtCrdView?.visibility = View.GONE
+                //   binding?.enterCashAmountTv?.visibility = View.GONE
+            }
         }
 
         if (transactionType == EDashboardItem.BRAND_EMI) {
@@ -266,7 +274,7 @@ class NewInputAmountFragment : Fragment() {
         }
 
         if (saleAmount < 1) {
-            VFService.showToast("Sale Amount should be greater than Rs 1")
+            VFService.showToast("Amount should be greater than Rs 1")
             return
         } else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
             VFService.showToast("Cash Amount should be greater than Rs 1")
@@ -570,6 +578,27 @@ class NewInputAmountFragment : Fragment() {
                             )
                         }
                     }
+                }
+
+                EDashboardItem.DYNAMIC_QR->{
+                    if( binding?.mobNumbr?.text.toString().length !in 10..13 ){
+
+                        context?.getString(R.string.enter_valid_mobile_number)?.let { VFService.showToast(it) }
+                    }else{
+                        val extraPairData = Triple(
+                            binding?.mobNumbr?.text.toString(),
+                            binding?.descriptionEt?.text.toString(),
+                            third = true
+                        )
+                        iFrReq?.onFragmentRequest(
+                            UiAction.DYNAMIC_QR,
+                            Pair(
+                                saleAmount.toString().trim(),
+                               "0"
+                            ),extraPairData
+                        )
+                    }
+
                 }
 
                 else -> {

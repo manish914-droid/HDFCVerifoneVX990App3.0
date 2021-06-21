@@ -1,5 +1,4 @@
 package com.example.verifonevx990app.digiPOS.pendingTxn
-
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle

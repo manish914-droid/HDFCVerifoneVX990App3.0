@@ -30,7 +30,6 @@ import kotlinx.coroutines.launch
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
-
 class DigiPosTxnListFragment : Fragment() {
     private var iDialog: IDialog? = null
     private var sheetBehavior: BottomSheetBehavior<ConstraintLayout>? = null
