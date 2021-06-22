@@ -76,6 +76,7 @@ class BrandEMIDataByCategoryID : Fragment() {
         subCategoryData = arguments?.getParcelableArrayList("subCategoryData")
 
         //Method to Filter child category data from SubCategory Data According to Selected Category and display on UI:-
+        setUpRecyclerView()
         fetchChildCategoryAndDisplay()
 
         //region================Search EditText TextChangeListener event:-
@@ -137,17 +138,17 @@ class BrandEMIDataByCategoryID : Fragment() {
 
     //region====================================Fetch Child Category Data and Display:-
     private fun fetchChildCategoryAndDisplay() {
-        lifecycleScope.launch(Dispatchers.Default) {
+        lifecycleScope.launch(Dispatchers.IO) {
             if (subCategoryData != null) {
                 displayFilteredList =
                     subCategoryData?.filter { brandEMIDataModal?.getCategoryID() == it.parentCategoryID }
                             as MutableList<BrandEMIMasterSubCategoryDataModal>?
-                Log.d("ChildCategoryData:- ", subCategoryData.toString())
-                if (displayFilteredList?.isNotEmpty() == true)
+                Log.d("ChildCategoryData:- ", displayFilteredList.toString())
+                if (displayFilteredList?.isNotEmpty() == true) {
                     withContext(Dispatchers.Main) {
-                        setUpRecyclerView()
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     }
-                else
+                } else {
                     withContext(Dispatchers.Main) {
                         (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
                             arguments = Bundle().apply {
@@ -157,6 +158,11 @@ class BrandEMIDataByCategoryID : Fragment() {
                             }
                         })
                     }
+                }
+            } else {
+                withContext(Dispatchers.Main) {
+                    VFService.showToast("No Data Found")
+                }
             }
         }
     }
@@ -230,7 +236,7 @@ internal class BrandEMISubCategoryByIDAdapter(
     private var dataList: MutableList<BrandEMIMasterSubCategoryDataModal>?,
     private val onItemClick: (Int) -> Unit
 ) :
-    RecyclerView.Adapter<BrandEMISubCategoryByIDAdapter.BrandEMIMasterSubCategoryViewHolder>() {
+    RecyclerView.Adapter<BrandEMISubCategoryByIDAdapter.BrandEMIMasterSubCategoryByIDViewHolder>() {
 
     private val categoryByIDDataList: MutableList<BrandEMIMasterSubCategoryDataModal> =
         mutableListOf()
@@ -243,24 +249,24 @@ internal class BrandEMISubCategoryByIDAdapter(
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): BrandEMIMasterSubCategoryViewHolder {
+    ): BrandEMIMasterSubCategoryByIDViewHolder {
         val binding: ItemBrandEmiSubCategoryItemBinding =
             ItemBrandEmiSubCategoryItemBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent, false
             )
-        return BrandEMIMasterSubCategoryViewHolder(binding)
+        return BrandEMIMasterSubCategoryByIDViewHolder(binding)
     }
 
     override fun getItemCount(): Int {
         return categoryByIDDataList.size
     }
 
-    override fun onBindViewHolder(holder: BrandEMIMasterSubCategoryViewHolder, p1: Int) {
-        holder.binding.tvBrandSubCategoryByIdName.text = dataList?.get(p1)?.categoryName ?: ""
+    override fun onBindViewHolder(holder: BrandEMIMasterSubCategoryByIDViewHolder, p1: Int) {
+        holder.binding.tvBrandSubCategoryByIdName.text = categoryByIDDataList[p1].categoryName
     }
 
-    inner class BrandEMIMasterSubCategoryViewHolder(val binding: ItemBrandEmiSubCategoryItemBinding) :
+    inner class BrandEMIMasterSubCategoryByIDViewHolder(val binding: ItemBrandEmiSubCategoryItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.brandEmiSubCategoryByIdLv.setOnClickListener {

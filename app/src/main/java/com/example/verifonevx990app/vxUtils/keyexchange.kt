@@ -666,7 +666,7 @@ class KeyExchanger(
                             {},
                             {})
                     }
-                    VFService.vfBeeper?.startBeep(200)
+                    VFService.vfBeeper.startBeep(200)
                     AppPreference.saveBoolean(
                         PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString(),
                         false
@@ -746,7 +746,7 @@ class KeyExchanger(
             logger(TAG, x)
             result = VFService.injectTMK(decriptedTmk, ppk, ppkKcv, dpk, dpkKcv)
             if (result == true) {
-                VFService.vfBeeper?.startBeep(200)
+                VFService.vfBeeper.startBeep(200)
             }
             Log.d("Key Insert Success:- ", result.toString())
         } catch (e: Exception) {
@@ -785,7 +785,7 @@ class KeyExchanger(
             }
 
             if (result == true) {
-                VFService.vfBeeper?.startBeep(200)
+                VFService.vfBeeper.startBeep(200)
             }
             Log.d("Key Insert Success:- ", result.toString())
             if (result != null) {
@@ -903,7 +903,7 @@ suspend fun downloadPromo() {
         sc.close()
     }
     if (fileArray.isNotEmpty()) {
-        unzipZipedBytes(fileArray.toByteArray())
+        unzipZippedBytes(fileArray.toByteArray())
     }
 
 }

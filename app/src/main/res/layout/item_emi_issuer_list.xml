@@ -10,19 +10,32 @@
         android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/pad_4"
-            android:contentDescription="@string/issuer_icon"
-            android:scaleType="centerCrop"
-            android:src="@drawable/kotak_issuer_icon" />
+        android:contentDescription="@string/issuer_icon"
+        android:scaleType="centerCrop"
+        android:src="@drawable/kotak_issuer_icon" />
 
-        <ImageView
-            android:id="@+id/issuerCheckedIV"
-            android:layout_width="@dimen/pad_16"
-            android:layout_height="@dimen/pad_16"
-            android:layout_gravity="top"
-            android:layout_marginStart="@dimen/pad_4"
-            android:layout_marginTop="@dimen/pad_16"
-            android:clickable="false"
-            android:contentDescription="@string/checked"
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/issuerBankName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pad_4"
+        android:background="@color/white"
+        android:hint="@string/success_message"
+        android:scaleType="centerCrop"
+        android:textColor="@color/themeBackground"
+        android:textColorHint="@color/themeBackground"
+        android:textSize="@dimen/text_size_small"
+        android:visibility="gone" />
+
+    <ImageView
+        android:id="@+id/issuerCheckedIV"
+        android:layout_width="@dimen/pad_16"
+        android:layout_height="@dimen/pad_16"
+        android:layout_gravity="top"
+        android:layout_marginStart="@dimen/pad_4"
+        android:layout_marginTop="@dimen/pad_16"
+        android:clickable="false"
+        android:contentDescription="@string/checked"
             android:src="@drawable/circle_with_tick_mark"
             android:visibility="gone" />
 </FrameLayout>

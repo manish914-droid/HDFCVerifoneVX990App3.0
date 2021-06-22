@@ -57,9 +57,7 @@
                     app:neumorph_shadowColorDark="@color/upperShadow"
                     app:neumorph_shadowColorLight="@color/lowerShadow"
                     app:neumorph_shadowElevation="4dp"
-                    app:neumorph_shapeType="pressed"
-                    app:neumorph_strokeColor="@color/darkgray"
-                    app:neumorph_strokeWidth="@dimen/pad_1">
+                    app:neumorph_shapeType="pressed">
 
                     <com.example.verifonevx990app.vxUtils.BHEditText
                         android:id="@+id/compareByTenure"

@@ -47,11 +47,7 @@ class DigiPosTXNListDetailPage : Fragment() {
         detailPageData = arguments?.getParcelable("data")
 
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.txn_detail_page)
-        binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            startActivity(Intent(activity, MainActivity::class.java).apply {
-                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-            })
-        }
+        binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
 
         if (detailPageData?.txnStatus?.toLowerCase(Locale.ROOT).equals("success", true)) {
             binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
@@ -144,7 +140,8 @@ class DigiPosTXNListDetailPage : Fragment() {
     private fun getTransactionStatus() {
         iDialog?.showProgress()
         lifecycleScope.launch(Dispatchers.IO) {
-            val req57 = "${EnumDigiPosProcess.GET_STATUS.code}^${detailPageData?.partnerTXNID}^^"
+            val req57 =
+                "${EnumDigiPosProcess.GET_STATUS.code}^${detailPageData?.partnerTXNID}^${detailPageData?.mTXNID}^"
             Log.d("Field57:- ", req57)
             getDigiPosStatus(
                 req57, EnumDigiPosProcessingCode.DIGIPOSPROCODE.code,

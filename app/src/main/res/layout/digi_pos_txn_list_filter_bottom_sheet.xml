@@ -5,6 +5,7 @@
     android:id="@+id/bottom_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/trans_black"
     app:behavior_hideable="true"
     app:behavior_peekHeight="0dp"
     app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
@@ -180,6 +181,7 @@
             android:background="@drawable/rounded_rectangle_theme"
             android:clickable="true"
             android:cursorVisible="false"
+            android:text="@string/_0_0"
             android:digits="0123456789"
             android:drawableStart="@drawable/ic_indian_rupee"
             android:ems="10"

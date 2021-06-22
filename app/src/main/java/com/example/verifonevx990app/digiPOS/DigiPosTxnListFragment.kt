@@ -27,6 +27,7 @@ import com.example.verifonevx990app.vxUtils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -38,9 +39,7 @@ class DigiPosTxnListFragment : Fragment() {
     private var selectedFilterTxnID: String = ""
     private var selectedFilterTxnIDValue: String = ""
     private var selectedFilterAmountValue: String = ""
-    private var linearLayoutManager: LinearLayoutManager? = null
-    private var requestTypeID = EnumDigiPosProcess.TXN_LIST.code
-    private var hasMoreData = "0"
+    private var hasMoreData = false
     private var perPageRecord = "0"
     private var totalRecord = "0"
     private var pageNumber = "1"
@@ -48,8 +47,10 @@ class DigiPosTxnListFragment : Fragment() {
     private var mTransactionID = ""
     private var bottomSheetAmountData = ""
     private var filterTransactionType = ""
+    private var tempDataList = mutableListOf<String>()
+    private var requestTypeID = EnumDigiPosProcess.TXN_LIST.code
     private var field57RequestData =
-        "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^$perPageRecord^"
+        "$requestTypeID^$totalRecord^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^$pageNumber^"
     private var processingCode = EnumDigiPosProcessingCode.DIGIPOSPROCODE.code
     private var txnDataList = mutableListOf<DigiPosTxnModal>()
     private val digiPosTxnListAdapter by lazy {
@@ -70,12 +71,10 @@ class DigiPosTxnListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        sheetBehavior = BottomSheetBehavior.from(binding?.bottomSheet!!.bottomLayout)
-        linearLayoutManager = LinearLayoutManager(requireContext())
+        sheetBehavior = binding?.bottomSheet?.let { BottomSheetBehavior.from(it.bottomLayout) }
 
         //back Navigation icon click event:-
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            //closeBottomSheet()
             parentFragmentManager.popBackStackImmediate()
         }
 
@@ -216,13 +215,8 @@ class DigiPosTxnListFragment : Fragment() {
         }
         //endregion
 
-        //region=============SetUp TXN List RecyclerView:-
-        binding?.transactionListRV?.apply {
-            layoutManager = linearLayoutManager
-            itemAnimator = DefaultItemAnimator()
-            adapter = digiPosTxnListAdapter
-        }
-        //endregion
+        setUpRecyclerView()
+        getDigiPosTransactionListFromHost()
 
         //region======================Filter Apply Button onclick event:-
         binding?.bottomSheet?.applyFilter?.setOnClickListener {
@@ -235,6 +229,8 @@ class DigiPosTxnListFragment : Fragment() {
             field57RequestData =
                 "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^1^"
             closeBottomSheet()
+            tempDataList.clear()
+            txnDataList.clear()
             getDigiPosTransactionListFromHost()
         }
         //endregion
@@ -244,23 +240,30 @@ class DigiPosTxnListFragment : Fragment() {
 
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
-                val currentItems = linearLayoutManager?.childCount
-                val totalItems = linearLayoutManager?.itemCount
-                val scrollOutItems = linearLayoutManager?.findFirstVisibleItemPosition()
-                if (currentItems?.plus(scrollOutItems ?: 0) == totalItems && hasMoreData == "1") {
+                if (!binding?.transactionListRV?.canScrollVertically(1)!! && dy > 0 && hasMoreData) {
                     Log.d("MoreData:- ", "Loading.....")
+                    pageNumber = pageNumber.toInt().plus(1).toString()
                     field57RequestData =
-                        "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^" +
-                                "${perPageRecord.toInt().plus(1)}^"
+                        "$requestTypeID^$totalRecord^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^" +
+                                "$pageNumber^"
                     getDigiPosTransactionListFromHost()
                 }
             }
+
         })
         //endregion
 
-        //getTransactionListFromHost:-
-        getDigiPosTransactionListFromHost()
     }
+
+    //region====================SetUp RecyclerView:-
+    private fun setUpRecyclerView() {
+        binding?.transactionListRV?.apply {
+            layoutManager = LinearLayoutManager(requireContext())
+            itemAnimator = DefaultItemAnimator()
+            adapter = digiPosTxnListAdapter
+        }
+    }
+    //endregion
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -271,16 +274,17 @@ class DigiPosTxnListFragment : Fragment() {
     private fun getDigiPosTransactionListFromHost() {
         Log.d("Field57:- ", field57RequestData)
         iDialog?.showProgress()
-        val idw = IsoDataWriter().apply {
-            val terminalData = TerminalParameterTable.selectFromSchemeTable()
-            if (terminalData != null) {
-                mti = Mti.EIGHT_HUNDRED_MTI.mti
+        val idw = runBlocking(Dispatchers.IO) {
+            IsoDataWriter().apply {
+                val terminalData = TerminalParameterTable.selectFromSchemeTable()
+                if (terminalData != null) {
+                    mti = Mti.EIGHT_HUNDRED_MTI.mti
 
-                //Processing Code Field 3
-                addField(3, processingCode)
+                    //Processing Code Field 3
+                    addField(3, processingCode)
 
-                //STAN(ROC) Field 11
-                addField(11, ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())
+                    //STAN(ROC) Field 11
+                    addField(11, ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())
 
                 //NII Field 24
                 addField(24, Nii.BRAND_EMI_MASTER.nii)
@@ -310,22 +314,22 @@ class DigiPosTxnListFragment : Fragment() {
                     10,
                     false
                 ) + version + pcNumber + pcNumber2
-                //adding Field 61
-                addFieldByHex(61, f61)
+                    //adding Field 61
+                    addFieldByHex(61, f61)
 
-                //adding Field 63
-                val deviceSerial = addPad(AppPreference.getString("serialNumber"), " ", 15, false)
-                val bankCode = AppPreference.getBankCode()
-                val f63 = "$deviceSerial$bankCode"
-                addFieldByHex(63, f63)
+                    //adding Field 63
+                    val deviceSerial =
+                        addPad(AppPreference.getString("serialNumber"), " ", 15, false)
+                    val bankCode = AppPreference.getBankCode()
+                    val f63 = "$deviceSerial$bankCode"
+                    addFieldByHex(63, f63)
+                }
             }
         }
 
         logger("DIGIPOS REQ1>>", idw.isoMap, "e")
 
         // val idwByteArray = idw.generateIsoByteRequest()
-
-        var responseField57 = ""
         var responseMsg = ""
         var isBool = false
         lifecycleScope.launch(Dispatchers.IO) {
@@ -351,7 +355,8 @@ class DigiPosTxnListFragment : Fragment() {
                     }
                     isBool = successResponseCode == "00"
                     if (responseIsoData.isoMap[57] != null) {
-                        responseField57 = responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                        var responseField57 =
+                            responseIsoData.isoMap[57]?.parseRaw2String().toString()
                         parseTXNListDataAndShowInRecyclerView(responseField57)
                     }
                 } else {
@@ -363,6 +368,7 @@ class DigiPosTxnListFragment : Fragment() {
                     iDialog?.hideProgress()
                     lifecycleScope.launch(Dispatchers.Main) {
                         iDialog?.hideProgress()
+                        hasMoreData = false
                         iDialog?.alertBoxWithAction(null, null,
                             getString(R.string.error), result,
                             false, getString(R.string.positive_button_ok),
@@ -381,11 +387,11 @@ class DigiPosTxnListFragment : Fragment() {
                 parseDataListWithSplitter(SplitterTypes.VERTICAL_LINE.splitter, field57Data)
             if (dataList.isNotEmpty()) {
                 requestTypeID = dataList[0]
-                hasMoreData = dataList[1]
+                //hasMoreData = dataList[1] ----> This Data from Host will always be "0" so we need to manage Pagination in App-End Side
                 perPageRecord = dataList[2]
                 totalRecord = (totalRecord.toInt().plus(perPageRecord.toInt()).toString())
 
-                var tempDataList = mutableListOf<String>()
+                tempDataList.clear()
                 tempDataList = dataList.subList(3, dataList.size)
                 for (i in tempDataList.indices) {
                     //Below we are splitting Data from tempDataList to extract brandID , categoryID , parentCategoryID , categoryName:-
@@ -409,14 +415,17 @@ class DigiPosTxnListFragment : Fragment() {
                 }
                 //Inflate Update Data in Adapter List:-
                 lifecycleScope.launch(Dispatchers.Main) {
-                    if (txnDataList.isNotEmpty())
+                    hasMoreData = tempDataList.isNotEmpty() && tempDataList.size >= 10
+                    if (txnDataList.isNotEmpty()) {
                         digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                    }
                     iDialog?.hideProgress()
                 }
             }
         } else {
             lifecycleScope.launch(Dispatchers.Main) {
                 iDialog?.hideProgress()
+                hasMoreData = false
                 VFService.showToast("No Data Found")
             }
         }
@@ -446,7 +455,7 @@ class DigiPosTxnListFragment : Fragment() {
                 iDialog?.showProgress()
                 lifecycleScope.launch(Dispatchers.IO) {
                     val req57 =
-                        "${EnumDigiPosProcess.GET_STATUS.code}^${txnDataList[position].partnerTXNID}^^"
+                        "${EnumDigiPosProcess.GET_STATUS.code}^${txnDataList[position].partnerTXNID}^${txnDataList[position].mTXNID}^"
                     Log.d("Field57:- ", req57)
                     getDigiPosStatus(
                         req57,
@@ -509,6 +518,24 @@ class DigiPosTxnListFragment : Fragment() {
         }
     }
 //endregion
+
+    override fun onStop() {
+        super.onStop()
+        selectedFilterTransactionType = ""
+        selectedFilterTxnID = ""
+        selectedFilterTxnIDValue = ""
+        selectedFilterAmountValue = ""
+        hasMoreData = false
+        perPageRecord = "0"
+        totalRecord = "0"
+        pageNumber = "1"
+        partnerTransactionID = ""
+        mTransactionID = ""
+        bottomSheetAmountData = ""
+        filterTransactionType = ""
+        tempDataList.clear()
+        txnDataList.clear()
+    }
 
     override fun onDetach() {
         super.onDetach()

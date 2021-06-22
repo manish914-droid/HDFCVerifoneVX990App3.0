@@ -2,7 +2,6 @@ package com.example.verifonevx990app.emiCatalogue
 
 import android.content.Context
 import android.os.Bundle
-import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -17,7 +16,9 @@ import com.example.verifonevx990app.databinding.EmiCompareFragmentBinding
 import com.example.verifonevx990app.databinding.ItemEmiCompareViewBinding
 import com.example.verifonevx990app.vxUtils.IDialog
 import com.example.verifonevx990app.vxUtils.UiAction
+import com.example.verifonevx990app.vxUtils.divideAmountBy100
 import com.google.gson.Gson
+import java.util.*
 
 class EMICompareFragment : Fragment() {
 
@@ -33,7 +34,6 @@ class EMICompareFragment : Fragment() {
         )
     }
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
-    private val selectedTenure by lazy { arguments?.getString("selectedTenure") ?: "" }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -72,8 +72,24 @@ class EMICompareFragment : Fragment() {
                 binding?.issuerBankIcon?.visibility = View.VISIBLE
                 binding?.tenureText?.visibility = View.GONE
 
-                if (dataList.size == 1) {
-                    binding?.issuerBankIcon?.setImageResource(dataList[0].bankLogo)
+                val resource: Int? =
+                    when (dataList[0].issuerBankName?.toLowerCase(Locale.ROOT)?.trim()) {
+                        "hdfc bank cc" -> R.drawable.hdfc_issuer_icon
+                        "hdfc bank dc" -> R.drawable.hdfc_dc_issuer_icon
+                        "sbi card" -> R.drawable.sbi_issuer_icon
+                        "citi" -> R.drawable.citi_issuer_icon
+                        "icici" -> R.drawable.icici_issuer_icon
+                        "yes" -> R.drawable.yes_issuer_icon
+                        "kotak" -> R.drawable.kotak_issuer_icon
+                        "rbl" -> R.drawable.rbl_issuer_icon
+                        "scb" -> R.drawable.scb_issuer_icon
+                        "axis" -> R.drawable.axis_issuer_icon
+                        "indusind" -> R.drawable.indusind_issuer_icon
+                        else -> null
+                    }
+
+                if (resource != null) {
+                    binding?.issuerBankIcon?.setImageResource(resource)
                 }
             }
 
@@ -83,8 +99,9 @@ class EMICompareFragment : Fragment() {
                 binding?.issuerBankIcon?.visibility = View.GONE
                 binding?.tenureText?.visibility = View.VISIBLE
 
-                if (!TextUtils.isEmpty(selectedTenure)) {
-                    binding?.tenureText?.text = selectedTenure
+                if (dataList.isNotEmpty()) {
+                    val tenureData = "${dataList[0].issuerBankTenure} Months"
+                    binding?.tenureText?.text = tenureData
                 }
             }
         }
@@ -153,12 +170,27 @@ class EMICompareAdapter(
         val modal = compareDataList[position]
         when (compareActionName) {
             CompareActionType.COMPARE_BY_BANK.compareType -> {
-                holder.viewBinding.topHeaderBT.text = modal.issuerBankTenure
+                val tenureData = "${modal.issuerBankTenure} Months"
+                holder.viewBinding.topHeaderBT.text = tenureData
             }
             CompareActionType.COMPARE_BY_TENURE.compareType -> {
                 holder.viewBinding.topHeaderBT.text = modal.issuerBankName
             }
         }
+
+        holder.viewBinding.transactionAmountTV.text =
+            divideAmountBy100(modal.transactionAmount.toInt()).toString()
+        holder.viewBinding.discountAmount.text =
+            divideAmountBy100(modal.discountAmount.toInt()).toString()
+        holder.viewBinding.loanAmount.text = divideAmountBy100(modal.loanAmount.toInt()).toString()
+        holder.viewBinding.roi.text = divideAmountBy100(modal.tenureInterestRate.toInt()).toString()
+        holder.viewBinding.emiAmount.text = divideAmountBy100(modal.emiAmount.toInt()).toString()
+        holder.viewBinding.totalWithInterest.text =
+            divideAmountBy100(modal.netPay.toInt()).toString()
+        holder.viewBinding.cashbackAmount.text =
+            divideAmountBy100(modal.cashBackAmount.toInt()).toString()
+        holder.viewBinding.netCost.text = divideAmountBy100(modal.netPay.toInt()).toString()
+        holder.viewBinding.additionalOffer.text = ""
     }
 
     override fun getItemCount(): Int = compareDataList.size

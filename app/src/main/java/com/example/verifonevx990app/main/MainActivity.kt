@@ -6,10 +6,8 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
-import android.os.RemoteException
+import android.net.Uri
+import android.os.*
 import android.provider.Settings
 import android.text.InputFilter
 import android.text.InputType
@@ -21,7 +19,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +61,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
+import kotlinx.parcelize.Parcelize
 import java.io.File
 
 // BottomNavigationView.OnNavigationItemSelectedListener
@@ -119,6 +117,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     private var alert: androidx.appcompat.app.AlertDialog? = null
     private val builder by lazy { androidx.appcompat.app.AlertDialog.Builder(this) }
     private var binding: ActivityMainBinding? = null
+    private var tcpIPImagesDataList = mutableListOf<Byte>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -509,7 +508,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         showProgress(getString(R.string.please_wait_aaplication_is_configuring_updates))
         if (systemManager != null && !TextUtils.isEmpty(filePath)) {
             try {
-                systemManager?.installApp(
+                systemManager.installApp(
                     filePath, object : IAppInstallObserver.Stub() {
                         @Throws(RemoteException::class)
                         override fun onInstallFinished(packageName: String, returnCode: Int) {
@@ -586,13 +585,15 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             if (!TextUtils.isEmpty(successResponseCode) && successResponseCode == "00" &&
                 responseField60Value.substring(0, 4) == AppUpdate.APP_UPDATE_AVAILABLE.updateCode
             ) {
-                when (responseProcessingCode.toString()) {
+                when (responseProcessingCode) {
                     ProcessingCode.APP_UPDATE_CONTINUE.code -> saveAndContinueUpdateApplication(
                         responseField60Value,
                         responseProcessingCode
                     )
                     ProcessingCode.APP_UPDATE.code -> {
+                        unzipZippedBytes(tcpIPImagesDataList.toByteArray())
                         hideProgress()
+                        Log.d("Full ImageData:- ", Gson().toJson(tcpIPImagesDataList))
                         VFService.showToast(getString(R.string.app_updated_successfully))
                     }
                     else -> {
@@ -609,15 +610,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     //Below method is used to save application update data in DB ApplicationUpdate Table and Continue Application Update:-
     private fun saveAndContinueUpdateApplication(
-        responseField60Value: String,
-        responseProcessingCode: String
+        responseField60Value: String, responseProcessingCode: String
     ) {
         val appPartialName = responseField60Value.substring(24, 36)
         val apkData = responseField60Value.substring(96, responseField60Value.length)
+        tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
         startTCPIPAppUpdate(
             appUpdateProccessingCode = responseProcessingCode,
-            chunkValue = responseField60Value.substring(8, 24),
-            partialName = appPartialName
+            chunkValue = responseField60Value.substring(8, 24), partialName = appPartialName
         )
     }
 
@@ -916,7 +916,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putString("proc_code", ProcessingCode.PRE_AUTH.code)
                         putString("mobileNumber", extraPair?.first)
                         putString("enquiryAmt", amt)
-
                     }
                 })
             }
@@ -1166,16 +1165,13 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             }
                         })*/
 
-                        transactFragment(DigiPosMenuFragment().apply {
-                            val dp = DigiPosDataTable.selectAllDigiPosData()
-                            val dpObj = Gson().toJson(dp)
-                            logger("UPDATEDIGI", dpObj, "e")
-
+                        transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.DIGI_POS)
-                                // putString(INPUT_SUB_HEADING, "")
+                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                putString(INPUT_SUB_HEADING, "")
                             }
                         })
+
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                     }
@@ -1190,12 +1186,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                        transactFragment(EMICatalogue().apply {
+                        /*transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
                                 putString(INPUT_SUB_HEADING, "")
                             }
-                        })
+                        })*/
 
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1827,6 +1823,11 @@ withContext(Dispatchers.Main){
                                         } else {
                                             VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
                                             onBackPressed()
+                                            startTCPIPAppUpdate(
+                                                ProcessingCode.APP_UPDATE.code,
+                                                chunkValue = "0",
+                                                partialName = "0"
+                                            )
                                         }
                                     } else {
                                         onBackPressed()
@@ -2299,7 +2300,8 @@ enum class EMIRequestType(var requestType: String) {
     BRAND_T_AND_C("6"),
     BRAND_SUB_CATEGORY("2"),
     BRAND_EMI_Product("3"),
-    BRAND_EMI_BY_ACCESS_CODE("7")
+    BRAND_EMI_BY_ACCESS_CODE("7"),
+    EMI_CATALOGUE_ACCESS_CODE("10")
 }
 //endregion
 
@@ -2327,6 +2329,9 @@ enum class SETTLEMENT(val type: String) {
     Settlement("55")
 }
 //endregion
+
+@Parcelize
+data class EMICatalogueAndBannerImageModal(var imagePath: Uri, var imageName: String) : Parcelable
 
 interface IFragmentRequest {
     fun

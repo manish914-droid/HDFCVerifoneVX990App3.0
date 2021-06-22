@@ -444,8 +444,8 @@
 
 
     <string name="calculate_and_compare_emi_offers"><![CDATA[Calculate & Compare EMI Offers:]]></string>
-    <string name="compare_by_tenure">Compare by Tenure</string>
-    <string name="compare_by_bank">Compare By Bank</string>
+    <string name="compare_by_tenure">Compare Tenure</string>
+    <string name="compare_by_bank">Compare Bank</string>
     <string name="issuer_icon">Issuer Bank Icon</string>
     <string name="select_tenure">1. Select Tenure:</string>
     <string name="select_banks_to_compare">2. Select Banks To Compare:</string>
@@ -496,6 +496,7 @@
     <string name="ptxnID_hint">123456</string>
     <string name="txnStatus">TXN STATUS</string>
     <string name="txn_detail_page">TXN Detail Page</string>
+    <string name="_0_0">0.0</string>
     <string name="scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now">Scan QR code to pay.\nWould you like to check payment status now.</string>
 <string name="scan_qr_pay">Scan QR code to pay.</string>
 </resources>

@@ -41,6 +41,7 @@ object AppPreference {
     const val F48IdentifierAndSuccesssTxn = "f48id_txnDate"
 
     const val BrandID = "brandID"
+    const val ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE = "enquiry_amount_for_emi_catalogue"
 
     @JvmStatic
     fun getBankCode(): String {
@@ -160,6 +161,20 @@ object AppPreference {
         val p = VerifoneApp.appContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
         val edit = p?.edit()
         edit?.putInt(key, value)
+        edit?.apply()
+    }
+
+    @JvmStatic
+    fun getLongData(key: String): Long {
+        val v = VerifoneApp.appContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+        return v?.getLong(key, 0L) ?: 0L
+    }
+
+    @JvmStatic
+    fun setLongData(key: String, value: Long) {
+        val p = VerifoneApp.appContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE)
+        val edit = p?.edit()
+        edit?.putLong(key, value)
         edit?.apply()
     }
 

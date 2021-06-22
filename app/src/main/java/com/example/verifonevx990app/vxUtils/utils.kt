@@ -25,10 +25,10 @@ import com.example.verifonevx990app.BuildConfig
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
-import com.example.verifonevx990app.emiCatalogue.IssuerBankModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.init.getEditorActionListener
 import com.example.verifonevx990app.main.CardAid
+import com.example.verifonevx990app.main.EMICatalogueAndBannerImageModal
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.*
@@ -54,6 +54,7 @@ import kotlin.experimental.and
 
 var isDashboardOpen = false
 var isExpanded = false
+val BUFFER_SIZE = 4096
 
 open class OnTextChange(private val cb: (String) -> Unit) : TextWatcher {
 
@@ -426,39 +427,60 @@ suspend fun saveToDB(spliter: List<String>) {
     }
 }
 
-fun unzipZipedBytes(ba: ByteArray) {
-
-    val root = VerifoneApp.appContext.externalCacheDir.toString()
-    val folder = File("$root/BonusHub")
+fun unzipZippedBytes(ba: ByteArray) {
+    val root = "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
+    val folder = File(root)
 
     if (!folder.exists()) {
         folder.mkdir()
     }
 
     val bais = ByteArrayInputStream(ba)
-    val zis: ZipInputStream? = ZipInputStream(bais)
+    val zis = ZipInputStream(bais)
 
     var ze: ZipEntry? = null
-    ze = zis?.nextEntry
+    ze = zis.nextEntry
+    try {
+        while (ze != null) {
+            val entryName = ze.name
+            val f = File(folder, entryName)
+            val out = FileOutputStream(f)
 
-    while (ze != null) {
-        val entryName = ze.name
-        val f = File(folder, entryName)
-        val out = FileOutputStream(f)
+            val bf = ByteArray(4096)
+            var byteRead = zis.read(bf)
 
-        val bf = ByteArray(4096)
-        var byteRead = zis?.read(bf) ?: -1
-
-        while (byteRead != -1) {
-            out.write(bf, 0, byteRead)
-            byteRead = zis?.read(bf) ?: -1
+            while (byteRead != -1) {
+                out.write(bf, 0, byteRead)
+                byteRead = zis.read(bf)
+            }
+            out.close()
+            ze = zis.nextEntry
         }
-        out.close()
-        zis?.closeEntry()
-        ze = zis?.nextEntry
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+    } finally {
+        zis.closeEntry()
+        zis.close()
     }
-    zis?.close()
 }
+
+//region============================Reading All Zip Folder EMI catalogue and Banner Images from Device Store Folder:-
+fun readEMICatalogueAndBannerImages(): MutableList<EMICatalogueAndBannerImageModal> {
+    val root = "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
+    val folder = File(root)
+    val imageList = mutableListOf<EMICatalogueAndBannerImageModal>()
+    var folderFilesList: Array<File>? = null
+    if (folder.isDirectory) {
+        folderFilesList = folder.listFiles()
+        for (value in folderFilesList) {
+            var imageName = value.name.split(".")
+            imageList.add(EMICatalogueAndBannerImageModal(Uri.fromFile(value), imageName[0]))
+        }
+    }
+    Log.d("AllImagesPath:- ", Gson().toJson(imageList))
+    return imageList
+}
+//endregion
 
 //Below method is used to show Invoice with Padding:-
 fun invoiceWithPadding(invoiceNo: String) =
@@ -518,9 +540,9 @@ object ConnectionTimeStamps {
 
     fun getOtherInfo(): String {
         return try {
-            val imei = VFService.vfDeviceService?.deviceInfo?.imei
-            val batteryStrength = VFService.vfDeviceService?.deviceInfo?.batteryLevel
-            val simNo = VFService.vfDeviceService?.deviceInfo?.iccid
+            val imei = VFService.vfDeviceService.deviceInfo.imei
+            val batteryStrength = VFService.vfDeviceService.deviceInfo.batteryLevel
+            val simNo = VFService.vfDeviceService.deviceInfo.iccid
             Log.e("[1] iemi,battry,simNo", "$imei ,${batteryStrength} -----> ${simNo}  ")
             "~${VerifoneApp.networkStrength}~${batteryStrength}~${imei}~${simNo}~${VerifoneApp.operatorName}"
         } catch (ex: java.lang.Exception) {
@@ -877,7 +899,7 @@ object ROCProviderV2 {
             }
 
             val byteArray = track21.toByteArray(StandardCharsets.ISO_8859_1)
-            encryptedbyteArrrays = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
+            encryptedbyteArrrays = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
 
             /*println(
                 "Track 2 with encyption is --->" + Utility.byte2HexStr(encryptedbyteArrrays)
@@ -943,7 +965,7 @@ object ROCProviderV2 {
     ): String {
         val sb = StringBuilder()
         for (f in commonTagListemv) {
-            val v = VFService.vfIEMV?.getCardData(Integer.toHexString(f).toUpperCase(Locale.ROOT))
+            val v = VFService.vfIEMV.getCardData(Integer.toHexString(f).toUpperCase(Locale.ROOT))
             if (v != null) {
                 sb.append(Integer.toHexString(f))
                 var l = Integer.toHexString(v.size)
@@ -1219,7 +1241,7 @@ fun getEncryptedField57DataForManualSale(panNumber: String, expDate: String): St
         }
         logger("Field57_Manual", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
+        encryptedByteArray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
         /*println(
             "Track 2 with encryption in manual sale is --->" + Utility.byte2HexStr(
                 encryptedByteArray
@@ -1269,7 +1291,7 @@ fun getEncryptedField57DataForOfflineSale(
         }
         logger("Field57_Manual", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArrray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
+        encryptedByteArrray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
         //println("Track 2 with encryption is --->" + Utility.byte2HexStr(encryptedByteArrray))
         return Utility.byte2HexStr(encryptedByteArrray)
     } else return "TRACK57_LENGTH<8"
@@ -1291,7 +1313,7 @@ fun getEncryptedPan(panNumber: String): String {
         }
         logger("Field 56", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
+        encryptedByteArray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
         /*println(
             "Track 2 with encryption in manual sale is --->" + Utility.byte2HexStr(
                 encryptedByteArray
@@ -1887,7 +1909,7 @@ private fun navigateToMain(context: Context) {
 fun txnSuccessToast(context: Context, msg: String = "Transaction Approved") {
     try {
         GlobalScope.launch(Dispatchers.Main) {
-            VFService.vfBeeper?.startBeep(200)
+            VFService.vfBeeper.startBeep(200)
             val layout = (context as Activity).layoutInflater.inflate(
                     R.layout.new_success_toast,
                     context.findViewById<LinearLayout>(R.id.custom_toast_layout)
@@ -2347,23 +2369,6 @@ fun fetchAndSaveIssuerTCData() {
         }
     } else
         Log.d("IssuerTCData:- ", Gson().toJson(data))
-}
-//endregion
-
-//region===============Convert Map Data To MutableList:-
-fun convertMapToList(dataMap: MutableMap<String, IssuerBankModal>): MutableList<IssuerBankModal> {
-    val dataList = mutableListOf<IssuerBankModal>()
-    for ((_, value) in dataMap.entries) {
-        dataList.add(
-            IssuerBankModal(
-                value.issuerBankName,
-                value.issuerBankTenure,
-                value.issuerID,
-                value.bankLogo
-            )
-        )
-    }
-    return dataList
 }
 //endregion
 
