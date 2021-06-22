@@ -126,7 +126,7 @@ class NewInputAmountFragment : Fragment() {
             EDashboardItem.SALE -> {
                 if (checkHDFCTPTFieldsBitOnOff(TransactionType.TIP_SALE)) {
                     //   binding?.enterCashAmountTv?.visibility = View.VISIBLE
-                    cashAmount?.visibility = View.VISIBLE
+                    binding?.cashAmtCrdView?.visibility = View.VISIBLE
                     cashAmount?.hint = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
                     //    binding?.enterCashAmountTv?.text = VerifoneApp.appContext.getString(R.string.enter_tip_amount)
 

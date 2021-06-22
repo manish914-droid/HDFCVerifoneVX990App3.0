@@ -4522,9 +4522,93 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
 
 
 }
-
-
 //endregion
+
+@RealmClass
+open class TxnCallBackRequestTable():RealmObject(),Parcelable{
+    @PrimaryKey
+    var roc=""
+    var reqtype=""
+    var tid=""
+    var batchnum=""
+    var amount=""
+
+
+    private constructor(parcel: Parcel) : this()
+
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    override fun writeToParcel(dest: Parcel?, flags: Int) {
+
+    }
+
+    companion object {
+        private val TAG: String = TxnCallBackRequestTable::class.java.simpleName
+
+        @JvmField
+        val CREATOR = object : Parcelable.Creator<TxnCallBackRequestTable> {
+            override fun createFromParcel(parcel: Parcel): TxnCallBackRequestTable {
+                return TxnCallBackRequestTable(
+                    parcel
+                )
+            }
+
+            override fun newArray(size: Int): Array<TxnCallBackRequestTable> {
+                return Array(size) { TxnCallBackRequestTable() }
+            }
+        }
+
+        fun insertOrUpdateTxnCallBackData(param: TxnCallBackRequestTable) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
+                }
+            }
+
+        fun insertOrUpdateTxnCallBackDataWithCB(param: TxnCallBackRequestTable, callback: () -> Unit) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
+                }
+                callback()
+            }
+
+        fun selectAllTxnCallBackData(): MutableList<TxnCallBackRequestTable> = runBlocking {
+            var result = mutableListOf<TxnCallBackRequestTable>()
+            getRealm {
+                val re = it.copyFromRealm(it.where(TxnCallBackRequestTable::class.java).findAll())
+                if (re != null) result = re
+
+            }.await()
+            result
+        }
+
+
+        fun deletRecord(roc: String) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.where(TxnCallBackRequestTable::class.java)
+                        .equalTo(
+                            "roc",
+                            roc
+                        ).findAll()?.deleteAllFromRealm()
+                }
+            }
+
+        fun clear() =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        TxnCallBackRequestTable::class.java
+                    )
+                }
+            }
+
+    }
+}
 
 
 @RealmClass

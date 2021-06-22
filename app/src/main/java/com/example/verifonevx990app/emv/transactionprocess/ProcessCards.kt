@@ -508,59 +508,33 @@ class ProcessCard(
                                 //region=========This Field is use only in case of BankEMI Field58 Transaction Amount:-
                                 cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
                                 //endregion
-                                iemv?.startEMV(
-                                    ConstIPBOC.startEMV.processType.full_process,
-                                    Bundle(),
-                                    GenericReadCardData(activity, iemv) { cardBinValue ->
+                                iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process, Bundle(), GenericReadCardData(activity, iemv)
+                                { cardBinValue ->
                                         /*iemv?.stopCheckCard()
                                         iemv?.abortEMV()*/
                                         Log.e("bb CC", "------->>")
                                         if (!TextUtils.isEmpty(cardBinValue)) {
-                                            GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/ }
-                                            GenericEMISchemeAndOffer(
-                                                activity,
-                                                cardProcessedDataModal,
-                                                cardBinValue,
-                                                transactionalAmt
-                                            ) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
+                                            GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/
+                                            }
+                                            GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                 GlobalScope.launch(Dispatchers.Main) {
                                                     if (hostResponseCodeAndMessage.first) {
                                                         (activity as VFTransactionActivity).startActivityForResult(
-                                                            Intent(
-                                                                activity,
-                                                                EMISchemeAndOfferActivity::class.java
-                                                            ).apply {
-                                                                putParcelableArrayListExtra(
-                                                                    "emiSchemeDataList",
-                                                                    bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>
-                                                                )
-                                                                putParcelableArrayListExtra(
-                                                                    "emiTAndCDataList",
-                                                                    bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>
-                                                                )
-                                                                putExtra(
-                                                                    "cardProcessedData",
-                                                                    cardProcessedDataModal
-                                                                )
+                                                            Intent(activity, EMISchemeAndOfferActivity::class.java).apply {
+                                                                putParcelableArrayListExtra("emiSchemeDataList", bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>)
+                                                                putParcelableArrayListExtra("emiTAndCDataList", bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>)
+                                                                putExtra("cardProcessedData", cardProcessedDataModal)
                                                             },
-                                                            EIntentRequest.BankEMISchemeOffer.code
-                                                        )
+                                                            EIntentRequest.BankEMISchemeOffer.code)
                                                         (activity as VFTransactionActivity).hideProgress()
                                                     } else {
                                                         (activity as VFTransactionActivity).hideProgress()
-                                                        (activity as VFTransactionActivity).alertBoxWithAction(
-                                                            null,
-                                                            null,
-                                                            activity.getString(R.string.error),
-                                                            hostResponseCodeAndMessage.second,
-                                                            false,
-                                                            activity.getString(R.string.positive_button_ok),
+                                                        (activity as VFTransactionActivity).alertBoxWithAction(null, null, activity.getString(R.string.error), hostResponseCodeAndMessage.second, false, activity.getString(R.string.positive_button_ok),
                                                             {
                                                                 (activity as VFTransactionActivity).declinedTransaction()
                                                             },
                                                             {})
                                                     }
-
                                                 }
                                             }
                                         }

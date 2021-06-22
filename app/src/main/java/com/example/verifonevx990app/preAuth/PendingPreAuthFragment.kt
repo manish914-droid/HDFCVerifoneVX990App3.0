@@ -155,21 +155,24 @@ class PendingPreAuthFragment : Fragment() {
 
         bindingg.completeBtnn.setOnClickListener {
             //  VFService.showToast("COMP")
-            if (bindingg.amountEt.text.toString().toFloat() >= 1) {
-                val tpt = TerminalParameterTable.selectFromSchemeTable()
-                authData.authTid = tpt?.terminalId
+            if (bindingg.amountEt.text.toString().isNotBlank()) {
+                if (bindingg.amountEt.text.toString().toFloat() >= 1) {
+                    val tpt = TerminalParameterTable.selectFromSchemeTable()
+                    authData.authTid = tpt?.terminalId
+                    authData.authAmt = bindingg.amountEt.text.toString()
+                    //   authData.authAmt = "%.2f".format(pendingPreauthData.amount)
+                    authData.authBatchNo = invoiceWithPadding(pendingPreauthData.batch.toString())
+                    authData.authRoc = invoiceWithPadding(pendingPreauthData.roc.toString())
+                    GlobalScope.async(Dispatchers.IO) {
+                        confirmCompletePreAuth(authData, position)
 
-                authData.authAmt = bindingg.amountEt.text.toString()
-                //   authData.authAmt = "%.2f".format(pendingPreauthData.amount)
-                authData.authBatchNo = invoiceWithPadding(pendingPreauthData.batch.toString())
-                authData.authRoc = invoiceWithPadding(pendingPreauthData.roc.toString())
-                GlobalScope.async(Dispatchers.IO) {
-                    confirmCompletePreAuth(authData, position)
-
+                    }
+                    dialogBuilder.hide()
+                } else {
+                    VFService.showToast("Amount should be greater than 1 rs")
                 }
-                dialogBuilder.hide()
             } else {
-                VFService.showToast("Amount should be greater than 1 rs")
+                VFService.showToast("**** Enter Amount ****")
 
             }
         }
@@ -211,7 +214,6 @@ class PendingPreAuthFragment : Fragment() {
         }
         //    logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")
         //  runOnUiThread { showProgress(getString(R.string.sale_data_sync)) }
-        var gg = GlobalScope.async(Dispatchers.IO) {
             activity?.let {
                 SyncAuthTransToHost(it as BaseActivity).checkReversalPerformAuthTransaction(
                     transactionISO, cardProcessedData
@@ -225,8 +227,7 @@ class PendingPreAuthFragment : Fragment() {
                     //   parentFragmentManager.popBackStackImmediate()
                 }
             }
-        }
-        gg.await()
+
 
 
     }

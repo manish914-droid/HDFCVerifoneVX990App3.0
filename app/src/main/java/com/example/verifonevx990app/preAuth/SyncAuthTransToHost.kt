@@ -31,6 +31,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
         cardProcessedDataModal: CardProcessedDataModal, cb: (Boolean, String) -> Unit
     ) {
         // //Sending Transaction Data Packet to Host:-(In case of no reversal)
+        logger("coroutine 4", Thread.currentThread().name, "e")
         if (TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
             withContext(Dispatchers.Main) {
                 activityContext?.getString(R.string.sale_data_sync)?.let {
@@ -39,6 +40,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                     )
                 }
             }
+            logger("coroutine 5", Thread.currentThread().name, "e")
             syncAuthTransactionToHost(
                 transactionISOByteArray,
                 cardProcessedDataModal

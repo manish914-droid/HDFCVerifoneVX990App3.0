@@ -8,6 +8,7 @@ import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.digiPOS.BitmapUtils.convertCompressedByteArrayToBitmap
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
+import com.example.verifonevx990app.realmtables.TxnCallBackRequestTable
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.*
@@ -17,6 +18,7 @@ import java.io.IOException
 import java.nio.ByteBuffer
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 const val QR_FILE_NAME = "staticQr"
 
@@ -329,6 +331,31 @@ suspend fun uploadPendingDigiPosTxn(activity: BaseActivity,cb: (Boolean) -> Unit
     Log.e("UPLOAD DIGI"," ----------------------->  END")
        cb(true)
 }
+suspend fun syncTxnCallBackToHost(cb: (Boolean) -> Unit) {
+    val txnCbAllPendingReqList=TxnCallBackRequestTable.selectAllTxnCallBackData()
+    if(txnCbAllPendingReqList.isNotEmpty()) {
+        for (i in txnCbAllPendingReqList) {
+            val field57 = "${i.reqtype}^${i.tid}^${i.batchnum}^${i.roc}^${i.amount}"
+            getDigiPosStatus(field57, EnumDigiPosProcessingCode.DIGIPOSPROCODE.code)
+            { isSuccess, responseMsg, responsef57, fullResponse ->
+                if (isSuccess) {
+                    // deleting txncb from table
+                    TxnCallBackRequestTable.deletRecord(i.roc)
+
+                } else {
+                    Log.e("UPLOAD TXN CallBack"," -------->  Other than 00 (Fail)")
+
+                }
+
+            }
+        }
+        cb(true)
+    }
+
+
+}
+
+
 
 fun getTxnStatusStatus(activity: BaseActivity) {
 

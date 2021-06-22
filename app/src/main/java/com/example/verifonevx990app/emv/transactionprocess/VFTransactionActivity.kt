@@ -20,7 +20,7 @@ import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
 import com.example.verifonevx990app.databinding.ActivityTransactionBinding
 import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
-import com.example.verifonevx990app.digiPOS.EnumDigiPosProcessingCode
+import com.example.verifonevx990app.digiPOS.syncTxnCallBackToHost
 import com.example.verifonevx990app.emv.VFEmv
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.main.DetectCardType
@@ -50,7 +50,7 @@ import java.lang.Runnable
 
 class VFTransactionActivity : BaseActivity() {
     companion object {
-        val TAG = VFTransactionActivity::class.java.simpleName
+        val TAG: String = VFTransactionActivity::class.java.simpleName
     }
 
     private var userInactivity: Boolean = false
@@ -359,17 +359,17 @@ class VFTransactionActivity : BaseActivity() {
         val amountValue = "${getString(R.string.rupees_symbol)} $transactionAmountValue"
         if (transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
             val brandEMIAccessAmount =
-                getString(R.string.rupees_symbol) + (((transactionAmountValue).toFloat()).div(100)).toString()
+                getString(R.string.rupees_symbol) + (((transactionAmountValue).toDouble()).div(100)).toString()
             binding?.baseAmtTv?.text = brandEMIAccessAmount
         } else {
             binding?.baseAmtTv?.text = amountValue
         }
-        transactionalAmount = ((transactionAmountValue.toFloat()) * 100).toLong()
-        otherTransAmount = ((transactionOtherAmountValue.toFloat()) * 100).toLong()
+        transactionalAmount = ((transactionAmountValue.toDouble()) * 100).toLong()
+        otherTransAmount = ((transactionOtherAmountValue.toDouble()) * 100).toLong()
         globalCardProcessedModel.setOtherAmount(otherTransAmount)
         globalCardProcessedModel.setTransactionAmount(transactionalAmount)
-        globalCardProcessedModel.setSaleAmount(((saleAmt.toFloat()) * 100).toLong())
-        globalCardProcessedModel.setTipAmount(((saleWithTipAmt.toFloat()) * 100).toLong())
+        globalCardProcessedModel.setSaleAmount(((saleAmt.toDouble()) * 100).toLong())
+        globalCardProcessedModel.setTipAmount(((saleWithTipAmt.toDouble()) * 100).toLong())
 
         if (isManualEntryAllowed && transactionType == TransactionType.SALE.type) binding?.manualEntryButton?.visibility =
             View.VISIBLE else binding?.manualEntryButton?.visibility = View.GONE
@@ -505,33 +505,83 @@ class VFTransactionActivity : BaseActivity() {
                                     Log.d("StubbedEMIData:- ", data.toString())
                                     printSaveSaleEmiDataInBatch(data) { printCB ->
                                         if (!printCB) {
-                                            //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
-                                            //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
-                                            if (!TextUtils.isEmpty(autoSettlementCheck))
-                                                GlobalScope.launch(Dispatchers.Main) {
-                                                    syncOfflineSaleAndAskAutoSettlement(
-                                                        autoSettlementCheck.substring(0, 1)
-                                                    )
+                                            Log.e("EMI FIRST ","COMMENT ******")
+                                            // Here we are Syncing Txn CallBack to server
+                                            lifecycleScope.launch(Dispatchers.IO){
+                                                withContext(Dispatchers.Main) {
+                                                    showProgress("Please wait Transaction syncing.....")
                                                 }
+                                                val amount = MoneyUtil.fen2yuan(
+                                                    stubbedData.totalAmmount.toDouble().toLong()
+                                                )
+                                                val txnCbReqData = TxnCallBackRequestTable()
+                                                txnCbReqData.reqtype =
+                                                    EnumDigiPosProcess.TRANSACTION_CALL_BACK.code
+                                                txnCbReqData.tid = stubbedData.hostTID
+                                                txnCbReqData.batchnum = stubbedData.hostBatchNumber
+                                                txnCbReqData.roc = stubbedData.hostRoc
+                                                txnCbReqData.amount = amount
+                                                TxnCallBackRequestTable.insertOrUpdateTxnCallBackData(txnCbReqData)
+                                                syncTxnCallBackToHost {
+                                                    Log.e("TXN CB ", "SYNCED TO SERVER  --> $it")
+                                                    hideProgress()
+                                                }
+                                                Log.e("EMI LAST","COMMENT ******")
+
+                                                //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                                                //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
+
+                                                if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                                                    withContext(Dispatchers.Main) {
+                                                        syncOfflineSaleAndAskAutoSettlement(
+                                                            autoSettlementCheck.substring(0, 1)
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             } else {
                                 printAndSaveBatchDataInDB(stubbedData) { printCB ->
                                     if (!printCB) {
-                                        //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
-                                        //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
-                                        if (!TextUtils.isEmpty(autoSettlementCheck)) {
-                                            GlobalScope.launch(Dispatchers.Main) {
-                                                syncOfflineSaleAndAskAutoSettlement(
-                                                    autoSettlementCheck.substring(0, 1)
+                                        Log.e("FIRST ","COMMENT ******")
+                                        // Here we are Syncing Txn CallBack to server
+                                        lifecycleScope.launch(Dispatchers.IO){
+                                                withContext(Dispatchers.Main) {
+                                                    showProgress("Please wait Transaction syncing.....")
+                                                }
+                                                val amount = MoneyUtil.fen2yuan(
+                                                    stubbedData.totalAmmount.toDouble().toLong()
                                                 )
+                                                val txnCbReqData = TxnCallBackRequestTable()
+                                                txnCbReqData.reqtype =
+                                                    EnumDigiPosProcess.TRANSACTION_CALL_BACK.code
+                                                txnCbReqData.tid = stubbedData.hostTID
+                                                txnCbReqData.batchnum = stubbedData.hostBatchNumber
+                                                txnCbReqData.roc = stubbedData.hostRoc
+                                                txnCbReqData.amount = amount
+                                                TxnCallBackRequestTable.insertOrUpdateTxnCallBackData(txnCbReqData)
+                                                syncTxnCallBackToHost {
+                                                    Log.e("TXN CB ", "SYNCED TO SERVER  --> $it")
+                                                    hideProgress()
+                                                }
+                                            Log.e("LAST ","COMMENT ******")
+
+                                            //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                                            //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
+
+                                            if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                                                withContext(Dispatchers.Main) {
+                                                    syncOfflineSaleAndAskAutoSettlement(
+                                                        autoSettlementCheck.substring(0, 1)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
-
 
 
                         }
