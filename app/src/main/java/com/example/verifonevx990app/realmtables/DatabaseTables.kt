@@ -636,6 +636,19 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
             batch
         }
 
+        fun selectBatchDatafirst(): BatchFileDataTable? = runBlocking {
+            var batch: BatchFileDataTable? = null
+            getRealm {
+                val res =
+                        it.where(BatchFileDataTable::class.java)
+                                .findAll().first()
+                if (res != null) {
+                    batch = it.copyFromRealm(res)
+                }
+            }.await()
+            batch
+        }
+
         fun selectCancelReports(): BatchFileDataTable? = runBlocking {
             var batch: BatchFileDataTable? = null
             getRealm {
@@ -654,7 +667,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
                 val inv = addPad(invoiceNumber, "0", 6)
                 val res =
                     it.where(BatchFileDataTable::class.java)
-                        .equalTo("invoiceNumber", inv)
+                        .equalTo("hostInvoice", inv)
                         .findFirst()
                 if (res != null) batch = it.copyFromRealm(res)
             }.await()
@@ -666,7 +679,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
                 var batch: MutableList<BatchFileDataTable?> = mutableListOf()
                 getRealm {
                     val tp = it.where(BatchFileDataTable::class.java)
-                        .equalTo("invoiceNumber", invoiceNumber)
+                        .equalTo("hostInvoice", invoiceNumber)
                         // .equalTo("isRefundSale", false)
                         .equalTo("transactionType", TransactionType.SALE.type)
                         .or()

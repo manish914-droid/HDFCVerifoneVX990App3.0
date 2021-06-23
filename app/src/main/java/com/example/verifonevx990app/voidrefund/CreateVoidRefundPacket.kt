@@ -5,6 +5,7 @@ import com.example.verifonevx990app.realmtables.BatchFileDataTable
 import com.example.verifonevx990app.realmtables.IssuerParameterTable
 import com.example.verifonevx990app.utils.HexStringConverter
 import com.example.verifonevx990app.vxUtils.*
+import java.text.SimpleDateFormat
 import java.util.*
 
 class CreateVoidRefundPacket(private var batch: BatchFileDataTable) :
@@ -39,12 +40,43 @@ class CreateVoidRefundPacket(private var batch: BatchFileDataTable) :
 
         addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
 
+        val formater = SimpleDateFormat("yyMMddHHmmss", Locale.getDefault())
+        val formatedDate = formater.format(batch.timeStamp)
+
+        //send 56 field in request packet as –
+        //TID           – 8 length
+        //BATCHNO       - 6 length
+        //STAN          - 6 length
+        //TXN_DATE_TIME – 12 length
+        //AUTH_CODE     - 6 length
+        //INVOICE       - 6 length
+
+        //Changes By manish Kumar
+        //If in Respnse field 60 data comes Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
+        // then show response data otherwise show data available in database
+        //From mid to hostMID (coming from field 60)
+        //From tid to hostTID (coming from field 60)
+        //From batchNumber to hostBatchNumber (coming from field 60)
+        //From roc to hostRoc (coming from field 60)
+        //From invoiceNumber to hostInvoice (coming from field 60)
+        //From cardType to hostCardType (coming from field 60)
+
+        var hostTID = if (batch.hostTID.isNotBlank()) { batch.hostTID } else { batch.tid }
+        var hostBatchNumber = if (batch.hostBatchNumber.isNotBlank()) { batch.hostBatchNumber } else { addPad("${batch.batchNumber}", "0", 6, true) }
+        var hostRoc = if (batch.hostRoc.isNotBlank()) { batch.hostRoc } else { addPad("${batch.roc}", "0", 6, true) }
+        var hostInvoice = if (batch.hostInvoice.isNotBlank()) { batch.hostInvoice } else { addPad("${batch.invoiceNumber}", "0", 6, true) }
+
+        if(hostTID.isNotBlank() && hostBatchNumber.isNotBlank() && hostRoc.isNotBlank() && hostInvoice.isNotBlank()) {
+
+            addFieldByHex(56, "${hostTID}${hostBatchNumber}${hostRoc}${formatedDate}${batch.authCode}${hostInvoice}")
+            println("Field 56 data is" + "${hostTID}${hostBatchNumber}${hostRoc}${formatedDate}${batch.authCode}${hostInvoice}")
+        }
+
+
+         //old data
         //Transaction's ROC, transactionDate, transaction Time
-        val f56 = "${
-            invoiceWithPadding(
-                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString()
-            )
-        }${batch.currentYear}${batch.date}${batch.time}"
+        val f56 = "${invoiceWithPadding(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())}${batch.currentYear}${batch.date}${batch.time}"
+
         addFieldByHex(56, f56)
 
         addField(57, batch.track2Data)

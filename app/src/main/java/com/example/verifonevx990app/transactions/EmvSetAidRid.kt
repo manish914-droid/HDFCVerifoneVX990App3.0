@@ -9,11 +9,7 @@ import com.vfi.smartpos.deviceservice.aidl.IEMV
 import com.vfi.smartpos.deviceservice.constdefine.ConstIPBOC
 
 
-class EmvSetAidRid(
-    private var ipboc: IEMV?,
-    private var updateCVMValue: String,
-    private var ctlsUpdateTransLimit: String
-) {
+class EmvSetAidRid(private var ipboc: IEMV?, private var updateCVMValue: String, private var ctlsUpdateTransLimit: String) {
     private val TAG = "EMV-SetAidRid"
     private var ctlsVal: String? = null
     private var cvmVal: String? = null
