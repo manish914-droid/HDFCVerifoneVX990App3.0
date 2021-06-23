@@ -44,11 +44,7 @@ class VoidTransactionFragment : Fragment() {
     private var voidRefundBT: NeumorphButton? = null
     private var binding: FragmentVoidRefundViewBinding? = null
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         binding = FragmentVoidRefundViewBinding.inflate(inflater, container, false)
         return binding?.root
@@ -92,7 +88,7 @@ class VoidTransactionFragment : Fragment() {
             val bat =
                 BatchFileDataTable.selectVoidTransSaleDataByInvoice(invoiceWithPadding(invoice))
             try {
-                voidData = bat.first { it?.hostInvoice?.toLong() == invoice.toLong() }
+                voidData = bat.first { it?.invoiceNumber?.toLong() == invoice.toLong() }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -230,10 +226,10 @@ class VoidTransactionFragment : Fragment() {
                                     }
 
                                     if (respnosedatareader != null) {
-                                        // respnosedatareader.isoMap[62]?.parseRaw2String()?.let {
-                                        /*  deleteBatchTableDataInDBWithInvoiceNumber(
-                                                                        it
-                                                                    )*/
+                                       // respnosedatareader.isoMap[62]?.parseRaw2String()?.let {
+                                            /*  deleteBatchTableDataInDBWithInvoiceNumber(
+                                                                            it
+                                                                        )*/
                                         val autoSettlementCheck = respnosedatareader.isoMap.get(60)?.parseRaw2String().toString()
 
                                         val f60DataList = autoSettlementCheck.split('|')
@@ -257,39 +253,58 @@ class VoidTransactionFragment : Fragment() {
                                         }
 
 
-                                        if (voidData.transactionType == TransactionType.REFUND.type) {
-                                            voidData.transactionType = TransactionType.VOID_REFUND.type
-                                        } else {
-                                            voidData.transactionType = TransactionType.VOID.type
-                                        }
-                                        //   voidData.isRefundSale=false
-                                        //   (activity as MainActivity).showProgress()
-                                        //    BatchFileDataTable.updateVoidRefundStatus(voidData.invoiceNumber)
-                                        //     voidData.aqrRefNo = respnosedatareader.isoMap[31]?.parseRaw2String() ?: ""
-                                        if (respnosedatareader != null) {
-                                            voidData.referenceNumber = (respnosedatareader.isoMap[37]?.parseRaw2String() ?: "").replace(" ", "")
-                                        }
-                                        voidData.roc = ROCProviderV2.getRoc(AppPreference.getBankCode()).toString()
-                                        ROCProviderV2.incrementFromResponse(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
-
-                                        BatchFileDataTable.performOperation(voidData)
-
-                                        // Saving for Last Success Receipt
-                                        val lastSuccessReceiptData = Gson().toJson(voidData)
-                                        AppPreference.saveString(AppPreference.LAST_SUCCESS_RECEIPT_KEY, lastSuccessReceiptData)
-
-                                        PrintUtil(activity).startPrinting(voidData, EPrintCopyType.MERCHANT, activity as BaseActivity) { printCB, printingFail ->
-                                            if (!printCB) {
-                                                val autoSettlementCheck = respnosedatareader.isoMap.get(60)?.parseRaw2String().toString()
-                                                if (!TextUtils.isEmpty(autoSettlementCheck))
-                                                    GlobalScope.launch(Dispatchers.Main) {
-                                                        syncOfflineSaleAndAskAutoSettlement(
-                                                                autoSettlementCheck.substring(0, 1)
-                                                        )
-                                                    }
-
+                                            if (voidData.transactionType == TransactionType.REFUND.type) {
+                                                voidData.transactionType =
+                                                    TransactionType.VOID_REFUND.type
+                                            } else {
+                                                voidData.transactionType = TransactionType.VOID.type
                                             }
-                                            //  }
+                                            //   voidData.isRefundSale=false
+                                            //   (activity as MainActivity).showProgress()
+                                            //    BatchFileDataTable.updateVoidRefundStatus(voidData.invoiceNumber)
+                                            //     voidData.aqrRefNo = respnosedatareader.isoMap[31]?.parseRaw2String() ?: ""
+                                            if (respnosedatareader != null) {
+                                                voidData.referenceNumber =
+                                                    (respnosedatareader.isoMap[37]?.parseRaw2String()
+                                                        ?: "").replace(" ", "")
+                                            }
+                                            voidData.roc =
+                                                ROCProviderV2.getRoc(AppPreference.getBankCode())
+                                                    .toString()
+                                            ROCProviderV2.incrementFromResponse(
+                                                ROCProviderV2.getRoc(AppPreference.getBankCode())
+                                                    .toString(),
+                                                AppPreference.getBankCode()
+                                            )
+
+                                            BatchFileDataTable.performOperation(voidData)
+
+                                            // Saving for Last Success Receipt
+                                            val lastSuccessReceiptData = Gson().toJson(voidData)
+                                            AppPreference.saveString(
+                                                AppPreference.LAST_SUCCESS_RECEIPT_KEY,
+                                                lastSuccessReceiptData
+                                            )
+
+                                            PrintUtil(activity).startPrinting(
+                                                voidData,
+                                                EPrintCopyType.MERCHANT,
+                                                activity as BaseActivity
+                                            ) { printCB, printingFail ->
+                                                if (!printCB) {
+                                                    val autoSettlementCheck =
+                                                        respnosedatareader.isoMap.get(60)
+                                                            ?.parseRaw2String()
+                                                            .toString()
+                                                    if (!TextUtils.isEmpty(autoSettlementCheck))
+                                                        GlobalScope.launch(Dispatchers.Main) {
+                                                            syncOfflineSaleAndAskAutoSettlement(
+                                                                autoSettlementCheck.substring(0, 1)
+                                                            )
+                                                        }
+
+                                                }
+                                            }
                                         }
                                     }
 

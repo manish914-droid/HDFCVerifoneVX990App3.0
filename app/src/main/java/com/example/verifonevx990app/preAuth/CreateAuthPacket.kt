@@ -11,10 +11,7 @@ import java.util.*
 
 class CreateAuthPacket {
     //---
-    fun createPreAuthCompleteAndVoidPreauthISOPacket(
-        authCompletionData: AuthCompletionData,
-        cardProcessedData: CardProcessedDataModal
-    ): IsoDataWriter =
+    fun createPreAuthCompleteAndVoidPreauthISOPacket(authCompletionData: AuthCompletionData, cardProcessedData: CardProcessedDataModal): IsoDataWriter =
         IsoDataWriter().apply {
 
             //     val batchFileDataTable = BatchFileDataTable.selectBatchData()
@@ -61,20 +58,39 @@ class CreateAuthPacket {
                 val batchF56 = authCompletionData.authBatchNo?.let { addPad(it, "0", 6, true) }
                 val tidF56AuthCompletion = authCompletionData.authTid
 
+                val formatedDate = SimpleDateFormat("yyMMddHHmmss", Locale.getDefault()).format(dateTime)
+
+
+                if(tidF56AuthCompletion?.isNotBlank() == true && batchF56?.isNotBlank() == true && rocF56?.isNotBlank() == true) {
+                    addFieldByHex(56, "${tidF56AuthCompletion}${batchF56}${rocF56}${formatedDate}${""}${""}")
+                    println("Field 56 data is" + "${tidF56AuthCompletion}${batchF56}${rocF56}${formatedDate}${""}${""}")
+                }
+
 
 
                 when (cardProcessedData.getTransType()) {
                     TransactionType.PRE_AUTH_COMPLETE.type -> {
-                        val f56AuthCompletion =
-                            tidF56AuthCompletion + batchF56 + rocF56 + year + date + time
+                        //new data of field56       //tid              //batchno   //roc //datetime       //authcode //invoice
+                        val f56AuthCompletion = "${tidF56AuthCompletion}${batchF56}${rocF56}${formatedDate}${""}${""}"
+
+                        println("Field 56 data iin preAuth Complete" + f56AuthCompletion)
+
+                        //old data
+                     //   val f56AuthCompletion = tidF56AuthCompletion + batchF56 + rocF56 + year + date + time
                         //   logger("F56AuthComp-->>", f56AuthCompletion, "e")
                         addFieldByHex(56, f56AuthCompletion)
                         additionalData["F56reversal"] = f56AuthCompletion
                     }
 
                     TransactionType.VOID_PREAUTH.type -> {
-                        val f56AuthVoid =
-                            terminalData.terminalId + batchF56 + rocF56 + year + date + time
+
+                        println("Field 56 void data is" + "${terminalData.terminalId}${batchF56}${rocF56}${formatedDate}${"000000"}${""}")
+
+                        //new data of field 56  //tid              //batchno   //roc //datetime       //authcode //invoice
+                        val f56AuthVoid = "${terminalData.terminalId}${batchF56}${rocF56}${formatedDate}${"000000"}${""}"
+
+                        //old data
+                     //   val f56AuthVoid = terminalData.terminalId + batchF56 + rocF56 + year + date + time
                         //    logger("F56Void-->>", f56AuthVoid, "e")
                         addFieldByHex(56, f56AuthVoid)
                         additionalData["F56reversal"] = f56AuthVoid
