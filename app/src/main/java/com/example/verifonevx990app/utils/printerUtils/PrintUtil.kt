@@ -42,6 +42,7 @@ import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.jvm.Throws
 
 const val HDFC_LOGO = "hdfc_print_logo.bmp"
 const val AMEX_LOGO = "amex_print.bmp"
@@ -1204,11 +1205,7 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReport(
-        batch: List<BatchFileDataTable>,
-        context: Context?,
-        printCB: (Boolean) -> Unit
-    ) {
+    fun printDetailReport(batch: List<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit) {
         try {
             val pp = printer?.status
             Log.e("Printer Status", pp.toString())
@@ -1390,6 +1387,223 @@ class PrintUtil(context: Context?) {
             //   VFService.connectToVFService(VerifoneApp.appContext)
         }
     }
+
+    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit) {
+        try {
+            val pp = printer?.status
+            Log.e("Printer Status", pp.toString())
+            if (pp == 0) {
+                //-----------------------------------------------
+                setLogoAndHeader()
+                //  ------------------------------------------
+                val appVersion = BuildConfig.VERSION_NAME
+
+                val td = System.currentTimeMillis()
+                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                val date = formatdate.format(td)
+                val time = formattime.format(td)
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+
+                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+
+                centerText(textFormatBundle, "DETAIL REPORT", true)
+                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].hostMID}", "TID : ${batch[0].hostTID}")
+                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[0].batchNumber}", "")
+                printSeperator(textFormatBundle)
+
+                if (batch.isEmpty()) {
+                    alignLeftRightText(textInLineFormatBundle, "Total Transaction", "0")
+                } else {
+                    alignLeftRightText(textInLineFormatBundle, "TRANS-TYPE", "AMOUNT")
+                    alignLeftRightText(textInLineFormatBundle, "ISSUER", "PAN/CID")
+                    alignLeftRightText(textInLineFormatBundle, "DATE-TIME", "INVOICE")
+                    printSeperator(textFormatBundle)
+
+                    val totalMap = mutableMapOf<Int, SummeryTotalType>()
+                    val deformatter = SimpleDateFormat("yyMMdd HHmmss", Locale.ENGLISH)
+
+                    batch.sortBy { it.hostTID }
+
+                    var frequency = 0
+                    var count = 0
+                    var lastfrequecny = 0
+                    var hasfrequency = false
+                    var updatedindex = 0
+                    var iteration = 0
+                    val frequencylist = mutableListOf<String>()
+                    val tidlist = mutableListOf<String>()
+
+                    for (item in batch) {
+                        tidlist.add(item.hostTID)
+                    }
+                    for (item in tidlist.distinct()) {
+                        println("Frequency of item"+item + ": " + Collections.frequency(tidlist, item))
+                        frequencylist.add(""+Collections.frequency(tidlist, item))
+                    }
+
+                    iteration = tidlist.distinct().size-1
+
+                    for (b in batch) {
+                        //  || b.transactionType == TransactionType.VOID_PREAUTH.type
+                        if (b.transactionType == TransactionType.PRE_AUTH.type) continue  // Do not add pre auth transactions
+
+                        count++
+                        if(updatedindex <= frequencylist.size-1)
+                            frequency = frequencylist.get(updatedindex).toInt()+lastfrequecny
+
+
+                        if (totalMap.containsKey(b.transactionType)) {
+                            val x = totalMap[b.transactionType]
+                            if (x != null) {
+                                x.count += 1
+                                x.total += b.transactionalAmmount.toLong()
+                            }
+                        } else {
+                            totalMap[b.transactionType] = SummeryTotalType(1, b.transactionalAmmount.toLong())
+                        }
+                        val transAmount = "%.2f".format(b.transactionalAmmount.toDouble() / 100)
+                        alignLeftRightText(textInLineFormatBundle, transactionType2Name(b.transactionType), transAmount
+                        )
+                        if (b.transactionType == TransactionType.VOID_PREAUTH.type) {
+                            alignLeftRightText(textInLineFormatBundle, b.cardType, panMasking(b.encryptPan, "0000********0000"))
+                        } else {
+                            alignLeftRightText(textInLineFormatBundle, b.cardType,
+                                    panMasking(b.cardNumber, "0000********0000")
+                            )
+                        }
+                        if (b.transactionType == TransactionType.OFFLINE_SALE.type || b.transactionType == TransactionType.VOID_OFFLINE_SALE.type) {
+                            try {
+                                val dat = "${b.printDate} - ${b.time}"
+                                alignLeftRightText(
+                                        textInLineFormatBundle,
+                                        dat,
+                                        invoiceWithPadding(b.invoiceNumber)
+                                )
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+
+                        } else {
+                            val timee = b.time
+                            val timeFormat = SimpleDateFormat("HHmmss", Locale.getDefault())
+                            val timeFormat2 = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
+                            var formattedTime = ""
+                            try {
+                                val t1 = timeFormat.parse(timee)
+                                formattedTime = timeFormat2.format(t1)
+                                Log.e("Time", formattedTime)
+                                val dat = "${b.transactionDate} - $formattedTime"
+                                alignLeftRightText(
+                                        textInLineFormatBundle,
+                                        dat,
+                                        invoiceWithPadding(b.invoiceNumber)
+                                )
+                                //alignLeftRightText(textInLineFormatBundle," "," ")
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                        }
+
+                        printSeperator(textFormatBundle)
+                        if(frequency == count ){
+                            lastfrequecny = frequency
+                            hasfrequency = true
+                            updatedindex++
+                        }
+                        else {
+                            hasfrequency = false
+                        }
+                        if(hasfrequency) {
+                            printSeperator(textFormatBundle)
+                            centerText(textFormatBundle, "***TOTAL TRANSACTIONS***")
+                            val sortedMap = totalMap.toSortedMap(compareByDescending { it })
+                            /* for ((k, v) in sortedMap) {
+                             alignLeftRightText(
+                                 textInLineFormatBundle,
+                                 "${transactionType2Name(k)} = ${v.count}",
+                                 "Rs %.2f".format(v.total.toDouble() / 100)
+                             )
+                         }*/
+
+                            for ((k, m) in sortedMap) {
+                                /* alignLeftRightText(
+                                 textInLineFormatBundle,
+                                 "${transactionType2Name(k).toUpperCase(Locale.ROOT)}${"     =" + m.count}",
+                                 "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}"
+
+                             )*/
+
+                                alignLeftRightText(
+                                        textInLineFormatBundle,
+                                        transactionType2Name(k).toUpperCase(Locale.ROOT),
+                                        "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}",
+                                        "  =  " + m.count
+
+                                )
+
+                            }
+
+                            if(iteration > 0) {
+                                printSeperator(textFormatBundle)
+                                alignLeftRightText(textInLineFormatBundle, "MID : ${b.hostMID}", "TID : ${b.hostTID}")
+                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${b.batchNumber}", "")
+                                printSeperator(textFormatBundle)
+                                iteration--
+                            }
+
+                            totalMap.clear()
+                        }
+                    }
+
+                }
+                //    printSeperator(textFormatBundle)
+                printer?.addText(textFormatBundle, "--------------------------------")
+                centerText(textFormatBundle, "App Version :$appVersion")
+                centerText(textFormatBundle, "---------X-----------X----------")
+                printer?.feedLine(4)
+                // start print here
+                printer?.startPrint(object : PrinterListener.Stub() {
+                    override fun onFinish() {
+                        Log.e("DEATIL REPORT", "SUCESS__")
+                        printCB(true)
+                    }
+
+                    override fun onError(error: Int) {
+                        Log.e("DEATIL REPORT", "FAIL__")
+                        printCB(false)
+                    }
+
+
+                })
+            }
+        } catch (ex: DeadObjectException) {
+            ex.printStackTrace()
+            failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+            )
+        } catch (e: RemoteException) {
+            e.printStackTrace()
+            failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+            )
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+            failureImpl(
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
+            )
+        } finally {
+            //   VFService.connectToVFService(VerifoneApp.appContext)
+        }
+    }
+
 
     fun printReversal(context: Context?, callback: (String) -> Unit) {
         val isoW = AppPreference.getReversal()
@@ -1751,13 +1965,7 @@ class PrintUtil(context: Context?) {
     }
 
 
-    fun printSettlementReport(
-        context: Context?,
-        batch: MutableList<BatchFileDataTable>,
-        isSettlementSuccess: Boolean = false,
-        isLastSummary: Boolean = false,
-        callBack: (Boolean) -> Unit
-    ) {
+    fun printSettlementReport(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
         //  val format = Bundle()
         //   val fmtAddTextInLine = Bundle()
 
@@ -1892,14 +2100,13 @@ class PrintUtil(context: Context?) {
                             m.count += 1
                             m.total += transAmt
                         } else {
-                            val sm =
-                                SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                            val sm = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.cardType)
                             ma[it.transactionType] = sm
                         }
                     } else {
                         val hm = HashMap<Int, SummeryModel>().apply {
                             this[it.transactionType] =
-                                SummeryModel(transactionType2Name(it.transactionType), 1, transAmt)
+                                SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.cardType)
                         }
                         map[it.cardType] = hm
                     }
@@ -2015,6 +2222,314 @@ class PrintUtil(context: Context?) {
             }
         }
     }
+
+    fun printSettlementReportupdate(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
+        //  val format = Bundle()
+        //   val fmtAddTextInLine = Bundle()
+
+//below if condition is for zero settlement
+        if (batch.size <= 0) {
+            try {
+                centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
+
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
+
+
+                val td = System.currentTimeMillis()
+                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                val date = formatdate.format(td)
+                val time = formattime.format(td)
+
+                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+                if (isLastSummary) {
+                    centerText(textFormatBundle, "LAST SUMMARY REPORT")
+                } else {
+                    centerText(textFormatBundle, "SUMMARY REPORT")
+                }
+
+                alignLeftRightText(
+                        textInLineFormatBundle,
+                        "TID : ${tpt?.terminalId}",
+                        "MID : ${tpt?.merchantId}"
+                )
+                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
+                printSeperator(textFormatBundle)
+                alignLeftRightText(textInLineFormatBundle, "TOTAL TXN    =  0", "Rs.         0.00")
+
+                centerText(textFormatBundle, "ZERO SETTLEMENT SUCCESSFUL")
+                centerText(textFormatBundle, "BonusHub")
+                centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
+                printer?.feedLine(4)
+
+                printer?.startPrint(object : PrinterListener.Stub() {
+                    override fun onFinish() {
+                        callBack(true)
+                        Log.e("Settle_RECEIPT", "SUCESS__")
+                    }
+
+                    override fun onError(error: Int) {
+                        callBack(false)
+                        Log.e("Settle_RECEIPT", "FAIL__")
+                    }
+
+
+                })
+            } catch (ex: DeadObjectException) {
+                ex.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            }
+        }
+        ////below if condition is for settlement(Other than zero settlement)
+        else {
+            try {
+                val map = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
+                val map1 = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                val headers = arrayListOf<String>()
+                tpt?.receiptHeaderOne?.let { headers.add(it) }
+                tpt?.receiptHeaderTwo?.let { headers.add(it) }
+                tpt?.receiptHeaderThree?.let { headers.add(it) }
+
+                setHeaderWithLogo(textFormatBundle, "hdfc_print_logo.bmp", headers)
+
+                val td = System.currentTimeMillis()
+                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                val date = formatdate.format(td)
+                val time = formattime.format(td)
+
+                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+
+                //  alignLeftRightText(fmtAddTextInLine,"DATE : ${batch.date}","TIME : ${batch.time}")
+                /*   alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].mid}", "TID : ${batch[0].tid}")
+                   alignLeftRightText(textInLineFormatBundle, "BATCH NO  : ${batch[0].batchNumber}", "")*/
+
+                if (isLastSummary) {
+                    centerText(textFormatBundle, "LAST SUMMARY REPORT")
+                } else {
+                    centerText(textFormatBundle, "SUMMARY REPORT")
+                }
+
+                batch.sortBy { it.hostTID }
+
+                var tempTid = batch[0].hostTID
+
+                val list = mutableListOf<String>()
+                val frequencylist = mutableListOf<String>()
+
+                for (it in batch) {  // Do not count preauth transaction
+// || it.transactionType == TransactionType.VOID_PREAUTH.type
+                    if (it.transactionType == TransactionType.PRE_AUTH.type) continue
+
+                    val transAmt = try {
+                        it.transactionalAmmount.toLong()
+                    } catch (ex: Exception) {
+                        0L
+                    }
+
+
+                    if(tempTid == it.hostTID) {
+                        if (map.containsKey(it.hostTID+it.hostMID+it.batchNumber+it.cardType)) {
+
+                            val ma = map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] as MutableMap<Int, SummeryModel>
+                            if (ma.containsKey(it.transactionType)) {
+                                val m = ma[it.transactionType] as SummeryModel
+                                m.count += 1
+                                m.total += transAmt
+                            } else {
+                                val sm = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
+                                ma[it.transactionType] = sm
+                            }
+                        } else {
+                            val hm = HashMap<Int, SummeryModel>().apply {
+                                this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
+                            }
+                            map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] = hm
+                            list.add(it.hostTID)
+                        }
+                    }
+                    else{
+                        tempTid = it.hostTID
+                        val hm = HashMap<Int, SummeryModel>().apply {
+                            this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.hostTID)
+                        }
+                        map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] = hm
+                        list.add(it.hostTID)
+                    }
+
+                }
+
+                for (item in list.distinct()) {
+                    println("Frequency of item"+item + ": " + Collections.frequency(list, item))
+                    frequencylist.add(""+Collections.frequency(list, item))
+                }
+
+
+
+                val totalMap = mutableMapOf<Int, SummeryTotalType>()
+
+
+                var ietration =   list.distinct().size
+                var curentIndex = 0
+                var frequency = 0
+                var count = 0
+                var lastfrequecny = 0
+                var hasfrequency = false
+                var updatedindex = 0
+
+                for ((key, _map) in map.onEachIndexed { index, entry -> curentIndex = index }) {
+
+                    count++
+                    if(updatedindex <= frequencylist.size-1)
+                        frequency = frequencylist.get(updatedindex).toInt()+lastfrequecny
+
+                    if (key.isNotBlank()) {
+
+                        var hostTid: String? = key.subSequence(0,8).toString()
+                        var hostMid: String? =  key.subSequence(8,23).toString()
+                        var hostBatchNumber : String? = key.subSequence(23,29).toString()
+                        var cardIssuer: String= key.subSequence(29,key.length).toString()
+
+                        if(ietration > 0){
+                            printSeperator(textFormatBundle)
+                            alignLeftRightText(textInLineFormatBundle, "MID : ${hostMid}", "TID : ${hostTid}")
+                            alignLeftRightText(textInLineFormatBundle, "BATCH NO  : ${hostBatchNumber}", "")
+                            ietration--
+                        }
+
+
+                        printSeperator(textFormatBundle)
+                        alignLeftRightText(textInLineFormatBundle, "CARD ISSUER:  ", "", cardIssuer.toUpperCase(Locale.ROOT))
+                        // if(ind==0){
+                        alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
+                        //   ind=1
+                        //  }
+                    }
+                    for ((k, m) in _map) {
+                        val amt = "Rs  " + "%.2f".format(((m.total).toDouble() / 100))
+                        if (k == TransactionType.PRE_AUTH_COMPLETE.type || k == TransactionType.VOID_PREAUTH.type) {
+                            // need Not to show
+                        } else {
+                            alignLeftRightText(textInLineFormatBundle, m.type.toUpperCase(Locale.ROOT), amt, m.count.toString())
+                        }
+
+                        if (totalMap.containsKey(k)) {
+                            val x = totalMap[k]
+                            if (x != null) {
+                                x.count += m.count
+                                x.total += m.total
+                            }
+                        } else {
+                            totalMap[k] = SummeryTotalType(m.count, m.total)
+                        }
+
+                    }
+
+                    if(frequency == count ){
+                        lastfrequecny = frequency
+                        hasfrequency = true
+                        updatedindex++
+                    }
+                    else {
+                        hasfrequency = false
+                    }
+                    if(hasfrequency) {
+                        printSeperator(textFormatBundle)
+                        centerText(textInLineFormatBundle, "*** TOTAL TRANSACTION ***")
+                        val sortedMap = totalMap.toSortedMap(compareByDescending { it })
+                        for ((k, m) in sortedMap) {
+                            /* alignLeftRightText(
+                                 textInLineFormatBundle,
+                                 "${transactionType2Name(k).toUpperCase(Locale.ROOT)}${"     =" + m.count}",
+                                 "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}"
+
+                             )*/
+
+                            alignLeftRightText(textInLineFormatBundle, transactionType2Name(k).toUpperCase(Locale.ROOT), "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}", "  =  " + m.count)
+
+                        }
+
+                        totalMap.clear()
+                    }
+                    //  sb.appendln()
+                }
+
+                //    sb.appendln(getChar(LENGTH, '='))
+
+                printSeperator(textFormatBundle)
+                if (isSettlementSuccess) {
+                    centerText(textInLineFormatBundle, "SETTLEMENT SUCCESSFUL")
+                    centerText(textFormatBundle, "Bonushub")
+                }
+                centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
+
+                centerText(textFormatBundle, "---------X-----------X----------")
+                printer?.feedLine(4)
+
+                // start print here
+                printer?.startPrint(object : PrinterListener.Stub() {
+                    override fun onFinish() {
+                        callBack(true)
+                        Log.e("Settle_RECEIPT", "SUCESS__")
+                    }
+
+                    override fun onError(error: Int) {
+                        callBack(false)
+                        Log.e("Settle_RECEIPT", "FAIL__")
+                    }
+
+
+                })
+            } catch (ex: DeadObjectException) {
+                ex.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            } catch (e: RemoteException) {
+                e.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            } catch (ex: Exception) {
+                ex.printStackTrace()
+                failureImpl(
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
+                )
+            }
+        }
+    }
+
+
 
     fun test1printSettlementReport(
         context: Context?,
@@ -2178,7 +2693,8 @@ class PrintUtil(context: Context?) {
                                     SummeryModel(
                                         transactionType2Name(it.transactionType),
                                         1,
-                                        transAmt
+                                        transAmt,
+                                            it.cardType
                                     )
                                 ma[it.transactionType] = sm
                             }
@@ -2188,7 +2704,8 @@ class PrintUtil(context: Context?) {
                                     SummeryModel(
                                         transactionType2Name(it.transactionType),
                                         1,
-                                        transAmt
+                                        transAmt,
+                                            it.cardType
                                     )
                             }
                             map[it.cardType] = hm
@@ -4104,7 +4621,7 @@ fun checkForPrintReversalReceipt(context: Context?, callback: (String) -> Unit) 
     }
 }
 
-internal data class SummeryModel(val type: String, var count: Int = 0, var total: Long = 0)
+internal data class SummeryModel(val type: String, var count: Int = 0, var total: Long = 0,var hostTid: String)
 internal data class SummeryTotalType(var count: Int = 0, var total: Long = 0)
 internal open class IPrintListener(
     var printerUtil: PrintUtil,

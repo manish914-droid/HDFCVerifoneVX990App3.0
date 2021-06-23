@@ -63,6 +63,7 @@ import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 import java.io.File
+import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -508,7 +509,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         showProgress(getString(R.string.please_wait_aaplication_is_configuring_updates))
         if (systemManager != null && !TextUtils.isEmpty(filePath)) {
             try {
-                systemManager.installApp(
+                systemManager?.installApp(
                     filePath, object : IAppInstallObserver.Stub() {
                         @Throws(RemoteException::class)
                         override fun onInstallFinished(packageName: String, returnCode: Int) {
@@ -1718,7 +1719,7 @@ withContext(Dispatchers.Main){
                             else -> AppPreference.saveBoolean(AppPreference.IsAutoSettleDone, false)
                         }
                         //endregion
-                        PrintUtil(this).printSettlementReport(this, batchList, true) {
+                        PrintUtil(this).printSettlementReportupdate(this, batchList, true) {
                             if (it) {
                                 // todo digipos print here and after print delete success transactions from digiposDataTable
                                 //Added by Ajay Thakur

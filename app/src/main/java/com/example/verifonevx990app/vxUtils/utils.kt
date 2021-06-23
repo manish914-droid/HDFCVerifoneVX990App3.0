@@ -540,9 +540,9 @@ object ConnectionTimeStamps {
 
     fun getOtherInfo(): String {
         return try {
-            val imei = VFService.vfDeviceService.deviceInfo.imei
-            val batteryStrength = VFService.vfDeviceService.deviceInfo.batteryLevel
-            val simNo = VFService.vfDeviceService.deviceInfo.iccid
+            val imei = VFService.vfDeviceService?.deviceInfo?.imei
+            val batteryStrength = VFService.vfDeviceService?.deviceInfo?.batteryLevel
+            val simNo = VFService.vfDeviceService?.deviceInfo?.iccid
             Log.e("[1] iemi,battry,simNo", "$imei ,${batteryStrength} -----> ${simNo}  ")
             "~${VerifoneApp.networkStrength}~${batteryStrength}~${imei}~${simNo}~${VerifoneApp.operatorName}"
         } catch (ex: java.lang.Exception) {
@@ -899,7 +899,7 @@ object ROCProviderV2 {
             }
 
             val byteArray = track21.toByteArray(StandardCharsets.ISO_8859_1)
-            encryptedbyteArrrays = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
+            encryptedbyteArrrays = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
 
             /*println(
                 "Track 2 with encyption is --->" + Utility.byte2HexStr(encryptedbyteArrrays)
@@ -965,7 +965,7 @@ object ROCProviderV2 {
     ): String {
         val sb = StringBuilder()
         for (f in commonTagListemv) {
-            val v = VFService.vfIEMV.getCardData(Integer.toHexString(f).toUpperCase(Locale.ROOT))
+            val v = VFService.vfIEMV?.getCardData(Integer.toHexString(f).toUpperCase(Locale.ROOT))
             if (v != null) {
                 sb.append(Integer.toHexString(f))
                 var l = Integer.toHexString(v.size)
@@ -1241,7 +1241,7 @@ fun getEncryptedField57DataForManualSale(panNumber: String, expDate: String): St
         }
         logger("Field57_Manual", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
+        encryptedByteArray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
         /*println(
             "Track 2 with encryption in manual sale is --->" + Utility.byte2HexStr(
                 encryptedByteArray
@@ -1291,7 +1291,7 @@ fun getEncryptedField57DataForOfflineSale(
         }
         logger("Field57_Manual", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArrray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
+        encryptedByteArrray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
         //println("Track 2 with encryption is --->" + Utility.byte2HexStr(encryptedByteArrray))
         return Utility.byte2HexStr(encryptedByteArrray)
     } else return "TRACK57_LENGTH<8"
@@ -1313,7 +1313,7 @@ fun getEncryptedPan(panNumber: String): String {
         }
         logger("Field 56", " -->$dataDescription", "e")
         val byteArray = dataDescription.toByteArray(StandardCharsets.ISO_8859_1)
-        encryptedByteArray = VFService.vfPinPad.encryptTrackData(0, 2, byteArray)
+        encryptedByteArray = VFService.vfPinPad?.encryptTrackData(0, 2, byteArray)
         /*println(
             "Track 2 with encryption in manual sale is --->" + Utility.byte2HexStr(
                 encryptedByteArray
@@ -1909,7 +1909,7 @@ private fun navigateToMain(context: Context) {
 fun txnSuccessToast(context: Context, msg: String = "Transaction Approved") {
     try {
         GlobalScope.launch(Dispatchers.Main) {
-            VFService.vfBeeper.startBeep(200)
+            VFService.vfBeeper?.startBeep(200)
             val layout = (context as Activity).layoutInflater.inflate(
                     R.layout.new_success_toast,
                     context.findViewById<LinearLayout>(R.id.custom_toast_layout)
