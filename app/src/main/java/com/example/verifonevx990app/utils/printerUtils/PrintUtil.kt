@@ -155,12 +155,7 @@ class PrintUtil(context: Context?) {
 
 
     // Printing Sale Charge slip....
-    fun startPrinting(
-        printerReceiptData: BatchFileDataTable,
-        copyType: EPrintCopyType,
-        context: Context?,
-        printerCallback: (Boolean, Int) -> Unit
-    ) {
+    fun startPrinting(printerReceiptData: BatchFileDataTable, copyType: EPrintCopyType, context: Context?, printerCallback: (Boolean, Int) -> Unit) {
         //  printer=null
         try {
             //  logger("PS_START", (printer?.status).toString(), "e")
@@ -175,6 +170,52 @@ class PrintUtil(context: Context?) {
             } else {
                 ""
             }
+
+            //Changes By manish Kumar
+            //If in Respnse field 60 data comes Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
+            // then show response data otherwise show data available in database
+            //From mid to hostMID (coming from field 60)
+            //From tid to hostTID (coming from field 60)
+            //From batchNumber to hostBatchNumber (coming from field 60)
+            //From roc to hostRoc (coming from field 60)
+            //From invoiceNumber to hostInvoice (coming from field 60)
+            //From cardType to hostCardType (coming from field 60)
+
+            var hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
+                printerReceiptData.hostMID
+            } else {
+                printerReceiptData.mid
+            }
+
+            var hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
+                printerReceiptData.hostTID
+            } else {
+                printerReceiptData.tid
+            }
+
+            var hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
+                printerReceiptData.hostBatchNumber
+            } else {
+                printerReceiptData.batchNumber
+            }
+
+            var hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
+                printerReceiptData.hostRoc
+            } else {
+                printerReceiptData.roc
+            }
+            var hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
+                printerReceiptData.hostInvoice
+            } else {
+                printerReceiptData.invoiceNumber
+            }
+            var hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
+                printerReceiptData.hostCardType
+            } else {
+                printerReceiptData.cardType
+            }
+
+
             // bundle format for addText
             val format = Bundle()
             // bundle formate for AddTextInLine
@@ -182,51 +223,27 @@ class PrintUtil(context: Context?) {
 
             printLogo("hdfc_print_logo.bmp")
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
+            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
+            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
             //  logger("PS_H1", (printer?.status).toString(), "e")
             printer?.addText(format, printerReceiptData.merchantName) // header1
 
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
+            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
+            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
 
             //   logger("PS_H2", (printer?.status).toString(), "e")
             printer?.addText(format, printerReceiptData.merchantAddress1) //header2
 
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
+            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
+            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
             //   logger("PS_H3", (printer?.status).toString(), "e")
             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
 
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             val formatterdate = SimpleDateFormat("yyMMdd", Locale.getDefault())
@@ -243,161 +260,69 @@ class PrintUtil(context: Context?) {
                 formattedTime = timeFormat2.format(t1)
                 Log.e("Time", formattedTime)
                 //   logger("PS_DateTime", (printer?.status).toString(), "e")
-                printer?.addTextInLine(
-                    fmtAddTextInLine, "DATE : ${printerReceiptData.transactionDate}",
-                    "", "TIME : $formattedTime", 0
-                )
+                printer?.addTextInLine(fmtAddTextInLine, "DATE : ${printerReceiptData.transactionDate}", "", "TIME : $formattedTime", 0)
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //  logger("PS_MID_TID", (printer?.status).toString(), "e")
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "MID : ${printerReceiptData.mid}",
-                "",
-                "TID : ${printerReceiptData.tid}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            printer?.addTextInLine(fmtAddTextInLine, "MID : ${hostMID}", "", "TID : ${hostTID}", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
 
             logger("PS_Bno_ROC", (printer?.status).toString(), "e")
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "BATCH NO : ${addPad(printerReceiptData.batchNumber, "0", 6)}",
-                "",
-                "ROC : ${invoiceWithPadding(printerReceiptData.roc)}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            printer?.addTextInLine(fmtAddTextInLine, "BATCH NO : ${addPad(hostBatchNumber, "0", 6)}", "", "ROC : ${invoiceWithPadding(hostRoc)}",
+                    PrinterConfig.addTextInLine.mode.Devide_flexible)
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             logger("PS_invoice", (printer?.status).toString(), "e")
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "INVOICE : ${invoiceWithPadding(printerReceiptData.invoiceNumber)}",
-                "",
-                "",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            printer?.addTextInLine(fmtAddTextInLine, "INVOICE : ${invoiceWithPadding(hostInvoice)}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
             printTransType(format, printerReceiptData.transactionType)
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
 
             logger("PS_ct_exp", (printer?.status).toString(), "e")
 
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "CARD TYPE : ${printerReceiptData.cardType}",
-                "",
-                "EXP : XX/XX",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            printer?.addTextInLine(fmtAddTextInLine, "CARD TYPE : ${hostCardType}", "", "EXP : XX/XX", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             logger("PS_ct_no", (printer?.status).toString(), "e")
 
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "CARD NO : ${printerReceiptData.cardNumber}",
-                "",
-                printerReceiptData.operationType,
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            printer?.addTextInLine(fmtAddTextInLine, "CARD NO : ${printerReceiptData.cardNumber}", "", printerReceiptData.operationType, PrinterConfig.addTextInLine.mode.Devide_flexible)
 
             if (printerReceiptData.merchantMobileNumber.isNotBlank())
-                printer?.addTextInLine(
-                    fmtAddTextInLine,
-                    "MOBILE NO : ${printerReceiptData.merchantMobileNumber}",
-                    "",
-                    "",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible
-                )
+                printer?.addTextInLine(fmtAddTextInLine, "MOBILE NO : ${printerReceiptData.merchantMobileNumber}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             logger("PS_auth_rrn", (printer?.status).toString(), "e")
 
             if (printerReceiptData.authCode == "null") {
-                printer?.addTextInLine(
-                    fmtAddTextInLine,
-                    "RRN : ${printerReceiptData.referenceNumber}",
-                    "",
-                    "",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible
-                )
+                printer?.addTextInLine(fmtAddTextInLine, "RRN : ${printerReceiptData.referenceNumber}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
             } else {
-                printer?.addTextInLine(
-                    fmtAddTextInLine,
-                    "AUTH CODE : ${printerReceiptData.authCode.trim()}",
-                    "",
-                    "RRN : ${printerReceiptData.referenceNumber}",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible
-                )
+                printer?.addTextInLine(fmtAddTextInLine, "AUTH CODE : ${printerReceiptData.authCode.trim()}", "", "RRN : ${printerReceiptData.referenceNumber}", PrinterConfig.addTextInLine.mode.Devide_flexible)
             }
 
             if (printerReceiptData.operationType != "Mag") {
-                fmtAddTextInLine.putInt(
-                    PrinterConfig.addTextInLine.FontSize.BundleName,
-                    PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                )
-                fmtAddTextInLine.putString(
-                    PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                    PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                )
+                fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+                fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
 
@@ -405,66 +330,33 @@ class PrintUtil(context: Context?) {
 
                 if (printerReceiptData.operationType == "Chip") {
                     logger("PS_tvr_tsi", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TVR : ${printerReceiptData.tvr}",
-                        "",
-                        "TSI : ${printerReceiptData.tsi}",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "TVR : ${printerReceiptData.tvr}", "", "TSI : ${printerReceiptData.tsi}", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
 
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 if (!printerReceiptData.aid.isBlank() && !printerReceiptData.tc.isBlank()) {
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
+                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
                     logger("PS_aid", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "AID : ${printerReceiptData.aid}",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "AID : ${printerReceiptData.aid}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
+                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                     logger("PS_Tc", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TC : ${printerReceiptData.tc}",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "TC : ${printerReceiptData.tc}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
 
             }
 
             // region =======Setting amount on Sale charge slip ==============
             printSeperator(format)
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
+            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
             fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+                    PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                    PrinterFonts.path + PrinterFonts.FONT_AGENCYR
             )
             /* val baseAmount = "%.2f".format(printerReceiptData.transactionalAmmount.toDouble() / 100)
              // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
@@ -501,17 +393,9 @@ class PrintUtil(context: Context?) {
 
 
             val totalAmount = "%.2f".format(printerReceiptData.totalAmmount.toDouble())
-            val cashAmount = if (printerReceiptData.cashBackAmount.isEmpty()) {
-                "%.2f".format("0".toDouble())
-            } else {
-                "%.2f".format(printerReceiptData.cashBackAmount.toDouble())
-            }
+            val cashAmount = if (printerReceiptData.cashBackAmount.isEmpty()) { "%.2f".format("0".toDouble()) } else { "%.2f".format(printerReceiptData.cashBackAmount.toDouble()) }
             val tipAmount =
-                if (printerReceiptData.tipAmmount.isEmpty()) {
-                    "%.2f".format("0".toDouble())
-                } else {
-                    "%.2f".format(printerReceiptData.tipAmmount.toDouble())
-                }
+                    if (printerReceiptData.tipAmmount.isEmpty()) { "%.2f".format("0".toDouble()) } else { "%.2f".format(printerReceiptData.tipAmmount.toDouble()) }
 
             if (isTipAllowed && tipAmount.toDouble() > 0) {
                 if (printerReceiptData.transactionType != TransactionType.TIP_SALE.type) {
@@ -521,141 +405,33 @@ class PrintUtil(context: Context?) {
 
             when (printerReceiptData.transactionType) {
                 TransactionType.SALE_WITH_CASH.type -> {
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "SALE AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                saleAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "CASH AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                cashAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TOTAL AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                totalAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+                    printer?.addTextInLine(fmtAddTextInLine, "CASH AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(cashAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+                    printer?.addTextInLine(fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
                 TransactionType.SALE.type -> {
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "SALE AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                saleAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                     if (isTipAllowed && printerReceiptData.tipAmmount.toDouble() <= 0) {
-                        printer?.addTextInLine(
-                            fmtAddTextInLine,
-                            "TIP AMOUNT   :    ...............................",
-                            "",
-                            "",
-                            PrinterConfig.addTextInLine.mode.Devide_flexible
-                        )
+                        printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT   :    ...............................", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                     } else if (isTipAllowed && tipAmount.toDouble() > 0) {
-                        printer?.addTextInLine(
-                            fmtAddTextInLine,
-                            "TIP AMOUNT  :    Rs  ${
-                                MoneyUtil.fen2yuan(
-                                    tipAmount.toDouble().toLong()
-                                )
-                            }",
-                            "",
-                            "",
-                            PrinterConfig.addTextInLine.mode.Devide_flexible
-                        )
+                        printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                     }
                     printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TOTAL AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                totalAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                            fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
                 TransactionType.TIP_SALE.type -> {
                     saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
 
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "SALE AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                saleAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TOTAL AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                totalAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${
+                    MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+                    printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+                    printer?.addTextInLine(fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
                 else -> {
+                    printer?.addTextInLine(fmtAddTextInLine, "BASE AMOUNT  :    Rs  ${
+                    MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                     printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "BASE AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                totalAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TOTAL AMOUNT  :    Rs  ${
-                            MoneyUtil.fen2yuan(
-                                totalAmount.toDouble().toLong()
-                            )
-                        }",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                            fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                 }
             }
 
@@ -664,14 +440,8 @@ class PrintUtil(context: Context?) {
             // endregion=======Setting amount on Sale charge slip ==============
 
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
+            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
+            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
             if (printerReceiptData.isPinverified) {
                 //  printer?.addText(format, pinVerifyMsg)
                 centerText(format, pinVerifyMsg)
@@ -689,8 +459,7 @@ class PrintUtil(context: Context?) {
             //  printer?.addText(format, printerReceiptData.cardHolderName)
 
 
-            val ipt =
-                IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
+            val ipt = IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
             val chunks: List<String>? = ipt?.volletIssuerDisclammer?.let { chunkTnC(it) }
             if (chunks != null) {
                 for (st in chunks) {
@@ -707,54 +476,28 @@ class PrintUtil(context: Context?) {
 
             printLogo("BH.bmp")
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
+            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
+            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
-
             printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
 
             // start print here
-            printer?.startPrint(
-                IPrintListener(
-                    this,
-                    context,
-                    copyType,
-                    printerReceiptData,
-                    printerCallback
-                )
-            )
+            printer?.startPrint(IPrintListener(this, context, copyType, printerReceiptData, printerCallback))
         } catch (ex: DeadObjectException) {
             ex.printStackTrace()
-            failureImpl(
-                context as Activity,
-                "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
-            )
+            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
         } catch (e: RemoteException) {
             e.printStackTrace()
-            failureImpl(
-                context as Activity,
-                "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
-            )
+            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
         } catch (ex: Exception) {
             ex.printStackTrace()
-            failureImpl(
-                context as Activity,
-                "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
-            )
+            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
         } finally {
             //   VFService.connectToVFService(VerifoneApp.appContext)
         }
     }
+
 
     fun testStartPrinting(
         printerReceiptData: BatchFileDataTable,
