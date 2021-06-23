@@ -177,7 +177,7 @@ class SyncTransactionToHost(
                                                     cardProcessedDataModal?.getTransType() != TransactionType.SALE_WITH_CASH.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.CASH_AT_POS.type
                                                 ) {
-                                                    CompleteSecondGenAc(
+                                                    CompleteSecondGenAc(cardProcessedDataModal,
                                                         responseIsoData,
                                                         transactionISOData
                                                     ) { printExtraData ->
@@ -242,7 +242,7 @@ class SyncTransactionToHost(
                                                 cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
                                                 cardProcessedDataModal?.getTransType() != TransactionType.SALE.type
                                             ) {
-                                                CompleteSecondGenAc(responseIsoData) { printExtraData ->
+                                                CompleteSecondGenAc(cardProcessedDataModal,responseIsoData) { printExtraData ->
                                                     syncTransactionCallback(
                                                         true,
                                                         successResponseCode.toString(),

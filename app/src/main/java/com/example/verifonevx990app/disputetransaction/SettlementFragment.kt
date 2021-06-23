@@ -84,7 +84,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
                                             Log.e("UPLOAD DIGI"," ----------------------->  START")
                                             uploadPendingDigiPosTxn(activity as BaseActivity) {
                                                 Log.e("UPLOAD DIGI"," ----------------------->  BEFOR PRINT")
-                                                PrintUtil(activity).printDetailReport(
+                                                PrintUtil(activity).printDetailReportupdate(
                                                     batchList,
                                                     activity
                                                 ) { detailPrintStatus ->
@@ -220,7 +220,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
                                                 viewLifecycleOwner.lifecycleScope.launch(Dispatchers.IO) {
                                                     Log.e("UPLOAD DIGI"," ----------------------->  START")
                                                     uploadPendingDigiPosTxn(activity as BaseActivity) {
-                                                        PrintUtil(activity).printDetailReport(
+                                                        PrintUtil(activity).printDetailReportupdate(
                                                             batchList,
                                                             activity
                                                         ) { detailPrintStatus ->
