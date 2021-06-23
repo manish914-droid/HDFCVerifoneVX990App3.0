@@ -17,7 +17,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 internal class FlatShape(
-    private var drawableState: NeumorphShapeDrawableState
+        private var drawableState: NeumorphShapeDrawableState
 ) : Shape {
 
     private var lightShadowBitmap: Bitmap? = null
@@ -39,13 +39,13 @@ internal class FlatShape(
             val top = inset.top.toFloat()
             lightShadowBitmap?.let {
                 val offsetX =
-                    if (LightSource.isLeft(lightSource)) -elevation - z else -elevation + z
+                        if (LightSource.isLeft(lightSource)) -elevation - z else -elevation + z
                 val offsetY = if (LightSource.isTop(lightSource)) -elevation - z else -elevation + z
                 drawBitmap(it, offsetX + left, offsetY + top, null)
             }
             darkShadowBitmap?.let {
                 val offsetX =
-                    if (LightSource.isLeft(lightSource)) -elevation + z else -elevation - z
+                        if (LightSource.isLeft(lightSource)) -elevation + z else -elevation - z
                 val offsetY = if (LightSource.isTop(lightSource)) -elevation + z else -elevation - z
                 drawBitmap(it, offsetX + left, offsetY + top, null)
             }
@@ -61,7 +61,7 @@ internal class FlatShape(
                 CornerFamily.ROUNDED -> {
                     shape = GradientDrawable.RECTANGLE
                     cornerRadii = shapeAppearanceModel.getCornerRadii(
-                        min(bounds.width() / 2f, bounds.height() / 2f)
+                            min(bounds.width() / 2f, bounds.height() / 2f)
                     )
                 }
             }
@@ -95,14 +95,27 @@ internal class FlatShape(
         }
 
         val shadowElevation = drawableState.shadowElevation
-        val width = (w + shadowElevation * 2).roundToInt()
-        val height = (h + shadowElevation * 2).roundToInt()
-        return Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
-            .onCanvas {
-                withTranslation(shadowElevation, shadowElevation) {
-                    draw(this)
+        var width = (w + shadowElevation * 2).roundToInt()
+        var height = (h + shadowElevation * 2).roundToInt()
+        //By Manish Kumar
+        //To check width and height must be greater than 0
+        val updatewidth = if (width > 0) {
+            width
+        } else {
+            "200".toInt().also { width = it }
+        }
+        val updateheight = if (height > 0) {
+            height
+        } else {
+            "200".toInt().also { height = it }
+        }
+
+        return Bitmap.createBitmap(updatewidth, updateheight, Bitmap.Config.ARGB_8888)
+                .onCanvas {
+                    withTranslation(shadowElevation, shadowElevation) {
+                        draw(this)
+                    }
                 }
-            }
-            .blurred()
+                .blurred()
     }
 }
