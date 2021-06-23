@@ -9,21 +9,36 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
-import com.example.verifonevx990app.bankemi.BankEMIDataModal
+import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.FragmentEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerTenureBinding
+import com.example.verifonevx990app.main.EMICatalogueAndBannerImageModal
+import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMIDataTable
 import com.example.verifonevx990app.realmtables.IssuerParameterTable
 import com.example.verifonevx990app.vxUtils.*
+import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.io.Serializable
+import java.util.*
 
+/**
+This is a EMI Issuer List Page here we are fetching All Issuer Data with including including Issuer Name , Issuer ID and SchemeID and
+Displaying on UI:-
+================Written By Ajay Thakur on 11th June 2021====================
+ */
 class EMIIssuerList : Fragment() {
     private var binding: FragmentEmiIssuerListBinding? = null
     private var allIssuers: ArrayList<IssuerParameterTable> = arrayListOf()
@@ -31,16 +46,20 @@ class EMIIssuerList : Fragment() {
     private var allIssuerTenureList: MutableList<TenureBankModal> = mutableListOf()
     private val enquiryAmtStr by lazy { arguments?.getString("enquiryAmt") ?: "0" }
     private val mobileNumber by lazy { arguments?.getString("mobileNumber") ?: "" }
+    private var emiCatalogueImageList: MutableList<EMICatalogueAndBannerImageModal>? = null
     private var mobileNumberOnOff: Boolean = false
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val enquiryAmount by lazy { ((enquiryAmtStr.toFloat()) * 100).toLong() }
-    private val issuerListAdapter by lazy { IssuerListAdapter(allIssuerBankList) }
+    private val issuerListAdapter by lazy { IssuerListAdapter(temporaryAllIssuerList) }
     private val issuerTenureListAdapter by lazy {
         IssuerTenureListAdapter(
-            allIssuerTenureList,
+            temporaryAllTenureList,
             ::onTenureSelectedEvent
         )
     }
+    private var temporaryAllIssuerList = mutableListOf<IssuerBankModal>()
+    private var temporaryAllTenureList = mutableListOf<TenureBankModal>()
+    private var refreshedBanksByTenure = mutableListOf<IssuerBankModal>()
     private var firstClick = true
     private var iDialog: IDialog? = null
     private var brandEmiData: BrandEMIDataTable? = null
@@ -48,9 +67,9 @@ class EMIIssuerList : Fragment() {
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
     private var compareActionName: String? = null
-    private var bankNameList = mutableListOf<String>()
+    private var field57RequestData = ""
     private var selectedTenure: String? = null
-    private var bankEMISchemesDataList: MutableList<BankEMIDataModal> = mutableListOf()
+    private var brandEMISelectedData: BrandEMIDataTable? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -69,135 +88,54 @@ class EMIIssuerList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mobileNumberOnOff = !TextUtils.isEmpty(mobileNumber)
+        setUpRecyclerViews()
 
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
+            brandEMISelectedData = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
+            field57RequestData =
+                "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^${brandEMISelectedData?.brandID}" +
+                        "^${brandEMISelectedData?.productID}^^^$enquiryAmount"
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
+            field57RequestData =
+                if (AppPreference.getLongData(AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE) != 0L)
+                    "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^1^^^^${
+                        AppPreference.getLongData(
+                            AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE
+                        )
+                    }"
+                else
+                    "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^1^^^^$enquiryAmount"
         }
-
-        compareActionName = CompareActionType.COMPARE_BY_BANK.compareType
 
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
 
-        //region============Stub Dummy Data in Tenure List and Issuer Bank List for Test use:-
-        allIssuerBankList.clear()
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "HDFC DC",
-                "3 MONTHS",
-                "200",
-                R.drawable.hdfc_dc_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "AXIS",
-                "3 MONTHS",
-                "201",
-                R.drawable.axis_issuer_icon
-            )
-        )
-        allIssuerBankList.add(IssuerBankModal("SCB", "6 MONTHS", "202", R.drawable.scb_issuer_icon))
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "HDFC",
-                "6 MONTHS",
-                "203",
-                R.drawable.hdfc_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "ICICI",
-                "9 MONTHS",
-                "204",
-                R.drawable.icici_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "CITI",
-                "9 MONTHS",
-                "205",
-                R.drawable.citi_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "SBI Card",
-                "12 MONTHS",
-                "206",
-                R.drawable.sbi_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "Indusind",
-                "12 MONTHS",
-                "207",
-                R.drawable.indusind_issuer_icon
-            )
-        )
-        allIssuerBankList.add(
-            IssuerBankModal(
-                "KOTAK",
-                "20 MONTHS",
-                "208",
-                R.drawable.kotak_issuer_icon
-            )
-        )
+        //Request All Scheme Data from Host:-
+        Log.d("CompareActioneName:- ", compareActionName ?: "")
+        getAllBanksTenureAndSchemeData()
 
-        allIssuerTenureList.clear()
-        allIssuerTenureList.add(TenureBankModal("3 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("6 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("9 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("12 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("15 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("20 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("24 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("36 MONTHS"))
-        allIssuerTenureList.add(TenureBankModal("NO EMI ONLY CASHBACK"))
-        //endregion
-
-        val ipt = IssuerParameterTable.selectFromIssuerParameterTableOnConditionBase()
-        allIssuers = ipt as ArrayList<IssuerParameterTable>
-
-        //region===========Getting Brand , Category , Sub-Category and Product Data from Brand Table:-
-        //brandEmiData = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
-        //endregion
-
-        //region=============Show/Hide Select All Button on basis of mobileNumberOnOff:-
-        //binding?.selectAllCV?.visibility = View.VISIBLE
         binding?.headingText?.text = getString(R.string.calculate_and_compare_emi_offers)
-        //endregion
-
-        //region==========Binding Tenure RecyclerView:-
-        binding?.tenureRV?.apply {
-            layoutManager = GridLayoutManager(activity, 3)
-            adapter = issuerTenureListAdapter
-        }
-        //endregion
-        //region==========Binding Issuer Bank RecyclerView SetUp:-
-        binding?.issuerRV?.apply {
-            layoutManager = GridLayoutManager(activity, 3)
-            adapter = issuerListAdapter
-        }
-        //endregion
 
         //region=================Select All CheckBox OnClick Event:-
-        binding?.selectAllBankCheckButton?.setOnCheckedChangeListener { _, ischecked ->
-            if (ischecked) {
+        binding?.selectAllBankCheckButton?.setOnClickListener {
+            if (binding?.selectAllBankCheckButton?.isChecked == true) {
                 binding?.selectAllBankCheckButton?.text = getString(R.string.unselect_all_banks)
                 iDialog?.showProgress()
-                issuerListAdapter.selectAllIssuerBank(true)
+                issuerListAdapter.selectAllIssuerBank(
+                    true,
+                    CompareActionType.COMPARE_BY_TENURE.compareType
+                )
                 iDialog?.hideProgress()
             } else {
                 binding?.selectAllBankCheckButton?.text = getString(R.string.select_all_banks)
                 iDialog?.showProgress()
-                issuerListAdapter.selectAllIssuerBank(false)
+                issuerListAdapter.selectAllIssuerBank(
+                    false,
+                    CompareActionType.COMPARE_BY_TENURE.compareType
+                )
                 iDialog?.hideProgress()
             }
         }
@@ -218,33 +156,154 @@ class EMIIssuerList : Fragment() {
         //region===============Proceed EMI Catalogue button onClick Event:-
         binding?.proceedEMICatalogue?.setOnClickListener { proceedToCompareFragmentScreen() }
         //endregion
+    }
 
-        //region===============Below Code will Execute EveryTime Merchant Came to This Screen:-
-        compareByBankSelectEventMethod()
+    //region=================SetUp Tenure and Banks Recyclerview:-
+    private fun setUpRecyclerViews() {
+        //region==========Binding Tenure RecyclerView:-
+        binding?.tenureRV?.apply {
+            layoutManager = GridLayoutManager(activity, 3)
+            itemAnimator = DefaultItemAnimator()
+            adapter = issuerTenureListAdapter
+        }
+        //endregion
+
+        //region==========Binding Issuer Bank RecyclerView SetUp:-
+        binding?.issuerRV?.apply {
+            layoutManager = GridLayoutManager(activity, 3)
+            itemAnimator = DefaultItemAnimator()
+            adapter = issuerListAdapter
+        }
         //endregion
     }
+    //endregion
+
+
+    //region=========================Get All Banks Tenure and Scheme Data From Host:-
+    private fun getAllBanksTenureAndSchemeData() {
+        iDialog?.showProgress()
+        var emiISOData: IsoDataWriter? = null
+
+        //region==============================Creating ISO Packet For BrandEMIMasterSubCategoryData Request:-
+        runBlocking(Dispatchers.IO) {
+            CreateBrandEMIPacket(field57RequestData) {
+                emiISOData = it
+            }
+        }
+        //endregion
+
+        //region==============================Host Hit To Fetch BrandEMIProduct Data:-
+        lifecycleScope.launch(Dispatchers.IO) {
+            if (emiISOData != null) {
+                val byteArrayRequest = emiISOData?.generateIsoByteRequest()
+                HitServer.hitServer(byteArrayRequest!!, { result, success ->
+                    if (success && !TextUtils.isEmpty(result)) {
+                        val responseIsoData: IsoDataReader = readIso(result, false)
+                        logger("Transaction RESPONSE ", "---", "e")
+                        logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
+                        Log.e(
+                            "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
+                                .toString() + "---->" + responseIsoData.isoMap[58]?.parseRaw2String()
+                                .toString()
+                        )
+
+                        val responseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
+                        val hostMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
+                        val emiIssuerData = responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                        when (responseCode) {
+                            "00" -> {
+                                ROCProviderV2.incrementFromResponse(
+                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                    AppPreference.getBankCode()
+                                )
+                                parseAndStubbingBankEMICatalogueDataToList(emiIssuerData)
+                            }
+                            "-1" -> {
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    iDialog?.hideProgress()
+                                    iDialog?.alertBoxWithAction(null, null,
+                                        getString(R.string.info), "No Record Found",
+                                        false, getString(R.string.positive_button_ok),
+                                        {
+                                            parentFragmentManager.popBackStackImmediate()
+                                        }, {})
+                                }
+                            }
+                            else -> {
+                                ROCProviderV2.incrementFromResponse(
+                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                    AppPreference.getBankCode()
+                                )
+                            }
+                        }
+                    } else {
+                        ROCProviderV2.incrementFromResponse(
+                            ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                            AppPreference.getBankCode()
+                        )
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            iDialog?.hideProgress()
+                            iDialog?.alertBoxWithAction(null, null,
+                                getString(R.string.error), result,
+                                false, getString(R.string.positive_button_ok),
+                                { parentFragmentManager.popBackStackImmediate() }, {})
+                        }
+                    }
+                }, {})
+            }
+        }
+    }
+    //endregion
 
     //region============================Proceed To Compare Fragment Screen:-
     private fun proceedToCompareFragmentScreen() {
-        val dataLength = allIssuerBankList.size
-        var selectedIssuerIDS = ""
-        for (i in 0 until dataLength) {
-            if (allIssuerBankList[i].isIssuerSelected == true) {
-                selectedIssuerIDS = "$selectedIssuerIDS,${allIssuerBankList[i].issuerID}"
-                bankNameList.add(allIssuerBankList[i].issuerBankName ?: "")
+        //region===========Condition to Check When Compare By Bank is Selected and Single Bank is Selected:-
+        when (compareActionName) {
+            CompareActionType.COMPARE_BY_BANK.compareType -> {
+                val selectedIssuerNameData =
+                    temporaryAllIssuerList.filter { it.isIssuerSelected == true }
+                val selectedIssuerNameFullData =
+                    allIssuerBankList.filter { it.issuerSchemeID == selectedIssuerNameData[0].issuerSchemeID }
+                if (selectedIssuerNameFullData.isNotEmpty()) {
+                    (activity as MainActivity).transactFragment(EMICompareFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("compareActionName", compareActionName)
+                            putSerializable("type", action)
+                            putParcelableArrayList(
+                                "dataModal",
+                                selectedIssuerNameFullData as java.util.ArrayList<out Parcelable>
+                            )
+                        }
+                    })
+                } else {
+                    VFService.showToast(getString(R.string.please_select_one_issuer_bank))
+                }
+            }
+            CompareActionType.COMPARE_BY_TENURE.compareType -> {
+                val selectedIssuerNameData =
+                    refreshedBanksByTenure.filter { it.isIssuerSelected == true }
+                val tenureWiseSelectedIssuerFullData = mutableListOf<IssuerBankModal>()
+                for (value in selectedIssuerNameData) {
+                    tenureWiseSelectedIssuerFullData.addAll(allIssuerBankList.filter { it.issuerSchemeID == value.issuerSchemeID && it.issuerBankTenure == selectedTenure })
+                }
+                if (tenureWiseSelectedIssuerFullData.isNotEmpty()) {
+                    (activity as MainActivity).transactFragment(EMICompareFragment().apply {
+                        arguments = Bundle().apply {
+                            putString("compareActionName", compareActionName)
+                            putSerializable("type", action)
+                            putParcelableArrayList(
+                                "dataModal",
+                                tenureWiseSelectedIssuerFullData as java.util.ArrayList<out Parcelable>
+                            )
+                        }
+                    })
+                } else {
+                    VFService.showToast(getString(R.string.please_select_one_or_multiple_issuer_banks))
+                }
+                Log.d("TWSIFD:- ", tenureWiseSelectedIssuerFullData.toString())
             }
         }
-        Log.d("IssuerSelected:- ", selectedIssuerIDS)
-        (activity as MainActivity).transactFragment(EMICompareFragment().apply {
-            arguments = Bundle().apply {
-                putString("compareActionName", compareActionName)
-                putSerializable("type", action)
-                putString("selectedTenure", selectedTenure ?: "")
-                putParcelableArrayList(
-                    "dataModal",
-                    allIssuerBankList.filter { it.isIssuerSelected == true } as java.util.ArrayList<out Parcelable>)
-            }
-        })
+        //endregion
     }
     //endregion
 
@@ -260,8 +319,10 @@ class EMIIssuerList : Fragment() {
         binding?.selectBankHeadingText?.visibility = View.GONE
         binding?.selectBankHeadingText?.text = getString(R.string.select_banks_to_compare)
         binding?.selectAllBankCheckButton?.visibility = View.GONE
-        issuerListAdapter.refreshBankList(allIssuerBankList, isFirstFilter = true)
-        issuerListAdapter.selectAllIssuerBank(false)
+        issuerListAdapter.selectAllIssuerBank(
+            false,
+            CompareActionType.COMPARE_BY_TENURE.compareType
+        )
         issuerListAdapter.unCheckAllIssuerBankRadioButton()
         compareActionName = CompareActionType.COMPARE_BY_TENURE.compareType
         iDialog?.hideProgress()
@@ -278,8 +339,11 @@ class EMIIssuerList : Fragment() {
         binding?.selectBankHeadingText?.visibility = View.VISIBLE
         binding?.selectBankHeadingText?.text = getString(R.string.select_bank_to_compare_tenure)
         binding?.selectAllBankCheckButton?.visibility = View.GONE
-        issuerListAdapter.refreshBankList(allIssuerBankList, isFirstFilter = false)
-        issuerListAdapter.selectAllIssuerBank(false)
+        runBlocking {
+            temporaryAllIssuerList = allIssuerBankList.distinctBy { it.issuerID }.toMutableList()
+        }
+        issuerListAdapter.refreshBankList(temporaryAllIssuerList)
+        issuerListAdapter.selectAllIssuerBank(false, CompareActionType.COMPARE_BY_BANK.compareType)
         issuerTenureListAdapter.unCheckAllTenureRadioButton()
         binding?.issuerRV?.visibility = View.VISIBLE
         compareActionName = CompareActionType.COMPARE_BY_BANK.compareType
@@ -290,15 +354,19 @@ class EMIIssuerList : Fragment() {
     //region===================OnTenureSelectedEvent:-
     private fun onTenureSelectedEvent(position: Int) {
         if (position > -1) {
-            selectedTenure = allIssuerTenureList[position].bankTenure ?: ""
+            selectedTenure = temporaryAllTenureList[position].bankTenure ?: ""
             iDialog?.showProgress()
             binding?.selectAllBankCheckButton?.isChecked = false
-            val refreshedBanks = allIssuerBankList.filter {
-                it.issuerBankTenure == allIssuerTenureList[position].bankTenure
+            Log.d("GsonResponse:- ", Gson().toJson(allIssuerBankList))
+            refreshedBanksByTenure = allIssuerBankList.filter {
+                it.issuerBankTenure == temporaryAllTenureList[position].bankTenure
             } as MutableList<IssuerBankModal>
-            if (refreshedBanks.isNotEmpty()) {
-                refreshIssuerBankOnTenureSelection(refreshedBanks)
-                issuerListAdapter.selectAllIssuerBank(false)
+            if (refreshedBanksByTenure.isNotEmpty()) {
+                refreshIssuerBankOnTenureSelection(refreshedBanksByTenure)
+                issuerListAdapter.selectAllIssuerBank(
+                    false,
+                    CompareActionType.COMPARE_BY_TENURE.compareType
+                )
             } else {
                 binding?.selectBankHeadingText?.visibility = View.GONE
                 binding?.selectAllBankCheckButton?.visibility = View.GONE
@@ -311,7 +379,7 @@ class EMIIssuerList : Fragment() {
 
     //region===================Refresh Issuer Bank List on Tenure Selection in RecyclerView:-
     private fun refreshIssuerBankOnTenureSelection(refreshBankList: MutableList<IssuerBankModal>) {
-        issuerListAdapter.refreshBankList(refreshBankList, isFirstFilter = true)
+        issuerListAdapter.refreshBankList(refreshBankList)
         if (refreshBankList.size == 1) {
             binding?.selectBankHeadingText?.text = getString(R.string.select_bank)
             binding?.selectAllBankCheckButton?.visibility = View.GONE
@@ -332,100 +400,31 @@ class EMIIssuerList : Fragment() {
     }
     //endregion
 
+    override fun onStop() {
+        super.onStop()
+        compareActionName = null
+        allIssuerBankList.clear()
+        allIssuerTenureList.clear()
+        temporaryAllIssuerList.clear()
+        temporaryAllTenureList.clear()
+        refreshedBanksByTenure.clear()
+        totalRecord = "0"
+        moreDataFlag = "0"
+        totalRecord = "0"
+        perPageRecord = "0"
+        selectedTenure = null
+    }
+
     override fun onDetach() {
         super.onDetach()
         iDialog = null
     }
 
-    /* //region==================Do EMI Enquiry:-
-     private fun proceedEMICatalogueWithIssuer(selectedIssuerIDs: String) {
-         val requestType = if (mobileNumberOnOff) "8" else "4"
-         val skipRecordCount = "0"
-         val brandID = if (!TextUtils.isEmpty(brandEmiData?.brandID)) brandEmiData?.brandID else "01"
-         val productID =
-             if (!TextUtils.isEmpty(brandEmiData?.productID)) brandEmiData?.productID else "0"
-         val serialNumber = ""
-         val imeiNumber = ""
-         val emiAmount = enquiryAmount
-         val capturedMobileNumber = mobileNumber
-         if (allIssuers.size > 0) {
-             (activity as MainActivity).showProgress()
-             val dF57 =
-                 "$requestType^$skipRecordCount^$brandID^$productID^$serialNumber^$imeiNumber^$emiAmount^$selectedIssuerIDs^$capturedMobileNumber"
-             Log.d("Field57:- ", dF57)
-             val isoPacket =
-                 runBlocking(Dispatchers.IO) { CreateEMIEnquiryTransactionPacket(dF57).createTransactionPacket() }
-             GlobalScope.launch(Dispatchers.IO) {
-                 SyncEmiEnquiryToHost(activity as MainActivity) { syncStatus, responseIsoReader, responseMsg ->
-                     (activity as MainActivity).hideProgress()
-                     if (syncStatus) {
-                         if (mobileNumberOnOff) {
-                             GlobalScope.launch(Dispatchers.Main) {
-                                 (activity as MainActivity).alertBoxWithAction(null,
-                                     null,
-                                     "",
-                                     getString(R.string.sms_sent_to_mob),
-                                     false,
-                                     "",
-                                     { alertPositiveCallback ->
-                                         if (alertPositiveCallback)
-                                             startActivity(
-                                                 Intent(
-                                                     activity,
-                                                     MainActivity::class.java
-                                                 ).apply {
-                                                     flags =
-                                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                 })
-                                     },
-                                     {})
-                             }
-                         } else {
-                             try {
-                                 parseAndStubbingBankEMIEnquiryDataToList(
-                                     responseIsoReader?.isoMap?.get(
-                                         57
-                                     )?.parseRaw2String().toString()
-                                 ) { bankEmiEnquiryData ->
-                                     (activity as MainActivity).transactFragment(
-                                         EMiEnquiryOnPosActivity().apply {
-                                             arguments = Bundle().apply {
-                                                 putParcelableArrayList(
-                                                     "bankEnquiryData",
-                                                     bankEmiEnquiryData as ArrayList<out Parcelable>
-                                                 )
-                                                 putString("enquiryAmt", enquiryAmtStr)
-                                                 putSerializable("type", action)
-                                                 if (bankNameList.size == 1)
-                                                     putString("bankName", bankNameList[0])
-                                             }
-                                         })
-                                 }
-                             } catch (ex: Exception) {
-                                 ex.printStackTrace()
-                             }
-                         }
-                     } else {
-                         VFService.showToast(responseMsg.toString())
-                     }
-                 }.synToHost(isoPacket)
-             }
-         } else {
-             VFService.showToast("Select an Issuer \nFor further process")
-         }
-     }
-     //endregion*/
-
     //region=================Parse and Stubbing BankEMI Data To List:-
-    private fun parseAndStubbingBankEMIEnquiryDataToList(
-        bankEMIEnquiryHostResponseData: String, cb: (MutableList<BankEMIDataModal>) -> Unit
-    ) {
-
-        if (!TextUtils.isEmpty(bankEMIEnquiryHostResponseData)) {
-            val parsingDataWithCurlyBrace =
-                parseDataListWithSplitter("}", bankEMIEnquiryHostResponseData)
+    private fun parseAndStubbingBankEMICatalogueDataToList(bankEMICatalogueHostResponseData: String) {
+        if (!TextUtils.isEmpty(bankEMICatalogueHostResponseData)) {
             val parsingDataWithVerticalLineSeparator =
-                parseDataListWithSplitter("|", parsingDataWithCurlyBrace[0])
+                parseDataListWithSplitter("|", bankEMICatalogueHostResponseData)
             if (parsingDataWithVerticalLineSeparator.isNotEmpty()) {
                 moreDataFlag = parsingDataWithVerticalLineSeparator[0]
                 perPageRecord = parsingDataWithVerticalLineSeparator[1]
@@ -438,14 +437,15 @@ class EMIIssuerList : Fragment() {
                     parsingDataWithVerticalLineSeparator.size
                 )
 
+                //region=========================Stub Data in AllIssuerList:-
                 for (i in tempDataList.indices) {
                     if (!TextUtils.isEmpty(tempDataList[i])) {
                         val splitData = parseDataListWithSplitter(
                             SplitterTypes.CARET.splitter,
                             tempDataList[i]
                         )
-                        bankEMISchemesDataList.add(
-                            BankEMIDataModal(
+                        allIssuerBankList.add(
+                            IssuerBankModal(
                                 splitData[0], splitData[1],
                                 splitData[2], splitData[3],
                                 splitData[4], splitData[5],
@@ -456,18 +456,59 @@ class EMIIssuerList : Fragment() {
                                 splitData[14], splitData[15],
                                 splitData[16], splitData[17],
                                 splitData[18], splitData[19],
-                                splitData[20]
+                                splitData[20], splitData[21],
+                                splitData[22], splitData[23]
                             )
                         )
                     }
                 }
-                Log.d("Total BankEMI Data:- ", bankEMISchemesDataList.toString())
-                Log.d("Total BankEMI TAndC:- ", parsingDataWithCurlyBrace[1])
-                cb(bankEMISchemesDataList)
+                //endregion
 
-            }
-        }
+                //region========================Stub Data in AllTenureList:-
+                if (allIssuerBankList.isNotEmpty()) {
+                    val dataLength = allIssuerBankList.size
+                    for (i in 0 until dataLength)
+                        allIssuerTenureList.add(
+                            TenureBankModal(
+                                allIssuerBankList[i].issuerBankTenure,
+                                isTenureSelected = false
+                            )
+                        )
+                }
+                //endregion
 
+                Log.d("AllIssuerList:- ", allIssuerBankList.toString())
+                Log.d("AllTenureList:- ", allIssuerTenureList.toString())
+
+                if (allIssuerBankList.isNotEmpty() && allIssuerTenureList.isNotEmpty()) {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        AppPreference.setLongData(
+                            AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE,
+                            enquiryAmount
+                        )
+                        temporaryAllIssuerList =
+                            allIssuerBankList.distinctBy { it.issuerID }.toMutableList()
+                        temporaryAllTenureList =
+                            allIssuerTenureList.distinctBy { it.bankTenure }.toMutableList()
+                        withContext(Dispatchers.Main) {
+                            compareActionName = CompareActionType.COMPARE_BY_BANK.compareType
+                            issuerListAdapter.refreshBankList(temporaryAllIssuerList)
+                            issuerTenureListAdapter.refreshTenureList(temporaryAllTenureList)
+                            Log.d("DistinctIssuer:-", temporaryAllIssuerList.toString())
+                            Log.d("DistinctTenure:-", temporaryAllIssuerList.toString())
+
+                            //region===============Below Code will Execute EveryTime Merchant Came to This Screen:-
+                            compareByBankSelectEventMethod()
+                            iDialog?.hideProgress()
+                            //endregion
+                        }
+                    }
+                } else
+                    iDialog?.hideProgress()
+            } else
+                iDialog?.hideProgress()
+        } else
+            iDialog?.hideProgress()
         //endregion
     }
     //endregion
@@ -477,7 +518,7 @@ class EMIIssuerList : Fragment() {
 class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
     RecyclerView.Adapter<IssuerListAdapter.IssuerListViewHolder>() {
 
-    var isFirstFilter: Boolean = false
+    var compareActionName: String? = null
     var index = -1
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): IssuerListViewHolder {
@@ -491,10 +532,27 @@ class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
 
     override fun onBindViewHolder(holder: IssuerListViewHolder, position: Int) {
         val modal = issuerList[position]
-        holder.viewBinding.issuerBankLogo.setImageResource(modal.bankLogo)
+        val resource: Int? = when (modal.issuerBankName?.toLowerCase(Locale.ROOT)?.trim()) {
+            "hdfc bank cc" -> R.drawable.hdfc_issuer_icon
+            "hdfc bank dc" -> R.drawable.hdfc_dc_issuer_icon
+            "sbi card" -> R.drawable.sbi_issuer_icon
+            "citi" -> R.drawable.citi_issuer_icon
+            "icici" -> R.drawable.icici_issuer_icon
+            "yes" -> R.drawable.yes_issuer_icon
+            "kotak" -> R.drawable.kotak_issuer_icon
+            "rbl" -> R.drawable.rbl_issuer_icon
+            "scb" -> R.drawable.scb_issuer_icon
+            "axis" -> R.drawable.axis_issuer_icon
+            "indusind" -> R.drawable.indusind_issuer_icon
+            else -> null
+        }
+        //val bitmap = MediaStore.Images.Media.getBitmap(VerifoneApp.appContext.contentResolver, emiCatalogueImageList?.get(position)?.imagePath)
+        if (resource != null) {
+            holder.viewBinding.issuerBankLogo.setImageResource(resource)
+        }
 
         //region===============Below Code will only execute in case of Multiple Selection:-
-        if (isFirstFilter) {
+        if (compareActionName == CompareActionType.COMPARE_BY_TENURE.compareType) {
             if (modal.isIssuerSelected == true) {
                 holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
             } else {
@@ -504,7 +562,7 @@ class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
         //endregion
 
         holder.viewBinding.issuerBankLogo.setOnClickListener {
-            if (isFirstFilter) {
+            if (compareActionName == CompareActionType.COMPARE_BY_TENURE.compareType) {
                 modal.isIssuerSelected = !modal.isIssuerSelected!!
                 holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
             } else {
@@ -514,7 +572,7 @@ class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
         }
 
         //region=================Below Code will execute in case of Single Issuer Bank Selection:-
-        if (!isFirstFilter) {
+        if (compareActionName == CompareActionType.COMPARE_BY_BANK.compareType) {
             if (index == position) {
                 modal.isIssuerSelected = true
                 holder.viewBinding.issuerCheckedIV.visibility = View.VISIBLE
@@ -533,16 +591,16 @@ class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
 
 
     //region==================Refresh Bank List Data on UI:-
-    fun refreshBankList(refreshBankList: MutableList<IssuerBankModal>, isFirstFilter: Boolean) {
+    fun refreshBankList(refreshBankList: MutableList<IssuerBankModal>) {
         this.issuerList = refreshBankList
-        this.isFirstFilter = isFirstFilter
         notifyDataSetChanged()
     }
     //endregion
 
     //region===============Select All Issuer Bank:-
-    fun selectAllIssuerBank(isAllStatus: Boolean) {
+    fun selectAllIssuerBank(isAllStatus: Boolean, compareAction: String) {
         val dataSize = issuerList.size
+        this.compareActionName = compareAction
         for (i in 0 until dataSize) {
             when (isAllStatus) {
                 true -> issuerList[i].isIssuerSelected = true
@@ -581,7 +639,8 @@ class IssuerTenureListAdapter(
 
     override fun onBindViewHolder(holder: IssuerTenureListViewHolder, position: Int) {
         val modal = issuerTenureList[position]
-        holder.viewBinding.tenureRadioButton.text = modal.bankTenure
+        val tenureData = "${modal.bankTenure} Months"
+        holder.viewBinding.tenureRadioButton.text = tenureData
 
         //region===============Below Code will only execute in case of Single Radio Button Selection:-
         holder.viewBinding.tenureRadioButton.isChecked = index == position
@@ -607,14 +666,43 @@ class IssuerTenureListAdapter(
         notifyDataSetChanged()
     }
     //endregion
+
+    //region===================Refresh EMI Tenure List:-
+    fun refreshTenureList(refreshTenureList: MutableList<TenureBankModal>) {
+        this.issuerTenureList = refreshTenureList
+        notifyDataSetChanged()
+    }
+    //endregion
 }
 //endregion
 
 //region====================Data Modal Class:-
 @Parcelize
 data class IssuerBankModal(
-    val issuerBankName: String?, val issuerBankTenure: String?,
-    var issuerID: String, var bankLogo: Int,
+    var issuerBankTenure: String,
+    var tenureInterestRate: String,
+    var effectiveRate: String,
+    var discountModel: String,
+    var transactionAmount: String = "0",
+    var discountAmount: String = "0",
+    var discountFixedValue: String,
+    var discountPercentage: String,
+    var loanAmount: String = "0",
+    var emiAmount: String,
+    var totalEmiPay: String,
+    var processingFee: String,
+    var processingRate: String,
+    var totalProcessingFee: String,
+    var totalInterestPay: String = "0",
+    val cashBackAmount: String = "0",
+    var netPay: String,
+    var tenureTAndC: String,
+    var tenureWiseDBDTAndC: String,
+    var discountCalculatedValue: String,
+    var cashBackCalculatedValue: String,
+    var issuerID: String,
+    var issuerBankName: String?,
+    var issuerSchemeID: String?,
     var isIssuerSelected: Boolean? = false
 ) : Parcelable
 

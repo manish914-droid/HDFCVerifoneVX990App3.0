@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+<LinearLayout
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+
+    android:orientation="vertical"
+   >
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible" />
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
+        android:padding="@dimen/pad_16">
+
+        <!--Enter Auth Complete Amount-->
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/enterAmount_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pad_8"
+            android:visibility="visible"
+
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+
+            app:neumorph_strokeWidth="@dimen/pad_1">
+
+            <com.example.verifonevx990app.vxUtils.AmountEditText
+                android:id="@+id/amount_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_8"
+                android:layout_marginBottom="@dimen/pad_16"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:digits="0123456789"
+                android:drawableStart="@drawable/ic_indian_rupee"
+                android:ems="10"
+                android:focusable="false"
+                android:gravity="center"
+                android:hint="@string/enter_amount"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:lines="1"
+                android:maxLength="11"
+                android:paddingStart="@dimen/pad_8"
+
+                android:paddingEnd="@dimen/pad_8"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_color"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="bold"
+
+                />
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <!--VPA-->
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/vpa_crd_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pad_8"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+
+            app:neumorph_strokeWidth="@dimen/pad_1">
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/vpa_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_8"
+                android:layout_marginBottom="@dimen/pad_16"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:drawableStart="@drawable/ic_batch_no_img"
+                android:ems="10"
+                android:focusable="false"
+                android:gravity="center"
+                android:hint="@string/vpa"
+                android:imeOptions="actionDone"
+                android:inputType="textEmailAddress"
+                android:lines="1"
+
+                android:paddingStart="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_8"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_color"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular" />
+
+
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <!--Mobile no-->
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/mobile_crd_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pad_8"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+
+            app:neumorph_strokeWidth="@dimen/pad_1">
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/mobileno_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/pad_8"
+                android:layout_marginBottom="@dimen/pad_16"
+                android:background="@null"
+                android:cursorVisible="false"
+                android:digits="0123456789"
+                android:drawableStart="@drawable/ic_mobile_icon"
+                android:ems="10"
+                android:focusable="false"
+                android:gravity="center"
+                android:imeOptions="actionDone"
+                android:inputType="number"
+                android:lines="1"
+                android:maxLength="13"
+                android:paddingStart="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_8"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_color"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular" />
+        </com.example.customneumorphic.NeumorphCardView>
+
+        <!--Description-->
+        <com.example.customneumorphic.NeumorphCardView
+            android:id="@+id/descr_crd_view"
+            style="@style/Widget.Neumorph.CardView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pad_8"
+            android:visibility="visible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/title_tv"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
+
+            app:neumorph_strokeWidth="@dimen/pad_1">
+
+            <com.example.verifonevx990app.vxUtils.BHEditText
+                android:id="@+id/description_et"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+
+                android:layout_marginTop="@dimen/pad_8"
+                android:layout_marginBottom="@dimen/pad_16"
+                android:background="@null"
+                android:cursorVisible="false"
+
+                android:drawableStart="@drawable/ic_batch_no_img"
+                android:ems="10"
+                android:focusable="false"
+                android:gravity="center"
+                android:textAllCaps="true"
+                android:hint="@string/enter_description_optional"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:maxLines="4"
+
+                android:paddingStart="@dimen/pad_8"
+                android:paddingEnd="@dimen/pad_8"
+                android:textColor="@color/white"
+                android:textColorHint="@color/hint_color"
+                android:textSize="@dimen/text_size_regular"
+                app:fname="regular" />
+        </com.example.customneumorphic.NeumorphCardView>
+
+
+
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/proceed_dgp"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="@dimen/pad_40"
+            android:layout_marginTop="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_40"
+            android:text="@string/proceed"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_xsmall"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:neumorph_inset="@dimen/pad_14"
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+
+    </LinearLayout>
+
+
+</LinearLayout>
+
+</androidx.core.widget.NestedScrollView>

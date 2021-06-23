@@ -60,7 +60,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="400000"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -75,7 +76,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="1000"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -90,7 +92,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="400000"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -105,7 +108,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="9.9%"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -120,7 +124,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="1222"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -135,7 +140,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="450000"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -150,7 +156,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="0.00"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -165,7 +172,8 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="450000"
+                android:hint="@string/_500_00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -180,7 +188,7 @@
                 android:layout_height="60dp"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:text="0.00"
+                android:textColorHint="@color/white"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </androidx.appcompat.widget.LinearLayoutCompat>

@@ -821,7 +821,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                             GlobalScope.launch(Dispatchers.Main) {
                                                 iDiag?.showProgress(getString(R.string.printing_detail))
                                             }
-                                            PrintUtil(activity).printDetailReport(bat, activity) {
+                                            PrintUtil(activity).printDetailReportupdate(bat, activity) {
                                                 iDiag?.hideProgress()
                                             }
                                             //   printDetail(bat)
@@ -884,7 +884,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                             )
                                         }
                                         try {
-                                            PrintUtil(context).printSettlementReport(
+                                            PrintUtil(context).printSettlementReportupdate(
                                                 context,
                                                 batList
                                             ) {
@@ -950,7 +950,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 }
                                 GlobalScope.launch {
                                     try {
-                                        PrintUtil(context).printReversal(context) {
+                                        PrintUtil(context).printReversal(context,"") {
                                             //  VFService.showToast(it)
                                             iDiag?.hideProgress()
                                         }
@@ -1011,7 +1011,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
                                     if (batList1 != null) {
                                         try {
-                                            PrintUtil(context).printSettlementReport(
+                                            PrintUtil(context).printSettlementReportupdate(
                                                 context,
                                                 batList1 as MutableList<BatchFileDataTable>,
                                                 isSettlementSuccess = false,

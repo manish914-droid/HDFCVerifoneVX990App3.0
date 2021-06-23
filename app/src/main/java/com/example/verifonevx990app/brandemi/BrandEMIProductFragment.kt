@@ -3,7 +3,9 @@ package com.example.verifonevx990app.brandemi
 import android.content.Context
 import android.os.Bundle
 import android.os.Parcelable
+import android.text.Editable
 import android.text.TextUtils
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -34,6 +36,7 @@ class BrandEMIProductFragment : Fragment() {
     private var iDialog: IDialog? = null
     private var isSubCategoryItemPresent: Boolean = false
     private val brandEmiProductDataList by lazy { mutableListOf<BrandEMIProductDataModal>() }
+    private val brandEmiSearchedProductDataList by lazy { mutableListOf<BrandEMIProductDataModal>() }
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var brandEMIDataModal: BrandEMIDataModal? = null
     private var selectedProductUpdatedPosition = -1
@@ -41,7 +44,8 @@ class BrandEMIProductFragment : Fragment() {
     private var moreDataFlag = "0"
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
-    private val brandEMIMasterSubCategoryAdapter by lazy {
+    private var searchedProductName: String? = null
+    private val brandEMIProductAdapter by lazy {
         BrandEMIProductAdapter(
             brandEmiProductDataList,
             ::onProductSelected
@@ -101,6 +105,33 @@ class BrandEMIProductFragment : Fragment() {
         binding?.brandEmiProductFloatingButton?.visibility = View.GONE
 
         Log.d("BrandDataModal:- ", Gson().toJson(brandEMIDataModal))
+
+
+        //region=================Search Button to Fetch Searched Product From Host on Click event:-
+        binding?.searchButton?.setOnClickListener {
+            hideSoftKeyboard(requireActivity())
+            searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
+            totalRecord = "0"
+            brandEmiSearchedProductDataList.clear()
+            field57RequestData =
+                "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
+            fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
+        }
+        //endregion
+
+        //region================Product Search EditText TextChangeListener event:-
+        binding?.productSearchET?.addTextChangedListener(object : TextWatcher {
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+            override fun afterTextChanged(p0: Editable?) {
+                if (TextUtils.isEmpty(p0.toString())) {
+                    brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
+                    binding?.brandEmiProductRV?.smoothScrollToPosition(0)
+                    hideSoftKeyboard(requireActivity())
+                }
+            }
+        })
+        //endregion
     }
 
     //region========================Navigate Product Page To Input Amount Fragment:-
@@ -143,15 +174,16 @@ class BrandEMIProductFragment : Fragment() {
         binding?.brandEmiProductRV?.apply {
             layoutManager = LinearLayoutManager(context)
             itemAnimator = DefaultItemAnimator()
-            adapter = brandEMIMasterSubCategoryAdapter
+            adapter = brandEMIProductAdapter
         }
     }
     //endregion
 
     //region===============================Hit Host to Fetch BrandEMIProduct Data:-
-    private fun fetchBrandEMIProductDataFromHost() {
+    private fun fetchBrandEMIProductDataFromHost(isSearchedDataCall: Boolean = false) {
         iDialog?.showProgress()
         var brandEMIProductISOData: IsoDataWriter? = null
+
         //region==============================Creating ISO Packet For BrandEMIMasterSubCategoryData Request:-
         runBlocking(Dispatchers.IO) {
             CreateBrandEMIPacket(field57RequestData) {
@@ -188,10 +220,17 @@ class BrandEMIProductFragment : Fragment() {
                                 )
                                 GlobalScope.launch(Dispatchers.Main) {
                                     //Processing BrandEMIMasterSubCategoryData:-
-                                    stubbingBrandEMIProductDataToList(
-                                        brandEMIProductData,
-                                        hostMsg
-                                    )
+                                    if (isSearchedDataCall) {
+                                        stubbingBrandEMISearchedProductDataToList(
+                                            brandEMIProductData,
+                                            hostMsg
+                                        )
+                                    } else {
+                                        stubbingBrandEMIProductDataToList(
+                                            brandEMIProductData,
+                                            hostMsg
+                                        )
+                                    }
                                 }
                             }
                             "-1" -> {
@@ -272,7 +311,7 @@ class BrandEMIProductFragment : Fragment() {
                     }
 
                     if (brandEmiProductDataList.isNotEmpty()) {
-                        brandEMIMasterSubCategoryAdapter.refreshAdapterList(brandEmiProductDataList)
+                        brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
                     }
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
@@ -284,6 +323,70 @@ class BrandEMIProductFragment : Fragment() {
                     } else {
                         iDialog?.hideProgress()
                         Log.d("Full Product Data:- ", Gson().toJson(brandEmiProductDataList))
+                    }
+                }
+            } else {
+                GlobalScope.launch(Dispatchers.Main) {
+                    iDialog?.hideProgress()
+                }
+            }
+        }
+    }
+    //endregion
+
+    //region=================================Stubbing BrandEMI Searched Product Data and Display in List:-
+    private fun stubbingBrandEMISearchedProductDataToList(
+        brandEMIProductData: String,
+        hostMsg: String
+    ) {
+        GlobalScope.launch(Dispatchers.Main) {
+            if (!TextUtils.isEmpty(brandEMIProductData)) {
+                val dataList = parseDataListWithSplitter("|", brandEMIProductData)
+                if (dataList.isNotEmpty()) {
+                    moreDataFlag = dataList[0]
+                    perPageRecord = dataList[1]
+                    totalRecord =
+                        (totalRecord?.toInt()?.plus(perPageRecord?.toInt() ?: 0)).toString()
+                    //Store DataList in Temporary List and remove first 2 index values to get sublist from 2nd index till dataList size
+                    // and iterate further on record data only:-
+                    var tempDataList = mutableListOf<String>()
+                    tempDataList = dataList.subList(2, dataList.size)
+                    for (i in tempDataList.indices) {
+                        //Below we are splitting Data from tempDataList to extract brandID , categoryID , parentCategoryID , categoryName:-
+                        if (!TextUtils.isEmpty(tempDataList[i])) {
+                            val splitData = parseDataListWithSplitter(
+                                SplitterTypes.CARET.splitter,
+                                tempDataList[i]
+                            )
+                            brandEmiSearchedProductDataList.add(
+                                BrandEMIProductDataModal(
+                                    splitData[0], splitData[1],
+                                    splitData[2], splitData[3],
+                                    splitData[4], splitData[5],
+                                    splitData[6], splitData[7],
+                                    splitData[8], splitData[9],
+                                    splitData[10]
+                                )
+                            )
+                        }
+                    }
+
+                    if (brandEmiSearchedProductDataList.isNotEmpty()) {
+                        brandEMIProductAdapter.refreshAdapterList(brandEmiSearchedProductDataList)
+                    }
+
+                    //Refresh Field57 request value for Pagination if More Record Flag is True:-
+                    if (moreDataFlag == "1") {
+                        field57RequestData =
+                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
+                        fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
+                        Log.d("SearchedFullDataList:- ", brandEmiSearchedProductDataList.toString())
+                    } else {
+                        iDialog?.hideProgress()
+                        Log.d(
+                            "Searched Full Data:- ",
+                            Gson().toJson(brandEmiSearchedProductDataList)
+                        )
                     }
                 }
             } else {

@@ -444,8 +444,8 @@
 
 
     <string name="calculate_and_compare_emi_offers"><![CDATA[Calculate & Compare EMI Offers:]]></string>
-    <string name="compare_by_tenure">Compare by Tenure</string>
-    <string name="compare_by_bank">Compare By Bank</string>
+    <string name="compare_by_tenure">Compare Tenure</string>
+    <string name="compare_by_bank">Compare Bank</string>
     <string name="issuer_icon">Issuer Bank Icon</string>
     <string name="select_tenure">1. Select Tenure:</string>
     <string name="select_banks_to_compare">2. Select Banks To Compare:</string>
@@ -464,4 +464,39 @@
     <string name="netCostNew">Net Cost(\u20B9)</string>
     <string name="additionalOfferNew">Add. Offer</string>
     <string name="tenure_hint">3 MONTHS</string>
+    <string name="upi_collect">UPI Collect</string>
+    <string name="dynamic_qr">Dynamic Qr</string>
+    <string name="static_qr">Static Qr</string>
+    <string name="sms_pay">SMS Pay</string>
+    <string name="pending_txn">Pending Txn</string>
+    <string name="txn_list">TXN list</string>
+    <string name="enter_description_optional">Enter Description (optional)</string>
+    <string name="enter_mobile_number_optional">Mobile number(optional)</string>
+    <string name="vpa">VPA</string>
+    <string name="sms_upi_pay">SMS/UPI Pay</string>
+    <string name="upi_payment_link_sent">"Payment link has been sent \n \n Would you like to check payment status now."</string>
+    <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
+    <string name="socket_timeout">Socket Not Connected</string>
+    <string name="txn_id">Txn ID</string>
+    <string name="mode_samll">Mode</string>
+    <string name="mTxnID">MTxn Id</string>
+    <string name="mobile">Mobile</string>
+
+
+    <string name="date_hint">April 2021</string>
+    <string name="filter">Filters</string>
+    <string name="filterBy">Filter By</string>
+    <string name="apply">Apply</string>
+    <string name="ptxnID">PTXN ID</string>
+    <string name="mtxnID">MTXN ID</string>
+    <string name="mobilNumberHint">******3211</string>
+    <string name="getStatus">Get Status</string>
+    <string name="mode">MODE:</string>
+    <string name="mobileNumber">Mobile Number</string>
+    <string name="ptxnID_hint">123456</string>
+    <string name="txnStatus">TXN STATUS</string>
+    <string name="txn_detail_page">TXN Detail Page</string>
+    <string name="_0_0">0.0</string>
+    <string name="scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now">Scan QR code to pay.\nWould you like to check payment status now.</string>
+<string name="scan_qr_pay">Scan QR code to pay.</string>
 </resources>

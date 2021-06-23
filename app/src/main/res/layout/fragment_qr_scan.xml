@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:fillViewport="true"
+
+    android:layout_height="match_parent">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".digiPOS.QrScanFragment">
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+   <!-- <FrameLayout
+        android:layout_marginTop="@dimen/pad_8"
+        android:background="@drawable/ic_qr_boundy"
+        android:layout_width="wrap_content"
+        android:layout_gravity="center"
+        android:layout_height="wrap_content">-->
+    <ImageView
+        android:id="@+id/qr_img"
+        android:layout_width="match_parent"
+        android:layout_height="250dp"
+android:layout_marginStart="@dimen/pad_16"
+        android:layout_marginEnd="@dimen/pad_16"
+android:background="@drawable/ic_qr_boundy"
+        android:layout_gravity="center"
+android:paddingStart="@dimen/pad_20"
+        android:paddingEnd="@dimen/pad_20"
+       />
+     <!--  </FrameLayout>
+-->
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/scanqrdialogcolor"
+        android:gravity="center"
+android:layout_marginTop="@dimen/pad_16"
+android:paddingBottom="@dimen/pad_56"
+       android:paddingTop="@dimen/pad_10"
+        android:paddingStart="@dimen/pad_10"
+        android:paddingEnd="@dimen/pad_10"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+
+        <ImageView
+            android:id="@+id/imageView2"
+            android:layout_width="@dimen/pad_40"
+            android:layout_height="@dimen/pad_40"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+           android:src="@drawable/ic_link_icon"
+            android:contentDescription="@string/search_trans" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/payMsg"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:gravity="center"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/imageView2" />
+
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/noBtn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+
+            android:padding="@dimen/pad_2"
+            android:text="@string/no"
+            android:textColor="@color/themeBackground"
+            android:textSize="@dimen/text_size_small"
+            app:layout_constraintBottom_toBottomOf="parent"
+
+            app:layout_constraintEnd_toStartOf="@+id/yesBtn"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/payMsg"
+            app:neumorph_backgroundColor="@color/white"
+            app:neumorph_inset="@dimen/pad_4"
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+        <com.example.customneumorphic.NeumorphButton
+            android:id="@+id/yesBtn"
+            style="@style/Widget.Neumorph.Button"
+            android:layout_width="wrap_content"
+            android:layout_height="45dp"
+            android:padding="@dimen/pad_2"
+            android:text="@string/yes"
+            android:textColor="@color/white"
+            android:textSize="@dimen/text_size_small"
+            app:neumorph_backgroundColor="@color/themeBackground"
+            app:layout_constraintBottom_toBottomOf="@+id/noBtn"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/noBtn"
+            app:layout_constraintTop_toTopOf="@+id/noBtn"
+            app:neumorph_inset="@dimen/pad_4"
+            app:neumorph_lightSource="rightBottom"
+            app:neumorph_shadowColorDark="@color/upperShadow"
+            app:neumorph_shadowColorLight="@color/lowerShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_1" />
+
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
+</androidx.core.widget.NestedScrollView>

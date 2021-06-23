@@ -3,7 +3,10 @@ package com.example.verifonevx990app.vxUtils
 import android.content.Context.MODE_PRIVATE
 import android.util.Log
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.getCurrentDateInDisplayFormatDigipos
 import com.example.verifonevx990app.main.ConnectionError
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
 import java.io.DataInputStream
 import java.io.FileOutputStream
@@ -12,6 +15,9 @@ import java.net.Socket
 import java.net.SocketException
 import java.net.SocketTimeoutException
 import java.nio.channels.ServerSocketChannel
+import java.util.*
+import kotlin.collections.ArrayList
+import kotlin.experimental.and
 
 interface IReversalHandler {
     suspend fun saveReversal()
@@ -98,6 +104,127 @@ object HitServer {
             this@HitServer.callback = null
         }
     }
+
+
+    @Synchronized
+    suspend fun hitDigiPosServer(
+        isoWriterData: IsoDataWriter, isSaveTransactionAsPending: Boolean,
+        callback: ServerMessageCallback
+    ) {
+        this@HitServer.callback = callback
+
+        try {
+            if (checkInternetConnection()) {
+                with(ConnectionTimeStamps) {
+                    reset()
+                    dialStart = getF48TimeStamp()
+                }
+                Log.d("OpenSocket:- ", "Socket Start")
+                logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
+                // var responseStr : String? = null
+                openSocket { socket ->
+
+                        if (isSaveTransactionAsPending) {
+                            val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
+                            logger(TAG, "SAVED TO DIGIPOS -->$datatosave", "e")
+                            val datalist = datatosave.split("^")
+                            // EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
+                            // EnumDigiPosProcess.SMS_PAYDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
+
+                            val digiposData = DigiPosDataTable()
+                            digiposData.requestType = datalist[0].toInt()
+                            digiposData.amount = datalist[1]
+                            digiposData.description = datalist[2]
+                            digiposData.customerMobileNumber = datalist[3]
+                            digiposData.displayFormatedDate= getCurrentDateInDisplayFormatDigipos()
+
+                            when {
+                                datalist[0].toInt()== EnumDigiPosProcess.UPIDigiPOS.code.toInt() -> {
+                                    digiposData.vpa = datalist[4]
+                                    digiposData.partnerTxnId=datalist[5]
+                                    digiposData.paymentMode="UPI Pay"
+                                }
+                                datalist[0].toInt()== EnumDigiPosProcess.DYNAMIC_QR.code.toInt() -> {
+                                    digiposData.partnerTxnId = datalist[4]
+                                    digiposData.paymentMode="Bhqr Pay"
+                                }
+                                else -> {
+                                    digiposData.partnerTxnId = datalist[4]
+                                    digiposData.paymentMode="SMS Pay"
+                                }
+                            }
+                          //
+
+                            DigiPosDataTable.insertOrUpdateDigiposData(digiposData)
+                        }
+
+                    logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
+                    ConnectionTimeStamps.dialConnected = getF48TimeStamp()
+                    // progressMsg("Please wait sending data to Bonushub server")
+                    //println("Data send" + data.byteArr2HexStr())
+                    val data = isoWriterData.generateIsoByteRequest()
+                    logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
+                    ConnectionTimeStamps.startTransaction = getF48TimeStamp()
+                    val sos = socket.getOutputStream()
+                    sos?.write(data)
+                    sos.flush()
+
+                    //  progressMsg("Please wait receiving data from Bonushub server")
+                    val dis = DataInputStream(socket.getInputStream())
+                    val len = dis.readShort().toInt()
+                    val response = ByteArray(len)
+                    dis.readFully(response)
+                    ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+
+                    //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+
+                    val responseStr = response.byteArr2HexStr()
+                    val reader = readIso(responseStr, false)
+                    Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
+                        reader.isoMap[48]?.parseRaw2String() ?: ""
+                    )
+
+                    //println("Data Recieve" + response.byteArr2HexStr())
+                    logger(TAG, "len=$len, data received = $responseStr")
+
+                    socket.close()
+                    callback(responseStr, true)
+                    this@HitServer.callback = null
+                }
+
+            } else {
+                callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
+                this@HitServer.callback = null
+            }
+
+        }
+        catch (ex: SocketTimeoutException) {
+          //  println("CHECK EXCEPTION SOCKET")
+            callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
+            this@HitServer.callback = null
+        }
+        catch (ex: Exception) {
+            callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
+            this@HitServer.callback = null
+        }
+    }
+
+    /**
+     * Added by lucky (to convert byte[] to hesString)
+     */
+    @Synchronized
+    fun bytesToHex(bytes: ByteArray): String {
+        val hexChars = CharArray(bytes.size * 2)
+        for (j in bytes.indices) {
+            val v = bytes[j].toInt() and 0xFF
+
+            hexChars[j * 2] = hexArray[v ushr 4]
+            hexChars[j * 2 + 1] = hexArray[v and 0x0F]
+        }
+        return String(hexChars)
+    }
+    private val hexArray = "0123456789ABCDEF".toCharArray()
+
 
     @Synchronized
     suspend fun hitServersale(
@@ -426,7 +553,11 @@ object HitServer {
 
         } catch (ex: Exception) {
             ex.printStackTrace()
-            callback?.invoke(ex.message ?: "Connection Error", false)
+            println("SOCKET CONNECT EXCEPTION")
+            callback?.invoke(
+                VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error",
+                false
+            )
         } finally {
             Log.d("Finally Call:- ", "Final Block Runs Here.....")
         }

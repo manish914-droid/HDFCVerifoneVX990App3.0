@@ -13,11 +13,14 @@ import android.view.*
 import android.widget.Button
 import android.widget.ImageView
 import androidx.cardview.widget.CardView
+import androidx.lifecycle.lifecycleScope
 import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
 import com.example.verifonevx990app.databinding.ActivityTransactionBinding
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.syncTxnCallBackToHost
 import com.example.verifonevx990app.emv.VFEmv
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.main.DetectCardType
@@ -29,6 +32,7 @@ import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.transactions.EmiCustomerDetails
 import com.example.verifonevx990app.transactions.getMaskedPan
+import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.TransactionTypeValues
 import com.example.verifonevx990app.utils.Utility
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -42,11 +46,12 @@ import com.vfi.smartpos.deviceservice.constdefine.ConstIPBOC
 import com.vfi.smartpos.deviceservice.constdefine.ConstIPinpad
 import kotlinx.coroutines.*
 import java.lang.Runnable
+import kotlin.jvm.Throws
 
 
 class VFTransactionActivity : BaseActivity() {
     companion object {
-        val TAG = VFTransactionActivity::class.java.simpleName
+        val TAG: String = VFTransactionActivity::class.java.simpleName
     }
 
     private var userInactivity: Boolean = false
@@ -133,58 +138,58 @@ class VFTransactionActivity : BaseActivity() {
             if (printer?.status != 0) {
                 GlobalScope.launch(Dispatchers.Main) {
                     alertBoxWithAction(
-                            null,
-                            null,
-                            getString(R.string.printer_error),
-                            "Want to Proceed SALE with no charge slip",
-                            true,
-                            getString(R.string.yes),
-                            { alertPositiveCallback ->
-                                if (alertPositiveCallback)
-                                    ProcessCard(
-                                            this@VFTransactionActivity,
-                                            pinHandler,
-                                            globalCardProcessedModel,
-                                    ) { localCardProcessedData ->
-                                        localCardProcessedData.setProcessingCode(
-                                                transactionProcessingCode
+                        null,
+                        null,
+                        getString(R.string.printer_error),
+                        "Want to Proceed SALE with no charge slip",
+                        true,
+                        getString(R.string.yes),
+                        { alertPositiveCallback ->
+                            if (alertPositiveCallback)
+                                ProcessCard(
+                                    this@VFTransactionActivity,
+                                    pinHandler,
+                                    globalCardProcessedModel,
+                                ) { localCardProcessedData ->
+                                    localCardProcessedData.setProcessingCode(
+                                        transactionProcessingCode
+                                    )
+                                    localCardProcessedData.setTransactionAmount(transactionalAmount)
+                                    localCardProcessedData.setOtherAmount(otherTransAmount)
+                                    localCardProcessedData.setMobileBillExtraData(
+                                        Pair(mobileNumber, billNumber)
+                                    )
+                                    //    localCardProcessedData.setTransType(transactionType)
+                                    globalCardProcessedModel = localCardProcessedData
+                                    Log.d(
+                                        "CardProcessedData:- ",
+                                        Gson().toJson(localCardProcessedData)
+                                    )
+                                    val maskedPan = localCardProcessedData.getPanNumberData()?.let {
+                                        getMaskedPan(
+                                            TerminalParameterTable.selectFromSchemeTable(),
+                                            it
                                         )
-                                        localCardProcessedData.setTransactionAmount(transactionalAmount)
-                                        localCardProcessedData.setOtherAmount(otherTransAmount)
-                                        localCardProcessedData.setMobileBillExtraData(
-                                                Pair(mobileNumber, billNumber)
-                                        )
-                                        //    localCardProcessedData.setTransType(transactionType)
-                                        globalCardProcessedModel = localCardProcessedData
-                                        Log.d(
-                                                "CardProcessedData:- ",
-                                                Gson().toJson(localCardProcessedData)
-                                        )
-                                        val maskedPan = localCardProcessedData.getPanNumberData()?.let {
-                                            getMaskedPan(
-                                                    TerminalParameterTable.selectFromSchemeTable(),
-                                                    it
-                                            )
-                                        }
-                                        runOnUiThread {
-                                            binding?.atCardNoTv?.text = maskedPan
-                                            cardView_l.visibility = View.VISIBLE
-                                            //tv_card_number_heading.visibility = View.VISIBLE
-                                            tv_insert_card.visibility = View.INVISIBLE
-                                            //   binding?.paymentGif?.visibility = View.INVISIBLE
-                                        }
-                                        //Below Different Type of Transaction check Based ISO Packet Generation happening:-
-                                        processAccordingToCardType(localCardProcessedData)
                                     }
-
-
-                            },
-                            { cancelButtonCallback ->
-                                if (cancelButtonCallback) {
-                                    finish()
+                                    runOnUiThread {
+                                        binding?.atCardNoTv?.text = maskedPan
+                                        cardView_l.visibility = View.VISIBLE
+                                        //tv_card_number_heading.visibility = View.VISIBLE
+                                        tv_insert_card.visibility = View.INVISIBLE
+                                        //   binding?.paymentGif?.visibility = View.INVISIBLE
+                                    }
+                                    //Below Different Type of Transaction check Based ISO Packet Generation happening:-
+                                    processAccordingToCardType(localCardProcessedData)
                                 }
 
-                            })
+
+                        },
+                        { cancelButtonCallback ->
+                            if (cancelButtonCallback) {
+                                finish()
+                            }
+
+                        })
                 }
             } else {
                 ProcessCard(this, pinHandler, globalCardProcessedModel) { localCardProcessedData ->
@@ -355,17 +360,17 @@ class VFTransactionActivity : BaseActivity() {
         val amountValue = "${getString(R.string.rupees_symbol)} $transactionAmountValue"
         if (transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
             val brandEMIAccessAmount =
-                    getString(R.string.rupees_symbol) + (((transactionAmountValue).toFloat()).div(100)).toString()
+                getString(R.string.rupees_symbol) + (((transactionAmountValue).toDouble()).div(100)).toString()
             binding?.baseAmtTv?.text = brandEMIAccessAmount
         } else {
             binding?.baseAmtTv?.text = amountValue
         }
-        transactionalAmount = ((transactionAmountValue.toFloat()) * 100).toLong()
-        otherTransAmount = ((transactionOtherAmountValue.toFloat()) * 100).toLong()
+        transactionalAmount = ((transactionAmountValue.toDouble()) * 100).toLong()
+        otherTransAmount = ((transactionOtherAmountValue.toDouble()) * 100).toLong()
         globalCardProcessedModel.setOtherAmount(otherTransAmount)
         globalCardProcessedModel.setTransactionAmount(transactionalAmount)
-        globalCardProcessedModel.setSaleAmount(((saleAmt.toFloat()) * 100).toLong())
-        globalCardProcessedModel.setTipAmount(((saleWithTipAmt.toFloat()) * 100).toLong())
+        globalCardProcessedModel.setSaleAmount(((saleAmt.toDouble()) * 100).toLong())
+        globalCardProcessedModel.setTipAmount(((saleWithTipAmt.toDouble()) * 100).toLong())
 
         if (isManualEntryAllowed && transactionType == TransactionType.SALE.type) binding?.manualEntryButton?.visibility =
             View.VISIBLE else binding?.manualEntryButton?.visibility = View.GONE
@@ -467,28 +472,18 @@ class VFTransactionActivity : BaseActivity() {
                     logger("CHECKCALL", "CALLED", "e")
                 if (syncStatus) {
                     val responseIsoData: IsoDataReader = readIso(transactionMsg.toString(), false)
-                    val autoSettlementCheck =
-                        responseIsoData.isoMap[60]?.parseRaw2String().toString()
-                    if (syncStatus && responseCode == "00" && !AppPreference.getBoolean(
-                            AppPreference.ONLINE_EMV_DECLINED
-                        )
-                    ) {
+                    val autoSettlementCheck = responseIsoData.isoMap[60]?.parseRaw2String().toString()
+                    if (syncStatus && responseCode == "00" && !AppPreference.getBoolean(AppPreference.ONLINE_EMV_DECLINED)) {
                         //Below we are saving batch data and print the receipt of transaction:-
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             if (cardProcessedDataModal.getReadCardType() == DetectCardType.EMV_CARD_TYPE)
-                                txnSuccessToast(
-                                    this@VFTransactionActivity,
-                                    getString(R.string.transaction_approved_successfully)
-                                )
+                                txnSuccessToast(this@VFTransactionActivity, getString(R.string.transaction_approved_successfully))
                             else
                                 txnSuccessToast(this@VFTransactionActivity)
                             // delay(4000)
                         }
-                        StubBatchData(
-                            cardProcessedDataModal.getTransType(),
-                            cardProcessedDataModal,
-                            printExtraData, autoSettlementCheck
-                        )
+
+                        StubBatchData(cardProcessedDataModal.getTransType(), cardProcessedDataModal, printExtraData, autoSettlementCheck)
                         { stubbedData ->
                             if (cardProcessedDataModal.getTransType() == TransactionType.EMI_SALE.type ||
                                 cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type ||
@@ -499,58 +494,98 @@ class VFTransactionActivity : BaseActivity() {
                                     Log.d("StubbedEMIData:- ", data.toString())
                                     printSaveSaleEmiDataInBatch(data) { printCB ->
                                         if (!printCB) {
-                                            //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
-                                            //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
-                                            if (!TextUtils.isEmpty(autoSettlementCheck))
-                                                GlobalScope.launch(Dispatchers.Main) {
-                                                    syncOfflineSaleAndAskAutoSettlement(
-                                                        autoSettlementCheck.substring(0, 1)
-                                                    )
+                                            Log.e("EMI FIRST ","COMMENT ******")
+                                            // Here we are Syncing Txn CallBack to server
+                                            lifecycleScope.launch(Dispatchers.IO){
+                                                withContext(Dispatchers.Main) {
+                                                    showProgress("Please wait Transaction syncing.....")
                                                 }
+                                                val amount = MoneyUtil.fen2yuan(
+                                                    stubbedData.totalAmmount.toDouble().toLong()
+                                                )
+                                                val txnCbReqData = TxnCallBackRequestTable()
+                                                txnCbReqData.reqtype =
+                                                    EnumDigiPosProcess.TRANSACTION_CALL_BACK.code
+                                                txnCbReqData.tid = stubbedData.hostTID
+                                                txnCbReqData.batchnum = stubbedData.hostBatchNumber
+                                                txnCbReqData.roc = stubbedData.hostRoc
+                                                txnCbReqData.amount = amount
+                                                TxnCallBackRequestTable.insertOrUpdateTxnCallBackData(txnCbReqData)
+                                                syncTxnCallBackToHost {
+                                                    Log.e("TXN CB ", "SYNCED TO SERVER  --> $it")
+                                                    hideProgress()
+                                                }
+                                                Log.e("EMI LAST","COMMENT ******")
+
+                                                //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                                                //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
+
+                                                if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                                                    withContext(Dispatchers.Main) {
+                                                        syncOfflineSaleAndAskAutoSettlement(
+                                                            autoSettlementCheck.substring(0, 1)
+                                                        )
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             } else {
                                 printAndSaveBatchDataInDB(stubbedData) { printCB ->
                                     if (!printCB) {
-                                        //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
-                                        //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
-                                        if (!TextUtils.isEmpty(autoSettlementCheck)) {
-                                            GlobalScope.launch(Dispatchers.Main) {
-                                                syncOfflineSaleAndAskAutoSettlement(
-                                                    autoSettlementCheck.substring(0, 1)
+                                        Log.e("FIRST ","COMMENT ******")
+                                        // Here we are Syncing Txn CallBack to server
+                                        lifecycleScope.launch(Dispatchers.IO){
+                                                withContext(Dispatchers.Main) {
+                                                    showProgress("Please wait Transaction syncing.....")
+                                                }
+                                                val amount = MoneyUtil.fen2yuan(
+                                                    stubbedData.totalAmmount.toDouble().toLong()
                                                 )
+                                                val txnCbReqData = TxnCallBackRequestTable()
+                                                txnCbReqData.reqtype =
+                                                    EnumDigiPosProcess.TRANSACTION_CALL_BACK.code
+                                                txnCbReqData.tid = stubbedData.hostTID
+                                                txnCbReqData.batchnum = stubbedData.hostBatchNumber
+                                                txnCbReqData.roc = stubbedData.hostRoc
+                                                txnCbReqData.amount = amount
+                                                TxnCallBackRequestTable.insertOrUpdateTxnCallBackData(txnCbReqData)
+                                                syncTxnCallBackToHost {
+                                                    Log.e("TXN CB ", "SYNCED TO SERVER  --> $it")
+                                                    hideProgress()
+                                                }
+                                            Log.e("LAST ","COMMENT ******")
+
+                                            //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                                            //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
+
+                                            if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                                                withContext(Dispatchers.Main) {
+                                                    syncOfflineSaleAndAskAutoSettlement(
+                                                        autoSettlementCheck.substring(0, 1)
+                                                    )
+                                                }
                                             }
                                         }
                                     }
                                 }
                             }
+
+
                         }
                     } else if (syncStatus && responseCode != "00") {
                         GlobalScope.launch(Dispatchers.Main) {
-                            alertBoxWithAction(null,
-                                null,
-                                getString(R.string.transaction_delined_msg),
-                                responseIsoData.isoMap[58]?.parseRaw2String().toString(),
-                                false,
-                                getString(R.string.positive_button_ok),
-                                { alertPositiveCallback ->
+                            alertBoxWithAction(null, null, getString(R.string.transaction_delined_msg), responseIsoData.isoMap[58]?.parseRaw2String().toString(), false, getString(R.string.positive_button_ok), { alertPositiveCallback ->
                                     if (alertPositiveCallback) {
                                         if (!TextUtils.isEmpty(autoSettlementCheck)) {
                                             syncOfflineSaleAndAskAutoSettlement(
-                                                autoSettlementCheck.substring(
-                                                    0,
-                                                    1
-                                                )
+                                                autoSettlementCheck.substring(0, 1)
                                             )
                                         } else {
                                             startActivity(
-                                                Intent(
-                                                    this@VFTransactionActivity,
-                                                    MainActivity::class.java
-                                                ).apply {
-                                                    flags =
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                Intent(this@VFTransactionActivity, MainActivity::class.java).apply {
+                                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                 })
                                         }
                                     }
@@ -562,20 +597,11 @@ class VFTransactionActivity : BaseActivity() {
                     else if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
                         //   checkForPrintReversalReceipt(this@VFTransactionActivity) {
                         GlobalScope.launch(Dispatchers.Main) {
-                            alertBoxWithAction(null,
-                                null,
-                                getString(R.string.declined),
-                                getString(R.string.emv_declined),
-                                false,
-                                getString(R.string.positive_button_ok),
-                                { alertPositiveCallback ->
+                            alertBoxWithAction(null, null, getString(R.string.declined), getString(R.string.emv_declined), false, getString(R.string.positive_button_ok), { alertPositiveCallback ->
                                     if (alertPositiveCallback) {
-                                        checkForPrintReversalReceipt(this@VFTransactionActivity) {}
+                                        checkForPrintReversalReceipt(this@VFTransactionActivity,autoSettlementCheck) {}
                                         syncOfflineSaleAndAskAutoSettlement(
-                                            autoSettlementCheck.substring(
-                                                0,
-                                                1
-                                            )
+                                            autoSettlementCheck.substring(0, 1)
                                         )
                                     }
                                 },
@@ -587,7 +613,7 @@ class VFTransactionActivity : BaseActivity() {
                     runOnUiThread { hideProgress() }
                     //below condition is for print reversal receipt if reversal is generated
                     // and also check is need to printed or not(backend enable disable)
-                    checkForPrintReversalReceipt(this) {
+                    checkForPrintReversalReceipt(this,"") {
                         logger("ReversalReceipt", it, "e")
                     }
 
@@ -835,6 +861,7 @@ class VFTransactionActivity : BaseActivity() {
                 dialogCB(false)
             })
     }
+
 
     //Below function is used to deal with EMV Card Fallback when we insert EMV Card from other side then chip side:-
     fun handleEMVFallbackFromError(
@@ -1215,7 +1242,7 @@ class VFTransactionActivity : BaseActivity() {
 
             EIntentRequest.BankEMISchemeOffer.code -> {
                 val cardProcessedData =
-                        data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
+                    data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
                 val maskedPan = cardProcessedData.getPanNumberData()?.let {
                     getMaskedPan(TerminalParameterTable.selectFromSchemeTable(), it)
                 }
@@ -1248,7 +1275,7 @@ class VFTransactionActivity : BaseActivity() {
 
                 //region===============Check Transaction Type and Perform Action Accordingly:-
                 if (cardProcessedData.getReadCardType() == DetectCardType.MAG_CARD_TYPE &&
-                        cardProcessedData.getTransType() != TransactionType.TEST_EMI.type
+                    cardProcessedData.getTransType() != TransactionType.TEST_EMI.type
                 ) {
                     val isPin = cardProcessedData.getIsOnline() == 1
                     cardProcessedData.setProcessingCode(transactionProcessingCode)
@@ -1259,17 +1286,17 @@ class VFTransactionActivity : BaseActivity() {
                         Log.e("WWW", "-----")
                         cardProcessedData.setTransactionAmount(100)
                         DoEmv(
-                                this, pinHandler, cardProcessedData,
-                                ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
+                            this, pinHandler, cardProcessedData,
+                            ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
                         ) { cardProcessedDataModal ->
                             cardProcessedDataModal.setProcessingCode(transactionProcessingCode)
                             cardProcessedDataModal.setTransactionAmount(100)
                             cardProcessedDataModal.setOtherAmount(otherTransAmount)
                             cardProcessedDataModal.setMobileBillExtraData(
-                                    Pair(
-                                            mobileNumber,
-                                            billNumber
-                                    )
+                                Pair(
+                                    mobileNumber,
+                                    billNumber
+                                )
                             )
                             //    localCardProcessedData.setTransType(transactionType)
                             globalCardProcessedModel = cardProcessedDataModal
@@ -1289,20 +1316,20 @@ class VFTransactionActivity : BaseActivity() {
                         }
                     } else {
                         DoEmv(
-                                this, pinHandler, cardProcessedData,
-                                ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
+                            this, pinHandler, cardProcessedData,
+                            ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
                         ) { cardProcessedDataModal ->
                             Log.d("CardEMIData:- ", cardProcessedDataModal.toString())
                             cardProcessedDataModal.setProcessingCode(transactionProcessingCode)
                             cardProcessedDataModal.setTransactionAmount(
-                                    emiSelectedTransactionAmount ?: 0L
+                                emiSelectedTransactionAmount ?: 0L
                             )
                             cardProcessedDataModal.setOtherAmount(otherTransAmount)
                             cardProcessedDataModal.setMobileBillExtraData(
-                                    Pair(
-                                            mobileNumber,
-                                            billNumber
-                                    )
+                                Pair(
+                                    mobileNumber,
+                                    billNumber
+                                )
                             )
                             globalCardProcessedModel = cardProcessedDataModal
                             Log.d("CardProcessedData:- ", Gson().toJson(cardProcessedDataModal))

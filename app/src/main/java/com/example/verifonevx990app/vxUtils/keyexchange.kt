@@ -4,9 +4,11 @@ import android.content.Context
 import android.text.TextUtils
 import android.util.Log
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.*
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
+import com.google.gson.Gson
 import kotlinx.coroutines.*
 import java.util.*
 
@@ -104,7 +106,7 @@ class KeyExchanger(
         }
     }
 
-    fun startExchange() {
+    fun startExchange( isfreshInit:Boolean=true) {
         GlobalScope.launch {
             val isoW = createKeyExchangeIso()
             val bData = isoW.generateIsoByteRequest()
@@ -585,7 +587,70 @@ class KeyExchanger(
                                     }
                                 }
                             }
-                            getDidiPosStatus()
+
+                            getDigiPosStatus(
+                                EnumDigiPosProcess.InitializeDigiPOS.code,
+                                EnumDigiPosProcessingCode.DIGIPOSPROCODE.code, false
+                            ) { isSuccess, responseMsg, responsef57, fullResponse ->
+                                try {
+                                    if (isSuccess) {
+                                        //1^Success^Success^S101^Active^Active^Active^Active^0^1
+                                        val responsF57List = responsef57.split("^")
+                                        Log.e("F56->>", responsef57)
+                                        if (responsF57List[4] == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
+                                            val tpt1 =
+                                                TerminalParameterTable.selectFromSchemeTable()
+                                            tpt1?.isDigiposActive = "1"
+                                            tpt1?.digiPosResponseType = responsF57List[0].toString()
+                                            tpt1?.digiPosStatus = responsF57List[1].toString()
+                                            tpt1?.digiPosStatusMessage =
+                                                responsF57List[2].toString()
+                                            tpt1?.digiPosStatusCode = responsF57List[3].toString()
+                                            tpt1?.digiPosTerminalStatus =
+                                                responsF57List[4].toString()
+                                            tpt1?.digiPosBQRStatus = responsF57List[5].toString()
+                                            tpt1?.digiPosUPIStatus = responsF57List[6].toString()
+                                            tpt1?.digiPosSMSpayStatus = responsF57List[7].toString()
+                                            tpt1?.digiPosStaticQrDownloadRequired =
+                                                responsF57List[8].toString()
+                                            tpt1?.digiPosCardCallBackRequired =
+                                                responsF57List[9].toString()
+                                            if (tpt1 != null) {
+                                                TerminalParameterTable.performOperation(tpt1) {
+                                                    logger(
+                                                        LOG_TAG.DIGIPOS.tag,
+                                                        "Terminal parameter Table updated successfully $tpt1 "
+                                                    )
+                                                    val ttp =
+                                                        TerminalParameterTable.selectFromSchemeTable()
+                                                    val tptObj = Gson().toJson(ttp)
+                                                    logger(
+                                                        LOG_TAG.DIGIPOS.tag,
+                                                        "After success      $tptObj "
+                                                    )
+                                                }
+                                                if (tpt1.digiPosBQRStatus == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
+                                                    runBlocking {
+                                                        getStaticQrFromServerAndSaveToFile(context as BaseActivity){
+                                                            // FAIL AND SUCCESS HANDELED IN FUNCTION getStaticQrFromServerAndSaveToFile itself
+                                                        }
+                                                    }
+                                                }
+
+                                            }
+                                        } else {
+                                            logger("DIGI_POS", "DIGI_POS_UNAVAILABLE")
+                                        }
+                                    }
+
+                                } catch (ex: java.lang.Exception) {
+                                    ex.printStackTrace()
+                                    logger(
+                                        LOG_TAG.DIGIPOS.tag,
+                                        "Somethig wrong... in response data field 57"
+                                    )
+                                }
+                            }
 
                         }
                     }
@@ -838,7 +903,7 @@ suspend fun downloadPromo() {
         sc.close()
     }
     if (fileArray.isNotEmpty()) {
-        unzipZipedBytes(fileArray.toByteArray())
+        unzipZippedBytes(fileArray.toByteArray())
     }
 
 }
@@ -945,7 +1010,102 @@ suspend fun getPromotionData(
     }
 }
 
-suspend fun getDidiPosStatus() {
+suspend fun getDigiPosStatus(
+    field57RequestData: String,
+    processingCode: String, isSaveTransAsPending: Boolean = false,
+    cb: (Boolean, String, String, String) -> Unit
+) {
 
+    val idw = IsoDataWriter().apply {
+        val terminalData = TerminalParameterTable.selectFromSchemeTable()
+        if (terminalData != null) {
+            mti = Mti.EIGHT_HUNDRED_MTI.mti
 
+            //Processing Code Field 3
+            addField(3, processingCode)
+
+            //STAN(ROC) Field 11
+            addField(11, ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())
+
+            //NII Field 24
+            addField(24, Nii.BRAND_EMI_MASTER.nii)
+
+            //TID Field 41
+            addFieldByHex(41, terminalData.terminalId)
+
+            //Connection Time Stamps Field 48
+            addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
+
+            //adding Field 57
+            addFieldByHex(57, field57RequestData)
+
+            //adding Field 61
+            val version = addPad(getAppVersionNameAndRevisionID(), "0", 15, false)
+            val pcNumber = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)
+            val pcNumber2 =
+                addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY_2), "0", 9)
+            val f61 = ConnectionType.GPRS.code + addPad(
+                AppPreference.getString("deviceModel"),
+                " ",
+                6,
+                false
+            ) + addPad(
+                VerifoneApp.appContext.getString(R.string.app_name),
+                " ",
+                10,
+                false
+            ) + version + pcNumber + pcNumber2
+            //adding Field 61
+            addFieldByHex(61, f61)
+
+            //adding Field 63
+            val deviceSerial = addPad(AppPreference.getString("serialNumber"), " ", 15, false)
+            val bankCode = AppPreference.getBankCode()
+            val f63 = "$deviceSerial$bankCode"
+            addFieldByHex(63, f63)
+        }
+    }
+
+    logger("DIGIPOS REQ1>>", idw.isoMap, "e")
+
+    // val idwByteArray = idw.generateIsoByteRequest()
+
+    var responseField57 = ""
+    var responseMsg = ""
+    var isBool = false
+    HitServer.hitDigiPosServer(idw, isSaveTransAsPending) { result, success ->
+        responseMsg = result
+        if (success) {
+            ROCProviderV2.incrementFromResponse(
+                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                AppPreference.getBankCode()
+            )
+            val responseIsoData: IsoDataReader = readIso(result, false)
+            logger("Transaction RESPONSE ", "---", "e")
+            logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
+            Log.e(
+                "Success 39-->  ",
+                responseIsoData.isoMap[39]?.parseRaw2String().toString() + "---->" +
+                        responseIsoData.isoMap[58]?.parseRaw2String().toString()
+            )
+            val successResponseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
+            if (responseIsoData.isoMap[57] != null) {
+                responseField57 = responseIsoData.isoMap[57]?.parseRaw2String().toString()
+            }
+            if (responseIsoData.isoMap[58] != null) {
+                responseMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
+            }
+            isBool = successResponseCode == "00"
+            cb(isBool, responseMsg, responseField57, result)
+            /* if (processingCode == ProcessingCode.INITIALIZE_PROMOTION.code)
+                 cb(isBool, responseMsg, responseField57, result)
+             else cb(true, responseMsg, responseField57, result)*/
+        } else {
+            ROCProviderV2.incrementFromResponse(
+                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                AppPreference.getBankCode()
+            )
+            cb(isBool, responseMsg, responseField57, result)
+        }
+    }
 }

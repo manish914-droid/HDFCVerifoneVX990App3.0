@@ -295,9 +295,7 @@ fun toggleSoftKeyboard(et: EditText, context: Context) {
 fun hideSoftKeyboard(activity: Activity) {
     try {
         val ims = activity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-
         var view = activity.currentFocus
-
         if (view == null) {
             view = View(activity)
         }

@@ -131,19 +131,22 @@ class AmountEditText : BHEditText {
     }
 
     private fun implementTextListener() {
-        val tx = "%.2f".format(0f)
-        setText(tx)
-        requestFocus()
-        setSelection(tx.length)
+        /* val tx = "%.2f".format(0f)
+         setText(tx)
+         requestFocus()
+         setSelection(tx.length)*/
         addTextChangedListener(watcher1)
     }
 
 
     private fun doFormatting() {
-        if (text?.isEmpty()!!) {
-            val tx = "%.2f".format(0f)
-            setText(tx)
-            setSelection(tx.length)
+        /* if (text?.isEmpty()!!) {
+             val tx = "%.2f".format(0f)
+             setText(tx)
+             setSelection(tx.length)
+         }*/
+        if (text?.toString() == "0.0") {
+            setText("")
         } else {
             val fl = text.toString().replace(".", "").toLong()
             val tx = "%.2f".format(fl.toDouble() / 100)

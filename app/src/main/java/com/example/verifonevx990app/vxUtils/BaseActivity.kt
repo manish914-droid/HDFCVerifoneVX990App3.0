@@ -22,6 +22,7 @@ import com.example.verifonevx990app.databinding.NewPrintCustomerCopyBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.TenureDataModel
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -60,7 +61,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     }
 
     override fun showProgress(progressMsg: String) {
-        if (null != progressDialog && !progressDialog.isShowing && !(this as Activity).isFinishing) {
+        if (!progressDialog.isShowing && !(this as Activity).isFinishing) {
             progressTitleMsg.text = progressMsg
             progressDialog.show()
         }
@@ -68,7 +69,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
 
 
     override fun hideProgress() {
-        if (null != progressDialog && progressDialog.isShowing && !(this as Activity).isFinishing)
+        if (progressDialog.isShowing && !(this as Activity).isFinishing)
             progressDialog.dismiss()
     }
 
@@ -145,18 +146,25 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         positiveButtonText: String, alertCallback: (Boolean) -> Unit,
         cancelButtonCallback: (Boolean) -> Unit
     ) {
-
         val dialogBuilder = Dialog(this)
         //  builder.setTitle(title)
         //  builder.setMessage(msg)
-
         val bindingg = NewPrintCustomerCopyBinding.inflate(LayoutInflater.from(this))
 
         dialogBuilder.setContentView(bindingg.root)
-        if (msg == getString(R.string.print_customer_copy)) {
+        if (title == getString(R.string.print_customer_copy)|| title == getString(R.string.sms_upi_pay)) {
+            if(title==getString(R.string.sms_upi_pay)){
+                bindingg.imgPrinter.setImageResource(R.drawable.ic_link_icon)
+            } else if(title==getString(R.string.print_customer_copy)){
+                bindingg.imgPrinter.setImageResource(R.drawable.ic_printer)
+            }
             bindingg.imgPrinter.visibility = View.VISIBLE
         } else {
             bindingg.imgPrinter.visibility = View.GONE
+        }
+        if(positiveButtonText==""){
+            bindingg.yesBtn.visibility=View.GONE
+
         }
         dialogBuilder.setCancelable(false)
         val window = dialogBuilder.window
@@ -167,20 +175,13 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
 
         bindingg.yesBtn.text = positiveButtonText
         bindingg.dialogMsg.text = msg
-        /* .setPositiveButton(positiveButtonText) { dialog, _ ->
-             dialog.dismiss()
-             alertCallback(true)
-         }*/
+
         bindingg.yesBtn.setOnClickListener {
             dialogBuilder.dismiss()
             alertCallback(true)
         }
         //Below condition check is to show Cancel Button in Alert Dialog on condition base:-
         if (showCancelButton) {
-            /*  builder.setNegativeButton("No") { dialog, _ ->
-                  dialog.cancel()
-                  cancelButtonCallback(true)
-              }*/
             bindingg.noBtn.setOnClickListener {
                 dialogBuilder.cancel()
                 cancelButtonCallback(true)
@@ -212,7 +213,6 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         }
         dialogBuilder.show()
         dialogBuilder.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
     }
 
 
@@ -382,6 +382,34 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
                      Intent(this, MainActivity::class.java).apply {
                          flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                      })*/
+                dialogCB(false)
+            })
+    }
+
+
+    fun showMerchantAlertBoxSMSUpiPay(
+        printerUtil: PrintUtil,
+        digiposData: DigiPosDataTable,
+        dialogCB: (Boolean) -> Unit
+    ) {
+        alertBoxWithAction(
+            printerUtil, null, getString(R.string.print_customer_copy),
+            getString(R.string.print_customer_copy),
+            true, getString(R.string.positive_button_yes), { status ->
+                if (status) {
+                    printerUtil.printSMSUPIChagreSlip(
+                        digiposData,
+                        EPrintCopyType.CUSTOMER,
+                        this
+                    ) { customerCopyPrintSuccess, printingFail ->
+                        if (!customerCopyPrintSuccess) {
+                            //  VFService.showToast(getString(R.string.customer_copy_print_success))
+                            dialogCB(false)
+                        }
+                    }
+
+                }
+            }, {
                 dialogCB(false)
             })
     }

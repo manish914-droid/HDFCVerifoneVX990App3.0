@@ -40,7 +40,7 @@
             android:layout_height="50dp"
             android:padding="@dimen/pad_8"
             android:scaleType="fitXY"
-            android:src="@drawable/ic_bbg"
+
             android:visibility="visible" />
 
         <TextView

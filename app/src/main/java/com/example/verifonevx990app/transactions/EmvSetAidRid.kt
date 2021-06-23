@@ -4,7 +4,6 @@ import android.os.RemoteException
 import android.util.Log
 import com.example.verifonevx990app.utils.DRLUtil
 import com.example.verifonevx990app.vxUtils.AppPreference
-import com.example.verifonevx990app.vxUtils.convertStr2Nibble2Str
 import com.vfi.smartpos.deviceservice.aidl.IEMV
 import com.vfi.smartpos.deviceservice.constdefine.ConstIPBOC
 
@@ -16,8 +15,8 @@ class EmvSetAidRid(private var ipboc: IEMV?, private var updateCVMValue: String,
 
     init {
         Log.d("CTLS:- ", ctlsUpdateTransLimit)
-        ctlsVal = convertStr2Nibble2Str(ctlsUpdateTransLimit)
-        cvmVal = convertStr2Nibble2Str(updateCVMValue)
+        ctlsVal = ctlsUpdateTransLimit//convertStr2Nibble2Str(ctlsUpdateTransLimit)
+        cvmVal = updateCVMValue //convertStr2Nibble2Str(updateCVMValue)
     }
 
     /**

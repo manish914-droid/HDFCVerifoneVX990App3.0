@@ -3,18 +3,17 @@ package com.example.verifonevx990app
 import org.junit.Test
 
 class Example2UnitTest {
-    @Test
-    fun main2() {
-        val str = "LUCKY"
-        val one: Any = 10
+    val array=arrayOf(1, 2, 3, 4, 5)
 
-        if (one is Int) {
-            print("INT")
-            print(5 + one)
-        }
-        if (one is String) {
-            print("INT")
-        }
+    @Test
+    fun main1() {
+
+    }
+
+    fun change(s:String){
+        val strinhh=""
+print(s)
+
 
     }
 

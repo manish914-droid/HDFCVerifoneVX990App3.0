@@ -25,10 +25,10 @@ import com.example.verifonevx990app.BuildConfig
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
-import com.example.verifonevx990app.emiCatalogue.IssuerBankModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.init.getEditorActionListener
 import com.example.verifonevx990app.main.CardAid
+import com.example.verifonevx990app.main.EMICatalogueAndBannerImageModal
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.*
@@ -54,6 +54,7 @@ import kotlin.experimental.and
 
 var isDashboardOpen = false
 var isExpanded = false
+val BUFFER_SIZE = 4096
 
 open class OnTextChange(private val cb: (String) -> Unit) : TextWatcher {
 
@@ -86,6 +87,7 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
     DEFAUTL("Not Declared", R.drawable.ic_sad),
     BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE"),
     BANK_EMI_CATALOGUE(title = "BANK EMI CATALOGUE"),
+    DYNAMIC_QR(title="Dynamic QR")
 }
 
 
@@ -425,39 +427,60 @@ suspend fun saveToDB(spliter: List<String>) {
     }
 }
 
-fun unzipZipedBytes(ba: ByteArray) {
-
-    val root = VerifoneApp.appContext.externalCacheDir.toString()
-    val folder = File("$root/BonusHub")
+fun unzipZippedBytes(ba: ByteArray) {
+    val root = "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
+    val folder = File(root)
 
     if (!folder.exists()) {
         folder.mkdir()
     }
 
     val bais = ByteArrayInputStream(ba)
-    val zis: ZipInputStream? = ZipInputStream(bais)
+    val zis = ZipInputStream(bais)
 
     var ze: ZipEntry? = null
-    ze = zis?.nextEntry
+    ze = zis.nextEntry
+    try {
+        while (ze != null) {
+            val entryName = ze.name
+            val f = File(folder, entryName)
+            val out = FileOutputStream(f)
 
-    while (ze != null) {
-        val entryName = ze.name
-        val f = File(folder, entryName)
-        val out = FileOutputStream(f)
+            val bf = ByteArray(4096)
+            var byteRead = zis.read(bf)
 
-        val bf = ByteArray(4096)
-        var byteRead = zis?.read(bf) ?: -1
-
-        while (byteRead != -1) {
-            out.write(bf, 0, byteRead)
-            byteRead = zis?.read(bf) ?: -1
+            while (byteRead != -1) {
+                out.write(bf, 0, byteRead)
+                byteRead = zis.read(bf)
+            }
+            out.close()
+            ze = zis.nextEntry
         }
-        out.close()
-        zis?.closeEntry()
-        ze = zis?.nextEntry
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+    } finally {
+        zis.closeEntry()
+        zis.close()
     }
-    zis?.close()
 }
+
+//region============================Reading All Zip Folder EMI catalogue and Banner Images from Device Store Folder:-
+fun readEMICatalogueAndBannerImages(): MutableList<EMICatalogueAndBannerImageModal> {
+    val root = "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
+    val folder = File(root)
+    val imageList = mutableListOf<EMICatalogueAndBannerImageModal>()
+    var folderFilesList: Array<File>? = null
+    if (folder.isDirectory) {
+        folderFilesList = folder.listFiles()
+        for (value in folderFilesList) {
+            var imageName = value.name.split(".")
+            imageList.add(EMICatalogueAndBannerImageModal(Uri.fromFile(value), imageName[0]))
+        }
+    }
+    Log.d("AllImagesPath:- ", Gson().toJson(imageList))
+    return imageList
+}
+//endregion
 
 //Below method is used to show Invoice with Padding:-
 fun invoiceWithPadding(invoiceNo: String) =
@@ -545,6 +568,18 @@ fun dateFormater(date: Long): String =
 
 fun timeFormater(date: Long): String =
     SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(date)
+
+fun formatDateTime(dateTime: String): Date? {
+    val dateFormatter = SimpleDateFormat("ddMMMHHmm", Locale.getDefault())
+
+    /*try {
+        date = inputFormat.parse(dateTime)
+        str = dateFormatter.format(date)
+    } catch (e: Exception) {
+        e.printStackTrace()
+    }*/
+    return null
+}
 
 @Deprecated("User ROCproviderV2 for multiple bank related roc.")
 object ROCProvider {
@@ -1756,7 +1791,7 @@ fun convertStr2Nibble2Str(data: String): String {
         }
         tempData += splitData[i]
     }
-    return tempData
+    return tempData + "0"
 }
 
 fun getCurrentDate(): String {
@@ -2250,8 +2285,7 @@ fun showEditTextSelected(
     editText?.isFocusable = true
     editText?.isFocusableInTouchMode = true
     editText?.requestFocus()
-    val imm: InputMethodManager? =
-        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
     imm?.showSoftInput(editText, 0)
     cardView?.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
     cardView?.setStrokeWidth(1f)
@@ -2264,21 +2298,26 @@ fun showEditTextUnSelected(
     cardView: NeumorphCardView?,
     context: Context?
 ) {
-    editText?.isFocusable = false
-    editText?.isFocusableInTouchMode = false
-    val imm: InputMethodManager? =
-        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-    imm?.showSoftInput(editText, 0)
-    cardView?.setStrokeColor(null)
-    cardView?.setStrokeWidth(0f)
-}
+    runBlocking {
+        editText?.isFocusable = false
+        editText?.isFocusableInTouchMode = false
+      /*  val imm: InputMethodManager? =
+            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+        imm?.showSoftInput(editText, 0)*/
+        cardView?.setStrokeColor(null)
+        cardView?.setStrokeWidth(0f)
+    }
+
+    }
 
 fun showOtherEditTextUnSelected(hm: HashMap<NeumorphCardView?, EditText?>, context: Context?) {
-    for (i in hm) {
-        val cardView = i.key
-        val editText = i.value
-        showEditTextUnSelected(editText, cardView, context)
-    }
+  runBlocking {
+      for (i in hm) {
+          val cardView = i.key
+          val editText = i.value
+          showEditTextUnSelected(editText, cardView, context)
+      }
+  }
 }
 //endregion
 
@@ -2330,23 +2369,6 @@ fun fetchAndSaveIssuerTCData() {
         }
     } else
         Log.d("IssuerTCData:- ", Gson().toJson(data))
-}
-//endregion
-
-//region===============Convert Map Data To MutableList:-
-fun convertMapToList(dataMap: MutableMap<String, IssuerBankModal>): MutableList<IssuerBankModal> {
-    val dataList = mutableListOf<IssuerBankModal>()
-    for ((_, value) in dataMap.entries) {
-        dataList.add(
-            IssuerBankModal(
-                value.issuerBankName,
-                value.issuerBankTenure,
-                value.issuerID,
-                value.bankLogo
-            )
-        )
-    }
-    return dataList
 }
 //endregion
 

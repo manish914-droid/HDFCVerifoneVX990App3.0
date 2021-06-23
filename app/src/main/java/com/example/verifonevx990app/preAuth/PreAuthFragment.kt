@@ -54,25 +54,6 @@ class PreAuthFragment : Fragment() {
 
     private fun onOptionClickListner(option: EDashboardItem) {
         (activity as IFragmentRequest).onDashBoardItemClick(option)
-
-        /*when (option) {
-            EDashboardItem.PREAUTH -> {
-
-            }
-            EDashboardItem.PREAUTH_COMPLETE -> {
-
-            }
-            EDashboardItem.VOID_PREAUTH -> {
-
-            }
-            EDashboardItem.PENDING_PREAUTH -> {
-
-            }
-
-            else -> {
-
-            }
-        }*/
     }
 
 }
