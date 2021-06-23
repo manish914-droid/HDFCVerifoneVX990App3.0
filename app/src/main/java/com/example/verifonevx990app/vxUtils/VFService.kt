@@ -31,6 +31,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import java.net.InetAddress
 import java.net.InetSocketAddress
+import kotlin.jvm.Throws
 
 object VFService {
     @JvmStatic
@@ -50,6 +51,10 @@ object VFService {
 
     @JvmStatic
     var vfPrinter: IPrinter? = null
+
+    @JvmStatic
+    var vfsmartReader: ISmartCardReader? = null
+
     var pinInputListener: PinInputListener? = null
     val LYRA_IP_ADDRESS = "192.168.250.10"
     val NEW_IP_ADDRESS = "122.176.84.29"
@@ -82,7 +87,7 @@ object VFService {
                 vfPinPad = IPinpad.Stub.asInterface(service)
                 vfBeeper = IBeeper.Stub.asInterface(service)
                 vfPrinter = IPrinter.Stub.asInterface(service)
-
+                vfsmartReader = ISmartCardReader.Stub.asInterface(service)
 
                 try {
                     vfIEMV = vfDeviceService?.emv
@@ -90,9 +95,10 @@ object VFService {
                     vfBeeper = vfDeviceService?.beeper
                     vfPinPad = vfDeviceService?.getPinpad(1)
                     vfPrinter = vfDeviceService?.printer
+                    vfsmartReader = vfDeviceService?.getSmartCardReader(0) //0 for Ic terminal
 
                     val bundle: Bundle? = vfDeviceInfo?.deviceInfo
-                    val numericSerialnum = (bundle?.get("VRKSn") ?: "") as String
+                    val numericSerialnum = (bundle?.get("VRKSn") ?: "") as? String
 
                     if (numericSerialnum != null) {
                         Log.d("Device Numeric  No:- ", numericSerialnum)
@@ -103,7 +109,8 @@ object VFService {
                         AppPreference.saveString("serialNumber", vfDeviceInfo?.serialNo ?: "")
                     } else {
                         strnum = String()
-                        var number: String? = bundle?.get("VRKSn") as String
+                        var number: String? = bundle?.get("VRKSn") as? String
+
 
                         var numericSerialnum = number?.split("-")
 
