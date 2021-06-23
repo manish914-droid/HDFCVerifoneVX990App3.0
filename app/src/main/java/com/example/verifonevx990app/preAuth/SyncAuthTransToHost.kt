@@ -129,7 +129,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                 } else {
                     //    VFService.showToast(transactionMsg)
                     activityContext?.hideProgress()
-                    checkForPrintReversalReceipt(activityContext) {
+                    checkForPrintReversalReceipt(activityContext,"") {
                         (activityContext as BaseActivity).hideProgress()
                         GlobalScope.launch(Dispatchers.Main) {
                             (activityContext as BaseActivity).alertBoxWithAction(

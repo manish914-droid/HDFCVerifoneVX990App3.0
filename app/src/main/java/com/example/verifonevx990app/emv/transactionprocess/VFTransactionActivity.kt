@@ -46,6 +46,7 @@ import com.vfi.smartpos.deviceservice.constdefine.ConstIPBOC
 import com.vfi.smartpos.deviceservice.constdefine.ConstIPinpad
 import kotlinx.coroutines.*
 import java.lang.Runnable
+import kotlin.jvm.Throws
 
 
 class VFTransactionActivity : BaseActivity() {
@@ -471,30 +472,18 @@ class VFTransactionActivity : BaseActivity() {
                     logger("CHECKCALL", "CALLED", "e")
                 if (syncStatus) {
                     val responseIsoData: IsoDataReader = readIso(transactionMsg.toString(), false)
-                    val autoSettlementCheck =
-                        responseIsoData.isoMap[60]?.parseRaw2String().toString()
-                    if (syncStatus && responseCode == "00" && !AppPreference.getBoolean(
-                            AppPreference.ONLINE_EMV_DECLINED
-                        )
-                    ) {
+                    val autoSettlementCheck = responseIsoData.isoMap[60]?.parseRaw2String().toString()
+                    if (syncStatus && responseCode == "00" && !AppPreference.getBoolean(AppPreference.ONLINE_EMV_DECLINED)) {
                         //Below we are saving batch data and print the receipt of transaction:-
                         lifecycleScope.launch(Dispatchers.Main) {
                             if (cardProcessedDataModal.getReadCardType() == DetectCardType.EMV_CARD_TYPE)
-                                txnSuccessToast(
-                                    this@VFTransactionActivity,
-                                    getString(R.string.transaction_approved_successfully)
-                                )
+                                txnSuccessToast(this@VFTransactionActivity, getString(R.string.transaction_approved_successfully))
                             else
                                 txnSuccessToast(this@VFTransactionActivity)
                             // delay(4000)
                         }
 
-                        StubBatchData(
-                            cardProcessedDataModal.getTransType(),
-                            cardProcessedDataModal,
-                            printExtraData,
-                            autoSettlementCheck
-                        )
+                        StubBatchData(cardProcessedDataModal.getTransType(), cardProcessedDataModal, printExtraData, autoSettlementCheck)
                         { stubbedData ->
                             if (cardProcessedDataModal.getTransType() == TransactionType.EMI_SALE.type ||
                                 cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type ||
@@ -587,29 +576,16 @@ class VFTransactionActivity : BaseActivity() {
                         }
                     } else if (syncStatus && responseCode != "00") {
                         GlobalScope.launch(Dispatchers.Main) {
-                            alertBoxWithAction(null,
-                                null,
-                                getString(R.string.transaction_delined_msg),
-                                responseIsoData.isoMap[58]?.parseRaw2String().toString(),
-                                false,
-                                getString(R.string.positive_button_ok),
-                                { alertPositiveCallback ->
+                            alertBoxWithAction(null, null, getString(R.string.transaction_delined_msg), responseIsoData.isoMap[58]?.parseRaw2String().toString(), false, getString(R.string.positive_button_ok), { alertPositiveCallback ->
                                     if (alertPositiveCallback) {
                                         if (!TextUtils.isEmpty(autoSettlementCheck)) {
                                             syncOfflineSaleAndAskAutoSettlement(
-                                                autoSettlementCheck.substring(
-                                                    0,
-                                                    1
-                                                )
+                                                autoSettlementCheck.substring(0, 1)
                                             )
                                         } else {
                                             startActivity(
-                                                Intent(
-                                                    this@VFTransactionActivity,
-                                                    MainActivity::class.java
-                                                ).apply {
-                                                    flags =
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                                Intent(this@VFTransactionActivity, MainActivity::class.java).apply {
+                                                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
                                                 })
                                         }
                                     }
@@ -621,20 +597,11 @@ class VFTransactionActivity : BaseActivity() {
                     else if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
                         //   checkForPrintReversalReceipt(this@VFTransactionActivity) {
                         GlobalScope.launch(Dispatchers.Main) {
-                            alertBoxWithAction(null,
-                                null,
-                                getString(R.string.declined),
-                                getString(R.string.emv_declined),
-                                false,
-                                getString(R.string.positive_button_ok),
-                                { alertPositiveCallback ->
+                            alertBoxWithAction(null, null, getString(R.string.declined), getString(R.string.emv_declined), false, getString(R.string.positive_button_ok), { alertPositiveCallback ->
                                     if (alertPositiveCallback) {
-                                        checkForPrintReversalReceipt(this@VFTransactionActivity) {}
+                                        checkForPrintReversalReceipt(this@VFTransactionActivity,autoSettlementCheck) {}
                                         syncOfflineSaleAndAskAutoSettlement(
-                                            autoSettlementCheck.substring(
-                                                0,
-                                                1
-                                            )
+                                            autoSettlementCheck.substring(0, 1)
                                         )
                                     }
                                 },
@@ -646,7 +613,7 @@ class VFTransactionActivity : BaseActivity() {
                     runOnUiThread { hideProgress() }
                     //below condition is for print reversal receipt if reversal is generated
                     // and also check is need to printed or not(backend enable disable)
-                    checkForPrintReversalReceipt(this) {
+                    checkForPrintReversalReceipt(this,"") {
                         logger("ReversalReceipt", it, "e")
                     }
 

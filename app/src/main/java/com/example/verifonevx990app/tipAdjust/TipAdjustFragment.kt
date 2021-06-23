@@ -583,7 +583,7 @@ class TipAdjustFragment : Fragment() {
                             context.getString(R.string.positive_button_ok),
                             { alertPositiveCallback ->
                                 if (alertPositiveCallback)
-                                    checkForPrintReversalReceipt(activity) {
+                                    checkForPrintReversalReceipt(activity,"") {
                                         declinedTransaction()
                                     }
                             },

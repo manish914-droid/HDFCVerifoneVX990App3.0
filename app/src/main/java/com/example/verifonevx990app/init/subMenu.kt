@@ -950,7 +950,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 }
                                 GlobalScope.launch {
                                     try {
-                                        PrintUtil(context).printReversal(context) {
+                                        PrintUtil(context).printReversal(context,"") {
                                             //  VFService.showToast(it)
                                             iDiag?.hideProgress()
                                         }

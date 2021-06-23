@@ -292,7 +292,7 @@ class VoidTransactionFragment : Fragment() {
 
                                 }
                                 2 -> {
-                                    checkForPrintReversalReceipt(activity) {
+                                    checkForPrintReversalReceipt(activity,"") {
 
                                     }
                                 }

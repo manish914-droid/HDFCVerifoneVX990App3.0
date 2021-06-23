@@ -240,7 +240,7 @@ class VoidOfRefund : Fragment() {
                             ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                             AppPreference.getBankCode()
                         )
-                        checkForPrintReversalReceipt(activity) { VFService.showToast(getString(R.string.fail_to_upload_void_refund_sale)) }
+                        checkForPrintReversalReceipt(activity,"") { VFService.showToast(getString(R.string.fail_to_upload_void_refund_sale)) }
                     }
                 } else {
                     ROCProviderV2.incrementFromResponse(
@@ -249,7 +249,7 @@ class VoidOfRefund : Fragment() {
                     )
                     (activity as MainActivity).hideProgress()
                     if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
-                        checkForPrintReversalReceipt(activity) {
+                        checkForPrintReversalReceipt(activity,"") {
                             VFService.showToast(getString(R.string.fail_to_upload_void_refund_sale))
                         }
                     }

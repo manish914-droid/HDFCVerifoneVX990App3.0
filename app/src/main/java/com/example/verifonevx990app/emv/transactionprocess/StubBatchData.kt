@@ -17,13 +17,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StubBatchData(
-    var transactionType: Int,
-    var cardProcessedDataModal: CardProcessedDataModal,
-    private var printExtraData: Triple<String, String, String>?,
-    private val field60Data: String,
-    batchStubCallback: (BatchFileDataTable) -> Unit
-) {
+class StubBatchData(var transactionType: Int, var cardProcessedDataModal: CardProcessedDataModal, private var printExtraData: Triple<String, String, String>?, private val field60Data: String, batchStubCallback: (BatchFileDataTable) -> Unit) {
 
     var vfIEMV: IEMV? = null
 

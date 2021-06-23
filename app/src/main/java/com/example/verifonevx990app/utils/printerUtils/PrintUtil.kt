@@ -1348,11 +1348,67 @@ class PrintUtil(context: Context?) {
     }
 
 
-    fun printReversal(context: Context?, callback: (String) -> Unit) {
+    fun printReversal(context: Context?,field60Data: String,callback: (String) -> Unit) {
         val isoW = AppPreference.getReversal()
 
         if (isoW != null) {
+            var hostBankID: String? = null
+            var hostIssuerID: String? = null
+            var hostMID: String? = null
+            var hostTID: String? = null
+            var hostBatchNumber: String? = null
+            var hostRoc: String? = null
+            var hostInvoice: String? = null
+            var hostCardType: String? = null
             try {
+
+                val f60DataList = field60Data.split('|')
+                //   Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
+                // 0|1|51|000000041501002|41501369|000150|260|000260|RUPAY|
+                try {
+
+                    hostBankID = f60DataList[1]
+                    hostIssuerID = f60DataList[2]
+                    hostMID = f60DataList[3]
+                    hostTID = f60DataList[4]
+                    hostBatchNumber = f60DataList[5]
+                    hostRoc = f60DataList[6]
+                    hostInvoice = f60DataList[7]
+                    hostCardType = f60DataList[8]
+
+                    println("Server MID and TID and batchumber and roc and cardType is"+
+                            "MID -> "+hostMID+"TID -> "+hostTID+"Batchnumber -> "+hostBatchNumber+"ROC ->"+hostRoc+"CardType -> "+hostCardType)
+
+                    //  batchFileData
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                    //  batchFileData
+                }
+
+                //Changes By manish Kumar
+                //If in Respnse field 60 data comes Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
+                // then show response data otherwise show data available in database
+                //From mid to hostMID (coming from field 60)
+                //From tid to hostTID (coming from field 60)
+                //From batchNumber to hostBatchNumber (coming from field 60)
+                //From roc to hostRoc (coming from field 60)
+                //From invoiceNumber to hostInvoice (coming from field 60)
+                //From cardType to hostCardType (coming from field 60)
+
+                val roc = isoW.isoMap[11]?.rawData ?: ""
+                val tid = isoW.isoMap[41]?.parseRaw2String() ?: ""
+                val mid = isoW.isoMap[42]?.parseRaw2String() ?: ""
+                val batchdata = isoW.isoMap[60]?.parseRaw2String() ?: ""
+                val batch = batchdata.split("|")[0]
+                val cardType = isoW.additionalData["cardType"] ?: ""
+
+                var hostMID = if (hostMID?.isNotBlank() == true) { hostMID } else { mid }
+                var hostTID = if (hostTID?.isNotBlank() == true) { hostTID } else { tid }
+                var hostBatchNumber = if (hostBatchNumber?.isNotBlank() == true) { hostBatchNumber } else { batch }
+                var hostRoc = if (hostRoc?.isNotBlank() == true) { hostRoc } else { roc }
+                var hostCardType = if (hostCardType?.isNotBlank() == true) { hostCardType } else { cardType }
+
+
                 setLogoAndHeader()
 
                 val cal = Calendar.getInstance()
@@ -1362,13 +1418,7 @@ class PrintUtil(context: Context?) {
                 val of13 = isoW.isoMap[13]?.rawData ?: ""
 
                 val d = of13 + yr
-                val roc = isoW.isoMap[11]?.rawData ?: ""
-                val tid = isoW.isoMap[41]?.parseRaw2String() ?: ""
-                val mid = isoW.isoMap[42]?.parseRaw2String() ?: ""
-                val batchdata = isoW.isoMap[60]?.parseRaw2String() ?: ""
 
-
-                val batch = batchdata.split("|")[0]
 
                 var amountStr = isoW.isoMap[4]?.rawData ?: "0"
                 val amt = amountStr.toFloat() / 100
@@ -1376,30 +1426,23 @@ class PrintUtil(context: Context?) {
 
                 val date = "${d.substring(0, 2)}/${d.substring(2, 4)}/${d.substring(4, d.length)}"
                 val time =
-                    "${of12.substring(0, 2)}:${of12.substring(2, 4)}:${
+                        "${of12.substring(0, 2)}:${of12.substring(2, 4)}:${
                         of12.substring(
-                            4,
-                            of12.length
+                                4,
+                                of12.length
                         )
-                    }"
+                        }"
                 alignLeftRightText(textInLineFormatBundle, "DATE : ${date}", "TIME : ${time}")
-                alignLeftRightText(textInLineFormatBundle, "MID : ${mid}", "TID : ${tid}")
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    "BATCH NO  : ${batch}",
-                    "ROC : ${invoiceWithPadding(roc)}"
+                alignLeftRightText(textInLineFormatBundle, "MID : ${hostMID}", "TID : ${hostTID}")
+                alignLeftRightText(textInLineFormatBundle, "BATCH NO  : ${hostBatchNumber}", "ROC : ${invoiceWithPadding(hostRoc)}"
                 )
 
                 centerText(textFormatBundle, "TRANSACTION FAILED")
 
-                val cardType = isoW.additionalData["cardType"] ?: ""
+
                 val card = isoW.additionalData["pan"] ?: ""
                 if (card.isNotEmpty())
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "CARD NO : $card",
-                        cardType
-                    )//chip,swipe,cls
+                    alignLeftRightText(textInLineFormatBundle, "CARD NO : $card", hostCardType)//chip,swipe,cls
 
 
                 val tvr = isoW.additionalData["tvr"] ?: ""
@@ -1423,8 +1466,8 @@ class PrintUtil(context: Context?) {
                 printSeperator(textFormatBundle)
 
                 centerText(
-                    textFormatBundle,
-                    "Please contact your card issuer for reversal of debit if any."
+                        textFormatBundle,
+                        "Please contact your card issuer for reversal of debit if any."
                 )
                 centerText(textFormatBundle, "POWERED BY")
                 printLogo("BH.bmp")
@@ -1451,25 +1494,25 @@ class PrintUtil(context: Context?) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 ex.printStackTrace()
                 failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
                 )
             } catch (e: RemoteException) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 e.printStackTrace()
                 failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
                 )
             } catch (ex: Exception) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 ex.printStackTrace()
                 failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                        context as Activity,
+                        "Printer Service stopped.",
+                        "Please take chargeslip from the Report menu."
                 )
             }
         } else {
@@ -4394,12 +4437,12 @@ class PrintUtil(context: Context?) {
     }
 }
 
-fun checkForPrintReversalReceipt(context: Context?, callback: (String) -> Unit) {
+fun checkForPrintReversalReceipt(context: Context?,field60Data: String,callback: (String) -> Unit) {
     if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
         val tpt = TerminalParameterTable.selectFromSchemeTable()
         tpt?.cancledTransactionReceiptPrint?.let { logger("CancelPrinting", it, "e") }
         if (tpt?.cancledTransactionReceiptPrint == "01") {
-            PrintUtil(context).printReversal(context) {
+            PrintUtil(context).printReversal(context,field60Data) {
                 callback(it)
             }
         } else {
