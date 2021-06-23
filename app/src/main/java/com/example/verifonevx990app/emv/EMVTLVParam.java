@@ -47,24 +47,33 @@ public class EMVTLVParam extends TagLengthValue {
     }
 
     @Override
-    public int append(String tlv) {
+    public int append( String tlv ){
         int count = 0;
-        byte[] bTLV = ROCProviderV2.INSTANCE.hexStr2Byte(tlv);
-        for (int offset = 0; offset < bTLV.length; ) {
+        byte[] bTLV = ROCProviderV2.INSTANCE.hexStr2Byte(tlv );
+        for( int offset = 0; offset< bTLV.length; ){
             // read tag
-            int tagLen = getTagLen(bTLV[offset]);
-            String sTag = tlv.substring(offset * 2, offset * 2 + tagLen * 2);
-            int tag = Integer.parseInt(sTag, 16);
+            int tagLen = getTagLen( bTLV[offset] );
+            String sTag = tlv.substring(offset*2, offset*2+tagLen*2);
+            if(sTag.equalsIgnoreCase("DF81")){
+                sTag = sTag+"1B";
+            }
+            else if(sTag.equalsIgnoreCase("DF82")){
+                sTag = "DF81"+"18";
+            }
+            else if(sTag.equalsIgnoreCase("DF83")){
+                sTag = "DF81"+"19";
+            }
+            int tag = Integer.parseInt( sTag, 16);
             offset += (tagLen);
             // read length
             int lengthLen = getLengthLen(bTLV[offset]);
-            if (lengthLen > 1) {
+            if( lengthLen > 1 ) {
                 offset += 1;
             }
-            int length = Integer.parseInt(tlv.substring(offset * 2, offset * 2 + 2), 16);
+            int length = Integer.parseInt( tlv.substring(offset*2 , offset*2 +2), 16);
             offset += 1;
             // read value
-            String value = tlv.substring(offset * 2, offset * 2 + length * 2);
+            String value = tlv.substring(offset*2, offset*2+length*2);  //Here occur occurs
             offset += length;
 
             append(tag, value);
