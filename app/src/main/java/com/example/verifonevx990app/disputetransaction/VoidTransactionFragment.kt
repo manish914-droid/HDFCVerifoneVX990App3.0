@@ -88,7 +88,7 @@ class VoidTransactionFragment : Fragment() {
             val bat =
                 BatchFileDataTable.selectVoidTransSaleDataByInvoice(invoiceWithPadding(invoice))
             try {
-                voidData = bat.first { it?.invoiceNumber?.toLong() == invoice.toLong() }
+                voidData = bat.first { it?.hostInvoice?.toLong() == invoice.toLong() }
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
@@ -307,8 +307,6 @@ class VoidTransactionFragment : Fragment() {
                                             }
                                         }
                                     }
-
-                                }
                                 2 -> {
                                     checkForPrintReversalReceipt(activity,"") {
 
