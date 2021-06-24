@@ -1152,6 +1152,9 @@ class PrintUtil(context: Context?) {
                 alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
 
                 centerText(textFormatBundle, "DETAIL REPORT", true)
+
+                batch.sortBy { it.hostTID }
+
                 alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].hostMID}", "TID : ${batch[0].hostTID}")
                 alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[0].batchNumber}", "")
                 printSeperator(textFormatBundle)
@@ -1166,8 +1169,6 @@ class PrintUtil(context: Context?) {
 
                     val totalMap = mutableMapOf<Int, SummeryTotalType>()
                     val deformatter = SimpleDateFormat("yyMMdd HHmmss", Locale.ENGLISH)
-
-                    batch.sortBy { it.hostTID }
 
                     var frequency = 0
                     var count = 0
@@ -1290,8 +1291,8 @@ class PrintUtil(context: Context?) {
 
                             if(iteration > 0) {
                                 printSeperator(textFormatBundle)
-                                alignLeftRightText(textInLineFormatBundle, "MID : ${b.hostMID}", "TID : ${b.hostTID}")
-                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${b.batchNumber}", "")
+                                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[frequency+1].hostMID}", "TID : ${batch[frequency+1].hostTID}")
+                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[frequency+1].batchNumber}", "")
                                 printSeperator(textFormatBundle)
                                 iteration--
                             }
