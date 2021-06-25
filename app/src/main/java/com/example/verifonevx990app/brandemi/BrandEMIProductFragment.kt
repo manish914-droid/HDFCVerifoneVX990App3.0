@@ -155,15 +155,6 @@ class BrandEMIProductFragment : Fragment() {
                 )
             }
             //endregion
-            if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
-                iFrReq?.onFragmentRequest(
-                    UiAction.BRAND_EMI_CATALOGUE,
-                    Pair(
-                        "0.0",
-                        "0.0"
-                    )
-                )
-            } else
                 (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
                     arguments = Bundle().apply {
                         putSerializable("type", action)

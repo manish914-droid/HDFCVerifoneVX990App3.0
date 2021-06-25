@@ -110,9 +110,7 @@ class EMIIssuerList : Fragment() {
             field57RequestData =
                 if (AppPreference.getLongData(AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE) != 0L)
                     "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^1^^^^${
-                        AppPreference.getLongData(
-                            AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE
-                        )
+                        AppPreference.getLongData(AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE)
                     }"
                 else
                     "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^1^^^^$enquiryAmount"

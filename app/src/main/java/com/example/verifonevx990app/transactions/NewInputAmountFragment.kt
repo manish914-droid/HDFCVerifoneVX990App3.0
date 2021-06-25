@@ -493,7 +493,7 @@ class NewInputAmountFragment : Fragment() {
                         Pair(saleAmount.toString().trim(), "0")
                     )
                 }
-                /*EDashboardItem.BRAND_EMI_CATALOGUE -> {
+                EDashboardItem.BRAND_EMI_CATALOGUE -> {
                     val checkSaleAmount = binding?.saleAmount?.text.toString().trim().toDouble()
                     if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
                             ?.toDouble() ?: 0.0
@@ -570,7 +570,7 @@ class NewInputAmountFragment : Fragment() {
                             )
                         }
                     }
-                }*/
+                }
 
                 EDashboardItem.DYNAMIC_QR->{
                     if( binding?.mobNumbr?.text.toString().length !in 10..13 ){

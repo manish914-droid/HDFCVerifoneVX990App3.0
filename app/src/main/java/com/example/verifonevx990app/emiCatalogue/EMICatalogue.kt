@@ -14,8 +14,8 @@ import com.example.verifonevx990app.main.IFragmentRequest
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
+import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.vxUtils.IDialog
-import com.example.verifonevx990app.vxUtils.UiAction
 
 class EMICatalogue : Fragment() {
     private var iDialog: IDialog? = null
@@ -63,13 +63,12 @@ class EMICatalogue : Fragment() {
 
         //region================Navigate to NewInputAmount Fragment on Click Event of BankEMI Button:-
         binding?.buttonBankEmi?.setOnClickListener {
-            iFrReq?.onFragmentRequest(
-                UiAction.BANK_EMI_CATALOGUE,
-                Pair(
-                    "0.0",
-                    "0.0"
-                )
-            )
+            (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
+                arguments = Bundle().apply {
+                    putSerializable("type", EDashboardItem.BANK_EMI_CATALOGUE)
+                    putString(MainActivity.INPUT_SUB_HEADING, "")
+                }
+            })
         }
         //endregion
 
