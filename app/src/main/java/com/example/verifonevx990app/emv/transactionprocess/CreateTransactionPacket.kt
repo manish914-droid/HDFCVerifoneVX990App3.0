@@ -246,8 +246,7 @@ class CreateTransactionPacket(
             val customerID =
                 issuerParameterTable?.customerIdentifierFiledType?.let { addPad(it, "0", 2) } ?: 0
 
-            //  val walletIssuerID = HexStringConverter.addPreFixer(issuerParameterTable?.issuerId, 2)
-            val walletIssuerID = issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
+            val walletIssuerID = bankEmiTandCData?.issuerID?.let { addPad(it, "0", 2) } ?: 0
             addFieldByHex(
                 61, addPad(
                     AppPreference.getString("serialNumber"), " ", 15, false

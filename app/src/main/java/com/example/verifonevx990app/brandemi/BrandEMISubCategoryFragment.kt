@@ -24,6 +24,7 @@ import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMISubCategoryTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.realmtables.IssuerTAndCTable
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -90,12 +91,18 @@ class BrandEMISubCategoryFragment : Fragment() {
 
         //Save brandID in Shared Preference to use when user back from sub-category by id screen to sub-category screen for data load:-
         runBlocking(Dispatchers.IO) {
-            AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.getBrandID())
+            if (TextUtils.isEmpty(AppPreference.getString(AppPreference.BrandID))) {
+                AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.getBrandID())
+            }
             brandIDFromPref = AppPreference.getString(AppPreference.BrandID)
         }
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
         setUpRecyclerView()
+        runBlocking(Dispatchers.IO) {
+            val issuerTCData = IssuerTAndCTable.getAllIssuerTAndCData()
+            Log.d("IssuerTC:- ", Gson().toJson(issuerTCData))
+        }
         brandEmiMasterSubCategoryDataList.clear()
         checkAndLoadDataFromSourceCondition()
         Log.d("BrandID:- ", brandIDFromPref ?: "")

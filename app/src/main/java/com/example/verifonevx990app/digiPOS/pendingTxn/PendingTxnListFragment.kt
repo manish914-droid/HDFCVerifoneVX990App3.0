@@ -17,6 +17,7 @@ import com.example.verifonevx990app.digiPOS.*
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.vxUtils.BaseActivity
+import com.example.verifonevx990app.vxUtils.VFService
 import com.example.verifonevx990app.vxUtils.getDigiPosStatus
 import com.example.verifonevx990app.vxUtils.logger
 import com.google.gson.Gson
@@ -97,12 +98,9 @@ class PendingTxnListFragment : Fragment() {
                                 when (statusRespDataList[5]) {
                                     EDigiPosPaymentStatus.Pending.desciption -> {
                                         tabledata.txnStatus = statusRespDataList[5]
+                                        VFService.showToast(statusRespDataList[5])
+                                    }
 
-                                    }
-                                    EDigiPosPaymentStatus.Failed.desciption -> {
-                                        tabledata.txnStatus =
-                                            statusRespDataList[5]
-                                    }
                                     EDigiPosPaymentStatus.Approved.desciption -> {
                                         tabledata.txnStatus = statusRespDataList[5]
                                         DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
@@ -114,7 +112,7 @@ class PendingTxnListFragment : Fragment() {
                                         logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
                                         Log.e("F56->>", responsef57)
                                         runBlocking(Dispatchers.Main) {
-                                            if (digiPosData.size == 0) {
+                                            if (dp.size == 0) {
                                                 binding?.emptyViewText?.visibility = View.VISIBLE
                                                 binding?.recyclerView?.visibility = View.GONE
                                             } else {
@@ -130,6 +128,11 @@ class PendingTxnListFragment : Fragment() {
 
                                             //   binding?.recyclerView?.smoothScrollToPosition(0)
                                         }
+                                    }
+
+                                    else -> {
+
+                                        DigiPosDataTable.deletRecord(tabledata.partnerTxnId)
                                     }
                                 }
                             } else {

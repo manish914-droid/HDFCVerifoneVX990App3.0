@@ -70,7 +70,7 @@
         android:text="@string/proceed_txn"
         android:textColor="@color/white"
         android:textSize="@dimen/text_size_xregular"
-        app:backgroundTint="@color/colorPrimary"
+        app:backgroundTint="@color/red"
         app:elevation="@dimen/pad_0"
         app:icon="@drawable/ic_proceed_button"
         app:iconPadding="@dimen/pad_5"

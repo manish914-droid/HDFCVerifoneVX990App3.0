@@ -184,22 +184,40 @@ class GenericEMISchemeAndOffer(
                     }
 
                     //Parsing and Stubbing BankEMI TAndC Data:-
-                    if (!TextUtils.isEmpty(parsingDataWithCurlyBrace[1])) {
+                    val issuerRelatedData = parseDataListWithSplitter(
+                        SplitterTypes.VERTICAL_LINE.splitter,
+                        parsingDataWithCurlyBrace[1]
+                    )
+                    if (!TextUtils.isEmpty(issuerRelatedData[0])) {
                         val issuerTAndCData = parseDataListWithSplitter(
                             SplitterTypes.CARET.splitter,
-                            parsingDataWithCurlyBrace[1]
+                            issuerRelatedData[0]
                         )
+
                         Log.d("IssuerSchemeID", issuerTAndCData[0])
                         Log.d("IssuerID", issuerTAndCData[1])
                         Log.d("IssuerName", issuerTAndCData[2])
-                        bankEMIIssuerTAndCList.add(
-                            BankEMIIssuerTAndCDataModal(
-                                issuerTAndCData[0],
-                                issuerTAndCData[1],
-                                issuerTAndCData[2],
-                                issuerTAndCData[3]
+                        if (issuerTAndCData.size > 3) {
+                            bankEMIIssuerTAndCList.add(
+                                BankEMIIssuerTAndCDataModal(
+                                    issuerTAndCData[0],
+                                    issuerTAndCData[1],
+                                    issuerTAndCData[2],
+                                    issuerTAndCData[3],
+                                    issuerRelatedData[1]
+                                )
                             )
-                        )
+                        } else {
+                            bankEMIIssuerTAndCList.add(
+                                BankEMIIssuerTAndCDataModal(
+                                    issuerTAndCData[0],
+                                    issuerTAndCData[1],
+                                    issuerTAndCData[2],
+                                    "",
+                                    issuerRelatedData[1]
+                                )
+                            )
+                        }
                     }
 
 
@@ -274,6 +292,7 @@ data class BankEMIIssuerTAndCDataModal(
     var emiSchemeID: String,
     var issuerID: String,
     var issuerName: String,
-    var schemeTAndC: String
+    var schemeTAndC: String,
+    var updateIssuerTAndCTimeStamp: String
 ) : Parcelable
 //endregion
