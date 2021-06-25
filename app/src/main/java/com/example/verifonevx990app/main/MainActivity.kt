@@ -978,9 +978,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 if (checkInternetConnection()) {
                     val bundle = Bundle()
                     bundle.putSerializable("type", action)
-                    //TODO,  In live build code set ---> checkHDFCTPTFieldsBitOnOff(TransactionType.VOID) in if condition
-                    // setting hardcoded true is for only test purpose.
-                    if (true) {
+                    checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)
+
+                    if (checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)) {
                         verifyAdminPasswordFromHDFCTPT(this) {
                             if (it) {
                                 transactFragment(VoidTransactionFragment().apply {
@@ -995,7 +995,15 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             }
                         }
                     } else {
-                        VFService.showToast("VOID NOT ALLOWED...!!")
+                        transactFragment(VoidTransactionFragment().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", action)
+                                putString(
+                                    INPUT_SUB_HEADING,
+                                    SubHeaderTitle.VOID_SUBHEADER_VALUE.title
+                                )
+                            }
+                        })
                     }
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))

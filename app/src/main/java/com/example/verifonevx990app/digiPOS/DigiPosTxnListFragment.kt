@@ -237,7 +237,7 @@ class DigiPosTxnListFragment : Fragment() {
                 "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^1^"
             closeBottomSheet()
             tempDataList.clear()
-
+            txnDataList.clear()
             getDigiPosTransactionListFromHost()
         }
         //endregion
@@ -355,21 +355,36 @@ class DigiPosTxnListFragment : Fragment() {
                         responseIsoData.isoMap[39]?.parseRaw2String().toString() + "---->" +
                                 responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     )
-                    val successResponseCode =
-                        responseIsoData.isoMap[39]?.parseRaw2String().toString()
+                    val successResponseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
                     if (responseIsoData.isoMap[58] != null) {
                         responseMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     }
                     isBool = successResponseCode == "00"
-                    if(isBool) {
-                        if (responseIsoData.isoMap[57] != null) {
-                            txnDataList.clear()
-                            var responseField57 =
-                                responseIsoData.isoMap[57]?.parseRaw2String().toString()
-                            parseTXNListDataAndShowInRecyclerView(responseField57)
+                    val responseField57 = responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                    when(successResponseCode){
+                        "00" -> {
+                            if (responseIsoData.isoMap[57] != null) {
+                                parseTXNListDataAndShowInRecyclerView(responseField57)
+                            }
                         }
-                    }else{
-                        iDialog?.hideProgress()
+
+                        "-1" -> {
+                                 iDialog?.hideProgress()
+                                 VFService.showToast("No Data Found")
+                                 digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                        }
+
+                        else -> {
+                            lifecycleScope.launch(Dispatchers.Main){
+                                iDialog?.hideProgress()
+                                digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                                hasMoreData = false
+                                iDialog?.alertBoxWithAction(null, null,
+                                    getString(R.string.error), result,
+                                    false, getString(R.string.positive_button_ok),
+                                    { parentFragmentManager.popBackStackImmediate() }, {})
+                            }
+                        }
                     }
                 } else {
                     ROCProviderV2.incrementFromResponse(

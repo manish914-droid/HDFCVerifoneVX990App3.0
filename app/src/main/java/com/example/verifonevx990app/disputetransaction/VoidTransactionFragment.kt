@@ -29,6 +29,7 @@ import com.example.verifonevx990app.emv.transactionprocess.SyncVoidTransactionTo
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.realmtables.TxnCallBackRequestTable
 import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -101,10 +102,16 @@ class VoidTransactionFragment : Fragment() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-            if (voidData != null)
-                withContext(Dispatchers.Main) {
-                    voidTransConfirmationDialog(voidData!!)
+            if (voidData != null) {
+                val tpt=TerminalParameterTable.selectFromSchemeTable()
+                if(voidData?.transactionType==TransactionType.REFUND.type && tpt?.voidRefund!="1"){
+                    VFService.showToast(getString(R.string.void_refund_not_allowed))
+                }else{
+                    withContext(Dispatchers.Main) {
+                        voidTransConfirmationDialog(voidData!!)
+                    }
                 }
+            }
             else {
                 withContext(Dispatchers.Main) {
                     voidRefundBT?.isEnabled = true

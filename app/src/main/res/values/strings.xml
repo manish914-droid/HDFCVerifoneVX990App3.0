@@ -505,4 +505,5 @@
     <string name="printing_roll_not_available">Please Check Printing roll not available</string>
     <string name="no_pending_transaction_found_want_to_search_transaction">No Pending Transaction found want to search transaction</string>
     <string name="want_print_detail">Do you want to print Detail Report</string>
+    <string name="void_refund_not_allowed">Void of Refund not allowed</string>
 </resources>
