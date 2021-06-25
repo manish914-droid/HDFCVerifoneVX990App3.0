@@ -62,6 +62,7 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
+import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -1095,7 +1096,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             EDashboardItem.EMI_ENQUIRY -> {
                 if (checkInternetConnection()) {
-                    transactFragment(NewInputAmountFragment().apply {
+                /*    transactFragment(NewInputAmountFragment().apply {
                         arguments = Bundle().apply {
                             putSerializable("type", action)
                             putString(
@@ -1103,7 +1104,15 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
                             )
                         }
-                    })
+                    })*/
+
+                     transactFragment(EMICatalogue().apply {
+                            arguments = Bundle().apply {
+                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                putString(INPUT_SUB_HEADING, "")
+                            }
+                        })
+
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
