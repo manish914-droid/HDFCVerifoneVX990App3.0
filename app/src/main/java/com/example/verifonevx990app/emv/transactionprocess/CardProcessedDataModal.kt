@@ -21,6 +21,7 @@ class CardProcessedDataModal : Serializable {
     private var isOnline: Int = 0
     private var genratedPinBlock: String? = null
     private var aid: String? = null
+    private var aidPrint: String? = null
     private var cardholderName: String? = null
     private var date: String? = null
     private var time: String? = null
@@ -61,6 +62,15 @@ class CardProcessedDataModal : Serializable {
     private var cardlabel: String? = null
 
     private var pinByPass: Int? = null
+
+    //region==================================================No cvm required value:-
+    private var noCVMneeded: Boolean = false
+    //region
+
+    //region==================================================No cvm required value:-
+    private var doubleTap: Boolean = false
+    //region
+
 
 
     fun getTrack1Data(): String? {
@@ -347,6 +357,15 @@ class CardProcessedDataModal : Serializable {
         return aid
     }
 
+    fun setAIDPrint(aid: String?) {
+
+        this.aidPrint = aid
+    }
+    fun getAIDPrint(): String? {
+
+        return aidPrint
+    }
+
     fun getCardHolderName(): String? {
 
         return cardholderName
@@ -394,6 +413,14 @@ class CardProcessedDataModal : Serializable {
 
     fun getPinByPass(): Int? {
         return pinByPass
+    }
+
+    fun setNoCVM(noCVMneeded: Boolean) {
+        this.noCVMneeded = noCVMneeded
+    }
+
+    fun getNoCVM(): Boolean? {
+        return noCVMneeded
     }
 
     fun setcardLabel(cardlabel: String?) {

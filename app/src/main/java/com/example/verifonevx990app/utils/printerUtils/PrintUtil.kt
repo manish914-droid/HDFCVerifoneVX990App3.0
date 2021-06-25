@@ -106,8 +106,9 @@ class PrintUtil(context: Context?) {
     }
 
     // bundle format for addText
-    private var signatureMsg: String? = null
-    private var pinVerifyMsg: String? = null
+    // bundle format for addText
+    private lateinit var signatureMsg: String
+    private lateinit var pinVerifyMsg: String
 
     private val textFormatBundle by lazy { Bundle() }
 
@@ -442,11 +443,11 @@ class PrintUtil(context: Context?) {
 
             format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
             format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-            if (printerReceiptData.isPinverified) {
+            if (printerReceiptData.isPinverified && !(printerReceiptData.nocvm))  {
                 //  printer?.addText(format, pinVerifyMsg)
                 centerText(format, pinVerifyMsg)
                 centerText(format, signatureMsg)
-            } else {
+            } else if(!(printerReceiptData.nocvm)){
                 // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
                 alignLeftRightText(format, pinVerifyMsg, "", "")
                 alignLeftRightText(format, signatureMsg, "", "")

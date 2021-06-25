@@ -32,13 +32,7 @@ import kotlinx.coroutines.launch
 import java.nio.charset.StandardCharsets
 import java.util.*
 
-class VFEmvHandler(
-    var activity: Activity,
-    var handler: Handler,
-    var iemv: IEMV?,
-    var cardProcessedDataModal: CardProcessedDataModal,
-    var vfEmvHandlerCallback: (CardProcessedDataModal) -> Unit
-) : EMVHandler.Stub() {
+class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?, var cardProcessedDataModal: CardProcessedDataModal, var vfEmvHandlerCallback: (CardProcessedDataModal) -> Unit) : EMVHandler.Stub() {
     private var TAG = VFEmvHandler::class.java.name
     private var maxPin: Int = 0
     private var SuccessPin: Int = 1
@@ -50,6 +44,39 @@ class VFEmvHandler(
     override fun onRequestOnlineProcess(aaResult: Bundle?) {
         Log.d(MainActivity.TAG, "onRequestOnlineProcess...")
         //Setting Pos entry mode for those who did not got in Request Input Pin
+
+        val tlv1:ByteArray?
+        val noCvmTagvalue = arrayOf("0x9F34")
+        val cvmresult = iemv?.getAppTLVList(noCvmTagvalue)
+        tlv1 = iemv?.getCardData(Integer.toHexString(0x9F34).toUpperCase(Locale.ROOT))
+        if(null != tlv1 && !(tlv1.isEmpty())) {
+            println("CVM Result Data is ----> $cvmresult")
+
+            println("CVM Result Data value is ----> ${Utility.byte2HexStr(tlv1)}")
+
+            val f55Hash = HashMap<Int, String>()
+            val str = Utility.byte2HexStr(tlv1)
+
+            var i = 0
+            var j = 1
+            while (i < str.length - 1) {
+                val c = "" + str[i] + str[i + 1]
+                f55Hash.put(j, c)
+                println("9F34 value with pair is" + c)
+                j += 1
+                i += 2
+            }
+
+            var firstbyte: String = f55Hash.get(1) ?: ""
+
+            VFService.showToast("CVM Result first byte is ----> ${firstbyte}")
+            println("CVM Result first byte is ----> ${firstbyte}")
+
+            if ("1F" == firstbyte || "5F" == firstbyte || "3F" == firstbyte) {
+                cardProcessedDataModal.setNoCVM(true)
+            }
+
+        }
 
         when (cardProcessedDataModal.getReadCardType()) {
             DetectCardType.EMV_CARD_TYPE -> {
@@ -417,12 +444,13 @@ class VFEmvHandler(
         }*/
 
         val msg = data?.getString("ERROR")
+        VFService.showToast("OnTxnResult error code is --> "+result + "error msg is _--> "+msg)
         when {
             DetectError.SeePhone.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.contactless_seephone_error),
-                    activity.getString(R.string.please_use_another_card_for_transaction),
-                    false
+                        activity.getString(R.string.contactless_seephone_error),
+                        activity.getString(R.string.please_use_another_card_for_transaction),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -434,8 +462,8 @@ class VFEmvHandler(
             }
             DetectError.ReadCardFail.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.alert), activity.getString(R.string.read_card_fail),
-                    false
+                        activity.getString(R.string.alert), activity.getString(R.string.read_card_fail),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -447,9 +475,9 @@ class VFEmvHandler(
             }
             DetectError.Muticarderror.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.alert),
-                    activity.getString(R.string.multi_card_error),
-                    false
+                        activity.getString(R.string.alert),
+                        activity.getString(R.string.multi_card_error),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -461,10 +489,8 @@ class VFEmvHandler(
             }
             DetectError.NoCoOwnedApp.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.alert),
-                    activity.getString(R.string.please_use_another_card_for_transaction),
-                    false
-                ) { alertCBBool ->
+                        activity.getString(R.string.emv_fallback),
+                        activity.getString(R.string.please_use_another_card_for_transaction), false) { alertCBBool ->
                     if (alertCBBool)
                         try {
                             cardProcessedDataModal.setFallbackType(EFallbackCode.EMV_fallback.fallBackCode)
@@ -476,9 +502,9 @@ class VFEmvHandler(
             }
             DetectError.NeedContact.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.card_read_error),
-                    activity.getString(R.string.reinitiate_trans),
-                    false
+                        activity.getString(R.string.card_read_error),
+                        activity.getString(R.string.reinitiate_trans),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -490,9 +516,9 @@ class VFEmvHandler(
             }
             DetectError.EMVFallBack.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.emv_fallback),
-                    activity.getString(R.string.please_use_another_card_for_transaction),
-                    false
+                        activity.getString(R.string.emv_fallback),
+                        activity.getString(R.string.please_use_another_card_for_transaction),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -504,9 +530,9 @@ class VFEmvHandler(
             }
             DetectError.DynamicLimit.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.card_read_error),
-                    activity.getString(R.string.dynamicLimit_error),
-                    false
+                        activity.getString(R.string.card_read_error),
+                        activity.getString(R.string.dynamicLimit_error),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -518,8 +544,8 @@ class VFEmvHandler(
             }
             DetectError.IncorrectPAN.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.alert), msg.toString(),
-                    false
+                        activity.getString(R.string.alert), msg.toString(),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -532,9 +558,9 @@ class VFEmvHandler(
             }
             DetectError.CTLS_CARD_READ_FAILED_ERROR.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.read_failed),
-                    activity.getString(R.string.card_read_failed),
-                    false
+                        activity.getString(R.string.read_failed),
+                        activity.getString(R.string.card_read_failed),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -547,9 +573,22 @@ class VFEmvHandler(
             }
             DetectError.OtherErrorTransactionterminated.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.timeOut),
-                    activity.getString(R.string.transaction_terminated),
-                    false
+                        activity.getString(R.string.timeOut),
+                        activity.getString(R.string.transaction_terminated),
+                        false
+                ) { alertCBBool ->
+                    if (alertCBBool)
+                        try {
+                            (activity as VFTransactionActivity).declinedTransaction()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                }
+                logger("onTransactionResult", "IncorrectPAN", "e")
+            }
+            DetectError.TransactionDeclined.errorCode == result -> {
+                (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(R.string.transaction_declined), activity.getString(R.string.transaction_declined_message),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {
@@ -562,8 +601,8 @@ class VFEmvHandler(
             }
             else -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                    activity.getString(R.string.alert), msg.toString(),
-                    false
+                        activity.getString(R.string.alert), msg.toString(),
+                        false
                 ) { alertCBBool ->
                     if (alertCBBool)
                         try {

@@ -28,6 +28,7 @@ import com.example.verifonevx990app.appupdate.*
 import com.example.verifonevx990app.appupdate.SystemService.systemManager
 import com.example.verifonevx990app.bankEmiEnquiry.IssuerListFragment
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
+import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIByAccessCodeFragment
 import com.example.verifonevx990app.crosssell.HDFCCrossSellFragment
 import com.example.verifonevx990app.databinding.ActivityMainBinding
@@ -1156,7 +1157,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                        /*transactFragment(BrandEMIMasterCategoryFragment().apply {
+                        transactFragment(BrandEMIMasterCategoryFragment().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                                 putString(
@@ -1164,14 +1165,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                     SubHeaderTitle.Brand_EMI_Master_Category.title
                                 )
                             }
-                        })*/
+                        })
 
-                        transactFragment(EMICatalogue().apply {
+                      /*  transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
                                 putString(INPUT_SUB_HEADING, "")
                             }
-                        })
+                        })*/
 
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -2193,6 +2194,7 @@ enum class DetectError(val errorCode: Int) {
     IncorrectPAN(2007),
     OtherErrorTransactionterminated(11),
     CTLS_CARD_READ_FAILED_ERROR(29),
+    TransactionDeclined(1)
 }
 
 //Below Enum class is used to handle Host Response Codes:-
@@ -2320,7 +2322,8 @@ enum class CardAid(val aid: String) {
     Diners("A000000152"),
     Jcb("A000000065"),
     UnionPay("A000000333"),
-    AMEX("A000000025")
+    AMEX("A000000025"),
+    Master("A000000004")
 }
 //endregion
 
