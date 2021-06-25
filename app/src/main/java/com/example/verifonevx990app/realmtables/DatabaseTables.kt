@@ -4500,6 +4500,17 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
                     result
                 }
 
+        fun deletAllRecordAccToTxnStatus(txnStatus: String) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.where(DigiPosDataTable::class.java)
+                        .equalTo(
+                            "txnStatus",
+                            txnStatus
+                        ).findAll()?.deleteAllFromRealm()
+                }
+            }
+
         fun deletRecord(partnerTxnId: String) =
                 withRealm {
                     it.executeTransaction { i ->

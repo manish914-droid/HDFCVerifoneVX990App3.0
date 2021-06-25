@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
+
+
 <androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -23,9 +25,8 @@
 
             <TextView
                 android:id="@+id/filterTV"
-                android:layout_width="wrap_content"
-                android:layout_height="60dp"
-                android:layout_marginEnd="@dimen/pad_24"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:background="@color/colorPrimaryTrans"
                 android:gravity="end|center_vertical"
                 android:padding="@dimen/pad_8"
@@ -34,6 +35,7 @@
                 android:textSize="@dimen/text_size_small"
                 app:drawableRightCompat="@drawable/ic_arrow_down"
                 app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
 
             <androidx.recyclerview.widget.RecyclerView
@@ -41,7 +43,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginTop="@dimen/pad_8"
-                android:layout_marginBottom="@dimen/pad_60"
                 android:scrollbars="none"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

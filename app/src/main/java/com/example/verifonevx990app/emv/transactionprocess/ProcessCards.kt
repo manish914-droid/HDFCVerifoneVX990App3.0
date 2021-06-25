@@ -512,7 +512,7 @@ class ProcessCard(
                                 { cardBinValue ->
                                         /*iemv?.stopCheckCard()
                                         iemv?.abortEMV()*/
-                                        Log.e("bb CC", "------->>")
+                                        Log.e("Card Bin Emi", cardBinValue)
                                         if (!TextUtils.isEmpty(cardBinValue)) {
                                             GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/
                                             }

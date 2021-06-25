@@ -140,21 +140,25 @@ class AmountEditText : BHEditText {
 
 
     private fun doFormatting() {
-        /* if (text?.isEmpty()!!) {
-             val tx = "%.2f".format(0f)
-             setText(tx)
-             setSelection(tx.length)
-         }*/
-        if (text?.toString() == "0.0") {
-            setText("")
+        if (text?.isNotEmpty() == true) {
+
+            if (text?.toString() == "0.0") {
+                setText("")
+            } else {
+                val fl = text.toString().replace(".", "").toLong()
+                val tx = "%.2f".format(fl.toDouble() / 100)
+                setText(tx)
+                setSelection(tx.length)
+            }
+            removeTextChangedListener(watcher2)
+            addTextChangedListener(watcher1)
         } else {
-            val fl = text.toString().replace(".", "").toLong()
-            val tx = "%.2f".format(fl.toDouble() / 100)
+            val tx = "%.2f".format(0f)
             setText(tx)
             setSelection(tx.length)
+            removeTextChangedListener(watcher2)
+            addTextChangedListener(watcher1)
         }
-        removeTextChangedListener(watcher2)
-        addTextChangedListener(watcher1)
     }
 
 

@@ -76,18 +76,16 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
         title = "Pre-Auth"
     ),
     REFUND("Refund", R.drawable.ic_refund),
-    BANK_EMI(title = "Bank EMI"), OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS(title = "Cash Advance"), SALE_WITH_CASH(
-        title = "Sale With Cash"
-    ),
-    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(title = "Emi Enquiry"), BRAND_EMI(
+    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon), OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS("Cash Advance", R.drawable.ic_cash_at_pos_icon), SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
+    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon), BRAND_EMI(
         "Brand EMI", R.drawable.ic_brand_emi
     ),
-    TEST_EMI(title = "Test EMI"),
-    FLEXI_PAY(title = "Flexi Pay"),
+    TEST_EMI("Test Emi", R.drawable.ic_sale),
+    FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance),
     DEFAUTL("Not Declared", R.drawable.ic_sad),
-    BRAND_EMI_CATALOGUE(title = "BRAND EMI CATALOGUE"),
-    BANK_EMI_CATALOGUE(title = "BANK EMI CATALOGUE"),
-    DYNAMIC_QR(title="Dynamic QR")
+    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale),
+    BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale),
+    DYNAMIC_QR("Dynamic QR", R.drawable.ic_qr_code)
 }
 
 

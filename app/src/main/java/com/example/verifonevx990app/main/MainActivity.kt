@@ -1301,7 +1301,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                        transactFragment(EMICatalogue().apply {
+                       /* transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                             }

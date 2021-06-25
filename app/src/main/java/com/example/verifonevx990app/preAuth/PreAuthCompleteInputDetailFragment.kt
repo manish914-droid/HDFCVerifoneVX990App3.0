@@ -95,15 +95,9 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
             hm[binding?.tidCrdView] = binding?.tidEt
             hm[binding?.rocCrdView] = binding?.rocEt
             hm[binding?.batchCrdView] = binding?.batchEt
-
-
             showOtherEditTextUnSelected(hm, requireContext())
             Log.d("RocET:- ", "Clicked")
         }
-
-
-
-
         binding?.subHeaderView?.subHeaderText?.text = title
         binding?.tidEt?.isFocusableInTouchMode = true
         binding?.tidEt?.requestFocus()
@@ -200,7 +194,7 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
                 SyncAuthTransToHost(it as BaseActivity).checkReversalPerformAuthTransaction(
                     transactionISO, cardProcessedData
                 ) { isSuccess, msg ->
-                    showToast("$msg----------->  $isSuccess")
+                  //  showToast("$msg----------->  $isSuccess")
                     logger("PREAUTHCOMP", "Is success --->  $isSuccess  Msg --->  $msg")
                     parentFragmentManager.popBackStackImmediate()
                 }

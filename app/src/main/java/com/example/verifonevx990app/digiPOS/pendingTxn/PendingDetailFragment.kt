@@ -83,7 +83,7 @@ class PendingDetailFragment :Fragment() {
                 dataToPrintAfterSuccess?.let { it1 ->
                     PrintUtil(context).printSMSUPIChagreSlip(
                         it1,
-                        EPrintCopyType.MERCHANT,
+                        EPrintCopyType.DUPLICATE,
                         context
                     ) { alertCB, printingFail ->
                         //context.hideProgress()

@@ -141,7 +141,7 @@ class VFTransactionActivity : BaseActivity() {
                         null,
                         null,
                         getString(R.string.printer_error),
-                        "Want to Proceed SALE with no charge slip",
+                        "Want to Proceed Transaction with no charge slip",
                         true,
                         getString(R.string.yes),
                         { alertPositiveCallback ->
@@ -357,7 +357,9 @@ class VFTransactionActivity : BaseActivity() {
     private fun initUI() {
         //    binding?.paymentGif?.loadUrl("file:///android_asset/card_animation.html")
         //    binding?.paymentGif?.setOnTouchListener { _, event -> event.action == MotionEvent.ACTION_MOVE }
-        val amountValue = "${getString(R.string.rupees_symbol)} $transactionAmountValue"
+
+      val formattedAMt=  "%.2f".format(transactionAmountValue.toDouble())
+        val amountValue = "${getString(R.string.rupees_symbol)} $formattedAMt"
         if (transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
             val brandEMIAccessAmount =
                 getString(R.string.rupees_symbol) + (((transactionAmountValue).toDouble()).div(100)).toString()
@@ -498,7 +500,9 @@ class VFTransactionActivity : BaseActivity() {
                                             // Here we are Syncing Txn CallBack to server
                                             lifecycleScope.launch(Dispatchers.IO){
                                                 withContext(Dispatchers.Main) {
-                                                    showProgress("Please wait Transaction syncing.....")
+                                                    showProgress(getString(
+                                                        R.string.txn_syn
+                                                    ))
                                                 }
                                                 val amount = MoneyUtil.fen2yuan(
                                                     stubbedData.totalAmmount.toDouble().toLong()
@@ -538,7 +542,9 @@ class VFTransactionActivity : BaseActivity() {
                                         // Here we are Syncing Txn CallBack to server
                                         lifecycleScope.launch(Dispatchers.IO){
                                                 withContext(Dispatchers.Main) {
-                                                    showProgress("Please wait Transaction syncing.....")
+                                                    showProgress(getString(
+                                                        R.string.txn_syn
+                                                    ))
                                                 }
                                                 val amount = MoneyUtil.fen2yuan(
                                                     stubbedData.totalAmmount.toDouble().toLong()
@@ -750,7 +756,7 @@ class VFTransactionActivity : BaseActivity() {
         ) { dialogCB, printingFail ->
             Log.d("Sale Printer Status:- ", printingFail.toString())
             if (printingFail == 0)
-                GlobalScope.launch(Dispatchers.Main) {
+               runOnUiThread {
                     alertBoxWithAction(null,
                         null,
                         getString(R.string.printer_error),
@@ -758,14 +764,15 @@ class VFTransactionActivity : BaseActivity() {
                         false,
                         getString(R.string.positive_button_ok),
                         {
-                            startActivity(
+                            cb(dialogCB)
+                          /*  startActivity(
                                 Intent(
                                     this@VFTransactionActivity,
                                     MainActivity::class.java
                                 ).apply {
                                     flags =
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                })
+                                })*/
                         },
                         {})
                 }
@@ -791,7 +798,7 @@ class VFTransactionActivity : BaseActivity() {
         ) { dialogCB, printingFail ->
             Log.d("Sale Printer Status:- ", printingFail.toString())
             if (printingFail == 0)
-                GlobalScope.launch(Dispatchers.Main) {
+               runOnUiThread {
                     alertBoxWithAction(null,
                         null,
                         getString(R.string.printer_error),
@@ -799,14 +806,15 @@ class VFTransactionActivity : BaseActivity() {
                         false,
                         getString(R.string.positive_button_ok),
                         {
-                            startActivity(
+                            emiCB(dialogCB)
+                           /* startActivity(
                                 Intent(
                                     this@VFTransactionActivity,
                                     MainActivity::class.java
                                 ).apply {
                                     flags =
                                         Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                })
+                                })*/
                         },
                         {})
                 }

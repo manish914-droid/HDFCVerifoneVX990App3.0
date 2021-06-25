@@ -1303,7 +1303,30 @@ class PrintUtil(context: Context?) {
                     }
 
                 }
-                //    printSeperator(textFormatBundle)
+                // region === Below code is execute when digi txns are available on POS
+                val digiPosDataList = DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption) as ArrayList<DigiPosDataTable>
+
+                if (digiPosDataList.isNotEmpty()) {
+                    printSeperator(textFormatBundle)
+                    centerText(textFormatBundle, "---------X-----------X----------")
+                    centerText(textFormatBundle, "Digi Pos Detail Report", true)
+                    tpt?.terminalId?.let { centerText(textFormatBundle, "TID : $it") }
+                    printSeperator(textFormatBundle)
+                    // Txn description
+                    alignLeftRightText(textInLineFormatBundle, "MODE", "AMOUNT(INR)")
+                    alignLeftRightText(textInLineFormatBundle, "PartnetTxnId", "DATE-TIME")
+                    alignLeftRightText(textInLineFormatBundle, "mTxnId", "pgwTxnId")
+                    printSeperator(textFormatBundle)
+                    //Txn Detail
+                    for(digiPosData in digiPosDataList){
+                        alignLeftRightText(textInLineFormatBundle, digiPosData.paymentMode, digiPosData.amount)
+                        alignLeftRightText(textInLineFormatBundle, digiPosData.partnerTxnId, digiPosData.txnDate+"  "+digiPosData.txnTime)
+                        alignLeftRightText(textInLineFormatBundle, digiPosData.mTxnId, digiPosData.pgwTxnId)
+                        printer?.addText(textFormatBundle, "--------------------------------")
+                    }
+                    //   DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
+                }
+                //endregion
                 printer?.addText(textFormatBundle, "--------------------------------")
                 centerText(textFormatBundle, "App Version :$appVersion")
                 centerText(textFormatBundle, "---------X-----------X----------")
@@ -2271,21 +2294,69 @@ class PrintUtil(context: Context?) {
                 printSeperator(textFormatBundle)
                 if (isSettlementSuccess) {
                     centerText(textInLineFormatBundle, "SETTLEMENT SUCCESSFUL")
-                    centerText(textFormatBundle, "Bonushub")
                 }
+                // Below code is used for Digi POS Settlement report
+                if(!isLastSummary){
+                    val digiPosDataList=DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
+                    val requiredTxnhm= hashMapOf<String,ArrayList<DigiPosDataTable>>()
+                    if(digiPosDataList.isNotEmpty()){
+                        for (i in digiPosDataList){
+                            val digiData= arrayListOf<DigiPosDataTable>()
+                            for(j in digiPosDataList){
+                                if(i.paymentMode == j.paymentMode){
+                                    digiData.add(j)
+                                    requiredTxnhm[i.paymentMode] = digiData
+                                }
+                            }
+                        }
+
+                        centerText(textFormatBundle, "---------X-----------X----------")
+                        centerText(textFormatBundle, "Digi Pos Summary Report", true)
+                        tpt?.terminalId?.let { centerText(textFormatBundle, "TID : $it") }
+                        printSeperator(textFormatBundle)
+                        // Txn description
+                        alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL","COUNT")
+                        printSeperator(textFormatBundle)
+                        var totalAmount=0.0f
+                        var totalCount=0
+                        for ((k,v) in requiredTxnhm){
+                            val txnType=k
+                            val txnCount=v.size
+                            var txnTotalAmount=0.0f
+                            for(value in v){
+                                txnTotalAmount += (value.amount.toFloat())
+                                totalAmount += (value.amount.toFloat())
+                                totalCount++
+                            }
+                            alignLeftRightText(textInLineFormatBundle, txnType, "Rs. ${"%.2f".format(txnTotalAmount)}",txnCount.toString())
+                        }
+                        printSeperator(textFormatBundle)
+                        alignLeftRightText(textInLineFormatBundle, "Total TXNs", "Rs. ${"%.2f".format(totalAmount)}",totalCount.toString())
+                        printSeperator(textFormatBundle)
+                    }
+                }
+
+                centerText(textFormatBundle, "Bonushub")
                 centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
                 centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
 
+
                 // start print here
                 printer?.startPrint(object : PrinterListener.Stub() {
                     override fun onFinish() {
+                        if(isSettlementSuccess){
+                            DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
+                        }
                         callBack(true)
                         Log.e("Settle_RECEIPT", "SUCESS__")
                     }
 
                     override fun onError(error: Int) {
+                        if(isSettlementSuccess){
+                            DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
+                        }
                         callBack(false)
                         Log.e("Settle_RECEIPT", "FAIL__")
                     }

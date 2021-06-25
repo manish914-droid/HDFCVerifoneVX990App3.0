@@ -404,7 +404,7 @@ internal class SettlementAdapter(private val list: List<BatchFileDataTable>) :
 
     override fun onBindViewHolder(p0: SettlementHolder, p1: Int) {
 
-        p0.invoiceText.text = invoiceWithPadding(list[p1].invoiceNumber)
+        p0.invoiceText.text = invoiceWithPadding(list[p1].hostInvoice)
         var amount = "0"
 
         divideAmountBy100(amount.toDouble().toInt())

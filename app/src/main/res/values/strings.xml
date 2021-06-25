@@ -225,7 +225,7 @@
     <string name="please_settle_batch">Please settle batch</string>
     <string name="please_Wait_void_refund_sale_uploading">Please wait Void of Refund sale uploading.....</string>
     <string name="confirmation">Confirmation</string>
-    <string name="detail_summery_report_printed">Detail Report Printed Succesfully</string>
+    <string name="detail_summery_report_printed">Detail Report Printed Successfully</string>
     <string name="error_in_printing">Error in Printing</string>
     <string name="bank_code_not_found_iso_error">Bank Code Not Found</string>
     <string name="last_summary_confirmation">Do you want to print Last summary report</string>
@@ -321,7 +321,7 @@
     <string name="offline_sale">Offline Sale</string>
     <string name="offline_sale_uploading">Offline Sale Uploading</string>
     <string name="fail">Fail :- </string>
-    <string name="printing_roll_empty_msg">Please Check</string>
+    <string name="printing_roll_empty_msg">Transaction success Please Check Printing roll not available</string>
     <string name="please_check_printing_roll">Want To Settle without Settlement Reports?</string>
     <string name="app_selection_failed">App Selection Failed</string>
     <string name="please_reinitiate_transaction">Please Re-initiate Transaction.</string>
@@ -501,4 +501,8 @@
     <string name="_0_0">0.0</string>
     <string name="scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now">Scan QR code to pay.\nWould you like to check payment status now.</string>
 <string name="scan_qr_pay">Scan QR code to pay.</string>
+    <string name="txn_syn">Please wait Transaction syncing.....</string>
+    <string name="printing_roll_not_available">Please Check Printing roll not available</string>
+    <string name="no_pending_transaction_found_want_to_search_transaction">No Pending Transaction found want to search transaction</string>
+    <string name="want_print_detail">Do you want to print Detail Report</string>
 </resources>

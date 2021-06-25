@@ -20,12 +20,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.DigiPosTxnListBinding
 import com.example.verifonevx990app.databinding.DigiPosTxnListItemBinding
+import com.example.verifonevx990app.databinding.ItemPendingTxnBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
@@ -53,12 +55,7 @@ class DigiPosTxnListFragment : Fragment() {
         "$requestTypeID^$totalRecord^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^$pageNumber^"
     private var processingCode = EnumDigiPosProcessingCode.DIGIPOSPROCODE.code
     private var txnDataList = mutableListOf<DigiPosTxnModal>()
-    private val digiPosTxnListAdapter by lazy {
-        DigiPosTxnListAdapter(
-            txnDataList,
-            ::onItemClickCB
-        )
-    }
+    private lateinit var  digiPosTxnListAdapter :DigiPosTxnListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -71,6 +68,12 @@ class DigiPosTxnListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        digiPosTxnListAdapter = DigiPosTxnListAdapter(txnDataList,
+                ::onItemClickCB
+            )
+
+
+
         sheetBehavior = binding?.bottomSheet?.let { BottomSheetBehavior.from(it.bottomLayout) }
 
         //back Navigation icon click event:-
@@ -215,13 +218,17 @@ class DigiPosTxnListFragment : Fragment() {
         }
         //endregion
 
-        setUpRecyclerView()
-        getDigiPosTransactionListFromHost()
+
+
+            setUpRecyclerView()
+            getDigiPosTransactionListFromHost()
+
 
         //region======================Filter Apply Button onclick event:-
         binding?.bottomSheet?.applyFilter?.setOnClickListener {
-            bottomSheetAmountData = binding?.bottomSheet?.amountBottomET?.text?.toString() ?: ""
-            if (binding?.bottomSheet?.ptxnIDBottomRB?.isChecked == true)
+      val amtStr=   binding?.bottomSheet?.amountBottomET?.text?.toString() ?: "0.0"
+            bottomSheetAmountData = if(amtStr=="") "0.0" else amtStr
+                if (binding?.bottomSheet?.ptxnIDBottomRB?.isChecked == true)
                 partnerTransactionID = binding?.bottomSheet?.transactionIDET?.text.toString()
             if (binding?.bottomSheet?.mtxnIDBottomRB?.isChecked == true)
                 mTransactionID = binding?.bottomSheet?.transactionIDET?.text.toString()
@@ -230,7 +237,7 @@ class DigiPosTxnListFragment : Fragment() {
                 "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^1^"
             closeBottomSheet()
             tempDataList.clear()
-            txnDataList.clear()
+
             getDigiPosTransactionListFromHost()
         }
         //endregion
@@ -354,10 +361,15 @@ class DigiPosTxnListFragment : Fragment() {
                         responseMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     }
                     isBool = successResponseCode == "00"
-                    if (responseIsoData.isoMap[57] != null) {
-                        var responseField57 =
-                            responseIsoData.isoMap[57]?.parseRaw2String().toString()
-                        parseTXNListDataAndShowInRecyclerView(responseField57)
+                    if(isBool) {
+                        if (responseIsoData.isoMap[57] != null) {
+                            txnDataList.clear()
+                            var responseField57 =
+                                responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                            parseTXNListDataAndShowInRecyclerView(responseField57)
+                        }
+                    }else{
+                        iDialog?.hideProgress()
                     }
                 } else {
                     ROCProviderV2.incrementFromResponse(
@@ -552,6 +564,7 @@ internal class DigiPosTxnListAdapter(
     private val adapterTXNList: MutableList<DigiPosTxnModal> = mutableListOf()
 
     init {
+        logger("LIST SIZE","${dataList?.size}","e")
         if (dataList?.isNotEmpty() == true)
             adapterTXNList.addAll(dataList!!)
     }
@@ -560,7 +573,7 @@ internal class DigiPosTxnListAdapter(
         parent: ViewGroup,
         viewType: Int
     ): DigiPosTxnViewHolder {
-        val binding: DigiPosTxnListItemBinding = DigiPosTxnListItemBinding.inflate(
+        val binding: ItemPendingTxnBinding = ItemPendingTxnBinding.inflate(
             LayoutInflater.from(parent.context),
             parent,
             false
@@ -635,7 +648,7 @@ internal class DigiPosTxnListAdapter(
     }
     //endregion
 
-    inner class DigiPosTxnViewHolder(val binding: DigiPosTxnListItemBinding) :
+    inner class DigiPosTxnViewHolder(val binding: ItemPendingTxnBinding) :
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.getStatusButton.setOnClickListener {

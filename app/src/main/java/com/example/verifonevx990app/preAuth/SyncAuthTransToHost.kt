@@ -3,13 +3,18 @@ package com.example.verifonevx990app.preAuth
 import android.content.Intent
 import android.text.TextUtils
 import android.util.Log
+import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
+import com.example.verifonevx990app.digiPOS.syncTxnCallBackToHost
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.StubBatchData
 import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.TxnCallBackRequestTable
+import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.utils.printerUtils.checkForPrintReversalReceipt
@@ -322,7 +327,46 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
             activityContext
         ) { printCB ->
             if (!printCB) {
-                //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                GlobalScope.launch(Dispatchers.IO){
+                    withContext(Dispatchers.Main) {
+                        activityContext.  showProgress(VerifoneApp.appContext.getString(
+                            R.string.txn_syn
+                        ))
+                    }
+                    val amount = MoneyUtil.fen2yuan(
+                        stubbedData.totalAmmount.toDouble().toLong()
+                    )
+                    val txnCbReqData = TxnCallBackRequestTable()
+                    txnCbReqData.reqtype =
+                        EnumDigiPosProcess.TRANSACTION_CALL_BACK.code
+                    txnCbReqData.tid = stubbedData.hostTID
+                    txnCbReqData.batchnum = stubbedData.hostBatchNumber
+                    txnCbReqData.roc = stubbedData.hostRoc
+                    txnCbReqData.amount = amount
+                    TxnCallBackRequestTable.insertOrUpdateTxnCallBackData(txnCbReqData)
+                    syncTxnCallBackToHost {
+                        Log.e("TXN CB ", "SYNCED TO SERVER  --> $it")
+                        activityContext.   hideProgress()
+                    }
+                    Log.e("LAST ","COMMENT ******")
+
+                    //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
+                    //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
+
+                    if (!TextUtils.isEmpty(autoSettlementCheck)) {
+                        withContext(Dispatchers.Main) {
+                            syncOfflineSaleAndAskAutoSettlement(
+                                autoSettlementCheck.substring(0, 1),
+                                activityContext
+                            ) { isSuccess, msg ->
+                                cb(isSuccess, msg)
+
+                            }
+                        }
+                    }
+                }
+
+               /* //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
                 //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
                 if (!TextUtils.isEmpty(autoSettlementCheck))
                     GlobalScope.launch(Dispatchers.Main) {
@@ -333,7 +377,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                             cb(isSuccess, msg)
 
                         }
-                    }
+                    }*/
             }
         }
         //  }

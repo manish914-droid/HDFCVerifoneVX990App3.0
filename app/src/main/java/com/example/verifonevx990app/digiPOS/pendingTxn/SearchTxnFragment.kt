@@ -166,7 +166,7 @@ class SearchTxnFragment : Fragment() {
             dialog.dismiss()
             PrintUtil(context).printSMSUPIChagreSlip(
                 digiData,
-                EPrintCopyType.MERCHANT,
+                EPrintCopyType.DUPLICATE,
                 context
             ) { alertCB, printingFail ->
                 //context.hideProgress()

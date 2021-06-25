@@ -84,7 +84,7 @@ class DigiPosTXNListDetailPage : Fragment() {
             }
             else -> {
                 binding?.paymentModeTV?.setCompoundDrawablesWithIntrinsicBounds(
-                    R.drawable.qrbmp,
+                    R.drawable.ic_qrcode,
                     0,
                     0,
                     0
@@ -120,7 +120,7 @@ class DigiPosTXNListDetailPage : Fragment() {
 
                 PrintUtil(context).printSMSUPIChagreSlip(
                     tabledata,
-                    EPrintCopyType.MERCHANT,
+                    EPrintCopyType.DUPLICATE,
                     context
                 ) { alertCB, _ ->
                     if (!alertCB) {

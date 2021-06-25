@@ -810,9 +810,9 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                     if (batchData.isNotEmpty()) {
                         iDiag?.getMsgDialog(
                             getString(R.string.confirmation),
-                            "Do you want to print Detail Report",
-                            "Yes",
-                            "No",
+                            getString(R.string.want_print_detail),
+                            getString(R.string.yes),
+                            getString(R.string.no),
                             {
                                 GlobalScope.launch {
                                     val bat = BatchFileDataTable.selectBatchData()
@@ -824,9 +824,6 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                             PrintUtil(activity).printDetailReportupdate(bat, activity) {
                                                 iDiag?.hideProgress()
                                             }
-                                            //   printDetail(bat)
-                                            //   printSummery(bat)
-
 
                                         } catch (ex: java.lang.Exception) {
                                             ex.message ?: getString(R.string.error_in_printing)
