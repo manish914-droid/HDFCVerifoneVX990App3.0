@@ -166,6 +166,8 @@ class VoidTransactionFragment : Fragment() {
         }
         dialog.findViewById<Button>(R.id.ok_btnn).setOnClickListener {
             dialog.dismiss()
+
+            // todo One More Confirmation dialog
             onContinueClicked(voidData)
         }
         dialog.show()
