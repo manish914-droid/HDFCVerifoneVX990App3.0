@@ -357,11 +357,27 @@ class NewInputAmountFragment : Fragment() {
                     if (transactionType == EDashboardItem.TEST_EMI) {
                         uiAction = UiAction.TEST_EMI
                     }
-                    if (tpt?.reservedValues?.substring(1, 2) == "1" && tpt.reservedValues.substring(
-                            2,
-                            3
-                        ) == "1"
-                    ) {
+                    if (tpt?.reservedValues?.substring(1, 2) == "1" && tpt.reservedValues.substring(2, 3) == "1") {
+                        showMobileBillDialog(activity, TransactionType.EMI_SALE.type) { extraPairData ->
+                            if (extraPairData.third) {
+                                iFrReq?.onFragmentRequest(
+                                    uiAction,
+                                    Pair(saleAmount.toString().trim(), "0"),
+                                    extraPairData
+                                )
+                            } else {
+                                startActivity(
+                                    Intent(
+                                        requireActivity(),
+                                        MainActivity::class.java
+                                    ).apply {
+                                        flags =
+                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                                    })
+                            }
+                        }
+                    }
+                    else if (tpt?.reservedValues?.substring(1, 2) == "1") {
                         showMobileBillDialog(
                             activity,
                             TransactionType.EMI_SALE.type
@@ -383,7 +399,8 @@ class NewInputAmountFragment : Fragment() {
                                     })
                             }
                         }
-                    } else if (tpt?.reservedValues?.substring(1, 2) == "1") {
+                    }
+                    else if (tpt?.reservedValues?.substring(2, 3) == "1") {
                         showMobileBillDialog(
                             activity,
                             TransactionType.EMI_SALE.type
@@ -405,29 +422,8 @@ class NewInputAmountFragment : Fragment() {
                                     })
                             }
                         }
-                    } else if (tpt?.reservedValues?.substring(2, 3) == "1") {
-                        showMobileBillDialog(
-                            activity,
-                            TransactionType.EMI_SALE.type
-                        ) { extraPairData ->
-                            if (extraPairData.third) {
-                                iFrReq?.onFragmentRequest(
-                                    uiAction,
-                                    Pair(saleAmount.toString().trim(), "0"),
-                                    extraPairData
-                                )
-                            } else {
-                                startActivity(
-                                    Intent(
-                                        requireActivity(),
-                                        MainActivity::class.java
-                                    ).apply {
-                                        flags =
-                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    })
-                            }
-                        }
-                    } else {
+                    }
+                    else {
                         iFrReq?.onFragmentRequest(
                             uiAction,
                             Pair(saleAmount.toString().trim(), "0"),
@@ -438,11 +434,7 @@ class NewInputAmountFragment : Fragment() {
 
                 EDashboardItem.BRAND_EMI -> {
                     val checkSaleAmount = saleAmount.toString().trim().toDouble()
-                    if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()
-                            ?.toDouble() ?: 0.0
-                        && checkSaleAmount <= brandEMIDataModal?.getProductMaxAmount()
-                            ?.toDouble() ?: 0.0
-                    ) {
+                    if (checkSaleAmount >= brandEMIDataModal?.getProductMinAmount()?.toDouble() ?: 0.0 && checkSaleAmount <= brandEMIDataModal?.getProductMaxAmount()?.toDouble() ?: 0.0) {
                         enableDisableMobileAndInvoiceField()
                     } else {
                         VFService.showToast("Entered Amount Should be in Product Min & Max Amount Range")
@@ -582,7 +574,6 @@ class NewInputAmountFragment : Fragment() {
 
                 EDashboardItem.DYNAMIC_QR->{
                     if( binding?.mobNumbr?.text.toString().length !in 10..13 ){
-
                         context?.getString(R.string.enter_valid_mobile_number)?.let { VFService.showToast(it) }
                     }else{
                         val extraPairData = Triple(

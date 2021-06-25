@@ -1167,7 +1167,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             }
                         })
 
-                      /*  transactFragment(EMICatalogue().apply {
+                       /* transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
                                 putString(INPUT_SUB_HEADING, "")
@@ -1301,7 +1301,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                       /* transactFragment(EMICatalogue().apply {
+                       transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                             }
