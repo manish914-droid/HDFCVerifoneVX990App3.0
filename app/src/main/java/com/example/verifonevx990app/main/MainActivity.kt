@@ -6,7 +6,6 @@ import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
-import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.InputFilter
@@ -62,9 +61,7 @@ import com.google.android.material.appbar.AppBarLayout
 import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
-import kotlinx.parcelize.Parcelize
 import java.io.File
-import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -595,6 +592,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     ProcessingCode.APP_UPDATE.code -> {
                         unzipZippedBytes(tcpIPImagesDataList.toByteArray())
                         hideProgress()
+                        onBackPressed()
                         Log.d("Full ImageData:- ", Gson().toJson(tcpIPImagesDataList))
                         VFService.showToast(getString(R.string.app_updated_successfully))
                     }
@@ -725,70 +723,20 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 if (data?.isEmpty() == true) {
                     if (checkInternetConnection()) {
                         Log.d("Bank EMI Clicked:- ", "Clicked")
-                        showProgress()
-                        GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
-                            val issuerTAndCData = issuerTermsAndConditionData.first
-                            val responseBool = issuerTermsAndConditionData.second
-                            if (issuerTAndCData.isNotEmpty() && responseBool) {
-                                //region================Insert IssuerTAndC and Brand TAndC in DB:-
-                                //Issuer TAndC Inserting:-
-                                for (i in 0 until issuerTAndCData.size) {
-                                    val issuerModel = IssuerTAndCTable()
-                                    if (!TextUtils.isEmpty(issuerTAndCData[i])) {
-                                        val splitData = parseDataListWithSplitter(
-                                            SplitterTypes.CARET.splitter,
-                                            issuerTAndCData[i]
-                                        )
-
-                                        if (splitData.size > 2) {
-                                            issuerModel.issuerId = splitData[0]
-                                            issuerModel.headerTAndC = splitData[1]
-                                            issuerModel.footerTAndC = splitData[2]
-                                        } else {
-                                            issuerModel.issuerId = splitData[0]
-                                            issuerModel.headerTAndC = splitData[1]
-                                        }
-
-                                        runBlocking(Dispatchers.IO) {
-                                            IssuerTAndCTable.performOperation(issuerModel)
-                                        }
-                                    }
-                                }
-                                hideProgress()
-                                startActivityForResult(
-                                    Intent(
-                                        this,
-                                        VFTransactionActivity::class.java
-                                    ).apply {
-                                        putExtra("amt", amt)
-                                        putExtra(
-                                            "type",
-                                            transType
-                                        ) //EMI //UiAction.BANK_EMI
-                                        putExtra("proc_code", ProcessingCode.SALE.code)
-                                        putExtra("mobileNumber", extraPair?.first)
-                                        putExtra("billNumber", extraPair?.second)
-                                    }, EIntentRequest.TRANSACTION.code
-                                )
-                            } else {
-                                hideProgress()
-                                startActivityForResult(
-                                    Intent(
-                                        this,
-                                        VFTransactionActivity::class.java
-                                    ).apply {
-                                        putExtra("amt", amt)
-                                        putExtra(
-                                            "type",
-                                            transType
-                                        ) //EMI //UiAction.BANK_EMI
-                                        putExtra("proc_code", ProcessingCode.SALE.code)
-                                        putExtra("mobileNumber", extraPair?.first)
-                                        putExtra("billNumber", extraPair?.second)
-                                    }, EIntentRequest.TRANSACTION.code
-                                )
-                            }
-                        }
+                        startActivityForResult(
+                            Intent(
+                                this@MainActivity,
+                                VFTransactionActivity::class.java
+                            ).apply {
+                                putExtra("amt", amt)
+                                putExtra(
+                                    "type", transType
+                                ) //EMI //UiAction.BANK_EMI
+                                putExtra("proc_code", ProcessingCode.SALE.code)
+                                putExtra("mobileNumber", extraPair?.first)
+                                putExtra("billNumber", extraPair?.second)
+                            }, EIntentRequest.TRANSACTION.code
+                        )
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                     }
@@ -912,12 +860,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             UiAction.BRAND_EMI_CATALOGUE, UiAction.BANK_EMI_CATALOGUE -> {
                 val amt = (data as Pair<*, *>).first.toString()
+                val emiCatalogueImageList = runBlocking { readEMICatalogueAndBannerImages() }
                 transactFragment(EMIIssuerList().apply {
                     arguments = Bundle().apply {
                         putSerializable("type", action)
                         putString("proc_code", ProcessingCode.PRE_AUTH.code)
                         putString("mobileNumber", extraPair?.first)
                         putString("enquiryAmt", amt)
+                        putSerializable("imagesData", emiCatalogueImageList as HashMap<*, *>)
                     }
                 })
             }
@@ -1832,7 +1782,6 @@ withContext(Dispatchers.Main){
                                             }
                                         } else {
                                             VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
-                                            onBackPressed()
                                             startTCPIPAppUpdate(
                                                 ProcessingCode.APP_UPDATE.code,
                                                 chunkValue = "0",
@@ -2342,12 +2291,8 @@ enum class SETTLEMENT(val type: String) {
 }
 //endregion
 
-@Parcelize
-data class EMICatalogueAndBannerImageModal(var imagePath: Uri, var imageName: String) : Parcelable
-
 interface IFragmentRequest {
-    fun
-            onFragmentRequest(
+    fun onFragmentRequest(
         action: UiAction,
         data: Any,
         extraPair: Triple<String, String, Boolean>? = Triple("", "", third = true)

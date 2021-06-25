@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.digiPOS.EDigiPosPaymentStatus
-import com.example.verifonevx990app.digiPOS.EnumDigiPosTerminalStatusCode
 import com.example.verifonevx990app.transactions.EAccountType
 import com.example.verifonevx990app.vxUtils.TransactionType
 import com.example.verifonevx990app.vxUtils.addPad
@@ -4041,16 +4040,27 @@ open class BrandEMIMasterTimeStamps() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandEMIMasterTimeStamps) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+
+        //region====================Update IssuerTAndCTimeStamp Data:-
+        fun updateIssuerTandCTimeStamp(issuerTAndCTimeStampData: String?) = runBlocking {
+            getRealm {
+                val res = it.where(BrandEMIMasterTimeStamps::class.java).findFirst()
+                it.beginTransaction()
+                res?.issuerTAndCTimeStamp = issuerTAndCTimeStampData ?: ""
+                it.commitTransaction()
+            }.await()
+        }
+        //endregion
 
         //region====================Method to Get All BrandTAndC Data================
         fun getAllBrandEMIMasterDataTimeStamps(): MutableList<BrandEMIMasterTimeStamps> =
-                runBlocking {
-                    var result = mutableListOf<BrandEMIMasterTimeStamps>()
-                    getRealm {
-                        val re =
-                                it.copyFromRealm(it.where(BrandEMIMasterTimeStamps::class.java).findAll())
-                        if (re != null) result = re
+            runBlocking {
+                var result = mutableListOf<BrandEMIMasterTimeStamps>()
+                getRealm {
+                    val re =
+                        it.copyFromRealm(it.where(BrandEMIMasterTimeStamps::class.java).findAll())
+                    if (re != null) result = re
 
                     }.await()
                     result

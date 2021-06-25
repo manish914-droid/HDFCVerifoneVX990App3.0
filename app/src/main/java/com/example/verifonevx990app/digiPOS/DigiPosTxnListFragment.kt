@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.DigiPosTxnListBinding
-import com.example.verifonevx990app.databinding.DigiPosTxnListItemBinding
 import com.example.verifonevx990app.databinding.ItemPendingTxnBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -27,7 +26,6 @@ import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
@@ -218,17 +216,15 @@ class DigiPosTxnListFragment : Fragment() {
         }
         //endregion
 
-
-
             setUpRecyclerView()
             getDigiPosTransactionListFromHost()
 
 
         //region======================Filter Apply Button onclick event:-
         binding?.bottomSheet?.applyFilter?.setOnClickListener {
-      val amtStr=   binding?.bottomSheet?.amountBottomET?.text?.toString() ?: "0.0"
-            bottomSheetAmountData = if(amtStr=="") "0.0" else amtStr
-                if (binding?.bottomSheet?.ptxnIDBottomRB?.isChecked == true)
+            val amtStr = binding?.bottomSheet?.amountBottomET?.text?.toString() ?: "0.0"
+            bottomSheetAmountData = if (amtStr == "0.0") "" else amtStr
+            if (binding?.bottomSheet?.ptxnIDBottomRB?.isChecked == true)
                 partnerTransactionID = binding?.bottomSheet?.transactionIDET?.text.toString()
             if (binding?.bottomSheet?.mtxnIDBottomRB?.isChecked == true)
                 mTransactionID = binding?.bottomSheet?.transactionIDET?.text.toString()
@@ -369,9 +365,11 @@ class DigiPosTxnListFragment : Fragment() {
                         }
 
                         "-1" -> {
-                                 iDialog?.hideProgress()
-                                 VFService.showToast("No Data Found")
-                                 digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                iDialog?.hideProgress()
+                                VFService.showToast("No Data Found")
+                                digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                            }
                         }
 
                         else -> {

@@ -9,6 +9,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -18,8 +19,10 @@ import com.example.verifonevx990app.databinding.ItemEmiSchemeOfferBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.BrandEMIDataTable
+import com.example.verifonevx990app.realmtables.BrandEMIMasterTimeStamps
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class EMISchemeAndOfferActivity : BaseActivity() {
@@ -51,7 +54,21 @@ class EMISchemeAndOfferActivity : BaseActivity() {
         showProgress()
 
         //region==============Below Code will only execute in case of Insta EMI sale to fetch IssuerTAndC Data:-
-        if (transactionType == TransactionType.EMI_SALE.type) runBlocking(Dispatchers.IO) { fetchAndSaveIssuerTCData() }
+        lifecycleScope.launch(Dispatchers.IO) {
+            val timeStampsData = BrandEMIMasterTimeStamps.getAllBrandEMIMasterDataTimeStamps()
+            if (timeStampsData.isNotEmpty()) {
+                if (emiTAndCDataList?.get(0)?.updateIssuerTAndCTimeStamp ?: "0" != timeStampsData[0].issuerTAndCTimeStamp) {
+                    fetchAndSaveIssuerTCData(
+                        emiTAndCDataList?.get(0)?.updateIssuerTAndCTimeStamp ?: "0"
+                    )
+                } else
+                    Log.d("SameTimeStamps:- ", "IssuerTAndCData")
+            } else {
+                fetchAndSaveIssuerTCData(
+                    emiTAndCDataList?.get(0)?.updateIssuerTAndCTimeStamp ?: "0"
+                )
+            }
+        }
         //endregion
 
         /*region====================Checking Condition whether Previous Transaction Flow Comes from Brand EMI:-

@@ -1,8 +1,10 @@
 package com.example.verifonevx990app.emiCatalogue
 
 import android.content.Context
+import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
+import android.provider.MediaStore
 import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
@@ -18,7 +20,6 @@ import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.FragmentEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerTenureBinding
-import com.example.verifonevx990app.main.EMICatalogueAndBannerImageModal
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -46,11 +47,16 @@ class EMIIssuerList : Fragment() {
     private var allIssuerTenureList: MutableList<TenureBankModal> = mutableListOf()
     private val enquiryAmtStr by lazy { arguments?.getString("enquiryAmt") ?: "0" }
     private val mobileNumber by lazy { arguments?.getString("mobileNumber") ?: "" }
-    private var emiCatalogueImageList: MutableList<EMICatalogueAndBannerImageModal>? = null
+    private var emiCatalogueImageList: MutableMap<String, Uri>? = null
     private var mobileNumberOnOff: Boolean = false
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val enquiryAmount by lazy { ((enquiryAmtStr.toFloat()) * 100).toLong() }
-    private val issuerListAdapter by lazy { IssuerListAdapter(temporaryAllIssuerList) }
+    private val issuerListAdapter by lazy {
+        IssuerListAdapter(
+            temporaryAllIssuerList,
+            emiCatalogueImageList
+        )
+    }
     private val issuerTenureListAdapter by lazy {
         IssuerTenureListAdapter(
             temporaryAllTenureList,
@@ -88,6 +94,7 @@ class EMIIssuerList : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mobileNumberOnOff = !TextUtils.isEmpty(mobileNumber)
+        emiCatalogueImageList = arguments?.getSerializable("imagesData") as MutableMap<String, Uri>
         setUpRecyclerViews()
 
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
@@ -515,7 +522,10 @@ class EMIIssuerList : Fragment() {
 }
 
 //region===============Below adapter is used to show the All Issuer Bank lists available:-
-class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
+class IssuerListAdapter(
+    var issuerList: MutableList<IssuerBankModal>,
+    var emiCatalogueImagesMap: MutableMap<String, Uri>?
+) :
     RecyclerView.Adapter<IssuerListAdapter.IssuerListViewHolder>() {
 
     var compareActionName: String? = null
@@ -532,23 +542,35 @@ class IssuerListAdapter(var issuerList: MutableList<IssuerBankModal>) :
 
     override fun onBindViewHolder(holder: IssuerListViewHolder, position: Int) {
         val modal = issuerList[position]
-        val resource: Int? = when (modal.issuerBankName?.toLowerCase(Locale.ROOT)?.trim()) {
-            "hdfc bank cc" -> R.drawable.hdfc_issuer_icon
-            "hdfc bank dc" -> R.drawable.hdfc_dc_issuer_icon
-            "sbi card" -> R.drawable.sbi_issuer_icon
-            "citi" -> R.drawable.citi_issuer_icon
-            "icici" -> R.drawable.icici_issuer_icon
-            "yes" -> R.drawable.yes_issuer_icon
-            "kotak" -> R.drawable.kotak_issuer_icon
-            "rbl" -> R.drawable.rbl_issuer_icon
-            "scb" -> R.drawable.scb_issuer_icon
-            "axis" -> R.drawable.axis_issuer_icon
-            "indusind" -> R.drawable.indusind_issuer_icon
-            else -> null
+
+        //If Condition to check whether we have got EMI catalogue Data from File which we save after Settlement Success, Image Data from Host:-
+        if (emiCatalogueImagesMap?.isNotEmpty() == true && emiCatalogueImagesMap?.containsKey(modal.issuerID) == true) {
+            val imageUri: Uri? = emiCatalogueImagesMap?.get(modal.issuerID)
+            val bitmap =
+                MediaStore.Images.Media.getBitmap(VerifoneApp.appContext.contentResolver, imageUri)
+            if (bitmap != null) {
+                holder.viewBinding.issuerBankLogo.setImageBitmap(bitmap)
+            }
         }
-        //val bitmap = MediaStore.Images.Media.getBitmap(VerifoneApp.appContext.contentResolver, emiCatalogueImageList?.get(position)?.imagePath)
-        if (resource != null) {
-            holder.viewBinding.issuerBankLogo.setImageResource(resource)
+        //Else Condition to Read Images From Drawable and Show:-
+        else {
+            val resource: Int? = when (modal.issuerBankName?.toLowerCase(Locale.ROOT)?.trim()) {
+                "hdfc bank cc" -> R.drawable.hdfc_issuer_icon
+                "hdfc bank dc" -> R.drawable.hdfc_dc_issuer_icon
+                "sbi card" -> R.drawable.sbi_issuer_icon
+                "citi" -> R.drawable.citi_issuer_icon
+                "icici" -> R.drawable.icici_issuer_icon
+                "yes" -> R.drawable.yes_issuer_icon
+                "kotak" -> R.drawable.kotak_issuer_icon
+                "rbl" -> R.drawable.rbl_issuer_icon
+                "scb" -> R.drawable.scb_issuer_icon
+                "axis" -> R.drawable.axis_issuer_icon
+                "indusind" -> R.drawable.indusind_issuer_icon
+                else -> null
+            }
+            if (resource != null) {
+                holder.viewBinding.issuerBankLogo.setImageResource(resource)
+            }
         }
 
         //region===============Below Code will only execute in case of Multiple Selection:-

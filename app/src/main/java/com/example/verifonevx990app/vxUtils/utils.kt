@@ -28,7 +28,6 @@ import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.init.getEditorActionListener
 import com.example.verifonevx990app.main.CardAid
-import com.example.verifonevx990app.main.EMICatalogueAndBannerImageModal
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.*
@@ -72,14 +71,28 @@ open class OnTextChange(private val cb: (String) -> Unit) : TextWatcher {
 
 
 enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawable.ic_sad) {
-    INIT, KEY_EXCHANGE, INIT_WITH_KEY_EXCHANGE, START_SALE("Sale", R.drawable.ic_bbg), SETTLEMENT, APP_UPDATE, PRE_AUTH(
+    INIT, KEY_EXCHANGE, INIT_WITH_KEY_EXCHANGE, START_SALE(
+        "Sale",
+        R.drawable.ic_bbg
+    ),
+    SETTLEMENT, APP_UPDATE, PRE_AUTH(
         title = "Pre-Auth"
     ),
     REFUND("Refund", R.drawable.ic_refund),
-    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon), OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS("Cash Advance", R.drawable.ic_cash_at_pos_icon), SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
-    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon), BRAND_EMI(
-        "Brand EMI", R.drawable.ic_brand_emi
+    BANK_EMI(
+        "Bank EMI",
+        R.drawable.emi_catalog_icon
     ),
+    OFFLINE_SALE(title = "Offline Sale"), CASH_AT_POS(
+        "Cash Advance",
+        R.drawable.ic_cash_at_pos_icon
+    ),
+    SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
+    PRE_AUTH_COMPLETE(title = "Pre Auth Complete"), EMI_ENQUIRY(
+        "EMI Catalogue",
+        R.drawable.emi_catalog_icon
+    ),
+    BRAND_EMI("Brand EMI", R.drawable.ic_brand_emi),
     TEST_EMI("Test Emi", R.drawable.ic_sale),
     FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance),
     DEFAUTL("Not Declared", R.drawable.ic_sad),
@@ -463,16 +476,16 @@ fun unzipZippedBytes(ba: ByteArray) {
 }
 
 //region============================Reading All Zip Folder EMI catalogue and Banner Images from Device Store Folder:-
-fun readEMICatalogueAndBannerImages(): MutableList<EMICatalogueAndBannerImageModal> {
+fun readEMICatalogueAndBannerImages(): MutableMap<String, Uri> {
     val root = "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
     val folder = File(root)
-    val imageList = mutableListOf<EMICatalogueAndBannerImageModal>()
+    val imageList: MutableMap<String, Uri> = mutableMapOf()
     var folderFilesList: Array<File>? = null
     if (folder.isDirectory) {
         folderFilesList = folder.listFiles()
         for (value in folderFilesList) {
-            var imageName = value.name.split(".")
-            imageList.add(EMICatalogueAndBannerImageModal(Uri.fromFile(value), imageName[0]))
+            val imageName = value.name.split(".")
+            imageList[imageName[0]] = Uri.fromFile(value)
         }
     }
     Log.d("AllImagesPath:- ", Gson().toJson(imageList))
@@ -2332,7 +2345,7 @@ fun selectEditText(
 }
 
 //region============================IssuerTAndC Data Call:-
-fun fetchAndSaveIssuerTCData() {
+fun fetchAndSaveIssuerTCData(updatedIssuerTAndCTimeStamp: String?) {
     val data = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
     if (data?.isEmpty() == true) {
         GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
@@ -2362,6 +2375,11 @@ fun fetchAndSaveIssuerTCData() {
                             IssuerTAndCTable.performOperation(issuerModel)
                         }
                     }
+                }
+                runBlocking(Dispatchers.IO) {
+                    BrandEMIMasterTimeStamps.updateIssuerTandCTimeStamp(
+                        updatedIssuerTAndCTimeStamp
+                    )
                 }
             }
         }
