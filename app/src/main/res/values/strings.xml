@@ -279,6 +279,8 @@
     <string name="failed_to_print_settlement_detail_report">Fail to print Settlement Detail Report</string>
     <string name="transaction_approved_successfully">\nTransaction Approved\n\nPlease Remove Card</string>
     <string name="offline_sale_upload_msg">Offline sale uploaded successfully</string>
+    <string name="transaction_declined">Declined</string>
+    <string name="transaction_declined_message">Transaction declined</string>
     <string name="transaction_approved">Transaction Approved</string>
     <string name="void_preauth_success">Preauth Void Successfully</string>
     <string name="comp_preauth_success"> Preauth Complete Successfully</string>
