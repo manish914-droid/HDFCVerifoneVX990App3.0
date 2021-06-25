@@ -50,14 +50,8 @@ class DoEmv(
                     )
                 }
                 TransactionType.SALE_WITH_CASH.type -> {
-                    emvIntent.putLong(
-                        ConstIPBOC.startEMV.intent.KEY_authAmount_long,
-                        transactionalAmount
-                    )
-                    emvIntent.putString(
-                        ConstIPBOC.startEMV.intent.KEY_otherAmount_String,
-                        otherAmount.toString()
-                    )
+                    emvIntent.putLong(ConstIPBOC.startEMV.intent.KEY_authAmount_long, transactionalAmount-otherAmount)
+                    emvIntent.putString(ConstIPBOC.startEMV.intent.KEY_otherAmount_String, otherAmount.toString())
                 }
                 else -> {
                     emvIntent.putLong(
