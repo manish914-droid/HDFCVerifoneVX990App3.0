@@ -17,7 +17,11 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StubBatchData(var transactionType: Int, var cardProcessedDataModal: CardProcessedDataModal, private var printExtraData: Triple<String, String, String>?, private val field60Data: String, batchStubCallback: (BatchFileDataTable) -> Unit) {
+class StubBatchData(var transactionType: Int,
+                    var cardProcessedDataModal: CardProcessedDataModal,
+                    private var printExtraData: Triple<String, String, String>?,
+                    private val field60Data: String,
+                    batchStubCallback: (BatchFileDataTable) -> Unit) {
 
     var vfIEMV: IEMV? = null
 
@@ -101,6 +105,9 @@ class StubBatchData(var transactionType: Int, var cardProcessedDataModal: CardPr
 
         batchFileData.isPinverified = true
         //Saving card number in mask form because we don't save the pan number in Plain text.
+
+        batchFileData.nocvm = cardProcessedDataModal.getNoCVM() ?: false
+
         batchFileData.cardNumber =
             if (transactionType != TransactionType.PRE_AUTH_COMPLETE.type) {
                 getMaskedPan(
@@ -196,10 +203,10 @@ class StubBatchData(var transactionType: Int, var cardProcessedDataModal: CardPr
             DetectCardType.CONTACT_LESS_CARD_TYPE -> {
                 /*   val aidArray = arrayOf("0x9F06")
                val aidData = vfIEMV?.getAppTLVList(aidArray)*/
-                var aidData = cardProcessedDataModal.getAID() ?: ""
+                var aidData = cardProcessedDataModal.getAIDPrint() ?: ""
                 //println("Aid Data is ----> $aidData")
                 //val formattedAid = aidData?.subSequence(6, aidData.length)
-                batchFileData.aid = cardProcessedDataModal.getAID() ?: ""
+                batchFileData.aid = cardProcessedDataModal.getAIDPrint() ?: ""
             }
             else -> {
             }
