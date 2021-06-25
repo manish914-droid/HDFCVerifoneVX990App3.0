@@ -508,9 +508,7 @@ class NewInputAmountFragment : Fragment() {
                                         TextUtils.isEmpty(
                                             saleAmount.toString().trim()
                                         ) -> VFService.showToast("Enter Sale Amount")
-                                        TextUtils.isEmpty(
-                                            binding?.mobNumbr?.text?.toString()?.trim()
-                                        ) -> VFService.showToast("Enter Mobile Number")
+                                     //   TextUtils.isEmpty(binding?.mobNumbr?.text?.toString()?.trim()) -> VFService.showToast("Enter Mobile Number")
                                         else -> iFrReq?.onFragmentRequest(
                                             UiAction.BRAND_EMI_CATALOGUE,
                                             Pair(
@@ -542,18 +540,11 @@ class NewInputAmountFragment : Fragment() {
                 EDashboardItem.BANK_EMI_CATALOGUE -> {
                     if (tpt?.reservedValues?.substring(10, 11) == "1") {
                         when {
-                            TextUtils.isEmpty(
-                                saleAmount.toString().trim()
-                            ) -> VFService.showToast("Enter Sale Amount")
-                            TextUtils.isEmpty(
-                                binding?.mobNumbr?.text?.toString()?.trim()
-                            ) -> VFService.showToast("Enter Mobile Number")
+                            TextUtils.isEmpty(saleAmount.toString().trim()) -> VFService.showToast("Enter Sale Amount")
+                          //  TextUtils.isEmpty(binding?.mobNumbr?.text?.toString()?.trim()) -> VFService.showToast("Enter Mobile Number")
                             else -> iFrReq?.onFragmentRequest(
                                 UiAction.BANK_EMI_CATALOGUE,
-                                Pair(
-                                    saleAmount.toString().trim(),
-                                    cashAmt.toString().trim()
-                                )
+                                Pair(saleAmount.toString().trim(), cashAmt.toString().trim())
                             )
                         }
                     } else {
