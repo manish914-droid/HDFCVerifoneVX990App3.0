@@ -2291,6 +2291,17 @@ enum class SETTLEMENT(val type: String) {
 }
 //endregion
 
+//region===================BannerConfigModal:-
+data class BannerConfigModal(
+    var bannerID: String,
+    var bannerDisplayOrderID: String,
+    var bannerShowOrHideID: String,
+    var clickableOrNot: String,
+    var bannerClickActionID: String,
+    var bannerClickMessageData: String
+)
+//endregion
+
 interface IFragmentRequest {
     fun onFragmentRequest(
         action: UiAction,

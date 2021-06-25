@@ -27,6 +27,7 @@ import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.init.getEditorActionListener
+import com.example.verifonevx990app.main.BannerConfigModal
 import com.example.verifonevx990app.main.CardAid
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -1974,6 +1975,40 @@ fun readAppRevisionIDFromFile(context: Context, cb: (String) -> Unit) {
     } catch (ex: IOException) {
         ex.printStackTrace()
         cb(revisionID ?: "")
+    }
+}
+
+//Below method is used to read App Banner Configuration File from saved File in Terminal:-
+fun readAppBannerConfigurationData(bannerConfigList: (MutableList<BannerConfigModal>) -> Unit) {
+    val dataList = mutableListOf<BannerConfigModal>()
+    try {
+        val rootPath =
+            "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
+        val file = File(rootPath, "bannerConfigFile.txt")
+        val text: StringBuilder? = null
+        val br = BufferedReader(FileReader(file))
+        var data: String?
+        while (br.readLine().also { data = it } != null) {
+            val splitData =
+                parseDataListWithSplitter(SplitterTypes.VERTICAL_LINE.splitter, data ?: "")
+            if (splitData.isNotEmpty()) {
+                dataList.add(
+                    BannerConfigModal(
+                        splitData[0],
+                        splitData[1],
+                        splitData[2],
+                        splitData[3],
+                        splitData[4],
+                        splitData[5]
+                    )
+                )
+            }
+        }
+        br.close().toString()
+        bannerConfigList(dataList)
+    } catch (ex: IOException) {
+        ex.printStackTrace()
+        bannerConfigList(dataList)
     }
 }
 

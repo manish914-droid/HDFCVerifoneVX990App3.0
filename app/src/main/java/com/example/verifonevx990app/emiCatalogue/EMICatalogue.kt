@@ -10,20 +10,23 @@ import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.databinding.FragmentEmiCatalogueBinding
+import com.example.verifonevx990app.main.IFragmentRequest
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
-import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.vxUtils.IDialog
+import com.example.verifonevx990app.vxUtils.UiAction
 
 class EMICatalogue : Fragment() {
     private var iDialog: IDialog? = null
     private var binding: FragmentEmiCatalogueBinding? = null
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var tptData: TerminalParameterTable? = null
+    private var iFrReq: IFragmentRequest? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if (context is IFragmentRequest) iFrReq = context
         if (context is IDialog) iDialog = context
     }
 
@@ -60,12 +63,13 @@ class EMICatalogue : Fragment() {
 
         //region================Navigate to NewInputAmount Fragment on Click Event of BankEMI Button:-
         binding?.buttonBankEmi?.setOnClickListener {
-            (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable("type", EDashboardItem.BANK_EMI_CATALOGUE)
-                    putString(MainActivity.INPUT_SUB_HEADING, "")
-                }
-            })
+            iFrReq?.onFragmentRequest(
+                UiAction.BANK_EMI_CATALOGUE,
+                Pair(
+                    "0.0",
+                    "0.0"
+                )
+            )
         }
         //endregion
 

@@ -17,10 +17,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentBrandEmiProductBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiProductBinding
-import com.example.verifonevx990app.main.EMIRequestType
-import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.main.SplitterTypes
-import com.example.verifonevx990app.main.SubHeaderTitle
+import com.example.verifonevx990app.main.*
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.vxUtils.*
@@ -35,6 +32,7 @@ class BrandEMIProductFragment : Fragment() {
     private var binding: FragmentBrandEmiProductBinding? = null
     private var iDialog: IDialog? = null
     private var isSubCategoryItemPresent: Boolean = false
+    private var iFrReq: IFragmentRequest? = null
     private val brandEmiProductDataList by lazy { mutableListOf<BrandEMIProductDataModal>() }
     private val brandEmiSearchedProductDataList by lazy { mutableListOf<BrandEMIProductDataModal>() }
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
@@ -54,6 +52,7 @@ class BrandEMIProductFragment : Fragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
+        if (context is IFragmentRequest) iFrReq = context
         if (context is IDialog) iDialog = context
     }
 
@@ -156,13 +155,22 @@ class BrandEMIProductFragment : Fragment() {
                 )
             }
             //endregion
-            (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
-                arguments = Bundle().apply {
-                    putSerializable("type", action)
-                    putSerializable("modal", brandEMIDataModal)
-                    putString(MainActivity.INPUT_SUB_HEADING, SubHeaderTitle.Brand_EMI.title)
-                }
-            })
+            if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
+                iFrReq?.onFragmentRequest(
+                    UiAction.BRAND_EMI_CATALOGUE,
+                    Pair(
+                        "0.0",
+                        "0.0"
+                    )
+                )
+            } else
+                (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
+                    arguments = Bundle().apply {
+                        putSerializable("type", action)
+                        putSerializable("modal", brandEMIDataModal)
+                        putString(MainActivity.INPUT_SUB_HEADING, SubHeaderTitle.Brand_EMI.title)
+                    }
+                })
         } else {
             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
         }
