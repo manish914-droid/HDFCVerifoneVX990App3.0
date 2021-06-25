@@ -2299,6 +2299,7 @@ data class BannerConfigModal(
     var clickableOrNot: String,
     var bannerClickActionID: String,
     var bannerClickMessageData: String
+
 )
 //endregion
 
