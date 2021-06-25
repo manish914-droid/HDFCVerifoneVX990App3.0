@@ -1524,7 +1524,9 @@ fun showMobileBillDialog(
                         when {
                             TextUtils.isEmpty(mobileNumberET?.text.toString()) || mobileNumberET?.text.toString().length !in 10..13 ->
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
-                            TextUtils.isEmpty(billNumberET?.text.toString()) -> VFService.showToast(
+                            TextUtils.isEmpty(billNumberET?.text.toString()) &&(brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" &&
+                                    brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)
+                                        ?.toInt() ?: 0 > "1".toInt() )-> VFService.showToast(
                                 context.getString(R.string.enter_valid_bill_number)
                             )
                             else -> {
