@@ -156,7 +156,7 @@ class CompleteSecondGenAc(var cardProcessedDataModal: CardProcessedDataModal?,va
             onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_authCode_String, "00")
 
 //CardAid.Master.aid == finalaidstr
-            if(true){
+            if(CardAid.Master.aid == finalaidstr){
 
                 onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_field55_String, field55)
                 //At least 0A length for 91

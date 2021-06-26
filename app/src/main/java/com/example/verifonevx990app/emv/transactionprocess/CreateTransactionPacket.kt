@@ -253,7 +253,7 @@ class CreateTransactionPacket(
             var walletIssuerID = if (cardProcessedData.getTransType() == TransactionType.EMI_SALE.type
                     || cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type
                     || cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
-                issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
+                bankEmiTandCData?.issuerID?.let { addPad(it, "0", 2) } ?: 0
             } else {
                 issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
             }
