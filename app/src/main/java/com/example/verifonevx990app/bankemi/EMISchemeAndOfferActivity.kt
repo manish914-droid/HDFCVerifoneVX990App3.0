@@ -1,5 +1,6 @@
 package com.example.verifonevx990app.bankemi
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.res.ColorStateList
@@ -164,37 +165,31 @@ internal class EMISchemeAndOfferAdapter(
         return emiSchemeDataList?.size ?: 0
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: EMISchemeOfferHolder, position: Int) {
         val modelData = emiSchemeDataList?.get(position)
         if (modelData != null) {
-            holder.binding.tvTransactionAmount.text =
-                divideAmountBy100(modelData.transactionAmount.toInt()).toString()
+            holder.binding.tvTransactionAmount.text = "\u20B9 " + divideAmountBy100(modelData.transactionAmount.toInt()).toString()
+            holder.binding.tvLoanAmount.text = "\u20B9 " + divideAmountBy100(modelData.loanAmount.toInt()).toString()
+            holder.binding.tvEmiAmount.text = "\u20B9 " + divideAmountBy100(modelData.emiAmount.toInt()).toString()
             val tenureDuration = "${modelData.tenure} Months"
             val tenureHeadingDuration = "${modelData.tenure} Months Scheme"
             holder.binding.tvTenure.text = tenureDuration
             holder.binding.tenureHeadingTv.text = tenureHeadingDuration
-            holder.binding.tvLoanAmount.text =
-                divideAmountBy100(modelData.loanAmount.toInt()).toString()
-            holder.binding.tvEmiAmount.text =
-                divideAmountBy100(modelData.emiAmount.toInt()).toString()
 
             //If Discount Amount Available show this else if CashBack Amount show that:-
             if (modelData.discountAmount.toInt() != 0) {
-                holder.binding.tvDiscountAmount.text =
-                    divideAmountBy100(modelData.discountAmount.toInt()).toString()
+                holder.binding.tvDiscountAmount.text = "\u20B9 " + divideAmountBy100(modelData.discountAmount.toInt()).toString()
                 holder.binding.discountLL.visibility = View.VISIBLE
                 holder.binding.cashBackLL.visibility = View.GONE
             }
             if (modelData.cashBackAmount.toInt() != 0) {
-                holder.binding.tvCashbackAmount.text =
-                    divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
+                holder.binding.tvCashbackAmount.text = "\u20B9 " + divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
                 holder.binding.cashBackLL.visibility = View.VISIBLE
                 holder.binding.discountLL.visibility = View.GONE
             }
-            holder.binding.tvTotalInterestPay.text =
-                divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
-            holder.binding.tvTotalEmiPay.text =
-                divideAmountBy100(modelData.totalEmiPay.toInt()).toString()
+            holder.binding.tvTotalInterestPay.text = "\u20B9 " + divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
+            holder.binding.tvTotalEmiPay.text = "\u20B9 " + divideAmountBy100(modelData.totalEmiPay.toInt()).toString()
         }
 
         holder.binding.parentEmiViewLl.setOnClickListener {
