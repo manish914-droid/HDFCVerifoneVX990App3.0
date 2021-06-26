@@ -254,6 +254,7 @@ class CreateTransactionPacket(
                     || cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type
                     || cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
                 bankEmiTandCData?.issuerID?.let { addPad(it, "0", 2) } ?: 0
+                //Changes by Ajay
             } else {
                 issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
             }
