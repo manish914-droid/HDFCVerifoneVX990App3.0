@@ -94,6 +94,7 @@ class BrandEMIProductFragment : Fragment() {
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
         field57RequestData =
             "${EMIRequestType.BRAND_EMI_Product.requestType}^0^${brandEMIDataModal?.getBrandID()}^${brandEMIDataModal?.getCategoryID()}"
+        Log.d("57Data:-", field57RequestData.toString())
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
         setUpRecyclerView()

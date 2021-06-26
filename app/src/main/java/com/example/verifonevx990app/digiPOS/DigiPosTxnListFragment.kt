@@ -520,14 +520,10 @@ class DigiPosTxnListFragment : Fragment() {
                                         }
                                         EDigiPosPaymentStatus.Approved.desciption -> {
                                             withContext(Dispatchers.Main) {
-                                                txnDataList.removeAt(position)
-                                                binding?.transactionListRV?.removeViewAt(position)
                                                 txnDataList[position] = modal
-                                                digiPosTxnListAdapter.notifyItemInserted(position)
-                                                digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                                                digiPosTxnListAdapter.notifyItemChanged(position)
                                                 iDialog?.hideProgress()
                                                 binding?.transactionListRV?.smoothScrollToPosition(0)
-
                                             }
                                         }
                                         else -> {
@@ -535,12 +531,8 @@ class DigiPosTxnListFragment : Fragment() {
                                                 iDialog?.hideProgress()
                                                 VFService.showToast(modal.txnStatus)
                                             }
-
                                         }
-
                                     }
-
-
                                 }
                             } else {
                                 lifecycleScope.launch(Dispatchers.Main) {
