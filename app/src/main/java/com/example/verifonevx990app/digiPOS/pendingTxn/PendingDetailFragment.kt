@@ -1,36 +1,34 @@
 package com.example.verifonevx990app.digiPOS.pendingTxn
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.DigiPosTxnListDetailPageBinding
 import com.example.verifonevx990app.digiPOS.*
-import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.IDialog
+import com.example.verifonevx990app.vxUtils.VFService
 import com.example.verifonevx990app.vxUtils.getDigiPosStatus
 import com.example.verifonevx990app.vxUtils.logger
-import com.example.verifonevx990app.vxUtils.txnSuccessToast
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 
 
-class PendingDetailFragment :Fragment() {
+class PendingDetailFragment : Fragment() {
     private var iDialog: IDialog? = null
     private var binding: DigiPosTxnListDetailPageBinding? = null
     private var detailPageData: DigiPosDataTable? = null
-   private var dataToPrintAfterSuccess : DigiPosDataTable?=null
+    private var dataToPrintAfterSuccess: DigiPosDataTable? = null
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is IDialog) iDialog = context
@@ -55,13 +53,13 @@ class PendingDetailFragment :Fragment() {
         }
 
         if (detailPageData?.txnStatus?.toLowerCase(Locale.ROOT).equals("success", true)) {
-            binding?.printButton?.text=getString(R.string.print)
+            binding?.printButton?.text = getString(R.string.print)
             binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
             val message = "Transaction ${detailPageData?.txnStatus}"
             binding?.transactionMessageTV?.text = message
             binding?.printButton?.text = getString(R.string.print)
         } else {
-            binding?.printButton?.text=getString(R.string.getStatus)
+            binding?.printButton?.text = getString(R.string.getStatus)
             binding?.transactionIV?.setImageResource(R.drawable.ic_exclaimation_mark_circle_error)
             binding?.printButton?.text = getString(R.string.getStatus)
             val message = "Transaction ${detailPageData?.txnStatus}"
@@ -79,7 +77,7 @@ class PendingDetailFragment :Fragment() {
 
         //OnClick event of Bottom Button:-
         binding?.printButton?.setOnClickListener {
-            if (binding?.printButton?.text.toString()==getString(R.string.print)) {
+            if (binding?.printButton?.text.toString() == getString(R.string.print)) {
                 dataToPrintAfterSuccess?.let { it1 ->
                     PrintUtil(context).printSMSUPIChagreSlip(
                         it1,
@@ -114,8 +112,8 @@ class PendingDetailFragment :Fragment() {
             ) { isSuccess, responseMsg, responsef57, fullResponse ->
                 try {
                     if (isSuccess) {
-                      //  val statusRespDataList = responsef57.split("^")
-                     //   val status = statusRespDataList[5]
+                        //  val statusRespDataList = responsef57.split("^")
+                        //   val status = statusRespDataList[5]
                         iDialog?.hideProgress()
                         lifecycleScope.launch(Dispatchers.Main) {
 
@@ -137,7 +135,7 @@ class PendingDetailFragment :Fragment() {
                             tabledata.partnerTxnId =
                                 statusRespDataList[6]
                             tabledata.transactionTimeStamp = statusRespDataList[7]
-                            tabledata.displayFormatedDate=
+                            tabledata.displayFormatedDate =
                                 getDateInDisplayFormatDigipos(statusRespDataList[7])
                             val dateTime =
                                 statusRespDataList[7].split(
@@ -157,21 +155,25 @@ class PendingDetailFragment :Fragment() {
                                 statusRespDataList[12]
                             when (statusRespDataList[5]) {
                                 EDigiPosPaymentStatus.Pending.desciption -> {
-                                    tabledata.txnStatus =statusRespDataList[5]
+                                    tabledata.txnStatus = statusRespDataList[5]
+                                    VFService.showToast(getString(R.string.txn_status_still_pending))
+                                }
 
-                                }
-                                EDigiPosPaymentStatus.Failed.desciption -> {
-                                    tabledata.txnStatus =
-                                        statusRespDataList[5]
-                                }
                                 EDigiPosPaymentStatus.Approved.desciption -> {
                                     tabledata.txnStatus = statusRespDataList[5]
-                                        binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
-                                        val message = "Transaction ${tabledata.txnStatus}"
-                                        binding?.transactionMessageTV?.text = message
-                                    binding?.txnStatusTV?.text=tabledata.txnStatus
+                                    binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
+                                    val message = "Transaction ${tabledata.txnStatus}"
+                                    binding?.transactionMessageTV?.text = message
+                                    binding?.txnStatusTV?.text = tabledata.txnStatus
                                     binding?.printButton?.text = getString(R.string.print)
-dataToPrintAfterSuccess=tabledata
+                                    dataToPrintAfterSuccess = tabledata
+                                }
+
+                                else -> {
+                                    tabledata.txnStatus =
+                                        statusRespDataList[5]
+                                    VFService.showToast(statusRespDataList[5])
+                                    DigiPosDataTable.deletRecord(tabledata.partnerTxnId)
                                 }
                             }
                             DigiPosDataTable.insertOrUpdateDigiposData(tabledata)

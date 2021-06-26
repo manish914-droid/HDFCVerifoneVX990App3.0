@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentQrScanBinding
@@ -54,7 +55,8 @@ class QrScanFragment : Fragment() {
         binding?.subHeaderView?.headerImage?.setImageResource(transactionType.res)
         binding?.subHeaderView?.subHeaderText?.text = transactionType.title
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            parentFragmentManager.popBackStackImmediate()
+            parentFragmentManager.popBackStack(DigiPosMenuFragment::class.java.simpleName, 0);
+
         }
 
         val paymsg = when (transactionType) {
@@ -134,11 +136,16 @@ class QrScanFragment : Fragment() {
                                         EDigiPosPaymentStatus.Pending.desciption -> {
                                             tabledata.txnStatus =
                                                 statusRespDataList[5]
-                                            VFService.showToast(statusRespDataList[5])
+
                                             DigiPosDataTable.insertOrUpdateDigiposData(
                                                 tabledata
                                             )
                                             Log.e("F56->>", responsef57)
+                                            VFService.showToast(getString(R.string.txn_status_still_pending))
+                                            lifecycleScope.launch(Dispatchers.Main) {
+                                                parentFragmentManager.popBackStack(DigiPosMenuFragment::class.java.simpleName, 0);
+
+                                            }
 
                                         }
 
@@ -206,14 +213,15 @@ class QrScanFragment : Fragment() {
                     }
                 }
                 EDashboardItem.STATIC_QR -> {
-                    activity?.deleteFile("$QR_FILE_NAME.jpg")
+                    // below commented code is for check the deleting qr code
+                   /* activity?.deleteFile("$QR_FILE_NAME.jpg")
                     var imgbm: Bitmap? = null
                     runBlocking {
                         imgbm = loadStaticQrFromInternalStorage() // it return null when file not exist
                     }
                     if (imgbm == null) {
                         logger("StaticQr", "  DELETED SUCCESS", "e")
-                    }
+                    }*/
                     parentFragmentManager.popBackStack()
                 }
 
@@ -224,7 +232,8 @@ class QrScanFragment : Fragment() {
         }
 
         binding?.noBtn?.setOnClickListener {
-            parentFragmentManager.popBackStack()
+           // parentFragmentManager.popBackStack()
+            parentFragmentManager.popBackStack(DigiPosMenuFragment::class.java.simpleName, 0);
 
         }
 
