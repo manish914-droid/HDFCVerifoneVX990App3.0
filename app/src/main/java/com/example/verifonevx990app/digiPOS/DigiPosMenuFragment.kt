@@ -166,7 +166,7 @@ class DigiPosMenuFragment : Fragment() {
                     putSerializable("type", EDashboardItem.DYNAMIC_QR)
                     // putString(INPUT_SUB_HEADING, "")
                 }
-            },true)
+            })
 
         }
         //endregion

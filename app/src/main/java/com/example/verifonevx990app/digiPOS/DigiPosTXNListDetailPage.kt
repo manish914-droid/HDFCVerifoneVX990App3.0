@@ -16,6 +16,7 @@ import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.IDialog
+import com.example.verifonevx990app.vxUtils.VFService
 import com.example.verifonevx990app.vxUtils.getDigiPosStatus
 import com.example.verifonevx990app.vxUtils.logger
 import kotlinx.coroutines.Dispatchers
@@ -150,13 +151,16 @@ class DigiPosTXNListDetailPage : Fragment() {
                 try {
                     if (isSuccess) {
                         val statusRespDataList = responsef57.split("^")
-                        val txnStatus = statusRespDataList[4]
+                        val txnStatus = statusRespDataList[5]
                         iDialog?.hideProgress()
                         lifecycleScope.launch(Dispatchers.Main) {
                             if (txnStatus.toLowerCase(Locale.ROOT).equals("success", true)) {
                                 binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
                                 val message = "Transaction ${detailPageData?.status}"
                                 binding?.transactionMessageTV?.text = message
+                            }
+                            if (txnStatus.toLowerCase(Locale.ROOT).equals("InProgress", true)) {
+                               VFService.showToast(getString(R.string.txn_status_still_pending))
                             }
                         }
 

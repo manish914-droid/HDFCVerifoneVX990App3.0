@@ -4846,7 +4846,6 @@ enum class EDashboardItem(
     PENDING_TXN("Pending Txn", R.drawable.pending_txn, 903),
     STATIC_QR("Static QR", R.drawable.ic_qr_code, 904),
     DYNAMIC_QR("Dynamic QR", R.drawable.ic_qr_code, 905),
-
 }
 
 //region========================push bill table for sms pay=======================

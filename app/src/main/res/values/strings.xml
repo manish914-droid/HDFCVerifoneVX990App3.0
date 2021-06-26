@@ -506,4 +506,5 @@
     <string name="no_pending_transaction_found_want_to_search_transaction">No Pending Transaction found want to search transaction</string>
     <string name="want_print_detail">Do you want to print Detail Report</string>
     <string name="void_refund_not_allowed">Void of Refund not allowed</string>
+    <string name="txn_status_still_pending">Txn Status Still Pending Check Later</string>
 </resources>

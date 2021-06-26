@@ -98,7 +98,7 @@ class PendingTxnListFragment : Fragment() {
                                 when (statusRespDataList[5]) {
                                     EDigiPosPaymentStatus.Pending.desciption -> {
                                         tabledata.txnStatus = statusRespDataList[5]
-                                        VFService.showToast(statusRespDataList[5])
+                                        VFService.showToast(getString(R.string.txn_status_still_pending))
                                     }
 
                                     EDigiPosPaymentStatus.Approved.desciption -> {

@@ -28,6 +28,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withContext
 import kotlinx.parcelize.Parcelize
 import java.util.*
 
@@ -53,7 +54,7 @@ class DigiPosTxnListFragment : Fragment() {
         "$requestTypeID^$totalRecord^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^$pageNumber^"
     private var processingCode = EnumDigiPosProcessingCode.DIGIPOSPROCODE.code
     private var txnDataList = mutableListOf<DigiPosTxnModal>()
-    private lateinit var  digiPosTxnListAdapter :DigiPosTxnListAdapter
+    private lateinit var digiPosTxnListAdapter: DigiPosTxnListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -66,9 +67,10 @@ class DigiPosTxnListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        digiPosTxnListAdapter = DigiPosTxnListAdapter(txnDataList,
-                ::onItemClickCB
-            )
+        digiPosTxnListAdapter = DigiPosTxnListAdapter(
+            txnDataList,
+            ::onItemClickCB
+        )
 
 
 
@@ -216,8 +218,8 @@ class DigiPosTxnListFragment : Fragment() {
         }
         //endregion
 
-            setUpRecyclerView()
-            getDigiPosTransactionListFromHost()
+        setUpRecyclerView()
+        getDigiPosTransactionListFromHost()
 
 
         //region======================Filter Apply Button onclick event:-
@@ -289,34 +291,35 @@ class DigiPosTxnListFragment : Fragment() {
                     //STAN(ROC) Field 11
                     addField(11, ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())
 
-                //NII Field 24
-                addField(24, Nii.BRAND_EMI_MASTER.nii)
+                    //NII Field 24
+                    addField(24, Nii.BRAND_EMI_MASTER.nii)
 
-                //TID Field 41
-                addFieldByHex(41, terminalData.terminalId)
+                    //TID Field 41
+                    addFieldByHex(41, terminalData.terminalId)
 
-                //Connection Time Stamps Field 48
-                addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
+                    //Connection Time Stamps Field 48
+                    addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
 
-                //adding Field 57
-                addFieldByHex(57, field57RequestData)
+                    //adding Field 57
+                    addFieldByHex(57, field57RequestData)
 
-                //adding Field 61
-                val version = addPad(getAppVersionNameAndRevisionID(), "0", 15, false)
-                val pcNumber = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)
-                val pcNumber2 =
-                    addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY_2), "0", 9)
-                val f61 = ConnectionType.GPRS.code + addPad(
-                    AppPreference.getString("deviceModel"),
-                    " ",
-                    6,
-                    false
-                ) + addPad(
-                    VerifoneApp.appContext.getString(R.string.app_name),
-                    " ",
-                    10,
-                    false
-                ) + version + pcNumber + pcNumber2
+                    //adding Field 61
+                    val version = addPad(getAppVersionNameAndRevisionID(), "0", 15, false)
+                    val pcNumber =
+                        addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)
+                    val pcNumber2 =
+                        addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY_2), "0", 9)
+                    val f61 = ConnectionType.GPRS.code + addPad(
+                        AppPreference.getString("deviceModel"),
+                        " ",
+                        6,
+                        false
+                    ) + addPad(
+                        VerifoneApp.appContext.getString(R.string.app_name),
+                        " ",
+                        10,
+                        false
+                    ) + version + pcNumber + pcNumber2
                     //adding Field 61
                     addFieldByHex(61, f61)
 
@@ -351,13 +354,14 @@ class DigiPosTxnListFragment : Fragment() {
                         responseIsoData.isoMap[39]?.parseRaw2String().toString() + "---->" +
                                 responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     )
-                    val successResponseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
+                    val successResponseCode =
+                        responseIsoData.isoMap[39]?.parseRaw2String().toString()
                     if (responseIsoData.isoMap[58] != null) {
                         responseMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     }
                     isBool = successResponseCode == "00"
                     val responseField57 = responseIsoData.isoMap[57]?.parseRaw2String().toString()
-                    when(successResponseCode){
+                    when (successResponseCode) {
                         "00" -> {
                             if (responseIsoData.isoMap[57] != null) {
                                 parseTXNListDataAndShowInRecyclerView(responseField57)
@@ -373,7 +377,7 @@ class DigiPosTxnListFragment : Fragment() {
                         }
 
                         else -> {
-                            lifecycleScope.launch(Dispatchers.Main){
+                            lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
                                 digiPosTxnListAdapter.refreshAdapterList(txnDataList)
                                 hasMoreData = false
@@ -504,14 +508,39 @@ class DigiPosTxnListFragment : Fragment() {
                                 modal.customerMobileNumber = statusRespDataList[10]
                                 modal.description = statusRespDataList[11]
                                 modal.pgwTXNID = statusRespDataList[12]
-                                lifecycleScope.launch(Dispatchers.Main) {
-                                    txnDataList.removeAt(position)
-                                    binding?.transactionListRV?.removeViewAt(position)
-                                    txnDataList[position] = modal
-                                    digiPosTxnListAdapter.notifyItemInserted(position)
-                                    digiPosTxnListAdapter.refreshAdapterList(txnDataList)
-                                    iDialog?.hideProgress()
-                                    binding?.transactionListRV?.smoothScrollToPosition(0)
+
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    when (modal.txnStatus) {
+
+                                        EDigiPosPaymentStatus.Pending.desciption -> {
+                                            withContext(Dispatchers.Main) {
+                                                iDialog?.hideProgress()
+                                                VFService.showToast(getString(R.string.txn_status_still_pending))
+                                            }
+                                        }
+                                        EDigiPosPaymentStatus.Approved.desciption -> {
+                                            withContext(Dispatchers.Main) {
+                                                txnDataList.removeAt(position)
+                                                binding?.transactionListRV?.removeViewAt(position)
+                                                txnDataList[position] = modal
+                                                digiPosTxnListAdapter.notifyItemInserted(position)
+                                                digiPosTxnListAdapter.refreshAdapterList(txnDataList)
+                                                iDialog?.hideProgress()
+                                                binding?.transactionListRV?.smoothScrollToPosition(0)
+
+                                            }
+                                        }
+                                        else -> {
+                                            withContext(Dispatchers.Main) {
+                                                iDialog?.hideProgress()
+                                                VFService.showToast(modal.txnStatus)
+                                            }
+
+                                        }
+
+                                    }
+
+
                                 }
                             } else {
                                 lifecycleScope.launch(Dispatchers.Main) {
@@ -577,7 +606,7 @@ internal class DigiPosTxnListAdapter(
     private val adapterTXNList: MutableList<DigiPosTxnModal> = mutableListOf()
 
     init {
-        logger("LIST SIZE","${dataList?.size}","e")
+        logger("LIST SIZE", "${dataList?.size}", "e")
         if (dataList?.isNotEmpty() == true)
             adapterTXNList.addAll(dataList!!)
     }

@@ -279,7 +279,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
     open fun transactFragment(fragment: Fragment, isBackStackAdded: Boolean = false): Boolean {
         val trans = supportFragmentManager.beginTransaction().apply {
             replace(R.id.ma_fl, fragment, fragment::class.java.simpleName)
-            addToBackStack("")
+            addToBackStack(fragment::class.java.simpleName)
         }
         if (isBackStackAdded) trans.addToBackStack(null)
         return trans.commitAllowingStateLoss() >= 0
