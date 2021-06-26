@@ -275,7 +275,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^$brandIDFromPref"
+                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()?:brandIDFromPref}"
                         fetchBrandEMIMasterSubCategoryDataFromHost()
                         Log.d("FullDataList:- ", brandEmiMasterSubCategoryDataList.toString())
                     } else {
@@ -332,12 +332,10 @@ class BrandEMISubCategoryFragment : Fragment() {
     //region=====================Condition to check whether sub-category data need to load from DB or Host based on Data Update TimeStamp:-
     private fun checkAndLoadDataFromSourceCondition() {
         val subCategoryDataFromDB = runBlocking {
-            BrandEMISubCategoryTable.getAllSubCategoryTableDataByBrandID(
-                brandEMIDataModal?.getBrandID() ?: brandIDFromPref ?: ""
-            )
+            BrandEMISubCategoryTable.getAllSubCategoryTableDataByBrandID(brandEMIDataModal?.getBrandID() ?: brandIDFromPref ?: "")
         }
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
-        field57RequestData = "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^$brandIDFromPref"
+        field57RequestData = "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^${brandEMIDataModal?.getBrandID()?:brandIDFromPref}"
         if (brandEMIDataModal?.getDataTimeStampChangedOrNot() == true) {
             if (subCategoryDataFromDB.isNotEmpty()) {
                 lifecycleScope.launch(Dispatchers.Default) {
@@ -345,8 +343,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         brandEmiMasterSubCategoryDataList.add(
                             BrandEMIMasterSubCategoryDataModal(
                                 value.brandID, value.categoryID,
-                                value.parentCategoryID, value.categoryName
-                            )
+                                value.parentCategoryID, value.categoryName)
                         )
                     }
                     withContext(Dispatchers.Main) {
