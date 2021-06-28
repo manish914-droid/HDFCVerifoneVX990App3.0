@@ -18,6 +18,7 @@ import com.example.verifonevx990app.emv.VFEmv.savedPinblock
 import com.example.verifonevx990app.emv.VFEmv.workKeyId
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
+import com.example.verifonevx990app.main.CardAid
 import com.example.verifonevx990app.main.DetectCardType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PosEntryModeType
@@ -277,7 +278,14 @@ object VFService {
         val param = Bundle()
         val globleparam = Bundle()
         val panBlock: String? = cardProcessedDataModal.getPanNumberData()
-        val pinLimit = byteArrayOf(0, 4, 5, 6) // 0 means bypass pin input
+        var pinLimit: ByteArray? = null
+
+        if(CardAid.UnionPay.aid.equals(cardProcessedDataModal.getAID())) {
+            pinLimit = byteArrayOf(0,4, 5, 6, 12) // 0 means bypass pin input
+        }
+        else
+            pinLimit = byteArrayOf(4, 5, 6,12)
+
         param.putByteArray(ConstIPinpad.startPinInput.param.KEY_pinLimit_ByteArray, pinLimit)
         param.putInt(ConstIPinpad.startPinInput.param.KEY_timeout_int, 30)
         when (cardProcessedDataModal.getIsOnline()) {
@@ -311,7 +319,12 @@ object VFService {
             override fun onConfirm(data: ByteArray?, isNonePin: Boolean) {
                 Log.d("Data", "PinPad onConfirm")
                 Log.d(MainActivity.TAG, "PinPad byPassPin ---> " + data)
-                if (data != null) cardProcessedDataModal.setPinByPass(0)
+
+                if(data != null) cardProcessedDataModal.setPinByPass(0)
+                else {
+                    cardProcessedDataModal.setPinByPass(1)
+                    cardProcessedDataModal.setIsOnline(0)
+                }
 
                 vfIEMV?.importPin(1, data)
                 Log.d(
