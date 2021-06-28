@@ -208,10 +208,10 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                                iDialog?.alertBoxWithAction(null, null,
+                                /*iDialog?.alertBoxWithAction(null, null,
                                     getString(R.string.error), hostMsg,
                                     false, getString(R.string.positive_button_ok),
-                                    { parentFragmentManager.popBackStackImmediate() }, {})
+                                    { parentFragmentManager.popBackStackImmediate() }, {})*/
                             }
                         }
                     } else {
@@ -221,10 +221,10 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                            iDialog?.alertBoxWithAction(null, null,
+                            /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})
+                                { parentFragmentManager.popBackStackImmediate() }, {})*/
                         }
                     }
                 }, {})
@@ -291,19 +291,19 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                 } else {
                     withContext(Dispatchers.Main) {
                         iDialog?.hideProgress()
-                        iDialog?.alertBoxWithAction(null, null,
+                        /*iDialog?.alertBoxWithAction(null, null,
                             getString(R.string.error), hostMsg,
                             false, getString(R.string.positive_button_ok),
-                            {}, {})
+                            {}, {})*/
                     }
                 }
             } else {
                 withContext(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    iDialog?.alertBoxWithAction(null, null,
+                    /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), hostMsg,
                         false, getString(R.string.positive_button_ok),
-                        {}, {})
+                        {}, {})*/
                 }
             }
         }

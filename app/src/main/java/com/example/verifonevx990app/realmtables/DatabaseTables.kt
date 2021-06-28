@@ -4140,25 +4140,42 @@ open class BrandEMISubCategoryTable() : RealmObject(), Parcelable {
 
         // region====================Method to Get All Sub-Category Table Data================
         fun getAllSubCategoryTableDataByBrandID(brand_id: String): MutableList<BrandEMISubCategoryTable> =
-                runBlocking {
-                    var result = mutableListOf<BrandEMISubCategoryTable>()
-                    getRealm {
-                        val re =
-                                it.copyFromRealm(
-                                        it.where(BrandEMISubCategoryTable::class.java)
-                                                .equalTo("brandID", brand_id)
-                                                .findAll()
-                                )
-                        if (re != null) result = re
+            runBlocking {
+                var result = mutableListOf<BrandEMISubCategoryTable>()
+                getRealm {
+                    val re =
+                        it.copyFromRealm(
+                            it.where(BrandEMISubCategoryTable::class.java)
+                                .equalTo("brandID", brand_id)
+                                .findAll()
+                        )
+                    if (re != null) result = re
 
-                    }.await()
-                    result
-                }
+                }.await()
+                result
+            }
+        //endregion
+
+        // region====================Method to Get All Sub-Category Table Data by Matching CategoryID with ParentCategoryID================
+        fun getAllDataByMatchingCategoryIdWithParentCategoryID(categoryID: String): MutableList<BrandEMISubCategoryTable> =
+            runBlocking {
+                var result = mutableListOf<BrandEMISubCategoryTable>()
+                getRealm {
+                    val re = it.copyFromRealm(
+                        it.where(BrandEMISubCategoryTable::class.java)
+                            .equalTo("parentCategoryID", categoryID)
+                            .findAll()
+                    )
+                    if (re != null) result = re
+
+                }.await()
+                result
+            }
         //endregion
 
         suspend fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
+            withRealm {
+                it.executeTransaction { i ->
                         i.delete(
                                 BrandEMISubCategoryTable::class.java
                         )
