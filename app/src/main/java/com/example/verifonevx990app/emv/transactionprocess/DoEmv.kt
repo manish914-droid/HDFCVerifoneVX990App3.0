@@ -14,13 +14,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class DoEmv(
-    var activity: Activity,
-    var handler: Handler,
-    var cardProcessedDataModal: CardProcessedDataModal,
-    valueCardTypeSmartCard: Int,
-    var transactionCallback: (CardProcessedDataModal) -> Unit
-) {
+class DoEmv(var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, valueCardTypeSmartCard: Int, var transactionCallback: (CardProcessedDataModal) -> Unit) {
     private val iemv: IEMV? by lazy { VFService.vfIEMV }
 
     //    private var iemv: IEMV? = VFService.vfIEMV
@@ -64,60 +58,32 @@ class DoEmv(
             emvIntent.putInt(ConstIPBOC.startEMV.intent.KEY_cardType_int, valueCardTypeSmartCard)
             emvIntent.putBoolean(ConstIPBOC.startEMV.intent.KEY_isSupportPBOCFirst_String, false)
             emvIntent.putString(ConstIPBOC.startEMV.intent.KEY_transCurrCode_String, "0356")
-            emvIntent.putString(
-                ConstIPBOC.startEMV.intent.KEY_merchantName_String,
-                terminalParameterTable?.receiptHeaderTwo
-            )
-            emvIntent.putString(
-                ConstIPBOC.startEMV.intent.KEY_merchantId_String,
-                terminalParameterTable?.merchantId
-            )
-            emvIntent.putString(
-                ConstIPBOC.startEMV.intent.KEY_terminalId_String,
-                terminalParameterTable?.terminalId
-            )
-            emvIntent.putBoolean(
-                ConstIPBOC.startEMV.intent.KEY_isSupportQ_boolean,
-                ConstIPBOC.startEMV.intent.VALUE_supported
-            )
-            emvIntent.putBoolean(
-                ConstIPBOC.startEMV.intent.KEY_isSupportSM_boolean,
-                ConstIPBOC.startEMV.intent.VALUE_unsupported
-            )
-            emvIntent.putBoolean(
-                ConstIPBOC.startEMV.intent.KEY_isQPBOCForceOnline_boolean,
-                ConstIPBOC.startEMV.intent.VALUE_unforced
-            )
+            emvIntent.putString(ConstIPBOC.startEMV.intent.KEY_merchantName_String, terminalParameterTable?.receiptHeaderTwo)
+            emvIntent.putString(ConstIPBOC.startEMV.intent.KEY_merchantId_String, terminalParameterTable?.merchantId)
+            emvIntent.putString(ConstIPBOC.startEMV.intent.KEY_terminalId_String, terminalParameterTable?.terminalId)
+            emvIntent.putBoolean(ConstIPBOC.startEMV.intent.KEY_isSupportQ_boolean, ConstIPBOC.startEMV.intent.VALUE_supported)
+            emvIntent.putBoolean(ConstIPBOC.startEMV.intent.KEY_isSupportSM_boolean, ConstIPBOC.startEMV.intent.VALUE_unsupported)
+            emvIntent.putBoolean(ConstIPBOC.startEMV.intent.KEY_isQPBOCForceOnline_boolean, ConstIPBOC.startEMV.intent.VALUE_unforced)
+
             emvIntent.putBoolean("isForceOffline", false)
             if (valueCardTypeSmartCard == ConstIPBOC.startEMV.intent.VALUE_cardType_contactless) {
-                emvIntent.putByte(
-                    ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte,
-                    0x00.toByte()
-                )
+                emvIntent.putByte(ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x00.toByte())
+                //For application Blocked issue (txn doesn't go online)
+                emvIntent.putBoolean(ConstIPBOC.startEMV.intent.KEY_isctlsEmvAbortWhenAppBlocked, ConstIPBOC.startEMV.intent.VALUE_supported)
             }
             //Below we are setting 9C (Transaction Type) in CTLS & EMV for all transaction:-
             when (cardProcessedDataModal.getProcessingCode()) {
-                ProcessingCode.REFUND.code -> emvIntent.putByte(
-                    ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte,
-                    0x20.toByte()
-                ) //------> For Refund Transaction
+                ProcessingCode.REFUND.code -> emvIntent.putByte(ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x20.toByte()) //------> For Refund Transaction
 
-                ProcessingCode.SALE_WITH_CASH.code -> emvIntent.putByte(
-                    ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte,
-                    0x09.toByte()
-                ) //------> For Sale with Cash Transaction
+                ProcessingCode.SALE_WITH_CASH.code -> emvIntent.putByte(ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x09.toByte()) //------> For Sale with Cash Transaction
 
                 ProcessingCode.CASH_AT_POS.code -> {
-                    emvIntent.putByte(
-                        ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte,
-                        0x01.toByte()
-                    ) //------> For Cash Transaction
+                    emvIntent.putByte(ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x01.toByte()) //------> For Cash Transaction
                 }
 
 
                 else -> emvIntent.putByte(
-                    ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte,
-                    0x00.toByte()
+                    ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x00.toByte()
                 ) //------> For Sale Transaction
             }
             // Starting EMV Process Here---------->>

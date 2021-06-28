@@ -55,6 +55,8 @@ public class ConstIPBOC {
 
             public static final String KEY_isSupportSM_boolean = "isSupportSM";
 
+            //ctlsEmvAbortWhenAppBlocked
+            public static final String KEY_isctlsEmvAbortWhenAppBlocked = "ctlsEmvAbortWhenAppBlocked";
             public static final String KEY_isQPBOCForceOnline_boolean = "isQPBOCForceOnline";
             public static final boolean VALUE_forced = true;
             public static final boolean VALUE_unforced = false;
