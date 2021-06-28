@@ -44,6 +44,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     private var iDialog: IDialog? = null
     private var brandEmiMasterSubCategoryDataList =
         mutableListOf<BrandEMIMasterSubCategoryDataModal>()
+    private var brandEMIAllDataList = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var brandEMIDataModal: BrandEMIDataModal? = null
     private var field57RequestData: String? = null
@@ -97,6 +98,7 @@ class BrandEMISubCategoryFragment : Fragment() {
         setUpRecyclerView()
         AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.getBrandID() ?: "")
         brandEmiMasterSubCategoryDataList.clear()
+        brandEMIAllDataList.clear()
         checkAndLoadDataFromSourceCondition()
 
         //region================Search EditText TextChangeListener event:-
@@ -106,7 +108,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                        brandEmiMasterSubCategoryDataList
+                        brandEMIAllDataList
                     )
                     binding?.brandEmiMasterSubCategoryRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -132,9 +134,9 @@ class BrandEMISubCategoryFragment : Fragment() {
         val searchedDataList = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
         lifecycleScope.launch(Dispatchers.Default) {
             if (!TextUtils.isEmpty(searchText)) {
-                val loopLength = brandEmiMasterSubCategoryDataList.size
+                val loopLength = brandEMIAllDataList.size
                 for (i in 0 until loopLength) {
-                    val subCategoryData = brandEmiMasterSubCategoryDataList[i]
+                    val subCategoryData = brandEMIAllDataList[i]
                     //check whether sub category name contains letter which is inserted in search box:-
                     if (subCategoryData.categoryName.toLowerCase(Locale.ROOT).trim()
                             .contains(searchText?.toLowerCase(Locale.ROOT)?.trim()!!)
@@ -147,7 +149,10 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                 }
                 withContext(Dispatchers.Main) {
-                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(searchedDataList)
+                    brandEmiMasterSubCategoryDataList = searchedDataList
+                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                        brandEmiMasterSubCategoryDataList
+                    )
                     iDialog?.hideProgress()
                 }
             } else
@@ -294,6 +299,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                                     brandEmiMasterSubCategoryDataList.filter {
                                         it.brandID == brandEMIDataModal?.getBrandID()
                                     } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                                brandEMIAllDataList = brandEmiMasterSubCategoryDataList
                                 brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                                     brandEmiMasterSubCategoryDataList
                                 )
@@ -347,6 +353,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                     }
                     withContext(Dispatchers.Main) {
+                        brandEMIAllDataList = brandEmiMasterSubCategoryDataList
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                             brandEmiMasterSubCategoryDataList
                         )
@@ -378,7 +385,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     private fun onCategoryItemClick(position: Int) {
         try {
             Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
-            val childFilteredList = brandEmiMasterSubCategoryDataList.filter {
+            val childFilteredList = brandEMIAllDataList.filter {
                 brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID
             }
                     as MutableList<BrandEMIMasterSubCategoryDataModal>?
@@ -405,14 +412,14 @@ class BrandEMISubCategoryFragment : Fragment() {
                 brandEMIDataModal?.setCategoryName(brandEmiMasterSubCategoryDataList[position].categoryName)
             }
             //endregion
-
+            binding?.categorySearchET?.setText("")
             (activity as MainActivity).transactFragment(BrandEMIDataByCategoryID().apply {
                 arguments = Bundle().apply {
                     putSerializable("modal", brandEMIDataModal)
                     putBoolean("isSubCategoryItemPresent", isSubCategoryItem)
                     putParcelableArrayList(
                         "subCategoryData",
-                        brandEmiMasterSubCategoryDataList as ArrayList<out Parcelable>
+                        brandEMIAllDataList as ArrayList<out Parcelable>
                     )
                     putSerializable("type", action)
                 }

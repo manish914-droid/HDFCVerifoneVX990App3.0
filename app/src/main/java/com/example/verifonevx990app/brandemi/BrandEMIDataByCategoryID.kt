@@ -39,6 +39,8 @@ class BrandEMIDataByCategoryID : Fragment() {
     private var subCategoryData: MutableList<BrandEMIMasterSubCategoryDataModal>? = null
     private var displayFilteredList: MutableList<BrandEMIMasterSubCategoryDataModal>? =
         mutableListOf()
+    private var displayAllDataList: MutableList<BrandEMIMasterSubCategoryDataModal>? =
+        mutableListOf()
     private var selectedCategoryID: String? = null
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val isSubCategoryItem by lazy { arguments?.getBoolean("isSubCategoryItemPresent") }
@@ -86,7 +88,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
-                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
+                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
                     binding?.brandCategoryByIDRecyclerView?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
                 }
@@ -126,7 +128,8 @@ class BrandEMIDataByCategoryID : Fragment() {
                         )
                 }
                 withContext(Dispatchers.Main) {
-                    brandEMISubCategoryByIDAdapter.refreshAdapterList(searchedDataList)
+                    displayFilteredList = searchedDataList
+                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     iDialog?.hideProgress()
                 }
             } else
