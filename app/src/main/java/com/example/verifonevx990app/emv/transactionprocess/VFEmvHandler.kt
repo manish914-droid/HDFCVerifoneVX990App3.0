@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.main.*
+import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.utils.Utility
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.getField55
@@ -544,20 +545,72 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                         }
                 }
             }
+
             DetectError.NeedContact.errorCode == result -> {
-                (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                        activity.getString(R.string.card_read_error),
-                        activity.getString(R.string.reinitiate_trans),
-                        false
-                ) { alertCBBool ->
-                    if (alertCBBool)
-                        try {
+
+                val tpt = TerminalParameterTable.selectFromSchemeTable()
+                if(cardProcessedDataModal.getTransactionAmount()!! >= tpt?.maxCtlsTransAmt?.toLong()!!){
+
+                    (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(R.string.switch_interface_alert), activity.getString(R.string.switch_interface_error), false) { alertCBBool ->
+                        if (alertCBBool)
+                            try {
+                                (activity as VFTransactionActivity).declinedTransaction()
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                    }
+                }
+
+                else if(null !=msg && msg.isNotEmpty() && msg.contains("70018")){
+
+                    (activity as VFTransactionActivity).handleEMVFallbackFromError(
+                            activity.getString(R.string.alert),
+                            activity.getString(R.string.application_blocked), false
+                    ) { alertCBBool ->
+                        if (alertCBBool)
+                            try {
+                                (activity as VFTransactionActivity).declinedTransaction()
+                            } catch (ex: Exception) {
+                                ex.printStackTrace()
+                            }
+                    }
+                }
+                else{
+                    VFService.showToast("Going in buzzer cond.")
+                    try {
+                        GlobalScope.launch {
+                            delay(1000)
+                            VFService.vfBeeper?.startBeep(1000)
                             (activity as VFTransactionActivity).declinedTransaction()
-                        } catch (ex: Exception) {
-                            ex.printStackTrace()
                         }
+                    }
+                    catch (ex: DeadObjectException){
+                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                            GlobalScope.launch {
+                                VFService.connectToVFService(VerifoneApp.appContext)
+                            }
+                        }, 200)
+                    }
+                    catch (ex : RemoteException){
+                        ex.printStackTrace()
+                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                            GlobalScope.launch {
+                                VFService.connectToVFService(VerifoneApp.appContext)
+                            }
+                        }, 200)
+                    }
+                    catch (ex: java.lang.Exception){
+                        ex.printStackTrace()
+                        Handler(Looper.getMainLooper()).postDelayed(Runnable {
+                            GlobalScope.launch {
+                                VFService.connectToVFService(VerifoneApp.appContext)
+                            }
+                        }, 200)
+                    }
+
                 }
             }
+
             DetectError.EMVFallBack.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
                         activity.getString(R.string.emv_fallback),

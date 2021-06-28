@@ -139,6 +139,9 @@
     <string name="enter_invoice">Enter Invoice</string>
     <string name="validate_and_go">Validate and go</string>
 
+    <string name="switch_interface_alert">Switch Interface Error</string>
+    <string name="switch_interface_error">Contactless Limit Exceeded.\nPlease Insert/Swipe Card.</string>
+    <string name="application_blocked">Application Blocked</string>
 
     <string name="print_enquiry">Print</string>
     <string name="send_enquiry_on_sms">Send SMS</string>
