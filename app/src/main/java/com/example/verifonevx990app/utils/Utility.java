@@ -83,6 +83,94 @@ public class Utility {
         }
     }
 
+    public  static String HexToBin(char hexdec[])
+    {
+        int i = 0;
+
+        String binaryNum = "";
+
+        while (i < hexdec.length) {
+
+            switch (hexdec[i]) {
+                case '0':
+                    binaryNum  += "0000";
+                    System.out.print("0000");
+                    break;
+                case '1':
+                    binaryNum  +="0001";
+                    System.out.print("0001");
+                    break;
+                case '2':
+                    binaryNum  +="0010";
+                    System.out.print("0010");
+                    break;
+                case '3':
+                    binaryNum  +="0011";
+                    System.out.print("0011");
+                    break;
+                case '4':
+                    binaryNum  +="0100";
+                    System.out.print("0100");
+                    break;
+                case '5':
+                    binaryNum  +="0101";
+                    System.out.print("0101");
+                    break;
+                case '6':
+                    binaryNum  +="0110";
+                    System.out.print("0110");
+                    break;
+                case '7':
+                    binaryNum  +="0111";
+                    System.out.print("0111");
+                    break;
+                case '8':
+                    binaryNum  +="1000";
+                    System.out.print("1000");
+                    break;
+                case '9':
+                    binaryNum  +="1001";
+                    System.out.print("1001");
+                    break;
+                case 'A':
+                case 'a':
+                    binaryNum  +="1010";
+                    System.out.print("1010");
+                    break;
+                case 'B':
+                case 'b':
+                    binaryNum  +="1011";
+                    System.out.print("1011");
+                    break;
+                case 'C':
+                case 'c':
+                    binaryNum  +="1100";
+                    System.out.print("1100");
+                    break;
+                case 'D':
+                case 'd':
+                    binaryNum  +="1101";
+                    System.out.print("1101");
+                    break;
+                case 'E':
+                case 'e':
+                    binaryNum  +="1110";
+                    System.out.print("1110");
+                    break;
+                case 'F':
+                case 'f':
+                    binaryNum  +="1111";
+                    System.out.print("1111");
+                    break;
+                default:
+                    System.out.print("\nInvalid hexadecimal digit " + hexdec[i]);
+            }
+            i++;
+        }
+
+        return binaryNum;
+    }
+
     public static byte[] hexStr2Byte(String hexString, int beginIndex, int length) {
         if (hexString == null || hexString.length() == 0) {
             return new byte[]{0};

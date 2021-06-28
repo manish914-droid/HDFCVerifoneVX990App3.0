@@ -14,10 +14,7 @@ import android.widget.RadioButton
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
-import com.example.verifonevx990app.main.DetectCardType
-import com.example.verifonevx990app.main.DetectError
-import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.main.PosEntryModeType
+import com.example.verifonevx990app.main.*
 import com.example.verifonevx990app.utils.Utility
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.getField55
@@ -117,6 +114,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
             }
         }
 
+        var tlvarqc: ByteArray?
         var tlv: ByteArray?
         tagOfF55 = SparseArray()
         val tagList = intArrayOf(
@@ -142,18 +140,60 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
         try {
             for (tag in tagList) {
                 tlv = iemv?.getCardData(Integer.toHexString(tag).toUpperCase(Locale.ROOT))
+
                 if (null != tlv && tlv.isNotEmpty()) {
-                    Log.e(
-                        "TLV F55 REQ--",
-                        "TAG--> " + Integer.toHexString(tag) + ", VALUE-->" + Utility.byte2HexStr(
-                            tlv
-                        )
-                    )
+                    Log.e("TLV F55 REQ--", "TAG--> " + Integer.toHexString(tag) + ", VALUE-->" + Utility.byte2HexStr(tlv))
                     val length = Integer.toHexString(tlv.size)
                     count += Integer.valueOf(length)
                     tagOfF55?.put(tag, Utility.byte2HexStr(tlv)) // build up the field 55
 
-                    if (null != tag && "84".equals(Integer.toHexString(tag))) {
+                    try {
+                        if(null !=tag && "95".equals(Integer.toHexString(tag))
+                                && CardAid.UnionPay.aid.equals(cardProcessedDataModal.getAID())){
+
+                            val f55Hash = HashMap<Int, String>()
+                            val str = Utility.byte2HexStr(tlv)
+
+                            var i = 0
+                            var j = 1
+                            while (i < str.length - 1) {
+                                val c = "" + str[i] + str[i + 1]
+                                f55Hash.put(j, c)
+                                println("95 value with pair is" + c)
+                                j += 1
+                                i += 2
+                            }
+
+                            var secondbyte: String = f55Hash.get(2) ?: ""
+
+                            var hexdec = CharArray(100)
+                            hexdec = secondbyte.toCharArray()
+
+                            var strbinarnum =  Utility.HexToBin(hexdec)
+
+                            f55Hash.clear()
+
+                            var  K=0
+                            while (K < strbinarnum.length - 1) {
+                                val c = "" + strbinarnum[K]
+                                f55Hash.put(K, c)
+                                println("Binary value with pair is" + c)
+                                K += 1
+                            }
+
+                            if(f55Hash.isNotEmpty() && f55Hash.get(1) == "1"){
+                                VFService.showToast("App Expired")
+                            }
+
+                            println("Binary number is"+strbinarnum)
+
+                        }
+                    }
+                    catch (ex: ArrayIndexOutOfBoundsException){
+                        ex.printStackTrace()
+                    }
+
+                    if(null != tag && "84".equals(Integer.toHexString(tag))){
                         //println("Aid value with Tag is ---> "+Integer.toHexString(tag) + Utility.byte2HexStr(tlv))
                         cardProcessedDataModal.setAIDPrint(Utility.byte2HexStr(tlv))
 
@@ -164,9 +204,13 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                 }
             }
             //println("Total length of tag55 is$count")
-        } catch (ex: Exception) {
+        }
+        catch (ex: Exception){
+            Log.d("Exception during ARQC", "" + ex.printStackTrace())
+        }catch (ex: Exception) {
             Log.d("Exception during ARQC", "" + ex.printStackTrace())
         }
+
         Log.d(MainActivity.TAG, "start online request")
         processField55Data()
         Log.d(MainActivity.TAG, "online request finished")
