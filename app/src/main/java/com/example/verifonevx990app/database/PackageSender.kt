@@ -135,7 +135,6 @@ class PackageSender(
         var socket: Socket? = null
         // create a socket with a timeout
         try {
-
             showProgressShow("Please wait Connecting to Bonushub Server")
             //create a socket
             val serverSocketChannel = ServerSocketChannel.open()
@@ -162,7 +161,6 @@ class PackageSender(
             // throw ste;
             return socket
         }
-
     }
 
     private fun connectionError() {

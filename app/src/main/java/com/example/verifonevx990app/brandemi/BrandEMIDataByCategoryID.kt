@@ -39,6 +39,7 @@ class BrandEMIDataByCategoryID : Fragment() {
     private var subCategoryData: MutableList<BrandEMIMasterSubCategoryDataModal>? = null
     private var displayFilteredList: MutableList<BrandEMIMasterSubCategoryDataModal>? =
         mutableListOf()
+    private var selectedCategoryID: String? = null
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val isSubCategoryItem by lazy { arguments?.getBoolean("isSubCategoryItemPresent") }
     private var binding: FragmentBrandEmiDataByCategoryIdBinding? = null
@@ -206,8 +207,11 @@ class BrandEMIDataByCategoryID : Fragment() {
     private fun navigateToProductPage(position: Int) {
         if (checkInternetConnection()) {
             //region Adding ChildSubCategoryID and Name:-
-            brandEMIDataModal?.setChildSubCategoryID(
+            brandEMIDataModal?.setCategoryID(
                 displayFilteredList?.get(position)?.categoryID ?: ""
+            )
+            brandEMIDataModal?.setChildSubCategoryID(
+                displayFilteredList?.get(position)?.parentCategoryID ?: ""
             )
             brandEMIDataModal?.setChildSubCategoryName(
                 displayFilteredList?.get(position)?.categoryName ?: ""
@@ -215,7 +219,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             //endregion
             (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
                 arguments = Bundle().apply {
-                    putBoolean("isSubCategoryItemPresent", isSubCategoryItem ?: false)
+                    putBoolean("isSubCategoryItemPresent", false)
                     putSerializable("modal", brandEMIDataModal)
                     putSerializable("type", action)
                 }

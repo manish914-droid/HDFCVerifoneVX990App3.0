@@ -214,20 +214,20 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                            iDialog?.alertBoxWithAction(null, null,
+                            /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})
+                                { parentFragmentManager.popBackStackImmediate() }, {})*/
                         }
                     }
                 }, {})
             } else {
                 lifecycleScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    iDialog?.alertBoxWithAction(null, null,
+                    /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), "Something went wrong",
                         false, getString(R.string.positive_button_ok),
-                        { parentFragmentManager.popBackStackImmediate() }, {})
+                        { parentFragmentManager.popBackStackImmediate() }, {})*/
                 }
             }
         }
@@ -305,10 +305,10 @@ class BrandEMISubCategoryFragment : Fragment() {
             } else {
                 withContext(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    iDialog?.alertBoxWithAction(null, null,
+                    /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), hostMsg,
                         false, getString(R.string.positive_button_ok),
-                        {}, {})
+                        {}, {})*/
                 }
             }
         }
@@ -378,9 +378,10 @@ class BrandEMISubCategoryFragment : Fragment() {
     private fun onCategoryItemClick(position: Int) {
         try {
             Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
-            val childFilteredList =
-                brandEmiMasterSubCategoryDataList.filter { brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID }
-                        as MutableList<BrandEMIMasterSubCategoryDataModal>?
+            val childFilteredList = brandEmiMasterSubCategoryDataList.filter {
+                brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID
+            }
+                    as MutableList<BrandEMIMasterSubCategoryDataModal>?
             Log.d("Data:- ", Gson().toJson(brandEmiMasterSubCategoryDataList))
             if (position > -1 && childFilteredList?.isNotEmpty() == true) {
                 navigateToBrandEMIDataByCategoryIDPage(position, true)

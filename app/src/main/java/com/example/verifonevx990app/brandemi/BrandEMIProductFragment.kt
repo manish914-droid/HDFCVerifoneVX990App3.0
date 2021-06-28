@@ -236,7 +236,7 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
-                                    iDialog?.alertBoxWithAction(null, null,
+                                    /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
                                         false, getString(R.string.positive_button_ok),
                                         {
@@ -246,7 +246,7 @@ class BrandEMIProductFragment : Fragment() {
                                                 parentFragmentManager.popBackStack()
                                                 parentFragmentManager.popBackStack()
                                             }
-                                        }, {})
+                                        }, {})*/
                                 }
                             }
                             else -> {
@@ -263,10 +263,10 @@ class BrandEMIProductFragment : Fragment() {
                         )
                         GlobalScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                            iDialog?.alertBoxWithAction(null, null,
+                            /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})
+                                { parentFragmentManager.popBackStackImmediate() }, {})*/
                         }
                     }
                 }, {})
