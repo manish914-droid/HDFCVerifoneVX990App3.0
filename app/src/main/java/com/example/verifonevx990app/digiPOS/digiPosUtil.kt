@@ -248,7 +248,7 @@ suspend fun uploadPendingDigiPosTxn(activity: BaseActivity,cb: (Boolean) -> Unit
                 try {
                     if (isSuccess) {
                         val statusRespDataList = responsef57.split("^")
-                        if(statusRespDataList[0]== EDigiPosPaymentStatus.Pending.desciption || statusRespDataList[0]== EDigiPosPaymentStatus.Approved.desciption){
+                        if(statusRespDataList[5]== EDigiPosPaymentStatus.Pending.desciption || statusRespDataList[5]== EDigiPosPaymentStatus.Approved.desciption){
                             val tabledata =
                                 DigiPosDataTable()
                             tabledata.requestType =
@@ -295,13 +295,13 @@ suspend fun uploadPendingDigiPosTxn(activity: BaseActivity,cb: (Boolean) -> Unit
                                     DigiPosDataTable.insertOrUpdateDigiposData(
                                         tabledata
                                     )
-                                    Log.e("UPLOAD PENDING->>", responsef57)
+                                    Log.e("UPLOADED PENDING->>", responsef57)
                                 }
                                 EDigiPosPaymentStatus.Approved.desciption -> {
                                     tabledata.txnStatus =
                                         statusRespDataList[5]
                                     DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
-                                    Log.e("UPLOAD SUCCESS->>", responsef57)
+                                    Log.e("UPLOADED SUCCESS->>", responsef57)
                                 }
                                 else -> {
                                     DigiPosDataTable.deletRecord(
@@ -316,7 +316,7 @@ suspend fun uploadPendingDigiPosTxn(activity: BaseActivity,cb: (Boolean) -> Unit
                             logger( LOG_TAG.DIGIPOS.tag,"Fail Txn response of Partner id --->  ${digiPosTabledata.partnerTxnId} ","e")
                         }
                     } else {
-                        logger( LOG_TAG.DIGIPOS.tag,"Fail Txn response of Partner id --->  ${digiPosTabledata.partnerTxnId}  --->  Other than 00 response","e")
+                        logger( LOG_TAG.DIGIPOS.tag,"Fail Txn() response of Partner id --->  ${digiPosTabledata.partnerTxnId}  --->  Other than 00 response","e")
                     }
                 } catch (ex: Exception) {
                     ex.printStackTrace()

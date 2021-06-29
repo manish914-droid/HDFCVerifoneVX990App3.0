@@ -67,7 +67,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
 
             var firstbyte: String = f55Hash.get(1) ?: ""
 
-            VFService.showToast("CVM Result first byte is ----> ${firstbyte}")
+          //  VFService.showToast("CVM Result first byte is ----> ${firstbyte}")
             println("CVM Result first byte is ----> ${firstbyte}")
 
             if ("1F" == firstbyte || "5F" == firstbyte || "3F" == firstbyte) {

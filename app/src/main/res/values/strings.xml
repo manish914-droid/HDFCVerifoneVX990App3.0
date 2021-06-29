@@ -293,7 +293,7 @@
     <string name="last_receipt_not_available">Last Receipt Not Available</string>
     <string name="no_cancel_receipt_found">No Cancel Receipt Found</string>
     <string name="no_receipt">No Receipt</string>
-    <string name="last_summary_not_available">Last Summary Not Available</string>
+    <string name="last_summary_not_available">Last summary not available</string>
     <string name="detail_report_not_found">Detail Report Not Found</string>
     <string name="invalid_invoice">Invalid Invoice</string>
     <string name="invoice_is_invalid">Entered Invoice Is Invalid</string>
