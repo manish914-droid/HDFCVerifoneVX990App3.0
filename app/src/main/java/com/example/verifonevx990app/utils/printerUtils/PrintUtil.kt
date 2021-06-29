@@ -46,6 +46,7 @@ import java.util.*
 
 const val HDFC_LOGO = "hdfc_print_logo.bmp"
 const val AMEX_LOGO = "amex_print.bmp"
+const val DIGI_SMART_HUB_LOGO = "smart_hub.bmp"
 private const val disclaimerEmiOpen = "~emi~"
 private const val disclaimerEmiClose = "~!emi~"
 private const val disclaimerIssuerOpen = "~iss~"
@@ -227,44 +228,45 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            printLogo("hdfc_print_logo.bmp")
+         //   printLogo("hdfc_print_logo.bmp")
+            setLogoAndHeader()
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            //  logger("PS_H1", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantName) // header1
-
-
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-
-            //   logger("PS_H2", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantAddress1) //header2
+            /* format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
+             //  logger("PS_H1", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantName) // header1
 
 
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            //   logger("PS_H3", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantAddress2) //header3
+             format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
 
+             //   logger("PS_H2", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantAddress1) //header2
+
+
+             format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
+             //   logger("PS_H3", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
+ */
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -985,7 +987,7 @@ class PrintUtil(context: Context?) {
                         "MID : ${tpt?.merchantId}",
                         "TID : ${tpt?.terminalId}"
                     )
-                }else {
+                } else {
                     alignLeftRightText(
                         textInLineFormatBundle,
                         "MID : ${batch[0].hostMID}",
@@ -997,8 +999,7 @@ class PrintUtil(context: Context?) {
 
                 if (batch.isEmpty()) {
                     alignLeftRightText(textInLineFormatBundle, "Total Transaction", "0")
-                }
-                else {
+                } else {
                     alignLeftRightText(textInLineFormatBundle, "TRANS-TYPE", "AMOUNT")
                     alignLeftRightText(textInLineFormatBundle, "ISSUER", "PAN/CID")
                     alignLeftRightText(textInLineFormatBundle, "DATE-TIME", "INVOICE")
@@ -1457,9 +1458,9 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            printLogo("smart_hub.bmp")
-
-            format.putInt(
+         //   printLogo("smart_hub.bmp")
+setLogoAndHeader(DIGI_SMART_HUB_LOGO)
+           /* format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
                 PrinterConfig.addText.FontSize.NORMAL_24_24
             )
@@ -1472,7 +1473,7 @@ class PrintUtil(context: Context?) {
             //   logger("PS_H2", (printer?.status).toString(), "e")
             printer?.addText(format, terminalData?.receiptHeaderTwo) //header2
             //   logger("PS_H3", (printer?.status).toString(), "e")
-            printer?.addText(format, terminalData?.receiptHeaderThree) //header3
+            printer?.addText(format, terminalData?.receiptHeaderThree) //header3*/
             printSeperator(format)
 
             fmtAddTextInLine.putInt(
@@ -1602,10 +1603,11 @@ class PrintUtil(context: Context?) {
 
     private fun setHeaderWithLogo(
         format: Bundle,
-        img: String,
+        img: String?,
         headers: ArrayList<String>,
         context: Context? = null
     ) {
+        if(img!=null)
         printLogo(img)
         centerText(format, headers[0])
         centerText(format, headers[1])
@@ -1690,11 +1692,11 @@ class PrintUtil(context: Context?) {
             try {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
-                val tpt = TerminalParameterTable.selectFromSchemeTable()
-                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
-                tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
-                tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
-
+               val tpt = TerminalParameterTable.selectFromSchemeTable()
+                /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                  tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
+                  tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }*/
+setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -1965,10 +1967,11 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+             /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
                 tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
                 tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
-
+*/
+                setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -2664,8 +2667,8 @@ class PrintUtil(context: Context?) {
 
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
-
-            printLogo("hdfc_print_logo.bmp")
+setLogoAndHeader()
+           /* printLogo("hdfc_print_logo.bmp")
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
@@ -2698,7 +2701,7 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addText.Alignment.CENTER
             )
             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
-
+*/
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -4077,10 +4080,12 @@ class PrintUtil(context: Context?) {
             val fmtAddTextInLine = Bundle()
             val tpt = TerminalParameterTable.selectFromSchemeTable()
             val headers = arrayListOf<String>()
-            tpt?.receiptHeaderOne?.let { headers.add(it) }
+           /* tpt?.receiptHeaderOne?.let { headers.add(it) }
             tpt?.receiptHeaderTwo?.let { headers.add(it) }
             tpt?.receiptHeaderThree?.let { headers.add(it) }
-            setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)
+            setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)*/
+
+            setLogoAndHeader()
 
             val time = cardProcessedDataModal.getTime()
             val timeFormat = SimpleDateFormat("HHmmss", Locale.getDefault())
@@ -4433,15 +4438,28 @@ class PrintUtil(context: Context?) {
 
     }
 
-    private fun setLogoAndHeader() {
+    private fun setLogoAndHeader(logo: String?=HDFC_LOGO) {
         try {
             val tpt = TerminalParameterTable.selectFromSchemeTable()
+            val hdfcTpt = HdfcTpt.selectAllHDFCTPTData()[0]
             val headers = arrayListOf<String>()
-            tpt?.receiptHeaderOne?.let { headers.add(it) }
-            tpt?.receiptHeaderTwo?.let { headers.add(it) }
-            tpt?.receiptHeaderThree?.let { headers.add(it) }
+            if (hdfcTpt.defaultMerchantName.isBlank()) {
+                tpt?.receiptHeaderOne?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.defaultMerchantName)
+            }
+            if (hdfcTpt.receiptL2.isBlank()) {
+                tpt?.receiptHeaderTwo?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.receiptL2)
+            }
+            if (hdfcTpt.receiptL3.isBlank()) {
+                tpt?.receiptHeaderThree?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.receiptL3)
+            }
 
-            setHeaderWithLogo(textFormatBundle, HDFC_LOGO, headers)
+            setHeaderWithLogo(textFormatBundle, logo, headers)
         } catch (ex: DeadObjectException) {
             throw ex
         } catch (ex: RemoteException) {

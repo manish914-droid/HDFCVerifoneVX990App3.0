@@ -1422,7 +1422,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     var recordId: String = ""
 
     @field:BHFieldParseIndex(5)
-    var recordType: String = ""
+    var recordType: String = "" // what type of table it is if =1 txn param ,   if =0 app update
 
     @field:BHFieldParseIndex(7)
     var epbxEnable: String = ""
@@ -2260,6 +2260,27 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
             }.await()
             tpt
         }
+
+        fun testTPT(): TerminalParameterTable? = runBlocking {
+            var tct: TerminalParameterTable? = null
+            getRealm {
+                val re = it.copyFromRealm(
+                    it.where(TerminalParameterTable::class.java)
+                        .findAll()
+                )
+                if (re.size > 0) tct = re[0]
+            }.await()
+            tct
+        }
+        /*var tpt: TerminalParameterTable? = null
+            getRealm {
+                val re = it.copyFromRealm(
+                    it.where(TerminalParameterTable::class.java)
+                        .findAll()
+                )
+                if (re.size > 0) tct = re[0]
+            }.await()
+            tpt*/
 
         fun updateSaleBatchNumber(batchNumber: String) = runBlocking {
             getRealm {
