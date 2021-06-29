@@ -49,6 +49,7 @@ class NewInputAmountFragment : Fragment() {
     var inputInCashAmount = false
     var inputInMobilenumber = false
     private lateinit var transactionType: EDashboardItem
+    private  var testEmiTxnType: String?=null
     private var iFrReq: IFragmentRequest? = null
     private var subHeaderText: TextView? = null
     private var subHeaderImage: ImageView? = null
@@ -89,6 +90,7 @@ class NewInputAmountFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         transactionType = arguments?.getSerializable("type") as EDashboardItem
+        testEmiTxnType = (arguments?.getSerializable("TestEmiOption")?:"") as String?
         isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
             if (isMobileNeeded) {
                 binding?.mobNoCrdView?.visibility = View.VISIBLE
@@ -362,7 +364,7 @@ class NewInputAmountFragment : Fragment() {
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
                                     uiAction,
-                                    Pair(saleAmount.toString().trim(), "0"),
+                                    Pair(saleAmount.toString().trim(), testEmiTxnType),
                                     extraPairData
                                 )
                             } else {
@@ -385,7 +387,7 @@ class NewInputAmountFragment : Fragment() {
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
                                     uiAction,
-                                    Pair(saleAmount.toString().trim(), "0"),
+                                    Pair(saleAmount.toString().trim(), testEmiTxnType),
                                     extraPairData
                                 )
                             } else {
@@ -408,7 +410,7 @@ class NewInputAmountFragment : Fragment() {
                             if (extraPairData.third) {
                                 iFrReq?.onFragmentRequest(
                                     uiAction,
-                                    Pair(saleAmount.toString().trim(), "0"),
+                                    Pair(saleAmount.toString().trim(), testEmiTxnType),
                                     extraPairData
                                 )
                             } else {
@@ -426,7 +428,7 @@ class NewInputAmountFragment : Fragment() {
                     else {
                         iFrReq?.onFragmentRequest(
                             uiAction,
-                            Pair(saleAmount.toString().trim(), "0"),
+                            Pair(saleAmount.toString().trim(), testEmiTxnType),
                             Triple("", "", true)
                         )
                     }

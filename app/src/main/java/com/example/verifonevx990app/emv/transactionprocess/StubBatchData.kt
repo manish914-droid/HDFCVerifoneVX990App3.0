@@ -104,10 +104,11 @@ class StubBatchData(var transactionType: Int,
         }
 
         batchFileData.isPinverified = true
-        //Saving card number in mask form because we don't save the pan number in Plain text.
 
         batchFileData.nocvm = cardProcessedDataModal.getNoCVM() ?: false
+        batchFileData.ctlsCaption= terminalData?.ctlsCaption?:""
 
+        //Saving card number in mask form because we don't save the pan number in Plain text.
         batchFileData.cardNumber =
             if (transactionType != TransactionType.PRE_AUTH_COMPLETE.type) {
                 getMaskedPan(
@@ -165,22 +166,6 @@ class StubBatchData(var transactionType: Int,
                     cardProcessedDataModal.getTransactionAmount().toString()
             }
         }
-
-        /*  batchFileData.baseAmmount = MoneyUtil.fen2yuan(baseAmount).toString()
-
-          batchFileData.baseAmmount = MoneyUtil.fen2yuan(cardProcessedDataModal.getTransactionAmount()?.toLong() ?: 0L).toString()
-          val cashBackAmount = 0L
-        val otherAmount=  cardProcessedDataModal.getOtherAmount()
-
-          if (cashBackAmount.toString().isNotEmpty() && cashBackAmount.toString() != "0") {
-              batchFileData.cashBackAmount = MoneyUtil.fen2yuan(cashBackAmount).toString()
-              if (transactionType != TransactionTypeValues.CASH_AT_POS)
-                  batchFileData.totalAmmount = MoneyUtil.fen2yuan(cardProcessedDataModal.getTransactionAmount()?.toLong() ?: 0L + cashBackAmount).toString()
-              else
-                  batchFileData.totalAmmount = MoneyUtil.fen2yuan(cardProcessedDataModal.getTransactionAmount()?.toLong() ?: 0L).toString()
-          } else
-              batchFileData.totalAmmount = MoneyUtil.fen2yuan(cardProcessedDataModal.getTransactionAmount()?.toLong() ?: 0L).toString()
-          */
 
         batchFileData.authCode = cardProcessedDataModal.getAuthCode() ?: ""
         //   batchFileData.invoiceNumber = invoiceIncrementValue.toString()

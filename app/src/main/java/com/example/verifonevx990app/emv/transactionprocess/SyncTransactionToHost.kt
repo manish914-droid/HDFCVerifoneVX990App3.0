@@ -175,7 +175,8 @@ class SyncTransactionToHost(
                                                     cardProcessedDataModal?.getTransType() != TransactionType.SALE.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.PRE_AUTH.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.SALE_WITH_CASH.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.CASH_AT_POS.type
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.CASH_AT_POS.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.TEST_EMI.type
                                                 ) {
                                                     CompleteSecondGenAc(cardProcessedDataModal,
                                                         responseIsoData,

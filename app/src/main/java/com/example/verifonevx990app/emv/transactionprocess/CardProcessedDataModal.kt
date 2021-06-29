@@ -71,6 +71,8 @@ class CardProcessedDataModal : Serializable {
     private var doubleTap: Boolean = false
     //region
 
+     var testEmiOption:String="0"
+
 
 
     fun getTrack1Data(): String? {

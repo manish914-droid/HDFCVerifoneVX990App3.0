@@ -717,6 +717,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             UiAction.BANK_EMI, UiAction.TEST_EMI -> {
                 var transType = TransactionType.EMI_SALE.type
                 val amt = (data as Pair<*, *>).first.toString()
+                val testEmiOpetionType = (data as Pair<*, *>).second.toString()
                 if (action == UiAction.TEST_EMI) {
                     transType = TransactionType.TEST_EMI.type
                 }
@@ -736,6 +737,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 putExtra("proc_code", ProcessingCode.SALE.code)
                                 putExtra("mobileNumber", extraPair?.first)
                                 putExtra("billNumber", extraPair?.second)
+                                putExtra("TestEmiOption", testEmiOpetionType)
                             }, EIntentRequest.TRANSACTION.code
                         )
                     } else {
@@ -755,6 +757,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
+                            putExtra("TestEmiOption", testEmiOpetionType)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 }
@@ -1368,7 +1371,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     fun inflateInputFragment(
         fragment: Fragment,
         subHeading: String,
-        action: EDashboardItem
+        action: EDashboardItem,testEmiOption:String="0"
     ) {
         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
@@ -1378,6 +1381,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 arguments = Bundle().apply {
                     putSerializable("type", action)
                     putString(INPUT_SUB_HEADING, subHeading)
+                    putString("TestEmiOption", testEmiOption)
                 }
             }, false)
         } else {

@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
+import com.example.verifonevx990app.digiPOS.QrScanFragment
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.main.SubHeaderTitle
@@ -454,21 +456,24 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                 }
 
                 BankOptions.TEST_EMI -> {
-                    verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
-                        if (correctPasswordSuccess) {
-                            if (checkInternetConnection()) {
-                                (activity as MainActivity).inflateInputFragment(
-                                    NewInputAmountFragment(),
-                                    SubHeaderTitle.TEST_EMI.title,
-                                    EDashboardItem.TEST_EMI
-                                )
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
+                    if (checkInternetConnection()) {
+                        verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
+                            if (correctPasswordSuccess) {
+                                    // open TestEMi
+                                (activity as BaseActivity).transactFragment(TestEmiOptionFragment().apply {
+                                    arguments = Bundle().apply {
+                                      //  putSerializable("type", EDashboardItem.DYNAMIC_QR)
 
+                                    }
+                                })
+
+                            }
+                        }
+                    }else {
+                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                         }
                     }
-                }
+
 
                 else -> {
                     verifySuperAdminPasswordDialog(requireActivity()) { success ->

@@ -19,6 +19,52 @@ import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
 
+enum class EDashboardItem(
+    val title: String,
+    val res: Int,
+    val rank: Int = 15,
+    var childList: MutableList<EDashboardItem>? = null
+) : Serializable {
+    NONE("No Option Found", R.drawable.ic_home),
+    SALE("Sale", R.drawable.sale_icon, 1),
+    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 2),
+    PREAUTH("Pre-Auth", R.drawable.pre_auth, 3),
+    EMI_ENQUIRY("EMI Enquiry", R.drawable.emi_catalog_icon, 4),
+    PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
+    PENDING_PREAUTH("Pending Preauth", R.drawable.ic_pending_preauth, 6),
+    OFFLINE_SALE("Offline Sale", R.drawable.sale_icon, 7),
+    VOID_OFFLINE_SALE("Void Offline Sale", R.drawable.void_icon, 8),
+    SALE_TIP("Tip Adjust", R.drawable.tip_adjust_icon, 9),
+    VOID_PREAUTH("Void Preauth", R.drawable.void_icon, 10),
+    REFUND("Refund", R.drawable.refund_icon, 11),
+    VOID_REFUND("Void Refund", R.drawable.void_icon, 12),
+    VOID_SALE("Void", R.drawable.void_icon, 13),
+    CROSS_SELL("Cross Sell", R.drawable.cross_sell_icon, 14),
+    SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
+    CASH_ADVANCE("Cash Advance", R.drawable.ic_cash_at_pos_icon),
+    BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon),
+    PENDING_OFFLINE_SALE("View Offline Sale", R.drawable.ic_pending_preauth),
+    PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.pre_auth, 9),
+    MORE("View More", R.drawable.ic_arrow_down, 999),
+    BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
+    EMI_PRO("Brand EMI By Access Code", R.drawable.emi_catalog_icon, 16),
+    EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
+    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
+    BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
+    DIGI_POS("Digi POS", R.drawable.digipos_icon, 20),
+
+    // just for handling the test emi not used in dashboard items
+    TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
+    FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance, 666),
+    LESS("View Less", R.drawable.ic_arrow_up, 888),
+
+    UPI("UPI COLLECT", R.drawable.upi_icon, 901),
+    SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
+    TXN_LIST("TXN LIST", R.drawable.sms_icon, 903),
+    PENDING_TXN("Pending Txn", R.drawable.pending_txn, 903),
+    STATIC_QR("Static QR", R.drawable.ic_qr_code, 904),
+    DYNAMIC_QR("Dynamic QR", R.drawable.ic_qr_code, 905),
+}
 
 /**
  * use withRealm fun and write the query in lambda
@@ -215,6 +261,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
     var hostRoc: String = ""
     var hostInvoice: String = ""
     var hostCardType: String = ""
+    var ctlsCaption:String=""
 
 
     private constructor(parcel: Parcel) : this() {
@@ -327,6 +374,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
         hostRoc = parcel.readString().toString()
         hostInvoice = parcel.readString().toString()
         hostCardType = parcel.readString().toString()
+        ctlsCaption = parcel.readString().toString()
 
     }
 
@@ -440,6 +488,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
         parcel.writeString(hostRoc)
         parcel.writeString(hostInvoice)
         parcel.writeString(hostCardType)
+        parcel.writeString(ctlsCaption)
 
     }
 
@@ -980,19 +1029,19 @@ open class TempBatchFileDataTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: TempBatchFileDataTable) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+            }
 
         fun performOperation(param: TempBatchFileDataTable, callback: () -> Unit) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
-                    callback()
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+                callback()
+            }
 
         fun selectBatchData(): MutableList<TempBatchFileDataTable> = runBlocking {
             var result = mutableListOf<TempBatchFileDataTable>()
@@ -1008,11 +1057,11 @@ open class TempBatchFileDataTable() : RealmObject(), Parcelable {
             var result = listOf<TempBatchFileDataTable>()
             getRealm {
                 val r = it.copyFromRealm(
-                        it.where(TempBatchFileDataTable::class.java)
-                                .equalTo(
-                                        "transactionType",
-                                        TransactionType.CASH_AT_POS.type
-                                ).findAll()
+                    it.where(TempBatchFileDataTable::class.java)
+                        .equalTo(
+                            "transactionType",
+                            TransactionType.CASH_AT_POS.type
+                        ).findAll()
                 )
                 if (r != null) result = r
             }.await()
@@ -1023,8 +1072,8 @@ open class TempBatchFileDataTable() : RealmObject(), Parcelable {
             var batch: TempBatchFileDataTable? = null
             getRealm {
                 val res =
-                        it.where(TempBatchFileDataTable::class.java)
-                                .findAll().last()
+                    it.where(TempBatchFileDataTable::class.java)
+                        .findAll().last()
                 if (res != null) {
                     batch = it.copyFromRealm(res)
                 }
@@ -1036,9 +1085,9 @@ open class TempBatchFileDataTable() : RealmObject(), Parcelable {
             var batch: TempBatchFileDataTable? = null
             getRealm {
                 val res =
-                        it.where(TempBatchFileDataTable::class.java)
-                                .equalTo("isTimeOut", true).findAll()
-                                .last()
+                    it.where(TempBatchFileDataTable::class.java)
+                        .equalTo("isTimeOut", true).findAll()
+                        .last()
                 if (res != null) batch = res
             }.await()
             batch
@@ -1049,22 +1098,22 @@ open class TempBatchFileDataTable() : RealmObject(), Parcelable {
             getRealm {
                 val inv = addPad(invoiceNumber, "0", 6)
                 val res =
-                        it.where(TempBatchFileDataTable::class.java)
-                                .equalTo("invoiceNumber", inv)
-                                .findFirst()
+                    it.where(TempBatchFileDataTable::class.java)
+                        .equalTo("invoiceNumber", inv)
+                        .findFirst()
                 if (res != null) batch = it.copyFromRealm(res)
             }.await()
             batch
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                TempBatchFileDataTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        TempBatchFileDataTable::class.java
+                    )
                 }
+            }
 
     }// end of companion block/////
 
@@ -1262,89 +1311,89 @@ open class IssuerParameterTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(issuerParamTable: IssuerParameterTable, callback: () -> Unit) =
-                withRealm {
-                    when {
-                        issuerParamTable.actionId == "1" || issuerParamTable.actionId == "2" -> it.executeTransaction { i ->
-                            i.insertOrUpdate(
-                                    issuerParamTable
-                            )
-                        }
+            withRealm {
+                when {
+                    issuerParamTable.actionId == "1" || issuerParamTable.actionId == "2" -> it.executeTransaction { i ->
+                        i.insertOrUpdate(
+                            issuerParamTable
+                        )
+                    }
 
-                        issuerParamTable.actionId == "3" -> {
-                            it.executeTransaction { i ->
-                                val rows =
-                                        i.where(IssuerParameterTable::class.java)
-                                                .equalTo("issuerId", issuerParamTable.issuerId)
-                                                .findAll()
-                                rows.deleteAllFromRealm()
-                            }
+                    issuerParamTable.actionId == "3" -> {
+                        it.executeTransaction { i ->
+                            val rows =
+                                i.where(IssuerParameterTable::class.java)
+                                    .equalTo("issuerId", issuerParamTable.issuerId)
+                                    .findAll()
+                            rows.deleteAllFromRealm()
                         }
                     }
-                    callback()
                 }
+                callback()
+            }
 
 
         fun selectFromIssuerParameterTable(): List<IssuerParameterTable> = runBlocking {
             var result = listOf<IssuerParameterTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(IssuerParameterTable::class.java)
-                                .findAll()
+                    it.where(IssuerParameterTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
         }
 
         fun selectFromIssuerParameterTableOnConditionBase(): List<IssuerParameterTable> =
-                runBlocking {
-                    var result = listOf<IssuerParameterTable>()
-                    getRealm {
-                        result = it.copyFromRealm(
-                                it.where(IssuerParameterTable::class.java)
-                                        .equalTo("isActive", "1")
-                                        .notEqualTo("issuerId", "50")
-                                        .findAll()
-                        )
-                    }.await()
-                    result
-                }
+            runBlocking {
+                var result = listOf<IssuerParameterTable>()
+                getRealm {
+                    result = it.copyFromRealm(
+                        it.where(IssuerParameterTable::class.java)
+                            .equalTo("isActive", "1")
+                            .notEqualTo("issuerId", "50")
+                            .findAll()
+                    )
+                }.await()
+                result
+            }
 
         fun selectFromIssuerParameterTableList(issuerId: String): List<IssuerParameterTable> =
-                runBlocking {
-                    var result = listOf<IssuerParameterTable>()
-                    getRealm {
-                        result = it.copyFromRealm(
-                                it.where(IssuerParameterTable::class.java)
-                                        .equalTo(
-                                                "issuerId",
-                                                issuerId
-                                        ).findAll()
-                        )
-                    }.await()
-                    result
-                }
+            runBlocking {
+                var result = listOf<IssuerParameterTable>()
+                getRealm {
+                    result = it.copyFromRealm(
+                        it.where(IssuerParameterTable::class.java)
+                            .equalTo(
+                                "issuerId",
+                                issuerId
+                            ).findAll()
+                    )
+                }.await()
+                result
+            }
 
 
         fun selectFromIssuerParameterTable(issuerId: String): IssuerParameterTable? = runBlocking {
             var result: IssuerParameterTable? = null
             getRealm {
                 val re =
-                        it.where(IssuerParameterTable::class.java)
-                                .equalTo("issuerId", issuerId)
-                                .findFirst()
+                    it.where(IssuerParameterTable::class.java)
+                        .equalTo("issuerId", issuerId)
+                        .findFirst()
                 if (re != null) result = it.copyFromRealm(re)
             }.await()
             result
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                IssuerParameterTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        IssuerParameterTable::class.java
+                    )
                 }
+            }
 
     }  // end of companion object block
 
@@ -1642,25 +1691,25 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(tct: TerminalCommunicationTable, callback: () -> Unit) =
-                withRealm {
-                    when (tct.actionId) {
-                        "1", "2" -> it.executeTransaction { r -> r.insertOrUpdate(tct) }
-                        "3" -> it.executeTransaction { r ->
-                            r.where(TerminalCommunicationTable::class.java)
-                                    .equalTo("recordId", tct.recordId).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (tct.actionId) {
+                    "1", "2" -> it.executeTransaction { r -> r.insertOrUpdate(tct) }
+                    "3" -> it.executeTransaction { r ->
+                        r.where(TerminalCommunicationTable::class.java)
+                            .equalTo("recordId", tct.recordId).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
 
         fun selectFromSchemeTable(): TerminalCommunicationTable? = runBlocking {
             var tct: TerminalCommunicationTable? = null
             getRealm {
                 val re = it.copyFromRealm(
-                        it.where(TerminalCommunicationTable::class.java)
-                                .findAll()
+                    it.where(TerminalCommunicationTable::class.java)
+                        .findAll()
                 )
                 if (re.size > 0) tct = re[0]
             }.await()
@@ -1668,13 +1717,13 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { r ->
-                        r.delete(
-                                TerminalCommunicationTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { r ->
+                    r.delete(
+                        TerminalCommunicationTable::class.java
+                    )
                 }
+            }
 
     }  // End of companion object block
 
@@ -1878,7 +1927,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
 
     @field:BHFieldParseIndex(46)
     @field:BHDashboardItem(
-            EDashboardItem.OFFLINE_SALE
+        EDashboardItem.OFFLINE_SALE
     )
     // EDashboardItem.PENDING_OFFLINE_SALE
     @field:BHFieldName("Offline Sale")
@@ -1956,6 +2005,19 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
     @field:BHFieldParseIndex(67)
     @field:BHFieldName("STAN")
     var roc = ""
+
+    @field:BHFieldParseIndex(68)
+    var ctlsCaption = ""
+
+    @field:BHFieldParseIndex(69)
+    var flexiPayMinAmountLimit = ""
+
+    @field:BHFieldParseIndex(70)
+    var flexiPayMaxAmountLimit = ""
+    //---->
+//68 ---ctls caption  ctls txn /
+    // 69 flexipay min  ----------->
+    // 70 flexipay max  ----------->
 
     @field:BHDashboardItem(EDashboardItem.EMI_ENQUIRY)
     var bankEnquiry: String = ""
@@ -2166,7 +2228,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         val CREATOR = object : Parcelable.Creator<TerminalParameterTable> {
             override fun createFromParcel(parcel: Parcel): TerminalParameterTable {
                 return TerminalParameterTable(
-                        parcel
+                    parcel
                 )
             }
 
@@ -2176,18 +2238,18 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(tpt: TerminalParameterTable, callback: () -> Unit) =
-                withRealm {
-                    when (tpt.actionId) {
-                        "1", "2" -> it.executeTransaction { r -> r.insertOrUpdate(tpt) }
-                        "3" -> it.executeTransaction { r ->
-                            r.where(TerminalParameterTable::class.java)
-                                    .equalTo("tableId", tpt.tableId)
-                                    .findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (tpt.actionId) {
+                    "1", "2" -> it.executeTransaction { r -> r.insertOrUpdate(tpt) }
+                    "3" -> it.executeTransaction { r ->
+                        r.where(TerminalParameterTable::class.java)
+                            .equalTo("tableId", tpt.tableId)
+                            .findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
 
         fun selectFromSchemeTable(): TerminalParameterTable? = runBlocking {
@@ -2231,7 +2293,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
                     tp?.invoiceNumber = invoiceWithPadding(1.toString())
                 } else {
                     tp?.invoiceNumber =
-                            invoiceWithPadding((invoiceNumber.toInt().plus(1)).toString())
+                        invoiceWithPadding((invoiceNumber.toInt().plus(1)).toString())
                 }
                 it.commitTransaction()
             }.await()
@@ -2250,10 +2312,10 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
             var tpt: TerminalParameterTable? = null
             getRealm {
                 var ltpt: List<TerminalParameterTable> =
-                        listOf()
+                    listOf()
                 val tp =
-                        it.where(TerminalParameterTable::class.java)
-                                .findAll()
+                    it.where(TerminalParameterTable::class.java)
+                        .findAll()
                 if (tp != null) ltpt = it.copyFromRealm(tp)
                 for (e in ltpt) {
                     if (e.tidBankCode.toInt() == bankCode.toInt()) {
@@ -2269,8 +2331,8 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
             var tpt: List<TerminalParameterTable> = listOf()
             getRealm {
                 val tp =
-                        it.where(TerminalParameterTable::class.java)
-                                .findAll()
+                    it.where(TerminalParameterTable::class.java)
+                        .findAll()
                 if (tp != null) tpt = it.copyFromRealm(tp)
             }.await()
             tpt
@@ -2285,7 +2347,7 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         private fun selectVoidBatchData(): BatchFileDataTable? {
             val realm = Realm.getDefaultInstance()
             val voidBatchTable =
-                    realm.copyFromRealm(realm.where(BatchFileDataTable::class.java).findAll())
+                realm.copyFromRealm(realm.where(BatchFileDataTable::class.java).findAll())
             realm.close()
             return if (voidBatchTable.size > 0)
                 voidBatchTable[voidBatchTable.size - 1]
@@ -2294,13 +2356,13 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { r ->
-                        r.delete(
-                                TerminalParameterTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { r ->
+                    r.delete(
+                        TerminalParameterTable::class.java
+                    )
                 }
+            }
 
         fun updateMerchantPromoData(data: Triple<String, Boolean, Boolean>) = runBlocking {
             var tpt: TerminalParameterTable? = null
@@ -2543,25 +2605,25 @@ open class CardDataTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: CardDataTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(CardDataTable::class.java)
-                                    .equalTo("cardTableIndex", param.cardTableIndex).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(CardDataTable::class.java)
+                            .equalTo("cardTableIndex", param.cardTableIndex).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
 
         fun selecteAllCardsData(): List<CardDataTable> = runBlocking {
             var result = listOf<CardDataTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(CardDataTable::class.java)
-                                .findAll()
+                    it.where(CardDataTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -2581,8 +2643,8 @@ open class CardDataTable() : RealmObject(), Parcelable {
             var result: CardDataTable? = null
             getRealm {
                 val cdtl = it.copyFromRealm(
-                        it.where(CardDataTable::class.java)
-                                .findAll()
+                    it.where(CardDataTable::class.java)
+                        .findAll()
                 )
                 for (each in cdtl) {
                     if (each.panLow.length >= 6 && each.panHi.length >= 6 && panNumber.length >= 6) {
@@ -2600,13 +2662,13 @@ open class CardDataTable() : RealmObject(), Parcelable {
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                CardDataTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        CardDataTable::class.java
+                    )
                 }
+            }
 
     }  // End of Companion object block
 
@@ -2706,25 +2768,25 @@ open class TenureTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: TenureTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(TenureTable::class.java)
-                                    .equalTo("emiTenureId", param.emiTenureId)
-                                    .findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(TenureTable::class.java)
+                            .equalTo("emiTenureId", param.emiTenureId)
+                            .findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromSchemeTable(): List<TenureTable> = runBlocking {
             var list = listOf<TenureTable>()
             getRealm {
                 list = it.copyFromRealm(
-                        it.where(TenureTable::class.java)
-                                .findAll()
+                    it.where(TenureTable::class.java)
+                        .findAll()
                 )
             }.await()
             list
@@ -2734,11 +2796,11 @@ open class TenureTable() : RealmObject(), Parcelable {
             var result = arrayListOf<TenureTable>()
             getRealm {
                 val re = it.copyFromRealm(
-                        it.where(TenureTable::class.java)
-                                .equalTo("schemeId", schemeId).equalTo(
-                                        "isActive",
-                                        "1"
-                                ).findAll()
+                    it.where(TenureTable::class.java)
+                        .equalTo("schemeId", schemeId).equalTo(
+                            "isActive",
+                            "1"
+                        ).findAll()
                 )
                 for (each in re) result.add(each)
             }.await()
@@ -2824,25 +2886,25 @@ open class SchemeTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: SchemeTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(SchemeTable::class.java)
-                                    .equalTo("schemeId", param.schemeId).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(SchemeTable::class.java)
+                            .equalTo("schemeId", param.schemeId).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
 
         fun selectFromSchemeTable(): List<SchemeTable> = runBlocking {
             var result = listOf<SchemeTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(SchemeTable::class.java)
-                                .findAll()
+                    it.where(SchemeTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -2852,11 +2914,11 @@ open class SchemeTable() : RealmObject(), Parcelable {
             val result = arrayListOf<SchemeTable>()
             getRealm {
                 val res = it.copyFromRealm(
-                        it.where(SchemeTable::class.java)
-                                .equalTo("issuerId", issuerId).equalTo(
-                                        "isActive",
-                                        "1"
-                                ).findAll()
+                    it.where(SchemeTable::class.java)
+                        .equalTo("issuerId", issuerId).equalTo(
+                            "isActive",
+                            "1"
+                        ).findAll()
                 )
                 for (each in res) result.add(each)
 
@@ -2943,25 +3005,25 @@ open class EmiBinTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: EmiBinTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(EmiBinTable::class.java)
-                                    .equalTo("binIndexId", param.binIndexId)
-                                    .findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(EmiBinTable::class.java)
+                            .equalTo("binIndexId", param.binIndexId)
+                            .findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromEmiBinTable(): List<EmiBinTable> = runBlocking {
             var result = listOf<EmiBinTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(EmiBinTable::class.java)
-                                .findAll()
+                    it.where(EmiBinTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -2971,8 +3033,8 @@ open class EmiBinTable() : RealmObject(), Parcelable {
             var result: EmiBinTable? = null
             getRealm {
                 val ebtl =
-                        it.where(EmiBinTable::class.java)
-                                .equalTo("issuerId", issuerId).findFirst()
+                    it.where(EmiBinTable::class.java)
+                        .equalTo("issuerId", issuerId).findFirst()
                 if (ebtl != null) result = it.copyFromRealm(ebtl)
 
             }.await()
@@ -3113,37 +3175,37 @@ open class EmiSchemeTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: EmiSchemeTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(EmiSchemeTable::class.java)
-                                    .equalTo("emiSchemeId", param.emiSchemeId)
-                                    .findAll()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(EmiSchemeTable::class.java)
+                            .equalTo("emiSchemeId", param.emiSchemeId)
+                            .findAll()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromEmiSchemeTable(): List<EmiSchemeTable> = runBlocking {
             var result = listOf<EmiSchemeTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(EmiSchemeTable::class.java)
-                                .findAll()
+                    it.where(EmiSchemeTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                EmiSchemeTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        EmiSchemeTable::class.java
+                    )
                 }
+            }
 
     }  // End of companion object block
 
@@ -3236,7 +3298,7 @@ open class BenifitSlabTable() : RealmObject(), Parcelable {
         val CREATOR = object : Parcelable.Creator<BenifitSlabTable> {
             override fun createFromParcel(parcel: Parcel): BenifitSlabTable {
                 return BenifitSlabTable(
-                        parcel
+                    parcel
                 )
             }
 
@@ -3246,17 +3308,17 @@ open class BenifitSlabTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BenifitSlabTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(BenifitSlabTable::class.java)
-                                    .equalTo("schemeSlabId", param.schemeSlabId).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(BenifitSlabTable::class.java)
+                            .equalTo("schemeSlabId", param.schemeSlabId).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromBenifitSlabTable(): List<BenifitSlabTable> = runBlocking {
             var result = listOf<BenifitSlabTable>()
@@ -3270,13 +3332,13 @@ open class BenifitSlabTable() : RealmObject(), Parcelable {
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                BenifitSlabTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BenifitSlabTable::class.java
+                    )
                 }
+            }
 
     } // End of Companion object block
 
@@ -3354,37 +3416,37 @@ open class BrandDataTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandDataTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(BrandDataTable::class.java)
-                                    .equalTo("brandId", param.brandId).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(BrandDataTable::class.java)
+                            .equalTo("brandId", param.brandId).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromBrandDataTable(): List<BrandDataTable> = runBlocking {
             var result = listOf<BrandDataTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(BrandDataTable::class.java)
-                                .findAll()
+                    it.where(BrandDataTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                BrandDataTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BrandDataTable::class.java
+                    )
                 }
+            }
 
     }  // End of companion object block
 
@@ -3450,7 +3512,7 @@ open class EmiSchemeProductTable() : RealmObject(), Parcelable {
         val CREATOR = object : Parcelable.Creator<EmiSchemeProductTable> {
             override fun createFromParcel(parcel: Parcel): EmiSchemeProductTable {
                 return EmiSchemeProductTable(
-                        parcel
+                    parcel
                 )
             }
 
@@ -3460,37 +3522,37 @@ open class EmiSchemeProductTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: EmiSchemeProductTable, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(EmiSchemeProductTable::class.java)
-                                    .equalTo("schemeProductId", param.schemeProductId).findAll()
-                                    .deleteAllFromRealm()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(EmiSchemeProductTable::class.java)
+                            .equalTo("schemeProductId", param.schemeProductId).findAll()
+                            .deleteAllFromRealm()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectFromEmiSchemeProductTable(): List<EmiSchemeProductTable> = runBlocking {
             var result = listOf<EmiSchemeProductTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(EmiSchemeProductTable::class.java)
-                                .findAll()
+                    it.where(EmiSchemeProductTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                EmiSchemeProductTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        EmiSchemeProductTable::class.java
+                    )
                 }
+            }
 
     }  // End of companion object block
 }
@@ -4062,19 +4124,19 @@ open class BrandEMIMasterTimeStamps() : RealmObject(), Parcelable {
                         it.copyFromRealm(it.where(BrandEMIMasterTimeStamps::class.java).findAll())
                     if (re != null) result = re
 
-                    }.await()
-                    result
-                }
+                }.await()
+                result
+            }
         //endregion
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                BrandEMIMasterTimeStamps::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BrandEMIMasterTimeStamps::class.java
+                    )
                 }
+            }
     }
 }
 //endregion
@@ -4122,20 +4184,20 @@ open class BrandEMISubCategoryTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandEMISubCategoryTable) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All Sub-Category Table Data================
         fun getAllSubCategoryTableData(): MutableList<BrandEMISubCategoryTable> =
-                runBlocking {
-                    var result = mutableListOf<BrandEMISubCategoryTable>()
-                    getRealm {
-                        val re =
-                                it.copyFromRealm(it.where(BrandEMISubCategoryTable::class.java).findAll())
-                        if (re != null) result = re
+            runBlocking {
+                var result = mutableListOf<BrandEMISubCategoryTable>()
+                getRealm {
+                    val re =
+                        it.copyFromRealm(it.where(BrandEMISubCategoryTable::class.java).findAll())
+                    if (re != null) result = re
 
-                    }.await()
-                    result
-                }
+                }.await()
+                result
+            }
         //endregion
 
         // region====================Method to Get All Sub-Category Table Data================
@@ -4260,7 +4322,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandEMIDataTable) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All IssuerTAndC Data================
         fun getAllEMIData(): BrandEMIDataTable = runBlocking {
@@ -4276,7 +4338,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
 
         //region===================Method to Clear BrandEMIData Table:-
         fun clear() =
-                withRealm { it.executeTransaction { i -> i.delete(BrandEMIDataTable::class.java) } }
+            withRealm { it.executeTransaction { i -> i.delete(BrandEMIDataTable::class.java) } }
         //endregion
 
     }
@@ -4410,14 +4472,14 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandEMIAccessDataModalTable) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get BrandEMIByAccessCode Data================
         fun getBrandEMIByAccessCodeData(): BrandEMIAccessDataModalTable = runBlocking {
             var result = BrandEMIAccessDataModalTable()
             getRealm {
                 val re =
-                        it.copyFromRealm(it.where(BrandEMIAccessDataModalTable::class.java).findFirst())
+                    it.copyFromRealm(it.where(BrandEMIAccessDataModalTable::class.java).findFirst())
                 if (re != null) result = re
 
             }.await()
@@ -4427,7 +4489,7 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
 
         //region===================Method to Clear BrandEMI By AccessCode Table:-
         fun clear() =
-                withRealm { it.executeTransaction { i -> i.delete(BrandEMIAccessDataModalTable::class.java) } }
+            withRealm { it.executeTransaction { i -> i.delete(BrandEMIAccessDataModalTable::class.java) } }
         //endregion
     }
 }
@@ -4478,7 +4540,7 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
         val CREATOR = object : Parcelable.Creator<DigiPosDataTable> {
             override fun createFromParcel(parcel: Parcel): DigiPosDataTable {
                 return DigiPosDataTable(
-                        parcel
+                    parcel
                 )
             }
 
@@ -4488,19 +4550,19 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
         }
 
         fun insertOrUpdateDigiposData(param: DigiPosDataTable) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+            }
 
         fun insertOrUpdateDigiposDataWithCB(param: DigiPosDataTable, callback: () -> Unit) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
-                    callback()
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+                callback()
+            }
 
         fun selectAllDigiPosData(): MutableList<DigiPosDataTable> = runBlocking {
             var result = mutableListOf<DigiPosDataTable>()
@@ -4513,19 +4575,19 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
         }
 
         fun selectDigiPosDataAccordingToTxnStatus(status: String): MutableList<DigiPosDataTable> =
-                runBlocking {
-                    var result = mutableListOf<DigiPosDataTable>()
-                    getRealm {
-                        val re = it.copyFromRealm(
-                                it.where(DigiPosDataTable::class.java)
-                                        .equalTo("txnStatus", status)
-                                        .findAll()
-                        )
-                        if (re != null) result = re
+            runBlocking {
+                var result = mutableListOf<DigiPosDataTable>()
+                getRealm {
+                    val re = it.copyFromRealm(
+                        it.where(DigiPosDataTable::class.java)
+                            .equalTo("txnStatus", status)
+                            .findAll()
+                    )
+                    if (re != null) result = re
 
-                    }.await()
-                    result
-                }
+                }.await()
+                result
+            }
 
         fun deletAllRecordAccToTxnStatus(txnStatus: String) =
             withRealm {
@@ -4539,24 +4601,24 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
             }
 
         fun deletRecord(partnerTxnId: String) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.where(DigiPosDataTable::class.java)
-                                .equalTo(
-                                        "partnerTxnId",
-                                        partnerTxnId
-                                ).findAll()?.deleteAllFromRealm()
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.where(DigiPosDataTable::class.java)
+                        .equalTo(
+                            "partnerTxnId",
+                            partnerTxnId
+                        ).findAll()?.deleteAllFromRealm()
                 }
+            }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                DigiPosDataTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        DigiPosDataTable::class.java
+                    )
                 }
+            }
 
     }// end of companion block/////
 
@@ -4565,13 +4627,13 @@ open class DigiPosDataTable() : RealmObject(), Parcelable {
 //endregion
 
 @RealmClass
-open class TxnCallBackRequestTable():RealmObject(),Parcelable{
+open class TxnCallBackRequestTable() : RealmObject(), Parcelable {
     @PrimaryKey
-    var roc=""
-    var reqtype=""
-    var tid=""
-    var batchnum=""
-    var amount=""
+    var roc = ""
+    var reqtype = ""
+    var tid = ""
+    var batchnum = ""
+    var amount = ""
 
 
     private constructor(parcel: Parcel) : this()
@@ -4592,7 +4654,7 @@ open class TxnCallBackRequestTable():RealmObject(),Parcelable{
         val CREATOR = object : Parcelable.Creator<TxnCallBackRequestTable> {
             override fun createFromParcel(parcel: Parcel): TxnCallBackRequestTable {
                 return TxnCallBackRequestTable(
-                        parcel
+                    parcel
                 )
             }
 
@@ -4602,19 +4664,22 @@ open class TxnCallBackRequestTable():RealmObject(),Parcelable{
         }
 
         fun insertOrUpdateTxnCallBackData(param: TxnCallBackRequestTable) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+            }
 
-        fun insertOrUpdateTxnCallBackDataWithCB(param: TxnCallBackRequestTable, callback: () -> Unit) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.insertOrUpdate(param)
-                    }
-                    callback()
+        fun insertOrUpdateTxnCallBackDataWithCB(
+            param: TxnCallBackRequestTable,
+            callback: () -> Unit
+        ) =
+            withRealm {
+                it.executeTransaction { i ->
+                    i.insertOrUpdate(param)
                 }
+                callback()
+            }
 
         fun selectAllTxnCallBackData(): MutableList<TxnCallBackRequestTable> = runBlocking {
             var result = mutableListOf<TxnCallBackRequestTable>()
@@ -4628,24 +4693,24 @@ open class TxnCallBackRequestTable():RealmObject(),Parcelable{
 
 
         fun deletRecord(roc: String) =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.where(TxnCallBackRequestTable::class.java)
-                                .equalTo(
-                                        "roc",
-                                        roc
-                                ).findAll()?.deleteAllFromRealm()
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.where(TxnCallBackRequestTable::class.java)
+                        .equalTo(
+                            "roc",
+                            roc
+                        ).findAll()?.deleteAllFromRealm()
                 }
+            }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                TxnCallBackRequestTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        TxnCallBackRequestTable::class.java
+                    )
                 }
+            }
 
     }
 }
@@ -4714,7 +4779,7 @@ open class OfflineSaleTable() : RealmObject(), Parcelable {
     fun getTimeString(): String {
         date.time = time
         return formatter.format(
-                date
+            date
         )
     }
 
@@ -4725,25 +4790,25 @@ open class OfflineSaleTable() : RealmObject(), Parcelable {
         val CREATOR = object : Parcelable.Creator<OfflineSaleTable> {
             override fun createFromParcel(source: Parcel): OfflineSaleTable {
                 return OfflineSaleTable(
-                        source
+                    source
                 )
             }
 
             override fun newArray(size: Int): Array<OfflineSaleTable> =
-                    Array(size) { OfflineSaleTable() }
+                Array(size) { OfflineSaleTable() }
         }
 
         fun insertOrUpdate(param: OfflineSaleTable) =
-                withRealm {
-                    it.executeTransaction { i -> i.insertOrUpdate(param) }
-                }
+            withRealm {
+                it.executeTransaction { i -> i.insertOrUpdate(param) }
+            }
 
         fun selectFromProductCategoryTable(): List<OfflineSaleTable> = runBlocking {
             var result = listOf<OfflineSaleTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(OfflineSaleTable::class.java)
-                                .findAll()
+                    it.where(OfflineSaleTable::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -4753,22 +4818,22 @@ open class OfflineSaleTable() : RealmObject(), Parcelable {
             withRealm {
                 it.executeTransaction { i ->
                     val result =
-                            i.where(OfflineSaleTable::class.java)
-                                    .equalTo("invoiceNo", ost.invoiceNo)
-                                    .findFirst()
+                        i.where(OfflineSaleTable::class.java)
+                            .equalTo("invoiceNo", ost.invoiceNo)
+                            .findFirst()
                     result?.deleteFromRealm()
                 }
             }
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                OfflineSaleTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        OfflineSaleTable::class.java
+                    )
                 }
+            }
 
 
         private val formatter = SimpleDateFormat("dd-MMM-yyyy\nhh:mm a")
@@ -4813,57 +4878,9 @@ annotation class BHFieldParseIndex(val index: Int)
 @Target(AnnotationTarget.FIELD, AnnotationTarget.PROPERTY)
 @Retention(AnnotationRetention.RUNTIME)
 annotation class BHDashboardItem(
-        val item: EDashboardItem,
-        val childItem: EDashboardItem = EDashboardItem.NONE
+    val item: EDashboardItem,
+    val childItem: EDashboardItem = EDashboardItem.NONE
 )
-
-
-enum class EDashboardItem(
-        val title: String,
-        val res: Int,
-        val rank: Int = 15,
-        var childList: MutableList<EDashboardItem>? = null
-) : Serializable {
-    NONE("No Option Found", R.drawable.ic_home),
-    SALE("Sale", R.drawable.sale_icon, 1),
-    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 2),
-    PREAUTH("Pre-Auth", R.drawable.pre_auth, 3),
-    EMI_ENQUIRY("EMI Enquiry", R.drawable.emi_catalog_icon, 4),
-    PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
-    PENDING_PREAUTH("Pending Preauth", R.drawable.ic_pending_preauth, 6),
-    OFFLINE_SALE("Offline Sale", R.drawable.sale_icon, 7),
-    VOID_OFFLINE_SALE("Void Offline Sale", R.drawable.void_icon, 8),
-    SALE_TIP("Tip Adjust", R.drawable.tip_adjust_icon, 9),
-    VOID_PREAUTH("Void Preauth", R.drawable.void_icon, 10),
-    REFUND("Refund", R.drawable.refund_icon, 11),
-    VOID_REFUND("Void Refund", R.drawable.void_icon, 12),
-    VOID_SALE("Void", R.drawable.void_icon, 13),
-    CROSS_SELL("Cross Sell", R.drawable.cross_sell_icon, 14),
-    SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
-    CASH_ADVANCE("Cash Advance", R.drawable.ic_cash_at_pos_icon),
-    BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon),
-    PENDING_OFFLINE_SALE("View Offline Sale", R.drawable.ic_pending_preauth),
-    PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.pre_auth, 9),
-    MORE("View More", R.drawable.ic_arrow_down, 999),
-    BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
-    EMI_PRO("Brand EMI By Access Code", R.drawable.emi_catalog_icon, 16),
-    EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
-    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
-    BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
-    DIGI_POS("Digi POS", R.drawable.digipos_icon, 20),
-
-    // just for handling the test emi not used in dashboard items
-    TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
-    FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance, 666),
-    LESS("View Less", R.drawable.ic_arrow_up, 888),
-
-    UPI("UPI COLLECT", R.drawable.upi_icon, 901),
-    SMS_PAY("SMS PAY", R.drawable.sms_icon, 902),
-    TXN_LIST("TXN LIST", R.drawable.sms_icon, 903),
-    PENDING_TXN("Pending Txn", R.drawable.pending_txn, 903),
-    STATIC_QR("Static QR", R.drawable.ic_qr_code, 904),
-    DYNAMIC_QR("Dynamic QR", R.drawable.ic_qr_code, 905),
-}
 
 //region========================push bill table for sms pay=======================
 @RealmClass
@@ -4910,8 +4927,8 @@ open class SmsPushBill() : RealmObject(), Parcelable {
             var result: SmsPushBill? = null
             getRealm {
                 val re =
-                        it.where(SmsPushBill::class.java)
-                                .equalTo("mobile", mobile).findFirst()
+                    it.where(SmsPushBill::class.java)
+                        .equalTo("mobile", mobile).findFirst()
                 if (re != null) result = it.copyFromRealm(re)
             }.await()
             result
@@ -4921,8 +4938,8 @@ open class SmsPushBill() : RealmObject(), Parcelable {
             var result = listOf<SmsPushBill>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(SmsPushBill::class.java)
-                                .findAll()
+                    it.where(SmsPushBill::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -4935,16 +4952,16 @@ open class SmsPushBill() : RealmObject(), Parcelable {
         }
 
         fun delete(mobile: String, callback: (Boolean) -> Unit) =
-                withRealm {
-                    var result = false
-                    it.executeTransaction { i ->
-                        result =
-                                i.where(SmsPushBill::class.java)
-                                        .equalTo("mobile", mobile).findAll()
-                                        .deleteAllFromRealm()
-                    }
-                    callback(result)
+            withRealm {
+                var result = false
+                it.executeTransaction { i ->
+                    result =
+                        i.where(SmsPushBill::class.java)
+                            .equalTo("mobile", mobile).findAll()
+                            .deleteAllFromRealm()
                 }
+                callback(result)
+            }
 
     }
 
@@ -4990,13 +5007,13 @@ open class HdfcTpt() : RealmObject(), Parcelable {
     var option2 = ""
 
     @field:BHFieldParseIndex(11)
-    var receiptL2 = ""
+    var receiptL2 = "" // header2
 
     @field:BHFieldParseIndex(12)
-    var receiptL3 = ""
+    var receiptL3 = ""// header3
 
     @field:BHFieldParseIndex(13)
-    var defaultMerchantName = ""
+    var defaultMerchantName = "" // header 1
 
     @field:BHFieldParseIndex(14)
     var localTerminalOption = ""
@@ -5083,23 +5100,23 @@ open class HdfcTpt() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: HdfcTpt, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(HdfcTpt::class.java)
-                                    .equalTo("recordId", param.recordId).findAll()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(HdfcTpt::class.java)
+                            .equalTo("recordId", param.recordId).findAll()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectAllHDFCTPTData(): List<HdfcTpt> = runBlocking {
             var result = listOf<HdfcTpt>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(HdfcTpt::class.java)
-                                .findAll()
+                    it.where(HdfcTpt::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -5109,22 +5126,22 @@ open class HdfcTpt() : RealmObject(), Parcelable {
             withRealm {
                 it.executeTransaction { i ->
                     val result =
-                            i.where(HdfcTpt::class.java)
-                                    .equalTo("bankId", ost.bankId)
-                                    .findFirst()
+                        i.where(HdfcTpt::class.java)
+                            .equalTo("bankId", ost.bankId)
+                            .findFirst()
                     result?.deleteFromRealm()
                 }
             }
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                OfflineSaleTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        OfflineSaleTable::class.java
+                    )
                 }
+            }
     }
 
 }
@@ -5282,30 +5299,30 @@ open class HdfcCdt() : RealmObject(), Parcelable {
         @JvmField
         val CREATOR = object : Parcelable.Creator<HdfcCdt> {
             override fun createFromParcel(source: Parcel): HdfcCdt =
-                    HdfcCdt(source)
+                HdfcCdt(source)
 
             override fun newArray(size: Int): Array<HdfcCdt> = Array<HdfcCdt>(size) { HdfcCdt() }
 
         }
 
         fun performOperation(param: HdfcCdt, callback: () -> Unit) =
-                withRealm {
-                    when (param.actionId) {
-                        "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
-                        "3" -> it.executeTransaction { i ->
-                            i.where(HdfcCdt::class.java)
-                                    .equalTo("recordId", param.recordId).findAll()
-                        }
+            withRealm {
+                when (param.actionId) {
+                    "1", "2" -> it.executeTransaction { i -> i.insertOrUpdate(param) }
+                    "3" -> it.executeTransaction { i ->
+                        i.where(HdfcCdt::class.java)
+                            .equalTo("recordId", param.recordId).findAll()
                     }
-                    callback()
                 }
+                callback()
+            }
 
         fun selectAllHDFCCDTData(): List<HdfcCdt> = runBlocking {
             var result = listOf<HdfcCdt>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(HdfcCdt::class.java)
-                                .findAll()
+                    it.where(HdfcCdt::class.java)
+                        .findAll()
                 )
             }.await()
             result
@@ -5315,22 +5332,22 @@ open class HdfcCdt() : RealmObject(), Parcelable {
             withRealm {
                 it.executeTransaction { i ->
                     val result =
-                            i.where(HdfcCdt::class.java)
-                                    .equalTo("bankId", ost.bankId)
-                                    .findFirst()
+                        i.where(HdfcCdt::class.java)
+                            .equalTo("bankId", ost.bankId)
+                            .findFirst()
                     result?.deleteFromRealm()
                 }
             }
         }
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                HdfcCdt::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        HdfcCdt::class.java
+                    )
                 }
+            }
 
     }
 

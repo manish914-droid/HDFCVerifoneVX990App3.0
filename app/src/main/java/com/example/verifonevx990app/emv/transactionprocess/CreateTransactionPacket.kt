@@ -199,7 +199,12 @@ class CreateTransactionPacket(
                 }
 
                 else -> {
-                    indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection"
+                    indicator = if( cardProcessedData.getTransType()==TransactionType.TEST_EMI.type ){
+
+                            logger("TEST OPTION",cardProcessedData.testEmiOption,"e")
+                        "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection|${cardProcessedData.testEmiOption}"
+                    }else
+                        "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection"
                 }
             }
 

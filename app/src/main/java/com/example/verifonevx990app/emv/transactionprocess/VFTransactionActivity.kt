@@ -68,6 +68,7 @@ class VFTransactionActivity : BaseActivity() {
     private val mobileNumber by lazy { intent.getStringExtra("mobileNumber") ?: "" }
     private val billNumber by lazy { intent.getStringExtra("billNumber") ?: "0" }
     private val saleWithTipAmt by lazy { intent.getStringExtra("saleWithTipAmt") ?: "0" }
+    private val testEmiOption by lazy { intent.getStringExtra("TestEmiOption") ?: "0" }
     private val uiAction by lazy {
         (intent.getSerializableExtra("uiAction") ?: UiAction.DEFAUTL) as UiAction
     }
@@ -1268,6 +1269,7 @@ class VFTransactionActivity : BaseActivity() {
                     binding?.tvInsertCard?.visibility = View.GONE
                     if (cardProcessedData.getTransType() == TransactionType.TEST_EMI.type) {
                         val baseAmountValue = getString(R.string.rupees_symbol) + "1.00"
+                        cardProcessedData.testEmiOption=testEmiOption
                         binding?.baseAmtTv?.text = baseAmountValue
                     } else {
                         val baseAmountValue = getString(R.string.rupees_symbol) +
@@ -1290,8 +1292,8 @@ class VFTransactionActivity : BaseActivity() {
                     processSwipeCardWithPINorWithoutPIN(isPin, cardProcessedData)
                 } else {
                     if (cardProcessedData.getTransType() == TransactionType.TEST_EMI.type) {
-                        VFService.showToast("Connect to BH_HOST1...")
-                        Log.e("WWW", "-----")
+                      //  VFService.showToast("Connect to BH_HOST1...")
+                        Log.e("Test emi...", "Connect to BH_HOST1...")
                         cardProcessedData.setTransactionAmount(100)
                         DoEmv(
                             this, pinHandler, cardProcessedData,
