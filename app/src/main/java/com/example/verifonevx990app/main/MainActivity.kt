@@ -1121,8 +1121,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             EDashboardItem.BRAND_EMI -> {
                 if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                ) {
+                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())) {
                     if (checkInternetConnection()) {
                         transactFragment(BrandEMIMasterCategoryFragment().apply {
                             arguments = Bundle().apply {
@@ -2150,6 +2149,7 @@ enum class DetectCardType(val cardType: Int, val cardTypeName: String = "") {
 enum class DetectError(val errorCode: Int) {
     SeePhone(150),
     DynamicLimit(208),
+    TransactionReject(202),
     RefuseTrans(202),
     Terminalcapability(204),
     EMVFallBack(12),
@@ -2160,7 +2160,8 @@ enum class DetectError(val errorCode: Int) {
     IncorrectPAN(2007),
     OtherErrorTransactionterminated(11),
     CTLS_CARD_READ_FAILED_ERROR(29),
-    TransactionDeclined(1)
+    TransactionDeclined(1),
+    SecondTap_Approved(209)
 }
 
 //Below Enum class is used to handle Host Response Codes:-

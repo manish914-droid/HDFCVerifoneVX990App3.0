@@ -3,10 +3,7 @@ package com.example.verifonevx990app.brandemi
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
 
-class CreateBrandEMIPacket(
-    private var field57RequestData: String?,
-    private var cb: (IsoDataWriter) -> Unit
-) {
+class CreateBrandEMIPacket(private var field57RequestData: String?, private var cb: (IsoDataWriter) -> Unit) {
     init {
         cb(createBrandEMIMasterDataPacket())
     }

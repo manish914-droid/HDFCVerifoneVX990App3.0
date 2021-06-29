@@ -27,6 +27,13 @@ object AppPreference {
     private const val PREFERENCE_NAME = "PaxApp"  // todo App Name to be changed
     const val LOGIN = "login"
 
+    //region========Rupay======= start============
+    const val de55 = "de_55"
+    const val doubletap = "doubletap"
+    const val doubletaptimeout = "doubletaptimeout"
+
+    //region========Rupay======= End ==============
+
     //region========EMV=======
     const val PC_NUMBER_KEY = "pc_number_key"
     const val PC_NUMBER_KEY_2 = "pc_number_key_2"
@@ -226,6 +233,16 @@ object AppPreference {
             }
         } else
             null
+    }
+
+    fun clearDoubleTap(){
+        logger(TAG, "========clearDoubleTap=========", "e")
+        VerifoneApp.appContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).apply {
+            val ed = edit()
+            ed?.putString(doubletap, "")
+            ed?.apply()
+            Log.e("Double Tap", "CLEAR Double Tap")
+        }
     }
 
 

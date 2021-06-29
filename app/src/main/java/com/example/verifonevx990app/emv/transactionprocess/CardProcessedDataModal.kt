@@ -431,6 +431,14 @@ class CardProcessedDataModal : Serializable {
         return cardlabel
     }
 
+    fun setDoubeTap(doubleTap: Boolean) {
+        this.doubleTap = doubleTap
+    }
+
+    fun getDoubeTap(): Boolean? {
+        return doubleTap
+    }
+
     fun getEmiType(): Int {
         return emitype
     }

@@ -101,6 +101,31 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
 
     }
 
+    override fun getInfoDialogdoubletap(title: String, msg: String, acceptCb: (Boolean, Dialog) -> Unit) {
+        val dialog = Dialog(this)
+        dialog.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.msg_dialog)
+            setCancelable(false)
+
+            findViewById<TextView>(R.id.msg_dialog_title).text = title
+            findViewById<TextView>(R.id.msg_dialog_msg).text = msg
+            findViewById<TextView>(R.id.msg_dialog_ok).visibility = View.INVISIBLE
+
+            with(findViewById<View>(R.id.msg_dialog_ok)) {
+                View.GONE
+                Handler(Looper.getMainLooper()).postDelayed({
+                    acceptCb(true,dialog)
+                }, 500)
+
+            }
+
+
+            findViewById<View>(R.id.msg_dialog_cancel).visibility = View.INVISIBLE
+        }.show()
+
+    }
+
     override fun getMsgDialog(
         title: String,
         msg: String,
@@ -443,6 +468,7 @@ interface IDialog {
     fun showProgress(progressMsg: String = "Please Wait....")
     fun hideProgress()
     fun getInfoDialog(title: String, msg: String, acceptCb: () -> Unit)
+    fun getInfoDialogdoubletap(title: String, msg: String, acceptCb: (Boolean, Dialog) -> Unit)
     fun alertBoxWithAction(
         printUtils: PrintUtil? = null, batchData: BatchFileDataTable? = null,
         title: String, msg: String, showCancelButton: Boolean, positiveButtonText: String,

@@ -7,6 +7,7 @@ import android.util.Log
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
 import com.vfi.smartpos.deviceservice.aidl.IEMV
+import com.vfi.smartpos.deviceservice.aidl.IssuerUpdateHandler
 
 import com.vfi.smartpos.deviceservice.constdefine.ConstIPBOC
 
@@ -14,7 +15,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class DoEmv(var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, valueCardTypeSmartCard: Int, var transactionCallback: (CardProcessedDataModal) -> Unit) {
+class DoEmv(private var issuerUpdateHandler: IssuerUpdateHandler?,var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, valueCardTypeSmartCard: Int, var transactionCallback: (CardProcessedDataModal) -> Unit) {
     private val iemv: IEMV? by lazy { VFService.vfIEMV }
 
     //    private var iemv: IEMV? = VFService.vfIEMV

@@ -1155,7 +1155,6 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "DETAIL REPORT", true)
 
                 batch.sortBy { it.hostTID }
-
                 alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].hostMID}", "TID : ${batch[0].hostTID}")
                 alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[0].batchNumber}", "")
                 printSeperator(textFormatBundle)
