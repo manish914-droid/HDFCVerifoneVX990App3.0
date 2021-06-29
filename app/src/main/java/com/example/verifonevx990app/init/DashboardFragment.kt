@@ -1,6 +1,7 @@
 package com.example.verifonevx990app.init
 
 import android.content.Context
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -26,15 +27,12 @@ import com.example.verifonevx990app.appupdate.SendAppUpdateConfirmationPacket
 import com.example.verifonevx990app.appupdate.SyncAppUpdateConfirmation
 import com.example.verifonevx990app.databinding.FragmentDashboardBinding
 import com.example.verifonevx990app.disputetransaction.CreateSettlementPacket
-import com.example.verifonevx990app.main.IFragmentRequest
-import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.main.SETTLEMENT
+import com.example.verifonevx990app.main.*
 import com.example.verifonevx990app.realmtables.BHDashboardItem
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.*
-import com.google.gson.Gson
 import kotlinx.coroutines.*
 import java.lang.Runnable
 import java.util.*
@@ -64,15 +62,17 @@ class DashboardFragment : Fragment() {
     private var animShow: Animation? = null
     private var animHide: Animation? = null
 
-    private val imageArr: IntArray by lazy {
-        intArrayOf(
-            R.drawable.banner_3,
-            R.drawable.banner_1,
-            R.drawable.banner_2,
-            R.drawable.banner_4
-        )
+    private var imageDataList: MutableList<BannerConfigModal> = mutableListOf()
+
+    private val imageAdapter by lazy {
+        activity?.let {
+            ImagePagerAdapterEMI(
+                it,
+                imageDataList,
+                ::onBannerItemClick
+            )
+        }
     }
-    private val imageAdapter by lazy { activity?.let { ImagePagerAdapterEMI(it, imageArr) } }
     private var counter = 0
     private var isUpdate = false
     private var binding: FragmentDashboardBinding? = null
@@ -107,19 +107,51 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         isDashboardOpen = true
 
+        //region=============Checking If Banner Data Available in File System the Display From There else Display From Local Android Drawable:-
+        val data = readAppBannerConfigurationData()
+        if (data.isNotEmpty()) {
+            imageDataList.clear()
+            imageDataList = data
+        } else {
+            imageDataList.clear()
+            //region===============Stubbing Dummy Banner Data in Banner ViewPager:-
+            imageDataList.add(
+                BannerConfigModal(
+                    BitmapFactory.decodeResource(resources, R.drawable.banner_1), "", "",
+                    "1", "0", "", ""
+                )
+            )
+            imageDataList.add(
+                BannerConfigModal(
+                    BitmapFactory.decodeResource(resources, R.drawable.banner_2), "", "",
+                    "1", "0", "", ""
+                )
+            )
+            imageDataList.add(
+                BannerConfigModal(
+                    BitmapFactory.decodeResource(resources, R.drawable.banner_3), "", "",
+                    "1", "0", "", ""
+                )
+            )
+            imageDataList.add(
+                BannerConfigModal(
+                    BitmapFactory.decodeResource(resources, R.drawable.banner_4), "", "",
+                    "1", "0", "", ""
+                )
+            )
+            //endregion
+        }
+        //endregion
+
+
         if (isExpanded) {
             binding?.pagerViewLL?.visibility = View.GONE
         } else {
             binding?.pagerViewLL?.visibility = View.VISIBLE
         }
 
-        runBlocking(Dispatchers.IO) {
-            val data = TerminalParameterTable.selectFromSchemeTable()
-            Log.d("Updated TPT:- ", Gson().toJson(data))
-        }
-
         update = Runnable {
-            if (currentPage == imageArr.size) {
+            if (currentPage == imageDataList.size) {
                 currentPage = 0
             }
             if (binding?.photosViewpager != null)
@@ -241,7 +273,7 @@ class DashboardFragment : Fragment() {
         runnable?.let { handler.removeCallbacks(it) }
     }
 
-    private suspend fun setUpImageViewPager() {
+    private fun setUpImageViewPager() {
         binding?.photosViewpager?.adapter = imageAdapter
         binding?.tabLL?.setupWithViewPager(binding?.photosViewpager)
     }
@@ -393,6 +425,28 @@ class DashboardFragment : Fragment() {
         }
     }
 
+    //region===================Banner ViewPager Item OnClick Event:-
+    private fun onBannerItemClick(position: Int) {
+        Log.d("BannerPosition:- ", position.toString())
+        if (position > -1 && !TextUtils.isEmpty(imageDataList[position].bannerID)) {
+            val modal = imageDataList[position]
+            if (modal.bannerShowOrHideID == "1" && modal.clickableOrNot == "1") {
+                when (modal.bannerClickActionID) {
+                    BannerClickAction.SALE.actionCode -> VFService.showToast("Sale Open")
+                    BannerClickAction.BANK_EMI.actionCode -> VFService.showToast("Bank EMI Open")
+                    BannerClickAction.BRAND_EMI.actionCode -> VFService.showToast("Brand EMI Open")
+                    BannerClickAction.EMI_CATALOGUE.actionCode -> VFService.showToast("EMI Catalogue Open")
+                    BannerClickAction.CROSS_SELL.actionCode -> VFService.showToast("Cross Sell Open")
+                    BannerClickAction.FLEXY_PAY.actionCode -> VFService.showToast("Flexy Pay Open")
+                    BannerClickAction.MERCHANT_PROMO.actionCode -> VFService.showToast("Merchant Promo Open")
+                    BannerClickAction.DIGI_POS.actionCode -> VFService.showToast("Digi Pos Open")
+                    else -> VFService.showToast(modal.bannerClickMessageData)
+                }
+            }
+        }
+    }
+    //endregion
+
     override fun onDetach() {
         super.onDetach()
         iFragmentRequest = null
@@ -485,7 +539,10 @@ class DashBoardAdapter(
     }
 }
 
-class ImagePagerAdapterEMI(val context: Context, private val imgArr: IntArray) : PagerAdapter() {
+class ImagePagerAdapterEMI(
+    val context: Context, private val imgArr: MutableList<BannerConfigModal>,
+    var cb: (position: Int) -> Unit
+) : PagerAdapter() {
 
     private val layoutInflater: LayoutInflater by lazy {
         context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
@@ -498,13 +555,14 @@ class ImagePagerAdapterEMI(val context: Context, private val imgArr: IntArray) :
     override fun getCount(): Int = imgArr.size
 
     override fun instantiateItem(container: ViewGroup, position: Int): Any {
+        val modal = imgArr[position]
         val itemView: View = layoutInflater.inflate(R.layout.item_adapter_img, container, false)
         val imageView = itemView.findViewById<View>(R.id.pagerImageView) as ImageView
-        imageView.setImageResource(imgArr[position])
+        imageView.setImageBitmap(modal.bannerImageBitmap)
         container.addView(itemView)
         //listening to image click
         imageView.setOnClickListener {
-
+            cb(position)
             Log.i("VIEW PAGER", "you clicked image " + (position + 1))
         }
         return itemView

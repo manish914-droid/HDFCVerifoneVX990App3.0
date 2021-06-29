@@ -216,6 +216,8 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
     var tenureWiseDBDTAndC = ""
     var discountCalculatedValue = ""
     var cashBackCalculatedValue = ""
+    var processingFeeAmount = ""
+    var totalProcessingFee = ""
 
     //EMI BrandDetail
     var brandId = "01"

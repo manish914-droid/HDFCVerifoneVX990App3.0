@@ -2,6 +2,8 @@ package com.example.verifonevx990app.brandemi
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextUtils
@@ -11,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +25,7 @@ import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 
 class BrandEMIProductFragment : Fragment() {
@@ -43,11 +43,11 @@ class BrandEMIProductFragment : Fragment() {
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
     private var searchedProductName: String? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
+    private var delayTime: Long = 0L
     private val brandEMIProductAdapter by lazy {
-        BrandEMIProductAdapter(
-            brandEmiProductDataList,
-            ::onProductSelected
-        )
+        BrandEMIProductAdapter(brandEmiProductDataList, ::onProductSelected)
     }
 
     override fun onAttach(context: Context) {
@@ -83,6 +83,7 @@ class BrandEMIProductFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
+        delayTime = timeOutTime()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             if (isSubCategoryItemPresent) parentFragmentManager.popBackStackImmediate()
             else {
@@ -192,6 +193,8 @@ class BrandEMIProductFragment : Fragment() {
         }
         //endregion
 
+        startTimeOut()
+
         //region==============================Host Hit To Fetch BrandEMIProduct Data:-
         GlobalScope.launch(Dispatchers.IO) {
             if (brandEMIProductISOData != null) {
@@ -236,6 +239,7 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
+                                    parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
                                         false, getString(R.string.positive_button_ok),
@@ -263,6 +267,7 @@ class BrandEMIProductFragment : Fragment() {
                         )
                         GlobalScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
+                            parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -312,6 +317,10 @@ class BrandEMIProductFragment : Fragment() {
 
                     if (brandEmiProductDataList.isNotEmpty()) {
                         brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
+                    }
+
+                    withContext(Dispatchers.Main) {
+                        cancelTimeOut()
                     }
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
@@ -375,6 +384,10 @@ class BrandEMIProductFragment : Fragment() {
                         brandEMIProductAdapter.refreshAdapterList(brandEmiSearchedProductDataList)
                     }
 
+                    withContext(Dispatchers.Main) {
+                        cancelTimeOut()
+                    }
+
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
@@ -411,6 +424,32 @@ class BrandEMIProductFragment : Fragment() {
             ex.printStackTrace()
         }
     }
+    //endregion
+
+    //region==============================Start TimeOut Handler:-
+    fun startTimeOut() {
+        runnable = object : Runnable {
+            override fun run() {
+                try {
+                    Log.d("TimeOut:- ", "Loading Data Failed....")
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, delayTime)
+                }
+            }
+        }
+        handler.post(runnable as Runnable)
+    }
+    //endregion
+
+    //region==============================Cancel TimeOut Handler:-
+    fun cancelTimeOut() = runnable?.let { handler.removeCallbacks(it) }
+
     //endregion
 }
 

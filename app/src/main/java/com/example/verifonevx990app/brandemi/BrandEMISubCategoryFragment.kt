@@ -2,6 +2,8 @@ package com.example.verifonevx990app.brandemi
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextUtils
@@ -52,6 +54,9 @@ class BrandEMISubCategoryFragment : Fragment() {
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
     private var brandIDFromPref: String? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
+    private var delayTime: Long = 0L
     private val brandEMIMasterSubCategoryAdapter by lazy {
         BrandEMIMasterSubCategoryAdapter(
             brandEmiMasterSubCategoryDataList,
@@ -85,6 +90,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
+        delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
         Log.d("BrandID:- ", brandEMIDataModal?.getBrandID() ?: "")
@@ -175,6 +181,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             }
         }
         //endregion
+        startTimeOut()
 
         //region==============================Host Hit To Fetch BrandEMIMasterSubCategory Data:-
         lifecycleScope.launch(Dispatchers.IO) {
@@ -211,6 +218,10 @@ class BrandEMISubCategoryFragment : Fragment() {
                                 ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                                 AppPreference.getBankCode()
                             )
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                iDialog?.hideProgress()
+                                parentFragmentManager.popBackStackImmediate()
+                            }
                         }
                     } else {
                         ROCProviderV2.incrementFromResponse(
@@ -219,6 +230,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
+                            parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -229,6 +241,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             } else {
                 lifecycleScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
+                    parentFragmentManager.popBackStackImmediate()
                     /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), "Something went wrong",
                         false, getString(R.string.positive_button_ok),
@@ -276,11 +289,14 @@ class BrandEMISubCategoryFragment : Fragment() {
                     //Notify RecyclerView DataList on UI with Category Data that has ParentCategoryID == 0 && BrandID = selected brandID :-
                     val totalDataList = brandEmiMasterSubCategoryDataList
                     Log.d("TotalDataList:- ", Gson().toJson(totalDataList))
+                    withContext(Dispatchers.Main) {
+                        cancelTimeOut()
+                    }
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()?:brandIDFromPref}"
+                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID() ?: brandIDFromPref}"
                         fetchBrandEMIMasterSubCategoryDataFromHost()
                         Log.d("FullDataList:- ", brandEmiMasterSubCategoryDataList.toString())
                     } else {
@@ -453,6 +469,32 @@ class BrandEMISubCategoryFragment : Fragment() {
             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
         }
     }
+    //endregion
+
+    //region==============================Start TimeOut Handler:-
+    fun startTimeOut() {
+        runnable = object : Runnable {
+            override fun run() {
+                try {
+                    Log.d("TimeOut:- ", "Loading Data Failed....")
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, delayTime)
+                }
+            }
+        }
+        handler.post(runnable as Runnable)
+    }
+    //endregion
+
+    //region==============================Cancel TimeOut Handler:-
+    fun cancelTimeOut() = runnable?.let { handler.removeCallbacks(it) }
+
     //endregion
 
     override fun onDetach() {

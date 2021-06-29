@@ -13,6 +13,7 @@ import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.net.Uri
 import android.os.*
+import android.provider.MediaStore
 import android.provider.Settings
 import android.text.*
 import android.util.Log
@@ -1981,36 +1982,45 @@ fun readAppRevisionIDFromFile(context: Context, cb: (String) -> Unit) {
 }
 
 //Below method is used to read App Banner Configuration File from saved File in Terminal:-
-fun readAppBannerConfigurationData(bannerConfigList: (MutableList<BannerConfigModal>) -> Unit) {
+fun readAppBannerConfigurationData(): MutableList<BannerConfigModal> {
     val dataList = mutableListOf<BannerConfigModal>()
+    val dataMap = runBlocking(Dispatchers.IO) { readEMICatalogueAndBannerImages() }
     try {
         val rootPath =
             "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
         val file = File(rootPath, "bannerConfigFile.txt")
-        val text: StringBuilder? = null
-        val br = BufferedReader(FileReader(file))
-        var data: String?
-        while (br.readLine().also { data = it } != null) {
-            val splitData =
-                parseDataListWithSplitter(SplitterTypes.VERTICAL_LINE.splitter, data ?: "")
-            if (splitData.isNotEmpty()) {
-                dataList.add(
-                    BannerConfigModal(
-                        splitData[0],
-                        splitData[1],
-                        splitData[2],
-                        splitData[3],
-                        splitData[4],
-                        splitData[5]
-                    )
-                )
+        return if (file.exists()) {
+            val br = BufferedReader(FileReader(file))
+            var data: String?
+            while (br.readLine().also { data = it } != null) {
+                if (data?.isNotEmpty() == true) {
+                    val splitData =
+                        parseDataListWithSplitter(SplitterTypes.VERTICAL_LINE.splitter, data ?: "")
+                    if (splitData.isNotEmpty()) {
+                        if (splitData[1].isNotEmpty() && splitData[2] == "1") {
+                            val bitmap = MediaStore.Images.Media.getBitmap(
+                                VerifoneApp.appContext.contentResolver,
+                                dataMap[splitData[0]]
+                            )
+                            dataList.add(
+                                BannerConfigModal(
+                                    bitmap, splitData[0], splitData[1], splitData[2],
+                                    splitData[3], splitData[4], splitData[5]
+                                )
+                            )
+                        }
+                    } else
+                        return dataList
+                } else
+                    return dataList
             }
-        }
-        br.close().toString()
-        bannerConfigList(dataList)
+            br.close().toString()
+            dataList
+        } else
+            dataList
     } catch (ex: IOException) {
         ex.printStackTrace()
-        bannerConfigList(dataList)
+        return dataList
     }
 }
 
@@ -2322,6 +2332,12 @@ fun String.terminalDate() = this.substring(0, 8)
 
 //region=================Get Terminal Date according to Passed Index Value:-
 fun String.terminalTime() = this.substring(8, this.length)
+//endregion
+
+//region=================Get ResponseTimeOut From TCT Table for Socket Calls:-
+fun timeOutTime(): Long = runBlocking(Dispatchers.IO) {
+    TerminalCommunicationTable.selectFromSchemeTable()?.responseTimeOut?.toInt()?.times(1000)
+}?.toLong() ?: 0L
 //endregion
 
 //region================Show Selected EditText:-

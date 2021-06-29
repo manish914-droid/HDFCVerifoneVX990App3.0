@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
@@ -62,7 +63,6 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
-import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -585,17 +585,19 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             if (!TextUtils.isEmpty(successResponseCode) && successResponseCode == "00" &&
                 responseField60Value.substring(0, 4) == AppUpdate.APP_UPDATE_AVAILABLE.updateCode
             ) {
+                val appPartialName = responseField60Value.substring(24, 36)
+                val apkData = responseField60Value.substring(96, responseField60Value.length)
+                tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
+
                 when (responseProcessingCode) {
                     ProcessingCode.APP_UPDATE_CONTINUE.code -> saveAndContinueUpdateApplication(
                         responseField60Value,
-                        responseProcessingCode
+                        responseProcessingCode,
+                        appPartialName
                     )
                     ProcessingCode.APP_UPDATE.code -> {
                         unzipZippedBytes(tcpIPImagesDataList.toByteArray())
-                        hideProgress()
-                        onBackPressed()
                         Log.d("Full ImageData:- ", Gson().toJson(tcpIPImagesDataList))
-                        VFService.showToast(getString(R.string.app_updated_successfully))
                     }
                     else -> {
                         hideProgress()
@@ -611,11 +613,10 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     //Below method is used to save application update data in DB ApplicationUpdate Table and Continue Application Update:-
     private fun saveAndContinueUpdateApplication(
-        responseField60Value: String, responseProcessingCode: String
+        responseField60Value: String,
+        responseProcessingCode: String,
+        appPartialName: String
     ) {
-        val appPartialName = responseField60Value.substring(24, 36)
-        val apkData = responseField60Value.substring(96, responseField60Value.length)
-        tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
         startTCPIPAppUpdate(
             appUpdateProccessingCode = responseProcessingCode,
             chunkValue = responseField60Value.substring(8, 24), partialName = appPartialName
@@ -717,7 +718,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             UiAction.BANK_EMI, UiAction.TEST_EMI -> {
                 var transType = TransactionType.EMI_SALE.type
                 val amt = (data as Pair<*, *>).first.toString()
-                val testEmiOpetionType = (data as Pair<*, *>).second.toString()
+                val testEmiOpetionType = data.second.toString()
                 if (action == UiAction.TEST_EMI) {
                     transType = TransactionType.TEST_EMI.type
                 }
@@ -1794,7 +1795,7 @@ withContext(Dispatchers.Main){
                                                 }
                                             }
                                         } else {
-                                            VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
+                                            //VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
                                             startTCPIPAppUpdate(
                                                 ProcessingCode.APP_UPDATE.code,
                                                 chunkValue = "0",
@@ -2306,14 +2307,27 @@ enum class SETTLEMENT(val type: String) {
 
 //region===================BannerConfigModal:-
 data class BannerConfigModal(
+    var bannerImageBitmap: Bitmap,
     var bannerID: String,
     var bannerDisplayOrderID: String,
     var bannerShowOrHideID: String,
     var clickableOrNot: String,
     var bannerClickActionID: String,
     var bannerClickMessageData: String
-
 )
+//endregion
+
+//region======================Banner OnClick Event Enum:-
+enum class BannerClickAction(var actionCode: String) {
+    SALE("100"),
+    BANK_EMI("110"),
+    BRAND_EMI("120"),
+    EMI_CATALOGUE("130"),
+    CROSS_SELL("140"),
+    FLEXY_PAY("150"),
+    MERCHANT_PROMO("160"),
+    DIGI_POS("170"),
+}
 //endregion
 
 interface IFragmentRequest {

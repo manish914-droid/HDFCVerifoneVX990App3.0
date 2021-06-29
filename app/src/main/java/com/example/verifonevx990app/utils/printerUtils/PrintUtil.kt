@@ -3647,6 +3647,38 @@ setLogoAndHeader()
                 "${printerReceiptData.tenure} Months"
             )
 
+            //region===============Processing Fee Changes And Showing On ChargeSlip:-
+            if (!TextUtils.isEmpty(printerReceiptData.processingFee)) {
+                val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "PROC-FEE ",
+                    procFee,
+                    ":  $currencySymbol "
+                )
+            }
+            if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
+                val procFeeAmount =
+                    "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "PROC-FEE AMOUNT ",
+                    procFeeAmount,
+                    ":  $currencySymbol "
+                )
+            }
+            if (!TextUtils.isEmpty(printerReceiptData.totalProcessingFee)) {
+                val totalProcFeeAmount =
+                    "%.2f".format(printerReceiptData.totalProcessingFee.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "T-PROC-FEE AMOUNT ",
+                    totalProcFeeAmount,
+                    ":  $currencySymbol "
+                )
+            }
+            //endregion
+
             var cashBackPercentHeadingText = ""
             var cashBackAmountHeadingText = ""
 

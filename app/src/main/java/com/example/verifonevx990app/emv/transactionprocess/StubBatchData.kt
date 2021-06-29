@@ -337,6 +337,8 @@ fun stubEMI(
         batchData.cashback = emiCustomerDetails?.cashBackAmount.toString()
         batchData.netPay = emiCustomerDetails?.netPay.toString()
         batchData.processingFee = emiCustomerDetails?.processingFee.toString()
+        batchData.processingFeeAmount = emiCustomerDetails?.processingRate.toString()
+        batchData.totalProcessingFee = emiCustomerDetails?.totalProcessingFee.toString()
         batchData.totalInterest = emiCustomerDetails?.totalInterestPay.toString()
     }
     //batchData.cashBackPercent= emiCustomerDetails?.cashBackPercent.toString()
