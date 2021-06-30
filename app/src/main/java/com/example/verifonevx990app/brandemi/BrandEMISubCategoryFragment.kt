@@ -90,7 +90,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
-        delayTime = timeOutTime()
+       // delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
         Log.d("BrandID:- ", brandEMIDataModal?.getBrandID() ?: "")

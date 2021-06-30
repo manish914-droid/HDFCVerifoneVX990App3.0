@@ -556,6 +556,7 @@ object HitServer {
                 socket.soTimeout = resTimeOut
                 cb(socket)
 
+
             } else callback?.invoke("No Comm Data Found", false)
 
         } catch (ex: Exception) {

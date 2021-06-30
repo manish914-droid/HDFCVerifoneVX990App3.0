@@ -63,6 +63,7 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
+import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {

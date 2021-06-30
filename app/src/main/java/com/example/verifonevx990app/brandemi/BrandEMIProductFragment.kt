@@ -83,7 +83,7 @@ class BrandEMIProductFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
-        delayTime = timeOutTime()
+     //   delayTime = timeOutTime()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             if (isSubCategoryItemPresent) parentFragmentManager.popBackStackImmediate()
             else {
@@ -378,9 +378,9 @@ class BrandEMIProductFragment : Fragment() {
                         brandEMIProductAdapter.refreshAdapterList(brandEmiSearchedProductDataList)
                     }
 
-                    withContext(Dispatchers.Main) {
+                  /*  withContext(Dispatchers.Main) {
                         cancelTimeOut()
-                    }
+                    }*/
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {

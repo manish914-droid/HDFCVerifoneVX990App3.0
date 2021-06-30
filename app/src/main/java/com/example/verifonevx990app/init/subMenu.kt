@@ -373,8 +373,7 @@ class TableEditHelper(
 
 //region=========Setting for Sub menus==================
 
-class
-SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
+class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
 
 
