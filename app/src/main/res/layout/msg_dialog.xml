@@ -1,13 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+
+<com.example.customneumorphic.NeumorphCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mob_no_crdView"
+    style="@style/Widget.Neumorph.CardView"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:visibility="visible"
+    android:layout_margin="@dimen/pad_16"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/cash_amt_crdView"
+    app:neumorph_backgroundColor="@color/themeBackground"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_shadowElevation="2dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+    app:neumorph_shapeType="flat">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/white"
+        android:padding="@dimen/pad_16"
+        android:background="@color/themeBackground"
         android:orientation="vertical">
 
         <com.example.verifonevx990app.vxUtils.BHTextView
@@ -18,7 +33,7 @@
             android:layout_marginTop="@dimen/pad_8"
             android:layout_marginEnd="@dimen/pad_16"
             android:gravity="start"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular"
             android:textStyle="bold"
             app:fname="bold" />
@@ -31,58 +46,66 @@
             android:layout_marginStart="@dimen/pad_16"
             android:layout_marginEnd="@dimen/pad_16"
             android:layout_marginBottom="@dimen/pad_16"
-            android:textColor="@color/black"
+            android:textColor="@color/white"
             android:textSize="@dimen/text_size_regular"
             app:fname="regular" />
 
 
-        <RelativeLayout
+        <!--Buttons-->
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingStart="@dimen/pad_16"
-            android:paddingEnd="@dimen/pad_16"
-            android:paddingBottom="@dimen/pad_8">
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/pad_16"
+            android:orientation="horizontal"
 
-            <com.example.verifonevx990app.vxUtils.BHButton
-                android:id="@+id/msg_dialog_ok"
-                android:layout_width="wrap_content"
-                android:layout_height="@dimen/small_btn_size"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/basic_button_bg"
-                android:gravity="center"
-                android:paddingStart="@dimen/pad_24"
-                android:paddingTop="@dimen/pad_8"
-                android:paddingEnd="@dimen/pad_24"
-                android:paddingBottom="@dimen/pad_8"
-                android:text="@string/key_ok"
-                android:textColor="@color/white"
-                android:textSize="@dimen/text_size_regular"
-                android:textStyle="bold"
-                app:fname="regular" />
+            >
 
-            <com.example.verifonevx990app.vxUtils.BHButton
+            <com.example.customneumorphic.NeumorphButton
                 android:id="@+id/msg_dialog_cancel"
+                style="@style/Widget.Neumorph.Button"
                 android:layout_width="wrap_content"
-                android:layout_height="@dimen/small_btn_size"
-                android:layout_marginEnd="@dimen/pad_16"
-                android:layout_toStartOf="@+id/msg_dialog_ok"
-                android:background="@drawable/basic_button_bg"
-                android:gravity="center"
-                android:paddingStart="@dimen/pad_16"
-                android:paddingTop="@dimen/pad_8"
-                android:paddingEnd="@dimen/pad_16"
-                android:paddingBottom="@dimen/pad_8"
+                android:layout_height="40dp"
+
+                android:layout_marginStart="24dp"
+                android:padding="@dimen/pad_2"
                 android:text="@string/cancel"
                 android:textColor="@color/white"
-                android:textSize="@dimen/text_size_regular"
-                android:textStyle="bold"
-                app:fname="regular" />
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
+            <com.example.customneumorphic.NeumorphButton
+                android:id="@+id/msg_dialog_ok"
+                style="@style/Widget.Neumorph.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+
+                android:layout_marginEnd="24dp"
+                android:padding="@dimen/pad_2"
+                android:text="@string/key_ok"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_xsmall"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:neumorph_inset="@dimen/pad_4"
+                app:neumorph_lightSource="rightBottom"
+                app:neumorph_shadowColorDark="@color/upperShadow"
+                app:neumorph_shadowColorLight="@color/lowerShadow"
+                app:neumorph_shadowElevation="2dp"
+                app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
 
-        </RelativeLayout>
 
     </LinearLayout>
 
 
-</androidx.cardview.widget.CardView>
+</com.example.customneumorphic.NeumorphCardView>

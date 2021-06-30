@@ -379,7 +379,7 @@ object HitServer {
                         val data =
                             keInit.createInitIso(nextCounter, isFirstCall).generateIsoByteRequest()
                         val formattedInitPackets = data.byteArr2HexStr()
-                        logger(TAG, "init iso = $formattedInitPackets")
+                        logger(TAG, "init iso = $formattedInitPackets","e")
                         //println("Init iso packet send --- > $formattedInitPackets")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
@@ -437,8 +437,10 @@ object HitServer {
                             val pCode = reader.isoMap[3]?.rawData ?: ""
                             logger(TAG, "Processing code $pCode")
                             if (pCode != ProcessingCode.INIT_MORE.code) {
+                                logger(TAG, "Table Parsing Start " ,"e")
                                 readInitServer(initList) { result, message ->
                                     callback(message, result)
+                                    logger(TAG, "Table Parsing End " ,"e")
                                 }
                                 break
                             }

@@ -646,6 +646,7 @@ class ProcessCard(
                                                     if (hostResponseCodeAndMessageAndHasEMI.first) {
                                                         // Checking Insta Emi
                                                         if (hostResponseCodeAndMessageAndHasEMI.third) {
+                                                            (activity as BaseActivity).hideProgress()
                                                             (activity as VFTransactionActivity).showEMISaleDialog(
                                                                 cardProcessedDataModal
                                                             ) {
@@ -675,7 +676,7 @@ class ProcessCard(
                                                                         },
                                                                         EIntentRequest.BankEMISchemeOffer.code
                                                                     )
-                                                                    (activity as VFTransactionActivity).hideProgress()
+
 
                                                                 } else {
                                                                     (activity as VFTransactionActivity).hideProgress()

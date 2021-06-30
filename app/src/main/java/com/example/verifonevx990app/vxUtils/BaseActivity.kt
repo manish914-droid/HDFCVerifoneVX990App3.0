@@ -84,7 +84,12 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.msg_dialog)
             setCancelable(false)
-
+            window?.attributes?.windowAnimations = R.style.DialogAnimation
+            val window = dialog.window
+            window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
             findViewById<TextView>(R.id.msg_dialog_title).text = title
             findViewById<TextView>(R.id.msg_dialog_msg).text = msg
 
@@ -94,9 +99,8 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
                     acceptCb()
                 }
             }
-
-
-            findViewById<View>(R.id.msg_dialog_cancel).visibility = View.INVISIBLE
+            findViewById<View>(R.id.msg_dialog_cancel).visibility = View.GONE
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }.show()
 
     }

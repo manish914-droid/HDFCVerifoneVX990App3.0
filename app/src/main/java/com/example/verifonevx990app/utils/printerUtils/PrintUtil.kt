@@ -188,35 +188,35 @@ class PrintUtil(context: Context?) {
             //From invoiceNumber to hostInvoice (coming from field 60)
             //From cardType to hostCardType (coming from field 60)
 
-            var hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
+            val hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
                 printerReceiptData.hostMID
             } else {
                 printerReceiptData.mid
             }
 
-            var hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
+            val hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
                 printerReceiptData.hostTID
             } else {
                 printerReceiptData.tid
             }
 
-            var hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
+            val hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
                 printerReceiptData.hostBatchNumber
             } else {
                 printerReceiptData.batchNumber
             }
 
-            var hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
+            val hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
                 printerReceiptData.hostRoc
             } else {
                 printerReceiptData.roc
             }
-            var hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
+            val hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
                 printerReceiptData.hostInvoice
             } else {
                 printerReceiptData.invoiceNumber
             }
-            var hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
+            val hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
                 printerReceiptData.hostCardType
             } else {
                 printerReceiptData.cardType
@@ -231,42 +231,6 @@ class PrintUtil(context: Context?) {
          //   printLogo("hdfc_print_logo.bmp")
             setLogoAndHeader()
 
-            /* format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-             //  logger("PS_H1", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantName) // header1
-
-
-             format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-
-             //   logger("PS_H2", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantAddress1) //header2
-
-
-             format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-             //   logger("PS_H3", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
- */
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -468,7 +432,7 @@ class PrintUtil(context: Context?) {
 
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                if (!printerReceiptData.aid.isBlank() && !printerReceiptData.tc.isBlank()) {
+                if (printerReceiptData.aid.isNotBlank() && printerReceiptData.tc.isNotBlank()) {
                     fmtAddTextInLine.putInt(
                         PrinterConfig.addTextInLine.FontSize.BundleName,
                         PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
@@ -486,17 +450,6 @@ class PrintUtil(context: Context?) {
                         PrinterConfig.addTextInLine.mode.Devide_flexible
                     )
 
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    logger("PS_Tc", (printer?.status).toString(), "e")
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "TC : ${printerReceiptData.tc}",
@@ -2008,32 +1961,19 @@ setLogoAndHeader(null)
                     }
 
                     override fun onError(error: Int) {
+                        VFService.showToast("PRINTING ROLL ERROR")
                         callBack(false)
                         Log.e("Settle_RECEIPT", "FAIL__")
                     }
 
 
                 })
-            } catch (ex: DeadObjectException) {
-                ex.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
                     context as Activity,
                     "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                    "Something went wrong"
                 )
             }
         }
@@ -2321,39 +2261,26 @@ setLogoAndHeader(null)
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
                         callBack(true)
-                        Log.e("Settle_RECEIPT", "SUCESS__")
+                        Log.e("Settle_RECEIPT", "onFinish")
                     }
 
                     override fun onError(error: Int) {
                         if (isSettlementSuccess) {
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
+                        VFService.showToast("PRINTING ROLL ERROR")
                         callBack(false)
-                        Log.e("Settle_RECEIPT", "FAIL__")
+                        Log.e("Settle_RECEIPT", "onError")
                     }
 
 
                 })
-            } catch (ex: DeadObjectException) {
+            }  catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
                     context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                    "Printer Service stopped",
+                    "Something went wrong"
                 )
             }
         }

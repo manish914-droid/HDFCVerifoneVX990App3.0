@@ -708,7 +708,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
                 val inv = addPad(invoiceNumber, "0", 6)
                 val res =
                         it.where(BatchFileDataTable::class.java)
-                                .equalTo("invoiceNumber", inv)
+                                .equalTo("hostInvoice", inv)
                                 .findFirst()
                 if (res != null) batch = it.copyFromRealm(res)
             }.await()

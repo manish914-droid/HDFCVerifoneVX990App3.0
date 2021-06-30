@@ -4,6 +4,7 @@ package com.example.verifonevx990app.utils
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.VFService
 
 import kotlinx.coroutines.Dispatchers
@@ -99,10 +100,23 @@ class KeyboardModel {
 }
 
 fun getFormattedAmount(str: String): String = try {
+    /*val tpt=TerminalParameterTable.selectFromSchemeTable()?.maxAmtEntryDigits
     val s = str.replace(".", "")
     var f = s.toDouble()
     f = if (f <= 99999999) f / 100 else (f / 10).toInt().toDouble() / 100
-    "%.2f".format(f)
+    "%.2f".format(f)*/
+
+    val fl = str.replace(".", "").toLong()
+     "%.2f".format(fl.toDouble() / 100)
 } catch (ex: Exception) {
     "0.00"
 }
+/*
+"%.0f".format(f)
+printf("dexp: %f\n", f);
+val fl = text.toString().replace(".", "").toLong()
+                val tx = "%.2f".format(fl.toDouble() / 100)
+
+                max amt ipt
+
+                */

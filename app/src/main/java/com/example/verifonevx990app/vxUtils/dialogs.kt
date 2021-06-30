@@ -78,7 +78,7 @@ private fun getPasswordDialog(
                         val p2 = try {
                             enterPasswordET.text.toString().toInt()
                         } catch (ex: Exception) {
-                            0
+                            -1
                         }
                         if (p2 == password) {
                             dismiss()

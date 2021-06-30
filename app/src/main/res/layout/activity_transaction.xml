@@ -22,37 +22,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar_txn" />
 
-
-    <!--
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/tv_transaction_amount_heading"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="@dimen/pad_16"
-            android:layout_marginStart="16dp"
-            android:text="@string/trans_amount"
-            android:textSize="@dimen/text_size_xregular"
-
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
-
-
-        <com.example.verifonevx990app.vxUtils.BHTextView
-            android:id="@+id/base_amt_tv"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginEnd="@dimen/pad_16"
-            android:gravity="end"
-            android:textColor="@color/colorPrimary"
-            android:textSize="@dimen/text_size_xregular"
-            app:fname="bold"
-            app:layout_constraintBottom_toBottomOf="@+id/tv_transaction_amount_heading"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/tv_transaction_amount_heading"
-            app:layout_constraintTop_toTopOf="@+id/tv_transaction_amount_heading" />
-    -->
     <com.example.customneumorphic.NeumorphCardView
         android:id="@+id/trans_amount_cardview"
         style="@style/Widget.Neumorph.CardView"
@@ -131,7 +100,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/white"
+            android:background="@color/themeBackground"
             android:orientation="vertical"
             android:padding="@dimen/pad_8">
 
@@ -140,7 +109,7 @@
                 android:layout_height="wrap_content"
                 android:text="@string/card_number"
                 android:layout_gravity="center"
-                android:textColor="@color/themeBackground"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_regular"
                 app:fname="bold" />
 
@@ -151,7 +120,7 @@
                 android:layout_marginTop="@dimen/pad_8"
                 android:gravity="center"
 
-                android:textColor="@color/themeBackground"
+                android:textColor="@color/white"
                 android:textSize="@dimen/text_size_xregular"
                 app:fname="regular" />
 

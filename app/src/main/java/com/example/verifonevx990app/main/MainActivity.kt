@@ -352,7 +352,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.item_get_invoice_no)
             setCancelable(false)
-
+            window?.attributes?.windowAnimations = R.style.DialogAnimation
+            val windoww = this.window
+            windoww?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
             val enterTID = this.findViewById<BHEditText>(R.id.invoice_no_et)
             val titleText = this.findViewById<BHTextView>(R.id.title_tv)
             titleText.text = getString(R.string.enter_tid)
@@ -379,7 +384,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     enterTID.error = getString(R.string.please_enter_a_valid_8digit_tid)
                 }
             }
+            windoww?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }.show()
+
     }
 
 
@@ -1437,41 +1444,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     }
 
-    /*override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                ) {
-                    if ((AppPreference.getLogin()))
-                        transactFragment(dashBoardFragment)
-                    else transactFragment(initFragment)
-                } else {
-                    if (checkInternetConnection())
-                        checkAndPerformOperation()
-                    else VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
-            }
-            R.id.settlement ->
-                if (checkInternetConnection()) {
-                    transactFragment(SettlementFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable("trans_type", TransactionType.VOID_REFUND)
-                            putString(
-                                INPUT_SUB_HEADING,
-                                SubHeaderTitle.SETTLEMENT_SUBHEADER_VALUE.title
-                            )
-                        }
-                    }, true)
-                } else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
-        }
-
-        return true
-    }*/
-
     override fun onBackPressed() {
         if (binding?.mainDl?.isDrawerOpen(GravityCompat.START) == true) {
             binding?.mainDl?.closeDrawer(GravityCompat.START, true)
@@ -1696,8 +1668,7 @@ withContext(Dispatchers.Main){
                         //endregion
                         PrintUtil(this).printSettlementReportupdate(this, batchList, true) {
                             if (it) {
-                                // todo digipos print here and after print delete success transactions from digiposDataTable
-                                //Added by Ajay Thakur
+                              //Added by Ajay Thakur
                                 //Saving Batch Data For Last Summary Report
                                 saveBatchInPreference(batchList)
                                 //Delete All BatchFile Data from Table after Settlement:-
@@ -1843,8 +1814,6 @@ withContext(Dispatchers.Main){
                                 }
                             } else {
                                 GlobalScope.launch(Dispatchers.Main) {
-                                    // todo delete success transactions from digiposDataTable here
-
                                     hideProgress()
                                     //Added by Ajay Thakur
                                     //Saving Batch Data For Last Summary Report

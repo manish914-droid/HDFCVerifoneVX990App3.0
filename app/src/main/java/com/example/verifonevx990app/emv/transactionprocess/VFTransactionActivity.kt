@@ -194,6 +194,7 @@ class VFTransactionActivity : BaseActivity() {
                 }
             } else {
                 ProcessCard(this, pinHandler, globalCardProcessedModel) { localCardProcessedData ->
+
                     localCardProcessedData.setProcessingCode(transactionProcessingCode)
                     localCardProcessedData.setTransactionAmount(transactionalAmount)
                     localCardProcessedData.setOtherAmount(otherTransAmount)
@@ -1259,8 +1260,8 @@ class VFTransactionActivity : BaseActivity() {
                 emiTAndCData = data.getParcelableExtra("emiTAndCDataList")
                 Log.d("SelectedEMI Data:- ", emiSelectedData.toString())
                 runOnUiThread {
-                    binding?.atCardNoTv?.text = maskedPan
-                    cardView_l.visibility = View.VISIBLE
+                 //   binding?.atCardNoTv?.text = maskedPan
+                //    cardView_l.visibility = View.VISIBLE
                     // tv_card_number_heading.visibility = View.VISIBLE
                     Log.e("CHANGED ", "NEW LAUNCH")
                     //    binding?.paymentGif?.loadUrl("file:///android_asset/cardprocess.html")
