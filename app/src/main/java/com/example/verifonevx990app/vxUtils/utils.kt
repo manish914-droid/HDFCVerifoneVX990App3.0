@@ -485,10 +485,13 @@ fun readEMICatalogueAndBannerImages(): MutableMap<String, Uri> {
     var folderFilesList: Array<File>? = null
     if (folder.isDirectory) {
         folderFilesList = folder.listFiles()
-        for (value in folderFilesList) {
-            val imageName = value.name.split(".")
-            imageList[imageName[0]] = Uri.fromFile(value)
-        }
+        if (folderFilesList.size > 1) {
+            for (value in folderFilesList) {
+                val imageName = value.name.split(".")
+                imageList[imageName[0]] = Uri.fromFile(value)
+            }
+        } else
+            return imageList
     }
     Log.d("AllImagesPath:- ", Gson().toJson(imageList))
     return imageList
@@ -1988,36 +1991,41 @@ fun readAppBannerConfigurationData(): MutableList<BannerConfigModal> {
     try {
         val rootPath =
             "${VerifoneApp.appContext.externalCacheDir.toString()}/EMICatalogueAndBannerImages"
-        val file = File(rootPath, "bannerConfigFile.txt")
-        return if (file.exists()) {
-            val br = BufferedReader(FileReader(file))
-            var data: String?
-            while (br.readLine().also { data = it } != null) {
-                if (data?.isNotEmpty() == true) {
-                    val splitData =
-                        parseDataListWithSplitter(SplitterTypes.VERTICAL_LINE.splitter, data ?: "")
-                    if (splitData.isNotEmpty()) {
-                        if (splitData[1].isNotEmpty() && splitData[2] == "1") {
-                            val bitmap = MediaStore.Images.Media.getBitmap(
-                                VerifoneApp.appContext.contentResolver,
-                                dataMap[splitData[0]]
-                            )
-                            dataList.add(
-                                BannerConfigModal(
-                                    bitmap, splitData[0], splitData[1], splitData[2],
-                                    splitData[3], splitData[4], splitData[5]
+        if (File(rootPath).exists() && dataMap.size > 1) {
+            val file = File(rootPath, "bannerConfigFile.txt")
+            return if (file.exists()) {
+                val br = BufferedReader(FileReader(file))
+                var data: String?
+                while (br.readLine().also { data = it } != null) {
+                    if (data?.isNotEmpty() == true) {
+                        val splitData = parseDataListWithSplitter(
+                            SplitterTypes.VERTICAL_LINE.splitter,
+                            data ?: ""
+                        )
+                        if (splitData.isNotEmpty()) {
+                            if (splitData[1].isNotEmpty() && splitData[2] == "1") {
+                                val bitmap = MediaStore.Images.Media.getBitmap(
+                                    VerifoneApp.appContext.contentResolver,
+                                    dataMap[splitData[0]]
                                 )
-                            )
-                        }
+                                dataList.add(
+                                    BannerConfigModal(
+                                        bitmap, splitData[0], splitData[1], splitData[2],
+                                        splitData[3], splitData[4], splitData[5]
+                                    )
+                                )
+                            }
+                        } else
+                            return dataList
                     } else
                         return dataList
-                } else
-                    return dataList
-            }
-            br.close().toString()
-            dataList
+                }
+                br.close().toString()
+                dataList
+            } else
+                dataList
         } else
-            dataList
+            return dataList
     } catch (ex: IOException) {
         ex.printStackTrace()
         return dataList

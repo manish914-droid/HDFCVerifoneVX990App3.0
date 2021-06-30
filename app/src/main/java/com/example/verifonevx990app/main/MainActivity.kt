@@ -865,7 +865,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             UiAction.BRAND_EMI_CATALOGUE, UiAction.BANK_EMI_CATALOGUE -> {
                 val amt = (data as Pair<*, *>).first.toString()
-                val emiCatalogueImageList = runBlocking { readEMICatalogueAndBannerImages() }
+                val emiCatalogueImageList =
+                    runBlocking(Dispatchers.IO) { readEMICatalogueAndBannerImages() }
                 transactFragment(EMIIssuerList().apply {
                     arguments = Bundle().apply {
                         putSerializable("type", action)

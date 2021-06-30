@@ -193,8 +193,6 @@ class BrandEMIProductFragment : Fragment() {
         }
         //endregion
 
-        startTimeOut()
-
         //region==============================Host Hit To Fetch BrandEMIProduct Data:-
         GlobalScope.launch(Dispatchers.IO) {
             if (brandEMIProductISOData != null) {
@@ -319,10 +317,6 @@ class BrandEMIProductFragment : Fragment() {
                         brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
                     }
 
-                    withContext(Dispatchers.Main) {
-                        cancelTimeOut()
-                    }
-
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
@@ -430,6 +424,7 @@ class BrandEMIProductFragment : Fragment() {
     fun startTimeOut() {
         runnable = object : Runnable {
             override fun run() {
+                Looper.prepare()
                 try {
                     Log.d("TimeOut:- ", "Loading Data Failed....")
                     lifecycleScope.launch(Dispatchers.Main) {

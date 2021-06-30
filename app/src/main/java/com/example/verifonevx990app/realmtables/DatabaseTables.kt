@@ -29,7 +29,7 @@ enum class EDashboardItem(
     SALE("Sale", R.drawable.sale_icon, 1),
     BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 2),
     PREAUTH("Pre-Auth", R.drawable.pre_auth, 3),
-    EMI_ENQUIRY("EMI Enquiry", R.drawable.emi_catalog_icon, 4),
+    EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon, 4),
     PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
     PENDING_PREAUTH("Pending Preauth", R.drawable.ic_pending_preauth, 6),
     OFFLINE_SALE("Offline Sale", R.drawable.sale_icon, 7),

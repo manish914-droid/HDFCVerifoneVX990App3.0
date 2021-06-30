@@ -180,8 +180,8 @@ class BrandEMISubCategoryFragment : Fragment() {
                 brandEMIMasterSubCategoryISOData = it
             }
         }
+
         //endregion
-        startTimeOut()
 
         //region==============================Host Hit To Fetch BrandEMIMasterSubCategory Data:-
         lifecycleScope.launch(Dispatchers.IO) {
@@ -289,9 +289,6 @@ class BrandEMISubCategoryFragment : Fragment() {
                     //Notify RecyclerView DataList on UI with Category Data that has ParentCategoryID == 0 && BrandID = selected brandID :-
                     val totalDataList = brandEmiMasterSubCategoryDataList
                     Log.d("TotalDataList:- ", Gson().toJson(totalDataList))
-                    withContext(Dispatchers.Main) {
-                        cancelTimeOut()
-                    }
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
@@ -475,6 +472,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     fun startTimeOut() {
         runnable = object : Runnable {
             override fun run() {
+                Looper.prepare()
                 try {
                     Log.d("TimeOut:- ", "Loading Data Failed....")
                     lifecycleScope.launch(Dispatchers.Main) {

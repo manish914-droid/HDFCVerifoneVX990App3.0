@@ -49,16 +49,28 @@ class EMICatalogue : Fragment() {
         tptData = TerminalParameterTable.selectFromSchemeTable()
 
         //region================Brand and Bank EMI Catalogue Button Hide/Show Conditions:-
-        /* if(tptData?.reservedValues?.substring(9, 10) == "1" && tptData?.reservedValues?.substring(5, 6) == "1"){
+         if (tptData?.reservedValues?.substring(9, 10) == "1" && tptData?.reservedValues?.substring(
+                 5,
+                 6
+             ) == "1"
+         ) {
              binding?.buttonBrandEmi?.visibility = View.VISIBLE
              binding?.buttonBankEmi?.visibility = View.VISIBLE
-         }else if(tptData?.reservedValues?.substring(9, 10) == "1" && tptData?.reservedValues?.substring(5, 6) == "0"){
+         } else if (tptData?.reservedValues?.substring(
+                 9,
+                 10
+             ) == "1" && tptData?.reservedValues?.substring(5, 6) == "0"
+         ) {
              binding?.buttonBrandEmi?.visibility = View.VISIBLE
              binding?.buttonBankEmi?.visibility = View.GONE
-         }else if(tptData?.reservedValues?.substring(9, 10) == "0" && tptData?.reservedValues?.substring(5, 6) == "1"){
+         } else if (tptData?.reservedValues?.substring(
+                 9,
+                 10
+             ) == "0" && tptData?.reservedValues?.substring(5, 6) == "1"
+         ) {
              binding?.buttonBrandEmi?.visibility = View.GONE
              binding?.buttonBankEmi?.visibility = View.VISIBLE
-         }*/
+         }
         //endregion
 
         //region================Navigate to NewInputAmount Fragment on Click Event of BankEMI Button:-

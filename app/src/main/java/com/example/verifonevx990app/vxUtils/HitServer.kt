@@ -17,7 +17,6 @@ import java.net.SocketTimeoutException
 import java.nio.channels.ServerSocketChannel
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.experimental.and
 
 interface IReversalHandler {
     suspend fun saveReversal()
@@ -42,7 +41,7 @@ object HitServer {
         irh: IReversalHandler? = null
     ) {
         this@HitServer.callback = callback
-
+        var responseStr: String? = null
         try {
             if (checkInternetConnection()) {
                 with(ConnectionTimeStamps) {
@@ -53,44 +52,52 @@ object HitServer {
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
                 openSocket { socket ->
-                    //    try {
-                    irh?.saveReversal()
-                    logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
-                    ConnectionTimeStamps.dialConnected = getF48TimeStamp()
-                    progressMsg("Please wait sending data to Bonushub server")
-                    //println("Data send" + data.byteArr2HexStr())
-                    logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
-                    ConnectionTimeStamps.startTransaction = getF48TimeStamp()
-                    val sos = socket.getOutputStream()
-                    sos?.write(data)
-                    sos.flush()
+                    try {
+                        irh?.saveReversal()
+                        logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
+                        ConnectionTimeStamps.dialConnected = getF48TimeStamp()
+                        progressMsg("Please wait sending data to Bonushub server")
+                        //println("Data send" + data.byteArr2HexStr())
+                        logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
+                        ConnectionTimeStamps.startTransaction = getF48TimeStamp()
+                        val sos = socket.getOutputStream()
+                        sos?.write(data)
+                        sos.flush()
 
-                    progressMsg("Please wait receiving data from Bonushub server")
-                    val dis = DataInputStream(socket.getInputStream())
-                    val len = dis.readShort().toInt()
-                    val response = ByteArray(len)
-                    dis.readFully(response)
-                    ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+                        progressMsg("Please wait receiving data from Bonushub server")
+                        val dis = DataInputStream(socket.getInputStream())
+                        val len = dis.readShort().toInt()
+                        val response = ByteArray(len)
+                        dis.readFully(response)
+                        ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
 
-                    //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+                        //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
 
-                    val responseStr = response.byteArr2HexStr()
-                    val reader = readIso(responseStr, false)
-                    Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
-                        reader.isoMap[48]?.parseRaw2String() ?: ""
-                    )
+                        responseStr = response.byteArr2HexStr()
+                        val reader = readIso(responseStr ?: "", false)
+                        Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
+                            reader.isoMap[48]?.parseRaw2String() ?: ""
+                        )
 
-                    //println("Data Recieve" + response.byteArr2HexStr())
-                    logger(TAG, "len=$len, data = $responseStr")
+                        //println("Data Recieve" + response.byteArr2HexStr())
+                        logger(TAG, "len=$len, data = $responseStr")
 
-                    socket.close()
+                        socket.close()
 
-                    //    }
-                    //        catch (ex: Exception) {
-                    //         ex.printStackTrace()
-                    //       callback(responseStr ?: "", true)
-                    //    }
-                    callback(responseStr, true)
+                    } catch (ex: SocketTimeoutException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: SocketException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: ConnectException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    }
+                    callback(responseStr ?: "", true)
                     this@HitServer.callback = null
                 }
 
@@ -555,7 +562,7 @@ object HitServer {
             ex.printStackTrace()
             println("SOCKET CONNECT EXCEPTION")
             callback?.invoke(
-                VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error",
+                VerifoneApp.appContext.getString(R.string.socket_timeout),
                 false
             )
         } finally {
