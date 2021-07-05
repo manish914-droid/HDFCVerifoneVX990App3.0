@@ -727,7 +727,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 val bat = BatchFileDataTable.selectBatchData()
                                 try {
                                     val b =
-                                        bat.first { it.invoiceNumber.toLong() == invoice.toLong() }
+                                        bat.first { it.hostInvoice.toLong() == invoice.toLong() }
                                     //    printBatch(b)
                                     when (b.transactionType) {
                                         TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
