@@ -43,7 +43,6 @@ import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
-import kotlin.jvm.Throws
 
 const val HDFC_LOGO = "hdfc_print_logo.bmp"
 const val AMEX_LOGO = "amex_print.bmp"
@@ -189,35 +188,35 @@ class PrintUtil(context: Context?) {
             //From invoiceNumber to hostInvoice (coming from field 60)
             //From cardType to hostCardType (coming from field 60)
 
-            var hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
+            val hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
                 printerReceiptData.hostMID
             } else {
                 printerReceiptData.mid
             }
 
-            var hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
+            val hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
                 printerReceiptData.hostTID
             } else {
                 printerReceiptData.tid
             }
 
-            var hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
+            val hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
                 printerReceiptData.hostBatchNumber
             } else {
                 printerReceiptData.batchNumber
             }
 
-            var hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
+            val hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
                 printerReceiptData.hostRoc
             } else {
                 printerReceiptData.roc
             }
-            var hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
+            val hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
                 printerReceiptData.hostInvoice
             } else {
                 printerReceiptData.invoiceNumber
             }
-            var hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
+            val hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
                 printerReceiptData.hostCardType
             } else {
                 printerReceiptData.cardType
@@ -232,42 +231,6 @@ class PrintUtil(context: Context?) {
          //   printLogo("hdfc_print_logo.bmp")
             setLogoAndHeader()
 
-            /* format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-             //  logger("PS_H1", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantName) // header1
-
-
-             format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-
-             //   logger("PS_H2", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantAddress1) //header2
-
-
-             format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-             //   logger("PS_H3", (printer?.status).toString(), "e")
-             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
- */
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -469,7 +432,7 @@ class PrintUtil(context: Context?) {
 
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                if (!printerReceiptData.aid.isBlank() && !printerReceiptData.tc.isBlank()) {
+                if (printerReceiptData.aid.isNotBlank() && printerReceiptData.tc.isNotBlank()) {
                     fmtAddTextInLine.putInt(
                         PrinterConfig.addTextInLine.FontSize.BundleName,
                         PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
@@ -487,17 +450,6 @@ class PrintUtil(context: Context?) {
                         PrinterConfig.addTextInLine.mode.Devide_flexible
                     )
 
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    logger("PS_Tc", (printer?.status).toString(), "e")
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "TC : ${printerReceiptData.tc}",
@@ -954,7 +906,10 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit
+    fun printDetailReportupdate(
+        batch: MutableList<BatchFileDataTable>,
+        context: Context?,
+        printCB: (Boolean) -> Unit
     ) {
         try {
             val pp = printer?.status
@@ -2311,39 +2266,26 @@ setLogoAndHeader(null)
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
                         callBack(true)
-                        Log.e("Settle_RECEIPT", "SUCESS__")
+                        Log.e("Settle_RECEIPT", "onFinish")
                     }
 
                     override fun onError(error: Int) {
                         if (isSettlementSuccess) {
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
+                        VFService.showToast("PRINTING ROLL ERROR")
                         callBack(false)
                         Log.e("Settle_RECEIPT", "FAIL__")
                     }
 
 
                 })
-            } catch (ex: DeadObjectException) {
-                ex.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
                     context as Activity,
                     "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                    "Something went wrong"
                 )
             }
         }
@@ -2406,32 +2348,19 @@ setLogoAndHeader(null)
                     }
 
                     override fun onError(error: Int) {
+                        VFService.showToast("PRINTING ROLL ERROR")
                         callBack(false)
-                        Log.e("Settle_RECEIPT", "FAIL__")
+                        Log.e("Settle_RECEIPT", "onError")
                     }
 
 
                 })
-            } catch (ex: DeadObjectException) {
+            }  catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
                     context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (e: RemoteException) {
-                e.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
-                )
-            } catch (ex: Exception) {
-                ex.printStackTrace()
-                failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                    "Printer Service stopped",
+                    "Something went wrong"
                 )
             }
         }
@@ -3416,7 +3345,12 @@ setLogoAndHeader()
     }
 
     //region=======================Method to Print BankEMI ChargeSlip:-
-    fun printEMISale(printerReceiptData: BatchFileDataTable, copyType: EPrintCopyType, context: Context?, printerCallback: (Boolean, Int) -> Unit) {
+    fun printEMISale(
+        printerReceiptData: BatchFileDataTable,
+        copyType: EPrintCopyType,
+        context: Context?,
+        printerCallback: (Boolean, Int) -> Unit
+    ) {
         var currencySymbol: String? = "Rs"
         var brandEmiData: BrandEMIDataTable? = null
         try {
@@ -3667,15 +3601,7 @@ setLogoAndHeader()
             var cashBackPercentHeadingText = ""
             var cashBackAmountHeadingText = ""
 
-            when (printerReceiptData.issuerId) {
-                "51" -> {
-                    cashBackPercentHeadingText = "Mfg/Merch Payback"
-                    cashBackAmountHeadingText = "Mfg/Merch Payback Amt"
-                }
-                "64" -> {
-                    cashBackPercentHeadingText = "Mfg/Merch Payback"
-                    cashBackAmountHeadingText = "Mfg/Merch Payback Amt"
-                }
+            when (hostIssuerId) {
                 "52" -> {
                     cashBackPercentHeadingText = "Mfg/Merch Cashback"
                     cashBackAmountHeadingText = "Mfg/Merch Cashback Amt"
@@ -3692,29 +3618,30 @@ setLogoAndHeader()
 
             //region=============CashBack CalculatedValue====================
             if (!TextUtils.isEmpty(printerReceiptData.cashBackCalculatedValue)) {
-                alignLeftRightText(textInLineFormatBundle, cashBackPercentHeadingText, printerReceiptData.cashBackCalculatedValue)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    cashBackPercentHeadingText,
+                    printerReceiptData.cashBackCalculatedValue
+                )
             }
             //endregion
 
             //region=============Total Discount CalculatedValue====================
             if (!TextUtils.isEmpty(printerReceiptData.cashback) && printerReceiptData.cashback != "0") {
                 val cashBackAmount = "%.2f".format(printerReceiptData.cashback.toFloat() / 100)
-                alignLeftRightText(textInLineFormatBundle, cashBackAmountHeadingText, cashBackAmount, ":  $currencySymbol ")
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    cashBackAmountHeadingText,
+                    cashBackAmount,
+                    ":  $currencySymbol "
+                )
             }
             //endregion
 
             var discountPercentHeadingText = ""
             var discountAmountHeadingText = ""
 
-            when (printerReceiptData.issuerId) {
-                "51" -> {
-                    discountPercentHeadingText = "Mfg/Merch Payback"
-                    discountAmountHeadingText = "Mfg/Merch Payback Amt"
-                }
-                "64" -> {
-                    discountPercentHeadingText = "Mfg/Merch Payback"
-                    discountAmountHeadingText = "Mfg/Merch Payback Amt"
-                }
+            when (hostIssuerId) {
                 "52" -> {
                     discountPercentHeadingText = "Mfg/Merch Cashback"
                     discountAmountHeadingText = "Mfg/Merch Cashback Amt"
@@ -3733,11 +3660,20 @@ setLogoAndHeader()
 
             if (!TextUtils.isEmpty(printerReceiptData.cashDiscountAmt) && printerReceiptData.cashDiscountAmt != "0") {
                 val discAmount = "%.2f".format(printerReceiptData.cashDiscountAmt.toFloat() / 100)
-                alignLeftRightText(textInLineFormatBundle, discountAmountHeadingText, discAmount, ":  $currencySymbol ")
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    discountPercentHeadingText,
+                    discAmount,
+                    ":  $currencySymbol "
+                )
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.discountCalculatedValue)) {
-                alignLeftRightText(textInLineFormatBundle, discountPercentHeadingText, printerReceiptData.discountCalculatedValue)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    discountAmountHeadingText,
+                    printerReceiptData.discountCalculatedValue,
+                )
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.loanAmt)) {
@@ -3772,7 +3708,7 @@ setLogoAndHeader()
 
             var totalAmountHeadingText = ""
 
-            totalAmountHeadingText = when (printerReceiptData.issuerId) {
+            totalAmountHeadingText = when (hostIssuerId) {
                 "52" -> "TOTAL AMOUNT(incl Int)"
                 "55" -> "TOTAL EFFECTIVE PAYOUT"
                 else -> "TOTAL Amt(With Int) "
@@ -4473,6 +4409,7 @@ setLogoAndHeader()
             } else {
                 headers.add(hdfcTpt.receiptL3)
             }
+
             setHeaderWithLogo(textFormatBundle, logo, headers)
         } catch (ex: DeadObjectException) {
             throw ex
