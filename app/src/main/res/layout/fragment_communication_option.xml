@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".init.CommunicationOptionFragment">
+
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/trans_com_param_option"
+        style="@style/Widget.Neumorph.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pad_16"
+        android:layout_marginTop="@dimen/pad_8"
+        android:layout_marginEnd="@dimen/pad_16"
+        android:gravity="center"
+
+        android:padding="@dimen/pad_20"
+        android:text="@string/trans_param"
+        android:textAllCaps="true"
+
+        android:textColor="@color/white"
+        app:neumorph_inset="@dimen/pad_8"
+        app:neumorph_shadowColorDark="@color/lowerShadow"
+        app:neumorph_shadowColorLight="@color/upperShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+        app:neumorph_shapeType="flat" />
+
+
+    <com.example.customneumorphic.NeumorphButton
+        android:id="@+id/app_update_com_param_option"
+        style="@style/Widget.Neumorph.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/pad_16"
+        android:layout_marginTop="@dimen/pad_8"
+        android:layout_marginEnd="@dimen/pad_16"
+        android:gravity="center"
+
+        android:padding="@dimen/pad_20"
+        android:text="@string/app_update_param"
+        android:textAllCaps="true"
+
+        android:textColor="@color/white"
+        app:neumorph_inset="@dimen/pad_8"
+        app:neumorph_shadowColorDark="@color/lowerShadow"
+        app:neumorph_shadowColorLight="@color/upperShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+        app:neumorph_shapeType="flat" />
+
+
+</LinearLayout>

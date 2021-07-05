@@ -19,10 +19,13 @@ import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
+import com.example.verifonevx990app.digiPOS.QrScanFragment
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
+import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.*
+import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.voidrefund.VoidRefundSalePrintReceipt
@@ -62,7 +65,9 @@ enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
     HOME("", EOptionGroup.NONE.heading),
     INIT("", EOptionGroup.NONE.heading),
     KEY_EXCHANGE("", EOptionGroup.NONE.heading),
-    TMK_EXCHANGE_HDFC("", EOptionGroup.NONE.heading);
+    TMK_EXCHANGE_HDFC("", EOptionGroup.NONE.heading),
+    TXN_COMM_PARAM_TABLE("TXN Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
+    APP_UPDATE_COMM_PARAM_TABLE("App Update Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt);
 
     override fun toString(): String {
         return "[$_name, $group]"
@@ -477,20 +482,16 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                         if (success) {
                             when (type) {
 
-                                BankOptions.TPT, BankOptions.CPT -> {
+                                BankOptions.TPT-> {
                                     val bundle = Bundle()
                                     bundle.putInt("type", type.ordinal)
                                     iDiag?.onEvents(VxEvent.ReplaceFragment(TableEditFragment().apply {
                                         arguments = bundle
                                     }))
                                 }
-                                // todo seperate cpt handring here
-
-                                /*BankOptions.CPT->{
-
-
-
-                                }*/
+                                BankOptions.CPT->{
+                                    iDiag?.onEvents(VxEvent.ReplaceFragment(CommunicationOptionFragment()))
+                                }
 
                                 BankOptions.ENV -> changeEnvParam()
 

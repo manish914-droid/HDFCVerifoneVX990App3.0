@@ -63,7 +63,6 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
-import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -782,7 +781,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
-                           putExtra("uiAction", action)
+                            putExtra("uiAction", action)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 } else {
@@ -1110,22 +1109,22 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             EDashboardItem.EMI_ENQUIRY -> {
                 if (checkInternetConnection()) {
-                /*    transactFragment(NewInputAmountFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable("type", action)
-                            putString(
-                                INPUT_SUB_HEADING,
-                                SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
-                            )
-                        }
-                    })*/
-
-                     transactFragment(EMICatalogue().apply {
+                    /*    transactFragment(NewInputAmountFragment().apply {
                             arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(INPUT_SUB_HEADING, "")
+                                putSerializable("type", action)
+                                putString(
+                                    INPUT_SUB_HEADING,
+                                    SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
+                                )
                             }
-                        })
+                        })*/
+
+                    transactFragment(EMICatalogue().apply {
+                        arguments = Bundle().apply {
+                            putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                            putString(INPUT_SUB_HEADING, "")
+                        }
+                    })
 
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1148,12 +1147,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             }
                         })
 
-                       /* transactFragment(EMICatalogue().apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(INPUT_SUB_HEADING, "")
-                            }
-                        })*/
+                        /* transactFragment(EMICatalogue().apply {
+                             arguments = Bundle().apply {
+                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                 putString(INPUT_SUB_HEADING, "")
+                             }
+                         })*/
 
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1282,7 +1281,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                       transactFragment(EMICatalogue().apply {
+                        transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                             }
@@ -1382,7 +1381,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     fun inflateInputFragment(
         fragment: Fragment,
         subHeading: String,
-        action: EDashboardItem,testEmiOption:String="0"
+        action: EDashboardItem, testEmiOption: String = "0"
     ) {
         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
@@ -1506,9 +1505,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         }
 
         GlobalScope.launch(Dispatchers.IO) {
-withContext(Dispatchers.Main){
-    (this@MainActivity as BaseActivity).showProgress("Digi POS Txn Uploading")
-}
+            withContext(Dispatchers.Main) {
+                (this@MainActivity as BaseActivity).showProgress("Digi POS Txn Uploading")
+            }
             Log.e("UPLOAD DIGI", " ----------------------->  START")
             uploadPendingDigiPosTxn(this@MainActivity as BaseActivity) {
                 Log.e("UPLOAD DIGI", " ----------------------->  BEFOR PRINT")
@@ -1535,7 +1534,6 @@ withContext(Dispatchers.Main){
                 }
             }
         }
-
 
 
     }
@@ -1669,7 +1667,7 @@ withContext(Dispatchers.Main){
                         //endregion
                         PrintUtil(this).printSettlementReportupdate(this, batchList, true) {
                             if (it) {
-                              //Added by Ajay Thakur
+                                //Added by Ajay Thakur
                                 //Saving Batch Data For Last Summary Report
                                 saveBatchInPreference(batchList)
                                 //Delete All BatchFile Data from Table after Settlement:-

@@ -38,7 +38,7 @@ object HitServer {
         data: ByteArray,
         callback: ServerMessageCallback,
         progressMsg: ProgressCallback,
-        irh: IReversalHandler? = null
+        irh: IReversalHandler? = null,isAppUpdate:Boolean=false
     ) {
         this@HitServer.callback = callback
         var responseStr: String? = null
@@ -51,7 +51,7 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket { socket ->
+                openSocket( { socket ->
                     try {
                         irh?.saveReversal()
                         logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
@@ -99,7 +99,7 @@ object HitServer {
                     }
                     callback(responseStr ?: "", true)
                     this@HitServer.callback = null
-                }
+                },isAppUpdate=isAppUpdate)
 
             } else {
                 callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
@@ -129,7 +129,7 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket { socket ->
+                openSocket( { socket ->
 
                         if (isSaveTransactionAsPending) {
                             val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
@@ -197,7 +197,7 @@ object HitServer {
                     socket.close()
                     callback(responseStr, true)
                     this@HitServer.callback = null
-                }
+                })
 
             } else {
                 callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
@@ -367,7 +367,7 @@ object HitServer {
                     reset()
                     dialStart = getF48TimeStamp()
                 }
-                openSocket { socket ->
+                openSocket ({ socket ->
 
                     logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
 
@@ -454,7 +454,7 @@ object HitServer {
                     fos.close()
                     //   ROCProviderV2.resetRoc(AppPreference.getBankCode())
                     this@HitServer.callback = null
-                }
+                })
 
             } else {
                 callback("Offline, No Internet available", false)
@@ -527,7 +527,7 @@ object HitServer {
         }
     }
 
-    private suspend fun openSocket(cb: OnSocketComplete) {
+    private suspend fun openSocket(cb: OnSocketComplete,isAppUpdate:Boolean=false) {
         Log.d("Socket Start:- ", "Socket Started Here.....")
 
         try {
@@ -535,7 +535,7 @@ object HitServer {
                 TerminalCommunicationTable.selectFromSchemeTable()  // always get tct it may get refresh meanwhile
             if (tct != null) {
 
-                val sAddress = VFService.getIpPort()
+                val sAddress = VFService.getIpPort(isAppUpdate)
 
                 ServerSocketChannel.open().apply {
                     configureBlocking(false)

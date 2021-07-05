@@ -172,8 +172,10 @@ class CreateTransactionPacket(
                             "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.first ?: cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
                             ",,,,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
                             "${bankEmiSchemeData?.totalProcessingFee},,"
-                }
 
+                    // mobile before mobile  --> bill,emie,phonenum
+                }
+/*0|46|1|00,460133,54,135,25,586,650000,0,635960,3,1300,216596,14040,635748,12,8,,8287305603,,0,0,0,0,,*/
                 TransactionType.BRAND_EMI.type -> {
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +

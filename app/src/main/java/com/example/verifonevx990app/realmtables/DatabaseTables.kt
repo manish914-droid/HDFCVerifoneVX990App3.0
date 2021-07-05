@@ -1718,6 +1718,17 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
             tct
         }
 
+        fun selectCommTableByRecordType(recordType: String): TerminalCommunicationTable? =
+            runBlocking {
+                var tct: TerminalCommunicationTable? = null
+                getRealm {
+                    val tp = it.where(TerminalCommunicationTable::class.java)
+                        .equalTo("recordType", recordType)
+                        .findFirst()
+                    if (tp != null) tct = it.copyFromRealm(tp) }.await()
+                tct
+            }
+
         fun clear() =
             withRealm {
                 it.executeTransaction { r ->

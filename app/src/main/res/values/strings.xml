@@ -514,4 +514,7 @@
     <string name="bill_num">Bill number</string>
     <string name="brand_min_max_amt_limit_txn"><![CDATA[Entered Amount Should be in Product Min & Max Amount Range]]></string>
     <string name="enterValid_serial_iemei_no">Enter valid serial/IMEI no</string>
+    <string name="trans_param">Trans Param</string>
+    <string name="app_update_param">App Update Param</string>
+    <string name="comm_param">Communication Param</string>
 </resources>
