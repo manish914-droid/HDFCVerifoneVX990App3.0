@@ -469,43 +469,23 @@ class PrintUtil(context: Context?) {
 
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                 //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                if (!printerReceiptData.aid.isBlank() && !printerReceiptData.tc.isBlank()) {
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
+                if (!printerReceiptData.aid.isBlank()) {
+                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
                     logger("PS_aid", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "AID : ${printerReceiptData.aid}",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
+                    printer?.addTextInLine(fmtAddTextInLine, "AID : ${printerReceiptData.aid}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
 
-                    fmtAddTextInLine.putInt(
-                        PrinterConfig.addTextInLine.FontSize.BundleName,
-                        PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-                    )
-                    fmtAddTextInLine.putString(
-                        PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                        PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-                    )
+                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
+                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+                }
+
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                     logger("PS_Tc", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(
-                        fmtAddTextInLine,
-                        "TC : ${printerReceiptData.tc}",
-                        "",
-                        "",
-                        PrinterConfig.addTextInLine.mode.Devide_flexible
-                    )
-                }
+                    if (!printerReceiptData.tc.isBlank()) {
+                        printer?.addTextInLine(fmtAddTextInLine, "TC : ${printerReceiptData.tc}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+                    }
+
 
             }
 
