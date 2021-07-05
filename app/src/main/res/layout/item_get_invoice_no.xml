@@ -54,7 +54,7 @@
                 android:inputType="numberPassword"
                 android:lines="1"
                 android:textColor="@color/white"
-
+                android:cursorVisible="true"
                 android:textColorHint="@color/white"
                 android:textSize="@dimen/text_size_regular"
                 app:fname="regular"
