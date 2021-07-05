@@ -267,6 +267,8 @@ class TableEditFragment : Fragment() {
     private fun getTable(): Any? = when (type) {
         BankOptions.TPT.ordinal -> TerminalParameterTable.selectFromSchemeTable()
         BankOptions.CPT.ordinal -> TerminalCommunicationTable.selectFromSchemeTable()
+        BankOptions.TXN_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("1")
+        BankOptions.APP_UPDATE_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("2")
 
         /* BankOptions.IPT.ordinal -> IssuerParameterTable.selectFromIssuerParameterTable(typeId)
          BankOptions.CDT.ordinal -> CardDataTable.selecteAllCardsData()
