@@ -167,15 +167,18 @@ suspend fun readInitServer(data: ArrayList<ByteArray>, callback: (Boolean, Strin
     GlobalScope.launch(Dispatchers.IO) {
         try {
             val filename = "init_file.txt"
-            VerifoneApp.appContext.openFileOutput(filename, Context.MODE_PRIVATE).apply {
-                for (each in data) write(each)
-                flush()
+           VerifoneApp.appContext.openFileOutput(filename, Context.MODE_PRIVATE).apply {
+                for (each in data)
+                    write(each)
+                    flush()
             }.close()
 
             val fin =
                 BufferedReader(InputStreamReader(VerifoneApp.appContext.openFileInput(filename)))
 
             var line: String? = fin.readLine()
+
+            TerminalCommunicationTable.clear()
 
             while (line != null) {
                 if (line.isNotEmpty()) {
@@ -1433,10 +1436,7 @@ fun showMobileBillDialog(
         dialog?.setCancelable(false)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
         val window = dialog?.window
-        window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            WindowManager.LayoutParams.WRAP_CONTENT
-        )
+        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
         val mobileNumberET: BHTextInputEditText? = dialog?.findViewById(R.id.mobileNumberET)
         val billNumberET: BHTextInputEditText? = dialog?.findViewById(R.id.billNumberET)
         val billNumberTil: BHTextInputLayout? = dialog?.findViewById(R.id.bill_number_til)
@@ -1458,11 +1458,7 @@ fun showMobileBillDialog(
                     billNumberTil?.visibility = View.VISIBLE
             }
             else -> {
-                if ((tpt?.reservedValues?.substring(
-                        2,
-                        3
-                    ) == "1" && transactionType == TransactionType.EMI_SALE.type)
-                )
+                if ((tpt?.reservedValues?.substring(2, 3) == "1" && transactionType == TransactionType.EMI_SALE.type))
                     billNumberTil?.visibility = View.VISIBLE
                 else
                     billNumberTil?.visibility = View.GONE
@@ -1481,46 +1477,20 @@ fun showMobileBillDialog(
             when (transactionType) {
                 //region=====================Brand EMI Validation:-
                 TransactionType.BRAND_EMI.type -> {
-                    if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" &&
-                        brandEMIDataModal.getBrandReservedValue()?.substring(2, 3) == "1"
-                    ) {
+                    if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3) == "1") {
                         dialog.dismiss()
-                        dialogCB(
-                            Triple(
-                                mobileNumberET?.text.toString(),
-                                billNumberET?.text.toString(),
-                                third = true
-                            )
-                        )
-                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" &&
-                        brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)
-                            ?.toInt() ?: 0 > "1".toInt()
-                    ) {
+                        dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
+                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)?.toInt() ?: 0 > "1".toInt()) {
                         if (!TextUtils.isEmpty(billNumberET?.text.toString())) {
                             dialog.dismiss()
-                            dialogCB(
-                                Triple(
-                                    mobileNumberET?.text.toString(),
-                                    billNumberET?.text.toString(),
-                                    third = true
-                                )
-                            )
+                            dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
                         } else {
                             VFService.showToast(context.getString(R.string.enter_valid_bill_number))
                         }
-                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "1" &&
-                        brandEMIDataModal.getBrandReservedValue()?.substring(0, 1)
-                            ?.toInt() ?: 0 > "1".toInt()
-                    ) {
+                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(0, 1)?.toInt() ?: 0 > "1".toInt()) {
                         if (!TextUtils.isEmpty(mobileNumberET?.text.toString()) && mobileNumberET?.text.toString().length in 10..13) {
                             dialog.dismiss()
-                            dialogCB(
-                                Triple(
-                                    mobileNumberET?.text.toString(),
-                                    billNumberET?.text.toString(),
-                                    third = true
-                                )
-                            )
+                            dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
                         } else {
                             VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
                         }
@@ -1528,20 +1498,10 @@ fun showMobileBillDialog(
                         when {
                             TextUtils.isEmpty(mobileNumberET?.text.toString()) || mobileNumberET?.text.toString().length !in 10..13 ->
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
-                            TextUtils.isEmpty(billNumberET?.text.toString()) &&(brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" &&
-                                    brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)
-                                        ?.toInt() ?: 0 > "1".toInt() )-> VFService.showToast(
-                                context.getString(R.string.enter_valid_bill_number)
-                            )
+                            TextUtils.isEmpty(billNumberET?.text.toString()) && (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)?.toInt() ?: 0 > "1".toInt() ) -> VFService.showToast(context.getString(R.string.enter_valid_bill_number))
                             else -> {
                                 dialog.dismiss()
-                                dialogCB(
-                                    Triple(
-                                        mobileNumberET?.text.toString(),
-                                        billNumberET?.text.toString(),
-                                        third = true
-                                    )
-                                )
+                                dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
                             }
                         }
                     }
@@ -1550,11 +1510,7 @@ fun showMobileBillDialog(
 
                 //region Other Transaction Validation:-
                 else -> {
-                    if (transactionType == TransactionType.SALE.type && tpt?.reservedValues?.substring(
-                            0,
-                            1
-                        ) == "1"
-                    ) {
+                    if (transactionType == TransactionType.SALE.type && tpt?.reservedValues?.substring(0, 1) == "1") {
                         when {
                             //  when mobile number entered
                             !TextUtils.isEmpty(mobileNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
@@ -1567,22 +1523,12 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
-                            1,
-                            2
-                        ) == "1" && tpt.reservedValues.substring(2, 3) == "1"
-                    ) {
+                    }
+                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(1, 2) == "1" && tpt.reservedValues.substring(2, 3) == "1") {
                         when {
-                            !TextUtils.isEmpty(mobileNumberET?.text.toString())
-                                    && !TextUtils.isEmpty(billNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
+                            !TextUtils.isEmpty(mobileNumberET?.text.toString()) && !TextUtils.isEmpty(billNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
                                 dialog.dismiss()
-                                dialogCB(
-                                    Triple(
-                                        mobileNumberET?.text.toString(),
-                                        billNumberET?.text.toString(),
-                                        third = true
-                                    )
-                                )
+                                dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
                             } else
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
 
@@ -1597,18 +1543,13 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", billNumberET?.text.toString(), third = true))
                             }
 
-                            TextUtils.isEmpty(mobileNumberET?.text.toString()) &&
-                                    TextUtils.isEmpty(mobileNumberET?.text.toString()) -> {
+                            TextUtils.isEmpty(mobileNumberET?.text.toString()) && TextUtils.isEmpty(mobileNumberET?.text.toString()) -> {
                                 dialog.dismiss()
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-
-                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
-                            1,
-                            2
-                        ) == "1"
-                    ) {
+                    }
+                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(1, 2) == "1") {
                         when {
                             !TextUtils.isEmpty(mobileNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
                                 dialog.dismiss()
@@ -1620,11 +1561,8 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
-                            2,
-                            3
-                        ) == "1"
-                    ) {
+                    }
+                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(2, 3) == "1") {
                         when {
                             !TextUtils.isEmpty(billNumberET?.text.toString()) -> {
                                 dialog.dismiss()

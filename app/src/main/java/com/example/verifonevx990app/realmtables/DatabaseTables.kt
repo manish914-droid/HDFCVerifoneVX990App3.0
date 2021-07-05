@@ -1424,7 +1424,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     var recordId: String = ""
 
     @field:BHFieldParseIndex(5)
-    var recordType: String = "" // what type of table it is if =1 txn param ,   if =0 app update
+    var recordType: String = "" // what type of table it is if =1 txn com param ,   if =2 app update com param
 
     @field:BHFieldParseIndex(7)
     var epbxEnable: String = ""
