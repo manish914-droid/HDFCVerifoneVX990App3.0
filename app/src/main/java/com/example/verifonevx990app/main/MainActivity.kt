@@ -1512,7 +1512,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             uploadPendingDigiPosTxn(this@MainActivity as BaseActivity) {
                 Log.e("UPLOAD DIGI", " ----------------------->  BEFOR PRINT")
                 (this@MainActivity as BaseActivity).hideProgress()
-                PrintUtil(this@MainActivity).printDetailReport(
+                PrintUtil(this@MainActivity).printDetailReportupdate(
                     settlementBatchData,
                     this@MainActivity
                 ) { detailPrintStatus ->
