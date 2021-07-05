@@ -38,7 +38,7 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 enum class EOptionGroup {
-    FUNCTIONS, REPORT, NONE
+     FUNCTIONS, REPORT, NONE
 }
 
 enum class BankOptions(val _name: String, val group: EOptionGroup, val res: Int = 0) {
