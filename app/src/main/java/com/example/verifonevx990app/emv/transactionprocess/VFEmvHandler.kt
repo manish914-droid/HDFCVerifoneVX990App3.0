@@ -195,7 +195,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                     }
 
                     if(null != tag && "84".equals(Integer.toHexString(tag))){
-                        //println("Aid value with Tag is ---> "+Integer.toHexString(tag) + Utility.byte2HexStr(tlv))
+                        println("Aid value with Tag is ---> "+Integer.toHexString(tag) + Utility.byte2HexStr(tlv))
                         cardProcessedDataModal.setAIDPrint(Utility.byte2HexStr(tlv))
 
                     }
