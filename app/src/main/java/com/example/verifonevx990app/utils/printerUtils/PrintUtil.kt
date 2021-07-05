@@ -4417,7 +4417,6 @@ setLogoAndHeader()
             } else {
                 headers.add(hdfcTpt.receiptL3)
             }
-
             setHeaderWithLogo(textFormatBundle, logo, headers)
         } catch (ex: DeadObjectException) {
             throw ex
