@@ -1273,8 +1273,9 @@ class VFTransactionActivity : BaseActivity() {
                         cardProcessedData.testEmiOption=testEmiOption
                         binding?.baseAmtTv?.text = baseAmountValue
                     } else {
-                        val baseAmountValue = getString(R.string.rupees_symbol) +
-                                (((emiSelectedData?.transactionAmount)?.toFloat())?.div(100)).toString()
+                       val formattedAmt= "%.2f".format((((emiSelectedData?.transactionAmount)?.toFloat())?.div(100)))
+
+                        val baseAmountValue = getString(R.string.rupees_symbol) + formattedAmt
                         binding?.baseAmtTv?.text = baseAmountValue
                     }
                 }

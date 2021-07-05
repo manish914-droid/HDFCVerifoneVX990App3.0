@@ -265,6 +265,7 @@ class TableEditFragment : Fragment() {
     private fun getTable(): Any? = when (type) {
         BankOptions.TPT.ordinal -> TerminalParameterTable.selectFromSchemeTable()
         BankOptions.CPT.ordinal -> TerminalCommunicationTable.selectFromSchemeTable()
+
         /* BankOptions.IPT.ordinal -> IssuerParameterTable.selectFromIssuerParameterTable(typeId)
          BankOptions.CDT.ordinal -> CardDataTable.selecteAllCardsData()
              .first { it.cardTableIndex == typeId }*/
@@ -486,6 +487,13 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         arguments = bundle
                                     }))
                                 }
+                                // todo seperate cpt handring here
+
+                                /*BankOptions.CPT->{
+
+
+
+                                }*/
 
                                 BankOptions.ENV -> changeEnvParam()
 

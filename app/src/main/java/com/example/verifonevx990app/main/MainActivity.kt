@@ -782,6 +782,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
+                           putExtra("uiAction", action)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 } else {

@@ -1,5 +1,6 @@
 package com.example.verifonevx990app.brandemi
 
+import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
 import android.os.Handler
@@ -395,9 +396,11 @@ class BrandEMISubCategoryFragment : Fragment() {
     //endregion
 
     //region==========================Perform Click Event on Category Item Click:-
+    @SuppressLint("LongLogTag")
     private fun onCategoryItemClick(position: Int) {
         try {
             Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
+            Log.d("Category & Subcategory data- ", Gson().toJson(brandEMIAllDataList))
             val childFilteredList = brandEMIAllDataList.filter {
                 brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID
             }
