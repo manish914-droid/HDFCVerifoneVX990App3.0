@@ -66,8 +66,8 @@ enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
     INIT("", EOptionGroup.NONE.heading),
     KEY_EXCHANGE("", EOptionGroup.NONE.heading),
     TMK_EXCHANGE_HDFC("", EOptionGroup.NONE.heading),
-    TXN_COMM_PARAM_TABLE("TXN Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
-    APP_UPDATE_COMM_PARAM_TABLE("App Update Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt);
+    TXN_COMM_PARAM_TABLE("TXN Com Param", EOptionGroup.NONE.heading, R.drawable.ic_copt),
+    APP_UPDATE_COMM_PARAM_TABLE("App Update Com Param", EOptionGroup.NONE.heading, R.drawable.ic_copt);
 
     override fun toString(): String {
         return "[$_name, $group]"
