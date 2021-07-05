@@ -1140,16 +1140,8 @@ class PrintUtil(context: Context?) {
 
                             if (iteration > 0) {
                                 printSeperator(textFormatBundle)
-                                alignLeftRightText(
-                                    textInLineFormatBundle,
-                                    "MID : ${batch[frequency + 1].hostMID}",
-                                    "TID : ${batch[frequency + 1].hostTID}"
-                                )
-                                alignLeftRightText(
-                                    textInLineFormatBundle,
-                                    "BATCH NO : ${batch[frequency + 1].batchNumber}",
-                                    ""
-                                )
+                                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[frequency].hostMID}", "TID : ${batch[frequency].hostTID}")
+                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[frequency].batchNumber}", "")
                                 printSeperator(textFormatBundle)
                                 iteration--
                             }

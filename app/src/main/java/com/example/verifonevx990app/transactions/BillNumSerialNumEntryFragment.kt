@@ -56,9 +56,14 @@ class BillNumSerialNumEntryFragment : Fragment() {
     val brandValidation: BrandEmiBillSerialMobileValidationModel by lazy {
         arguments?.getSerializable("brandValidation") as BrandEmiBillSerialMobileValidationModel
     }
-    private val brandEMIDataModal: BrandEMIDataModal by lazy {
-        arguments?.getSerializable("brandEMIDataModal") as BrandEMIDataModal
+    private val brandEMIDataModal1: BrandEMIDataModal by lazy {
+        (arguments?.getSerializable("brandEMIDataModal") ?: BrandEMIDataModal()) as BrandEMIDataModal
     }
+
+    private val brandEMIDataModal: BrandEMIDataModal by lazy {
+        (arguments?.getSerializable("brandEMIDataModal") ?: BrandEMIDataModal() )as BrandEMIDataModal
+    }
+
     private val transType: EDashboardItem by lazy {
         arguments?.getSerializable("transType") as EDashboardItem
     }
