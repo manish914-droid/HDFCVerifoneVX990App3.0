@@ -8,10 +8,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class SyncReversalToHost(
-    private var transactionISOData: IsoDataWriter?,
-    var syncTransactionCallback: (Boolean, String) -> Unit
-) {
+class SyncReversalToHost(private var transactionISOData: IsoDataWriter?, var syncTransactionCallback: (Boolean, String) -> Unit) {
 
     private var successResponseCode: String? = null
     private var transMsg: String? = null
@@ -35,6 +32,7 @@ class SyncReversalToHost(
             if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletaptimeout))) {
                 //   VFService.showToast("39 data in reversal in timeout "+"E2")
                 println("39 data in reversal in timeout "+"E2")
+                AppPreference.clearDoubleTapTimeout()
                 AppPreference.clearDoubleTap()
                 transactionISOData?.addFieldByHex(39, "E2")
             }
