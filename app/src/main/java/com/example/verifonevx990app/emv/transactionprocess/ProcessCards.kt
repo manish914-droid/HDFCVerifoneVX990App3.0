@@ -32,7 +32,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.jvm.Throws
 
-class ProcessCard(var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, var transactionCallback: (CardProcessedDataModal) -> Unit) {
+class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, var transactionCallback: (CardProcessedDataModal) -> Unit) {
     var transactionalAmt = cardProcessedDataModal.getTransactionAmount() ?: 0
     var otherAmt = cardProcessedDataModal.getOtherAmount() ?: 0
 
@@ -504,13 +504,13 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                 //region=========This Field is use only in case of BankEMI Field58 Transaction Amount:-
                                 cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
                                 //endregion
-                                iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process, Bundle(), GenericReadCardData(activity, iemv)
-                                { cardBinValue ->
+                                iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process, Bundle(), GenericReadCardData(activity, iemv) { cardBinValue ->
                                         /*iemv?.stopCheckCard()
                                         iemv?.abortEMV()*/
                                         Log.e("Card Bin Emi", cardBinValue)
                                         if (!TextUtils.isEmpty(cardBinValue)) {
-                                            GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/
+                                            GlobalScope.launch(Dispatchers.Main) {
+                                                (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/
                                             }
                                             GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                 GlobalScope.launch(Dispatchers.Main) {
@@ -564,33 +564,16 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                                 GlobalScope.launch(Dispatchers.Main) {
                                                     if (isSucess) {
                                                         (activity as VFTransactionActivity).startActivityForResult(
-                                                            Intent(
-                                                                activity,
-                                                                EMISchemeAndOfferActivity::class.java
-                                                            ).apply {
-                                                                putParcelableArrayListExtra(
-                                                                    "flexiPayData",
-                                                                    flexiPayData as ArrayList<out Parcelable>
-                                                                )
-
-                                                                putExtra(
-                                                                    "cardProcessedData",
-                                                                    cardProcessedDataModal
-                                                                )
+                                                            Intent(activity, EMISchemeAndOfferActivity::class.java).apply {
+                                                                putParcelableArrayListExtra("flexiPayData", flexiPayData as ArrayList<out Parcelable>)
+                                                                putExtra("cardProcessedData", cardProcessedDataModal)
                                                             },
                                                             EIntentRequest.FlexiPaySchemeOffer.code
                                                         )
                                                         (activity as VFTransactionActivity).hideProgress()
                                                     } else {
                                                         (activity as VFTransactionActivity).hideProgress()
-                                                        (activity as VFTransactionActivity).alertBoxWithAction(
-                                                            null,
-                                                            null,
-                                                            activity.getString(R.string.error),
-                                                            hostMsg,
-                                                            false,
-                                                            activity.getString(R.string.positive_button_ok),
-                                                            {
+                                                        (activity as VFTransactionActivity).alertBoxWithAction(null, null, activity.getString(R.string.error), hostMsg, false, activity.getString(R.string.positive_button_ok), {
                                                                 (activity as VFTransactionActivity).declinedTransaction()
                                                             },
                                                             {})
@@ -626,7 +609,8 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                     //region=========This Field is use only in case of BankEMI Field58 Transaction Amount:-
                                     cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
                                     //endregion
-                                    iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process, Bundle(),
+                                    iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process,
+                                        Bundle(),
                                         GenericReadCardData(activity, iemv) { cardBinValue ->
                                             if (!TextUtils.isEmpty(cardBinValue)) {
                                                 GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();iemv?.stopCheckCard() }
@@ -635,9 +619,9 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                                     if (hostResponseCodeAndMessageAndHasEMI.first) {
                                                         // Checking Insta Emi
                                                         if (hostResponseCodeAndMessageAndHasEMI.third) {
-                                                            (activity as BaseActivity).hideProgress()
                                                             (activity as VFTransactionActivity).showEMISaleDialog(cardProcessedDataModal) {
                                                                 if (it.getTransType() == TransactionType.EMI_SALE.type) {
+
                                                                     (activity as VFTransactionActivity).startActivityForResult(
                                                                         Intent(activity, EMISchemeAndOfferActivity::class.java).apply {
                                                                             putParcelableArrayListExtra("emiSchemeDataList", bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>)
@@ -645,10 +629,13 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                                                             putExtra("cardProcessedData", it)
                                                                             putExtra("transactionType", it.getTransType())
                                                                         },
-                                                                        EIntentRequest.BankEMISchemeOffer.code)
+                                                                        EIntentRequest.BankEMISchemeOffer.code
+                                                                    )
+                                                                    (activity as VFTransactionActivity).hideProgress()
+
                                                                 } else {
                                                                     (activity as VFTransactionActivity).hideProgress()
-                                                                    DoEmv(activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
+                                                                    DoEmv(issuerUpdateHandler,activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
                                                                         transactionCallback(cardProcessedDataModal)
                                                                     }
                                                                 }
@@ -658,8 +645,7 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                                         }
 
                                                     } else {
-                                                        (activity as BaseActivity).hideProgress()
-                                                        DoEmv(activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
+                                                        DoEmv(issuerUpdateHandler, activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
                                                             transactionCallback(cardProcessedDataModal)
                                                         }
                                                     }
@@ -668,7 +654,7 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                                         })
                                 } else {
                                     //Condition executes when  No EMI Available instantly(Directly Normal Sale)
-                                    DoEmv(activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
+                                    DoEmv(issuerUpdateHandler, activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
                                         transactionCallback(cardProcessedDataModal)
                                     }
                                 }
@@ -676,10 +662,7 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                             }
 
                             else -> {
-                                DoEmv(
-                                    activity, handler, cardProcessedDataModal,
-                                    ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
-                                ) { cardProcessedDataModal ->
+                                DoEmv(issuerUpdateHandler, activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
                                     transactionCallback(cardProcessedDataModal)
                                 }
                             }
@@ -741,23 +724,31 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                 override fun onCardActivate() {
                     try {
                         println("Contactless is calling")
-                        iemv?.stopCheckCard()
-                        iemv?.abortEMV()
+                        if(null != cardProcessedDataModal.getDoubeTap() && !(cardProcessedDataModal.getDoubeTap() == true)){
+                            iemv?.stopCheckCard()
+                            iemv?.abortEMV()
+
+                        }
                         cardProcessedDataModal.setTypeOfTxnFlag("3")
                         cardProcessedDataModal.setReadCardType(DetectCardType.CONTACT_LESS_CARD_TYPE)
                         VFService.vfBeeper?.startBeep(200)
                         println("Transactionamount is calling" + transactionalAmt.toString() + "Handler is" + handler)
 
-                        issuerUpdate(iemv)
-
-                        DoEmv(
-                            activity,
-                            handler,
-                            cardProcessedDataModal,
-                            ConstIPBOC.startEMV.intent.VALUE_cardType_contactless
-                        ) { cardProcessedDataModal ->
-                            transactionCallback(cardProcessedDataModal)
+                        if(null != cardProcessedDataModal.getDoubeTap() && !(cardProcessedDataModal.getDoubeTap() == true)){
+                            //    VFService.showToast("Going in if cond")
+                            DoEmv(issuerUpdateHandler,activity, handler, cardProcessedDataModal, ConstIPBOC.startEMV.intent.VALUE_cardType_contactless) { cardProcessedDataModal ->
+                                transactionCallback(cardProcessedDataModal)
+                            }
                         }
+                        else {
+                            //   VFService.showToast("Going in issuer update handler")
+                            AppPreference.clearDoubleTap()
+                            iemv?.setIssuerUpdateScript()
+                            println("Issuer update script called")
+                            transactionCallback(cardProcessedDataModal)
+
+                        }
+
                     } catch (ex: DeadObjectException) {
                         ex.printStackTrace()
                         println("Process card error14" + ex.message)
@@ -816,6 +807,12 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
                 override fun onTimeout() {
                     //To resolve timeout issue
                     cardProcessedDataModal.setReadCardType(DetectCardType.CARD_ERROR_TYPE)
+
+                      if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletap))) {
+                            println("Going in rupay double tap timeout")
+                          AppPreference.saveString(AppPreference.doubletaptimeout, AppPreference.doubletaptimeout)
+                          (activity as VFTransactionActivity).processDoubleTapTimeout()
+                        }
                     transactionCallback(cardProcessedDataModal)
                     VFService.showToast("timeout")
                 }
@@ -945,21 +942,5 @@ class ProcessCard(var activity: Activity, var handler: Handler, var cardProcesse
         }
     }
 
-    var issuerUpdateHandler: IssuerUpdateHandler? = null
-    fun issuerUpdate(iemv: IEMV?) {
-        try {
-            iemv?.setIssuerUpdateHandler(issuerUpdateHandler)
-        } catch (ex: RemoteException) {
-            ex.printStackTrace()
-        }
 
-        issuerUpdateHandler = object : IssuerUpdateHandler.Stub() {
-
-            @Throws(RemoteException::class)
-            override fun onRequestIssuerUpdate() {
-
-            }
-
-        }
-    }
 }

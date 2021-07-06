@@ -31,6 +31,42 @@ class SyncReversalToHost(
             transactionISOData?.additionalData?.get("F56reversal")
                 ?.let { transactionISOData?.addFieldByHex(56, it) }
             transactionISOData?.let { addIsoDateTime(it) }
+
+            if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletaptimeout))) {
+                //   VFService.showToast("39 data in reversal in timeout "+"E2")
+                println("39 data in reversal in timeout "+"E2")
+                AppPreference.clearDoubleTap()
+                transactionISOData?.addFieldByHex(39, "E2")
+            }
+
+            else if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletap))) {
+                //    VFService.showToast("39 data in reversal in double tap "+"E1")
+                println("39 data in reversal is "+"E1")
+                AppPreference.clearDoubleTap()
+                transactionISOData?.additionalData?.get("F39reversaldoubletap")
+                        ?.let { transactionISOData?.addFieldByHex(39, it) }
+            }
+
+
+            var field55      =  transactionISOData?.isoMap?.get(55)?.rawData ?: ""
+            var DE55reversal =  transactionISOData?.additionalData?.get("DE55reversal") ?: ""
+
+            if(null !=field55 && field55.isNotBlank() && null !=DE55reversal && DE55reversal.isNotBlank()) {
+                field55 = field55 + DE55reversal
+                println("Issuer script data in reversal"+field55)
+                transactionISOData?.addField(55, field55)
+            }
+            else if(null !=field55 && field55.isNotBlank()){
+                println("Issuer script data without reversal"+field55)
+                transactionISOData?.addField(55, field55)
+            }
+
+            transactionISOData?.additionalData?.get("F39reversal")
+                    ?.let {
+                        //    VFService.showToast("39 data in reversal normal "+it)
+                        println("39 data in reversal "+it)
+                        transactionISOData?.addFieldByHex(39, it)
+                    }
         }
         val transactionISOByteArray = transactionISOData?.generateIsoByteRequest()
         if (transactionISOData != null) {

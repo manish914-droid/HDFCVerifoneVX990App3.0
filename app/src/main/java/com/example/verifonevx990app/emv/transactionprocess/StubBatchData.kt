@@ -17,11 +17,7 @@ import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.*
 
-class StubBatchData(var transactionType: Int,
-                    var cardProcessedDataModal: CardProcessedDataModal,
-                    private var printExtraData: Triple<String, String, String>?,
-                    private val field60Data: String,
-                    batchStubCallback: (BatchFileDataTable) -> Unit) {
+class StubBatchData(private var de55: String?,var transactionType: Int, var cardProcessedDataModal: CardProcessedDataModal, private var printExtraData: Triple<String, String, String>?, private val field60Data: String, batchStubCallback: (BatchFileDataTable) -> Unit) {
 
     var vfIEMV: IEMV? = null
 
@@ -121,6 +117,9 @@ class StubBatchData(var transactionType: Int,
                     cardProcessedDataModal.getTrack2Data() ?: ""
                 )
             }
+
+        batchFileData.de55 = de55 ?: "" //for Rupay
+
         //batchFileData.detectedCardType=cardProcessedDataModal.getReadCardType()?:DetectCardType.CARD_ERROR_TYPE
         batchFileData.operationType =
             cardProcessedDataModal.getReadCardType()?.cardTypeName.toString()

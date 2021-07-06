@@ -545,7 +545,6 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                         }
                 }
             }
-
             DetectError.NeedContact.errorCode == result -> {
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
@@ -610,7 +609,6 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
 
                 }
             }
-
             DetectError.EMVFallBack.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
                         activity.getString(R.string.emv_fallback),
@@ -695,6 +693,37 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                         }
                 }
                 logger("onTransactionResult", "IncorrectPAN", "e")
+            }
+            DetectError.SecondTap_Approved.errorCode == result -> {
+
+                var tcdata = iemv?.getCardData(Integer.toHexString(0x9F26).toUpperCase(Locale.ROOT))
+
+                val tcValue = Utility.byte2HexStr(tcdata)
+                //  VFService.showToast("TC value in vfemv handler is"+tcValue)
+                cardProcessedDataModal?.setTC(tcValue)
+
+                try {
+                    AppPreference.clearReversal()
+                    (activity as VFTransactionActivity).printAndSaveDoubletapData(tcValue)
+
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+
+
+            }
+            DetectError.TransactionReject.errorCode == result -> {
+
+                (activity as VFTransactionActivity).processDoubleTap(cardProcessedDataModal)
+
+                /*   (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(R.string.alert), msg.toString(), false) { alertCBBool ->
+                       if (alertCBBool)
+                           try {
+                               (activity as VFTransactionActivity).processDoubleTap(cardProcessedDataModal)
+                           } catch (ex: Exception) {
+                               ex.printStackTrace()
+                           }
+                   }*/
             }
             else -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(

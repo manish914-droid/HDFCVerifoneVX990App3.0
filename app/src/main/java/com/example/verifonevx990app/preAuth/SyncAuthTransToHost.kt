@@ -71,11 +71,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                             it
                         )
                     }
-                    StubBatchData(
-                        cardProcessedDataModal.getTransType(),
-                        cardProcessedDataModal,
-                        null, autoSettlementCheck
-                    ) { stubbedData ->
+                    StubBatchData("", cardProcessedDataModal.getTransType(), cardProcessedDataModal, null, autoSettlementCheck) { stubbedData ->
 
                         activityContext?.let {
                             printAndSaveAuthTransToBatchDataInDB(
