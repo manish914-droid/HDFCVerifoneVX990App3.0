@@ -264,7 +264,7 @@ class BrandEMIProductFragment : Fragment() {
                             ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                             AppPreference.getBankCode()
                         )
-                        GlobalScope.launch(Dispatchers.Main) {
+                        lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,

@@ -472,7 +472,7 @@
     <string name="additionalOfferNew">Add. Offer</string>
     <string name="tenure_hint">3 MONTHS</string>
     <string name="upi_collect">UPI Collect</string>
-    <string name="dynamic_qr">Dynamic Qr</string>
+    <string name="bharat_qr">Bharat Qr</string>
     <string name="static_qr">Static Qr</string>
     <string name="sms_pay">SMS Pay</string>
     <string name="pending_txn">Pending Txn</string>

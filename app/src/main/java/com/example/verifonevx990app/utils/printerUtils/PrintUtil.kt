@@ -1549,21 +1549,21 @@ setLogoAndHeader(DIGI_SMART_HUB_LOGO)
             failureImpl(
                 context as Activity,
                 "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
+                "Please take charge slip from the Report menu."
             )
         } catch (e: RemoteException) {
             e.printStackTrace()
             failureImpl(
                 context as Activity,
                 "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
+                "Please take charge slip from the Report menu."
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
             failureImpl(
                 context as Activity,
                 "Printer Service stopped.",
-                "Please take chargeslip from the Report menu."
+                "Please take charge slip from the Report menu."
             )
         } finally {
             //   VFService.connectToVFService(VerifoneApp.appContext)
@@ -2013,12 +2013,8 @@ setLogoAndHeader(null)
                 val map = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
                 val map1 = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-                val headers = arrayListOf<String>()
-                tpt?.receiptHeaderOne?.let { headers.add(it) }
-                tpt?.receiptHeaderTwo?.let { headers.add(it) }
-                tpt?.receiptHeaderThree?.let { headers.add(it) }
 
-                setHeaderWithLogo(textFormatBundle, "hdfc_print_logo.bmp", headers)
+                setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -2425,7 +2421,7 @@ setLogoAndHeader(null)
                 tpt?.receiptHeaderTwo?.let { headers.add(it) }
                 tpt?.receiptHeaderThree?.let { headers.add(it) }
 
-                setHeaderWithLogo(textFormatBundle, "hdfc_print_logo.bmp", headers)
+                setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)

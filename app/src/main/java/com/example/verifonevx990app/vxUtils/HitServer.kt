@@ -532,7 +532,7 @@ object HitServer {
 
         try {
             tct =
-                TerminalCommunicationTable.selectFromSchemeTable()  // always get tct it may get refresh meanwhile
+                TerminalCommunicationTable.selectCommTableByRecordType("1")  // always get tct it may get refresh meanwhile
             if (tct != null) {
 
                 val sAddress = VFService.getIpPort(isAppUpdate)

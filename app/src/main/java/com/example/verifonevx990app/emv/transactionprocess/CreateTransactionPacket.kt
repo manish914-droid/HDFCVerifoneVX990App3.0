@@ -166,25 +166,46 @@ class CreateTransactionPacket(
                 TransactionType.EMI_SALE.type -> {
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
-                            "${bankEmiTandCData?.issuerID},${bankEmiTandCData?.emiSchemeID},1,0,${cardProcessedData.getEmiTransactionAmount()}," +
+                            "${bankEmiTandCData?.issuerID}," +
+                            "${bankEmiTandCData?.emiSchemeID},1,0,${cardProcessedData.getEmiTransactionAmount()}," +
                             "${bankEmiSchemeData?.discountAmount},${bankEmiSchemeData?.loanAmount},${bankEmiSchemeData?.tenure}," +
                             "${bankEmiSchemeData?.tenureInterestRate},${bankEmiSchemeData?.emiAmount},${bankEmiSchemeData?.cashBackAmount}," +
-                            "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.first ?: cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
-                            ",,,,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
+                            "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
+                            ",,${cardProcessedData.getMobileBillExtraData()?.first ?: ""},,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
                             "${bankEmiSchemeData?.totalProcessingFee},,"
+/*0|60|5|00,60832632,52,82,1,0,5666,224,5442,6,1400,944,0,5664,23,,,,8920868887,,0,0,0,0,,*/
 
+                                    /*
+                                    netpay
+                                    bill invoice no-                                                ,
+                                    serial number -                                                              ,
+                                    customer name -                                                                         ,
+                                    mobile no-                                                                                     ,
+                                    email id -                                                                                        ,
+                                    insta emi -                                                                                      0,
+                                    processing fee-                                                              0,
+                                    processing rate -                                                           0,
+                                    processing amount total-                            0,
+                                    emi code -                                           */
                     // mobile before mobile  --> bill,emie,phonenum
                 }
 /*0|46|1|00,460133,54,135,25,586,650000,0,635960,3,1300,216596,14040,635748,12,8,,8287305603,,0,0,0,0,,*/
                 TransactionType.BRAND_EMI.type -> {
+                    var imeiOrSerialNo:String?=null
+                    if(brandEMIDataTable?.imeiNumber !="" ){
+                        imeiOrSerialNo=brandEMIDataTable?.imeiNumber
+                    }else if(brandEMIDataTable?.serialNumber !="" ){
+                        imeiOrSerialNo=brandEMIDataTable?.serialNumber
+                    }
+
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
                             "${bankEmiTandCData?.issuerID},${bankEmiTandCData?.emiSchemeID},${brandEMIDataTable?.brandID}," +
                             "${brandEMIDataTable?.productID},${cardProcessedData.getEmiTransactionAmount()}," +
                             "${bankEmiSchemeData?.discountAmount},${bankEmiSchemeData?.loanAmount},${bankEmiSchemeData?.tenure}," +
                             "${bankEmiSchemeData?.tenureInterestRate},${bankEmiSchemeData?.emiAmount},${bankEmiSchemeData?.cashBackAmount}," +
-                            "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.first ?: cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
-                            "${brandEMIDataTable?.imeiNumber ?: brandEMIDataTable?.serialNumber ?: ""},,,,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
+                            "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
+                            "${imeiOrSerialNo ?: ""},,${cardProcessedData.getMobileBillExtraData()?.first ?: ""},,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
                             "${bankEmiSchemeData?.totalProcessingFee},,"
                 }
 

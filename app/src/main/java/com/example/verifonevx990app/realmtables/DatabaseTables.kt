@@ -63,7 +63,7 @@ enum class EDashboardItem(
     TXN_LIST("TXN LIST", R.drawable.sms_icon, 903),
     PENDING_TXN("Pending Txn", R.drawable.pending_txn, 903),
     STATIC_QR("Static QR", R.drawable.ic_qr_code, 904),
-    DYNAMIC_QR("Dynamic QR", R.drawable.ic_qr_code, 905),
+    BHARAT_QR("Bharat QR", R.drawable.ic_qr_code, 905),
 }
 
 /**
@@ -539,6 +539,8 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
                 if (re != null) result = re
 
             }.await()
+            // list is sorted by invoice number
+            result.sortByDescending { invoice->(invoice.hostInvoice).toInt() }
             result
         }
 

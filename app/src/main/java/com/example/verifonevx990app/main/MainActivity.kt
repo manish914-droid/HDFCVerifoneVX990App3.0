@@ -742,6 +742,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 putExtra(
                                     "type", transType
                                 ) //EMI //UiAction.BANK_EMI
+                                if(action==UiAction.TEST_EMI){
+                                    putExtra("type", TransactionType.TEST_EMI.type)
+                                }else{
+                                    putExtra("type", TransactionType.EMI_SALE.type)
+                                }
+
                                 putExtra("proc_code", ProcessingCode.SALE.code)
                                 putExtra("mobileNumber", extraPair?.first)
                                 putExtra("billNumber", extraPair?.second)
@@ -762,6 +768,11 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 "type",
                                 transType
                             ) //EMI //UiAction.BANK_EMI
+                            if(action==UiAction.TEST_EMI){
+                                putExtra("type", TransactionType.TEST_EMI.type)
+                            }else{
+                                putExtra("type", TransactionType.EMI_SALE.type)
+                            }
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
@@ -905,7 +916,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     val amt = (data as Pair<*, *>).first.toString()
                     transactFragment(QrScanFragment().apply {
                         arguments = Bundle().apply {
-                            putSerializable("type", EDashboardItem.DYNAMIC_QR)
+                            putSerializable("type", EDashboardItem.BHARAT_QR)
                             putString("mobileNumber", extraPair?.first)
                             putString("amount", amt)
                             putString("desc", extraPair?.second)
@@ -1321,7 +1332,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             }
 
-            EDashboardItem.DYNAMIC_QR -> {
+            EDashboardItem.BHARAT_QR -> {
                 if (checkInternetConnection()) {
                     transactFragment(NewInputAmountFragment().apply {
                         arguments = Bundle().apply {

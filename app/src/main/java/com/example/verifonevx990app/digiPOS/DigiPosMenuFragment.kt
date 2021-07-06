@@ -163,7 +163,7 @@ class DigiPosMenuFragment : Fragment() {
         binding?.dynamicQrBtn?.setOnClickListener {
             (activity as MainActivity).transactFragment(UpiSmsDynamicPayQrInputDetailFragment().apply {
                 arguments = Bundle().apply {
-                    putSerializable("type", EDashboardItem.DYNAMIC_QR)
+                    putSerializable("type", EDashboardItem.BHARAT_QR)
                     // putString(INPUT_SUB_HEADING, "")
                 }
             })

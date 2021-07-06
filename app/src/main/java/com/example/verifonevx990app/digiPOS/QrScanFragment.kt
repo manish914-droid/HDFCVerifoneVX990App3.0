@@ -1,14 +1,12 @@
 package com.example.verifonevx990app.digiPOS
 
 import android.content.Context
-import android.graphics.Bitmap
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentQrScanBinding
@@ -20,7 +18,6 @@ import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 
@@ -60,7 +57,7 @@ class QrScanFragment : Fragment() {
         }
 
         val paymsg = when (transactionType) {
-            EDashboardItem.DYNAMIC_QR -> {
+            EDashboardItem.BHARAT_QR -> {
 
                 getString(R.string.scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now)
             }
@@ -76,7 +73,7 @@ class QrScanFragment : Fragment() {
         binding?.yesBtn?.setOnClickListener {
 
             when (transactionType) {
-                EDashboardItem.DYNAMIC_QR -> {
+                EDashboardItem.BHARAT_QR -> {
                     lifecycleScope.launch(Dispatchers.IO) {
                         withContext(Dispatchers.Main) {
                             (activity as BaseActivity).showProgress()

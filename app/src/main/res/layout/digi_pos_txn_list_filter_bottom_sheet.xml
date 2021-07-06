@@ -79,7 +79,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/pad_32"
                     android:buttonTint="@color/colorGrey"
-                    android:text="@string/dynamic_qr"
+                    android:text="@string/bharat_qr"
                     android:textColor="@color/colorGrey"
                     android:textSize="@dimen/text_size_small" />
             </LinearLayout>

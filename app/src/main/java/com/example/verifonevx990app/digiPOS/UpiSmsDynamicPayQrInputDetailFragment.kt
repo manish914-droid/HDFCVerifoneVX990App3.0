@@ -51,7 +51,7 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
         binding?.subHeaderView?.subHeaderText?.text = transactionType.title
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE)
         when (transactionType) {
-            EDashboardItem.SMS_PAY, EDashboardItem.DYNAMIC_QR -> {
+            EDashboardItem.SMS_PAY, EDashboardItem.BHARAT_QR -> {
                 binding?.mobilenoEt?.hint = getString(R.string.enter_mobile_number)
             }
             EDashboardItem.UPI -> {
@@ -71,7 +71,7 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
 
         }
 
-        if (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.DYNAMIC_QR) {
+        if (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.BHARAT_QR) {
             binding?.vpaCrdView?.visibility = View.GONE
 
         }
@@ -133,12 +133,12 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
 
-            (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.DYNAMIC_QR) && binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
+            (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.BHARAT_QR) && binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
             }
 
-            transactionType == EDashboardItem.DYNAMIC_QR && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length !in 10..13 ->
+            transactionType == EDashboardItem.BHARAT_QR && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length !in 10..13 ->
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
 
@@ -155,7 +155,7 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
                 var f56 = ""
                 f56 = when (transactionType) {
                     EDashboardItem.UPI -> EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
-                    EDashboardItem.DYNAMIC_QR -> EnumDigiPosProcess.DYNAMIC_QR.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
+                    EDashboardItem.BHARAT_QR -> EnumDigiPosProcess.DYNAMIC_QR.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
                     else -> EnumDigiPosProcess.SMS_PAYDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
                 }
                 sendReceiveDataFromHost(f56)
@@ -375,10 +375,11 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
                                 }
                             }
 
-                            EDashboardItem.DYNAMIC_QR -> {
+                            EDashboardItem.BHARAT_QR -> {
                                 lifecycleScope.launch(Dispatchers.IO) {
                                     val respDataList = responsef57.split("^")
 //reqest type, parterid,status,statusmsg,statuscode,QrBlob
+                                    if (respDataList[2] == EDigiPosPaymentStatus.Approved.desciption){
                                     val tabledata = DigiPosDataTable()
                                     tabledata.requestType = respDataList[0].toInt()
                                     tabledata.partnerTxnId = respDataList[1]
@@ -409,6 +410,10 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
                                             putParcelable("tabledata", tabledata)
                                         }
                                     })
+                                }
+                                else{
+                                    VFService.showToast(respDataList[3])
+                                }
                                 }
                             }
                             else -> {

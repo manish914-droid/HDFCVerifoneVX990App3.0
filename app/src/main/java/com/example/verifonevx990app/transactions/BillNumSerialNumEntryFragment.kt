@@ -170,7 +170,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            saveBrandEMIDataToDB("", "", brandEMIDataModal, transType)
+            saveBrandEMIDataToDB( binding?.billNumEt?.text.toString().trim(),  binding?.billNumEt?.text.toString().trim(), brandEMIDataModal, transType)
             withContext(Dispatchers.Main) {
                 (activity as MainActivity).onFragmentRequest(
                     uiAction,

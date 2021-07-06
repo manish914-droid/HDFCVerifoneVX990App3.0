@@ -104,37 +104,42 @@ class NewInputAmountFragment : Fragment() {
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
 
         Log.e("Selected Brand EMI Data", Gson().toJson(brandEMIDataModal))
-        Log.e("Brand ResevedField", brandEMIDataModal?.getBrandReservedValue()?:"NULL")
-        Log.e("Brand validationtype", brandEMIDataModal?.getValidationTypeName()?:"NULL")
-        Log.e("Brand isRequired", brandEMIDataModal?.getIsRequired()?:"NULL")
+        Log.e("Brand ResevedField", brandEMIDataModal?.getBrandReservedValue() ?: "NULL")
+        Log.e("Brand validationtype", brandEMIDataModal?.getValidationTypeName() ?: "NULL")
+        Log.e("Brand isRequired", brandEMIDataModal?.getIsRequired() ?: "NULL")
+        Log.e("TPT RESERVE-->", tpt?.reservedValues ?: "RESERVE FIELD NULL")
 
-        isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
-            if (isMobileNeeded) {
-                binding?.mobNoCrdView?.visibility = View.VISIBLE
-            } else {
-                binding?.mobNoCrdView?.visibility = View.GONE
-            }
-        }
-        isMobileNumberEntryAndBillEntryRequiredOnBankEmi { isMobileNeeded, isBillNoNeeded ->
-            if (isMobileNeeded) {
-                binding?.mobNoCrdView?.visibility = View.VISIBLE
-            } else {
-                binding?.mobNoCrdView?.visibility = View.GONE
-            }
-            isBillNumRequiredForBankEmi = isBillNoNeeded
-        }
-
-        isMobileNumBillEntryAndSerialNumRequiredOnBrandEmi {
-            if (it != null) {
-                //  brandEmiValidationModel = it
-                if (it.isMobileNumReq || it.isMobileNumMandatory) {
+        if (transactionType == EDashboardItem.SALE) {
+            isMobileNumberEntryOnsale { isMobileNeeded, isMobilenumberMandatory ->
+                if (isMobileNeeded) {
                     binding?.mobNoCrdView?.visibility = View.VISIBLE
                 } else {
                     binding?.mobNoCrdView?.visibility = View.GONE
                 }
             }
         }
-
+        if (transactionType == EDashboardItem.BANK_EMI) {
+            isMobileNumberEntryAndBillEntryRequiredOnBankEmi { isMobileNeeded, isBillNoNeeded ->
+                if (isMobileNeeded) {
+                    binding?.mobNoCrdView?.visibility = View.VISIBLE
+                } else {
+                    binding?.mobNoCrdView?.visibility = View.GONE
+                }
+                isBillNumRequiredForBankEmi = isBillNoNeeded
+            }
+        }
+        if (transactionType == EDashboardItem.BRAND_EMI) {
+            isMobileNumBillEntryAndSerialNumRequiredOnBrandEmi {
+                if (it != null) {
+                    //  brandEmiValidationModel = it
+                    if (it.isMobileNumReq || it.isMobileNumMandatory) {
+                        binding?.mobNoCrdView?.visibility = View.VISIBLE
+                    } else {
+                        binding?.mobNoCrdView?.visibility = View.GONE
+                    }
+                }
+            }
+        }
         val hdfcTPTData = getHDFCTptData()
         //todo change below
         val hdfcCDTData = HdfcCdt.selectAllHDFCCDTData() ///getHDFCDtData()
@@ -174,7 +179,7 @@ class NewInputAmountFragment : Fragment() {
                 }
             }
 
-            EDashboardItem.DYNAMIC_QR -> {
+            EDashboardItem.BHARAT_QR -> {
                 binding?.mobNoCrdView?.visibility = View.VISIBLE
                 binding?.descrCrdView?.visibility = View.VISIBLE
             }
@@ -294,7 +299,7 @@ class NewInputAmountFragment : Fragment() {
             (binding?.saleAmount?.text.toString()).toDouble()
         } catch (ex: Exception) {
             ex.printStackTrace()
-            VFService.showToast("Sale Amount should be greater than Rs 1")
+            VFService.showToast("Please enter amount")
             return
         }
         val cashAmtStr = (cashAmount?.text.toString())
@@ -511,7 +516,7 @@ class NewInputAmountFragment : Fragment() {
                             ?.toDouble() ?: 0.0
                     ) {
                         GlobalScope.launch(Dispatchers.IO) {
-                            saveBrandEMIDataToDB("", "",brandEMIDataModal,transactionType)
+                            saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
                             withContext(Dispatchers.Main) {
                                 if (tpt?.reservedValues?.substring(10, 11) == "1") {
                                     when {
@@ -574,7 +579,7 @@ class NewInputAmountFragment : Fragment() {
                         }
                     }
                 }
-                EDashboardItem.DYNAMIC_QR -> {
+                EDashboardItem.BHARAT_QR -> {
                     if (binding?.mobNumbr?.text.toString().length !in 10..13) {
                         context?.getString(R.string.enter_valid_mobile_number)
                             ?.let { VFService.showToast(it) }
@@ -691,7 +696,7 @@ class NewInputAmountFragment : Fragment() {
             }
 
             else -> {
-logger("InputAmount","INVALID OPERATION","e")
+                logger("InputAmount", "INVALID OPERATION", "e")
             }
         }
     }
@@ -723,7 +728,7 @@ logger("InputAmount","INVALID OPERATION","e")
             })
         } else {
             GlobalScope.launch(Dispatchers.IO) {
-                saveBrandEMIDataToDB("", "",brandEMIDataModal,transactionType)
+                saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
                 withContext(Dispatchers.Main) {
                     iFrReq?.onFragmentRequest(
                         uiAction,
@@ -754,7 +759,12 @@ logger("InputAmount","INVALID OPERATION","e")
                                 showIMEISerialDialog(activity, brandEMIDataModal) { cbData ->
                                     if (cbData.third) {
                                         GlobalScope.launch(Dispatchers.IO) {
-                                            saveBrandEMIDataToDB(cbData.first, cbData.second,brandEMIDataModal,transactionType)
+                                            saveBrandEMIDataToDB(
+                                                cbData.first,
+                                                cbData.second,
+                                                brandEMIDataModal,
+                                                transactionType
+                                            )
                                             withContext(Dispatchers.Main) {
                                                 iFrReq?.onFragmentRequest(
                                                     UiAction.BRAND_EMI,
@@ -779,7 +789,7 @@ logger("InputAmount","INVALID OPERATION","e")
                                 }
                             } else {
                                 GlobalScope.launch(Dispatchers.IO) {
-                                    saveBrandEMIDataToDB("", "",brandEMIDataModal,transactionType)
+                                    saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
                                     withContext(Dispatchers.Main) {
                                         iFrReq?.onFragmentRequest(
                                             UiAction.BRAND_EMI,
@@ -807,7 +817,12 @@ logger("InputAmount","INVALID OPERATION","e")
                         showIMEISerialDialog(activity, brandEMIDataModal) { cbData ->
                             if (cbData.third) {
                                 GlobalScope.launch(Dispatchers.IO) {
-                                    saveBrandEMIDataToDB(cbData.first, cbData.second,brandEMIDataModal,transactionType)
+                                    saveBrandEMIDataToDB(
+                                        cbData.first,
+                                        cbData.second,
+                                        brandEMIDataModal,
+                                        transactionType
+                                    )
                                     withContext(Dispatchers.Main) {
                                         iFrReq?.onFragmentRequest(
                                             UiAction.BRAND_EMI,
@@ -829,7 +844,7 @@ logger("InputAmount","INVALID OPERATION","e")
                         }
                     } else {
                         GlobalScope.launch(Dispatchers.IO) {
-                            saveBrandEMIDataToDB("", "",brandEMIDataModal,transactionType)
+                            saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
                             withContext(Dispatchers.Main) {
                                 iFrReq?.onFragmentRequest(
                                     UiAction.BRAND_EMI,
@@ -868,8 +883,6 @@ logger("InputAmount","INVALID OPERATION","e")
 
     }
     //endregion
-
-
 
 
     private fun validateTIP(
@@ -1028,12 +1041,8 @@ logger("InputAmount","INVALID OPERATION","e")
                 }
                 brandEntryValidationModel?.isSerialNumReq = isShowSerialDialog()
                 brandEntryValidationModel?.isImeiNumReq = isShowIMEIDialog()
-                if(brandEMIDataModal?.getIsRequired()=="1"||brandEMIDataModal?.getIsRequired()=="2"){
-                    brandEntryValidationModel?.isIemeiOrSerialNumReq=true
-                }
-                else{
-                    brandEntryValidationModel?.isIemeiOrSerialNumReq=false
-                }
+                brandEntryValidationModel?.isIemeiOrSerialNumReq =
+                    brandEMIDataModal?.getIsRequired() == "1" || brandEMIDataModal?.getIsRequired() == "2"
 
                 cb(brandEntryValidationModel)
             }
@@ -1258,11 +1267,16 @@ class BrandEmiBillSerialMobileValidationModel : Serializable {
     var isSerialNumMandatory = false
     var isImeiNumMandatory = false
 
-    var isIemeiOrSerialNumReq=false
+    var isIemeiOrSerialNumReq = false
 }
 
 //region======================Saving BrandEMI Data To DB:-
- fun saveBrandEMIDataToDB(imeiNumber: String?, serialNumber: String?,brandEMIDataModal:BrandEMIDataModal?,transactionType:EDashboardItem) {
+fun saveBrandEMIDataToDB(
+    imeiNumber: String?,
+    serialNumber: String?,
+    brandEMIDataModal: BrandEMIDataModal?,
+    transactionType: EDashboardItem
+) {
     val modal = BrandEMIDataTable()
     runBlocking(Dispatchers.IO) { BrandEMIDataTable.clear() }
 

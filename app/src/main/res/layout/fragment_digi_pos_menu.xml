@@ -55,7 +55,7 @@
             android:drawableStart="@drawable/ic_qr_code"
             android:gravity="center"
             android:padding="@dimen/pad_20"
-            android:text="@string/dynamic_qr"
+            android:text="@string/bharat_qr"
             android:textAllCaps="true"
 
             android:textColor="@color/white"

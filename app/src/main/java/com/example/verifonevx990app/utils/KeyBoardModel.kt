@@ -4,9 +4,7 @@ package com.example.verifonevx990app.utils
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
-import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.vxUtils.VFService
-
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -69,8 +67,10 @@ class KeyboardModel {
                                     s = if (isInutSimpleDigit) {
                                         "${et.text}$str"
                                     } else {
-                                        val previousStr = "${et.text}"
-
+                                        var previousStr = "${et.text}"
+                                        if (previousStr.isBlank()) {
+                                            previousStr = "${et.text}$str"
+                                        }
                                         getFormattedAmountWithAmtCheck(s, previousStr)
                                     }
                                     setEt(et, s)//et.setText(s)
@@ -131,7 +131,7 @@ fun getFormattedAmountWithAmtCheck(str: String, previousInput: String): String =
     val flPrevious = previousInput.replace(".", "").toLong()
     if (flEntered > 9999999999) {
         "%.2f".format(flPrevious.toDouble() / 100)
-       // previousInput
+        // previousInput
     } else {
         "%.2f".format(flEntered.toDouble() / 100)
     }
