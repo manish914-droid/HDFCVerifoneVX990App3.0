@@ -3411,6 +3411,7 @@ setLogoAndHeader()
 
             var hostIssuerId = if (printerReceiptData.hostIssuerID.isNotBlank()) {
                 printerReceiptData.hostIssuerID
+                printerReceiptData.issuerId
             } else {
                 printerReceiptData.issuerId
             }
@@ -3585,27 +3586,30 @@ setLogoAndHeader()
                 alignLeftRightText(
                     textInLineFormatBundle,
                     "CARD ISSUER",
-                    "TEST ISSUER"
+                    "TEST ISSUER",
+                    ":       "
                 )
             } else {
                 alignLeftRightText(
                     textInLineFormatBundle,
                     "CARD ISSUER",
-                    printerReceiptData.issuerName
+                    printerReceiptData.issuerName,
+                    ":       "
                 )
             }
 
 
             if (!TextUtils.isEmpty(printerReceiptData.roi)) {
                 val rateOfInterest = "%.2f".format(printerReceiptData.roi.toFloat() / 100) + " %"
-                alignLeftRightText(textInLineFormatBundle, "ROI(p.a)", rateOfInterest)
+                alignLeftRightText(textInLineFormatBundle, "ROI(p.a)", rateOfInterest,":       ")
             }
 
 
             alignLeftRightText(
                 textInLineFormatBundle,
                 "TENURE",
-                "${printerReceiptData.tenure} Months"
+                "${printerReceiptData.tenure} Months",
+                ":      "
             )
 
             //region===============Processing Fee Changes And Showing On ChargeSlip:-
@@ -3759,10 +3763,11 @@ setLogoAndHeader()
                 val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
                 val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
                 val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
+                val f_totalAmt="%.2f".format(totalAmt)
                 alignLeftRightText(
                     textInLineFormatBundle,
                     totalAmountHeadingText,
-                    totalAmt.toString(),
+                    f_totalAmt.toString(),
                     ":  $currencySymbol "
                 )
             }

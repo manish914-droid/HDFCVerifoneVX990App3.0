@@ -5,9 +5,12 @@ import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.text.Editable
 import android.text.InputFilter
 import android.text.InputFilter.LengthFilter
 import android.text.InputType
+import android.text.TextWatcher
+import android.view.Gravity
 import android.view.ViewGroup
 import android.view.Window
 import android.view.WindowManager
@@ -17,6 +20,7 @@ import android.widget.TextView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.init.getEditorActionListener
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
+import com.example.verifonevx990app.utils.EditTextUtil
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -66,7 +70,7 @@ private fun getPasswordDialog(
                         hint = _hint
                     }
                     val okBtn = findViewById<Button>(R.id.invoice_ok_btn)
-
+                    EditTextUtil.editTextCursor(enterPasswordET)
                     enterPasswordET.setOnEditorActionListener(getEditorActionListener { okBtn.performClick() })
                     findViewById<TextView>(R.id.title_tv).text = title
                     findViewById<Button>(R.id.invoice_cancel_btn).setOnClickListener {

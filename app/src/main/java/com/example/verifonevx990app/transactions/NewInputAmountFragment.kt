@@ -1004,6 +1004,8 @@ class NewInputAmountFragment : Fragment() {
                     cb(true, false)
                 else if (tpt?.reservedValues?.substring(2, 3) == "1")
                     cb(false, true)
+                else
+                    cb(false,false)
             }
             else -> {
                 cb(false, false)
