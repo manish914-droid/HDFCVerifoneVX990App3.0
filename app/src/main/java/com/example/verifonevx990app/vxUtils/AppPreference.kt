@@ -245,6 +245,16 @@ object AppPreference {
         }
     }
 
+    fun clearDoubleTapTimeout(){
+        logger(TAG, "========clearDoubleTapTimeout=========", "e")
+        VerifoneApp.appContext.getSharedPreferences(PREFERENCE_NAME, Context.MODE_PRIVATE).apply {
+            val ed = edit()
+            ed?.putString(doubletaptimeout, "")
+            ed?.apply()
+            Log.e("Double Tap Timeout", "CLEAR Double Tap Timeout")
+        }
+    }
+
 
     @JvmStatic
     suspend fun getAutoSettle(): Boolean = VerifoneApp.appContext.getSharedPreferences(

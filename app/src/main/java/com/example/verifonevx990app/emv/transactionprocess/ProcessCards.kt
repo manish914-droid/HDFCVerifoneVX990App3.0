@@ -741,8 +741,6 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                             }
                         }
                         else {
-                            //   VFService.showToast("Going in issuer update handler")
-                            AppPreference.clearDoubleTap()
                             iemv?.setIssuerUpdateScript()
                             println("Issuer update script called")
                             transactionCallback(cardProcessedDataModal)
@@ -809,8 +807,8 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                     cardProcessedDataModal.setReadCardType(DetectCardType.CARD_ERROR_TYPE)
 
                       if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletap))) {
-                            println("Going in rupay double tap timeout")
-                          AppPreference.saveString(AppPreference.doubletaptimeout, AppPreference.doubletaptimeout)
+                                println("Going in rupay double tap timeout")
+                           AppPreference.saveString(AppPreference.doubletaptimeout, AppPreference.doubletaptimeout)
                           (activity as VFTransactionActivity).processDoubleTapTimeout()
                         }
                     transactionCallback(cardProcessedDataModal)
@@ -825,15 +823,10 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                         when (error) {
                             EFallbackCode.Swipe_fallback.fallBackCode -> {
                                 iemv?.stopCheckCard()
-                                (activity as VFTransactionActivity).handleEMVFallbackFromError(
-                                    activity.getString(
+                                (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(
                                         R.string.fallback
-                                    ), activity.getString(R.string.please_use_another_option), false
-                                ) {
-                                    detectCard(
-
-                                        error
-                                    )
+                                    ), activity.getString(R.string.please_use_another_option), false) {
+                                    detectCard(error)
                                 }
                             }
                             CardErrorCode.CTLS_ERROR_CODE.errorCode -> {

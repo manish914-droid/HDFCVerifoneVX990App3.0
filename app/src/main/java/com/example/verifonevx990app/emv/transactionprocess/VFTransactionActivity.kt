@@ -380,10 +380,18 @@ class VFTransactionActivity : BaseActivity() {
     }
 
     fun  processDoubleTapTimeout(){
-        // VFService.showToast("Going in carderror cond")
-        startActivity(Intent(this@VFTransactionActivity, MainActivity::class.java).apply {
-            flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-        })
+        if(!TextUtils.isEmpty(AppPreference.getString(AppPreference.doubletap))){
+            GlobalScope.launch(Dispatchers.Main) {
+                checkForPrintReversalReceipt(this@VFTransactionActivity,"") {}
+                syncOfflineSaleAndAskAutoSettlement(autoSettlementCheck.substring(0, 1) )
+             }
+        }
+        else {
+            startActivity(Intent(this, MainActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            })
+            logger("TimeOut", "e")
+        }
     }
 
     fun processDoubleTap(cardProcessedData: CardProcessedDataModal) {
