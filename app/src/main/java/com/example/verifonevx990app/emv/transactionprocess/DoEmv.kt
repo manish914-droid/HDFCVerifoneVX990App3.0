@@ -87,6 +87,10 @@ class DoEmv(private var issuerUpdateHandler: IssuerUpdateHandler?,var activity: 
                     ConstIPBOC.startEMV.intent.KEY_transProcessCode_byte, 0x00.toByte()
                 ) //------> For Sale Transaction
             }
+
+            //Here I am setting IssuerUpdateHandler
+            iemv?.setIssuerUpdateHandler(issuerUpdateHandler)
+
             // Starting EMV Process Here---------->>
             iemv?.startEMV(ConstIPBOC.startEMV.processType.full_process, emvIntent, emvHandler())
 
