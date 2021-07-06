@@ -20,6 +20,7 @@ import com.example.verifonevx990app.crosssell.TotalCrossellRep
 import com.example.verifonevx990app.digiPOS.EDigiPosPaymentStatus
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
+import com.example.verifonevx990app.main.DetectCardType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.preAuth.PendingPreauthData
@@ -46,6 +47,7 @@ import kotlin.jvm.Throws
 
 const val HDFC_LOGO = "hdfc_print_logo.bmp"
 const val AMEX_LOGO = "amex_print.bmp"
+const val DIGI_SMART_HUB_LOGO = "smart_hub.bmp"
 private const val disclaimerEmiOpen = "~emi~"
 private const val disclaimerEmiClose = "~!emi~"
 private const val disclaimerIssuerOpen = "~iss~"
@@ -156,7 +158,12 @@ class PrintUtil(context: Context?) {
 
 
     // Printing Sale Charge slip....
-    fun startPrinting(printerReceiptData: BatchFileDataTable, copyType: EPrintCopyType, context: Context?, printerCallback: (Boolean, Int) -> Unit) {
+    fun startPrinting(
+        printerReceiptData: BatchFileDataTable,
+        copyType: EPrintCopyType,
+        context: Context?,
+        printerCallback: (Boolean, Int) -> Unit
+    ) {
         //  printer=null
         try {
             //  logger("PS_START", (printer?.status).toString(), "e")
@@ -222,29 +229,54 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            printLogo("hdfc_print_logo.bmp")
+         //   printLogo("hdfc_print_logo.bmp")
+            setLogoAndHeader()
 
-            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
-            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-            //  logger("PS_H1", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantName) // header1
-
-
-            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
-            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-
-            //   logger("PS_H2", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantAddress1) //header2
-
-
-            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
-            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-            //   logger("PS_H3", (printer?.status).toString(), "e")
-            printer?.addText(format, printerReceiptData.merchantAddress2) //header3
+            /* format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
+             //  logger("PS_H1", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantName) // header1
 
 
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+             format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
+
+             //   logger("PS_H2", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantAddress1) //header2
+
+
+             format.putInt(
+                 PrinterConfig.addText.FontSize.BundleName,
+                 PrinterConfig.addText.FontSize.NORMAL_24_24
+             )
+             format.putInt(
+                 PrinterConfig.addText.Alignment.BundleName,
+                 PrinterConfig.addText.Alignment.CENTER
+             )
+             //   logger("PS_H3", (printer?.status).toString(), "e")
+             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
+ */
+
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             val formatterdate = SimpleDateFormat("yyMMdd", Locale.getDefault())
@@ -261,433 +293,91 @@ class PrintUtil(context: Context?) {
                 formattedTime = timeFormat2.format(t1)
                 Log.e("Time", formattedTime)
                 //   logger("PS_DateTime", (printer?.status).toString(), "e")
-                printer?.addTextInLine(fmtAddTextInLine, "DATE : ${printerReceiptData.transactionDate}", "", "TIME : $formattedTime", 0)
+                printer?.addTextInLine(
+                    fmtAddTextInLine,
+                    "DATE : ${printerReceiptData.transactionDate}",
+                    "",
+                    "TIME : $formattedTime",
+                    0
+                )
             } catch (e: ParseException) {
                 e.printStackTrace()
             }
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //  logger("PS_MID_TID", (printer?.status).toString(), "e")
-            printer?.addTextInLine(fmtAddTextInLine, "MID : ${hostMID}", "", "TID : ${hostTID}", PrinterConfig.addTextInLine.mode.Devide_flexible)
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "MID : ${hostMID}",
+                "",
+                "TID : ${hostTID}",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
 
 
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
 
             logger("PS_Bno_ROC", (printer?.status).toString(), "e")
-            printer?.addTextInLine(fmtAddTextInLine, "BATCH NO : ${addPad(hostBatchNumber, "0", 6)}", "", "ROC : ${invoiceWithPadding(hostRoc)}",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible)
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "BATCH NO : ${addPad(hostBatchNumber, "0", 6)}",
+                "",
+                "ROC : ${invoiceWithPadding(hostRoc)}",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
 
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             logger("PS_invoice", (printer?.status).toString(), "e")
-            printer?.addTextInLine(fmtAddTextInLine, "INVOICE : ${invoiceWithPadding(hostInvoice)}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
+            printer?.addTextInLine(
+                fmtAddTextInLine,
+                "INVOICE : ${invoiceWithPadding(hostInvoice)}",
+                "",
+                "",
+                PrinterConfig.addTextInLine.mode.Devide_flexible
+            )
 
             printTransType(format, printerReceiptData.transactionType)
 
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
+            fmtAddTextInLine.putInt(
+                PrinterConfig.addTextInLine.FontSize.BundleName,
+                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+            )
+            fmtAddTextInLine.putString(
+                PrinterConfig.addTextInLine.GlobalFont.BundleName,
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+            )
 
             logger("PS_ct_exp", (printer?.status).toString(), "e")
 
-            printer?.addTextInLine(fmtAddTextInLine, "CARD TYPE : ${hostCardType}", "", "EXP : XX/XX", PrinterConfig.addTextInLine.mode.Devide_flexible)
-
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            logger("PS_ct_no", (printer?.status).toString(), "e")
-
-            printer?.addTextInLine(fmtAddTextInLine, "CARD NO : ${printerReceiptData.cardNumber}", "", printerReceiptData.operationType, PrinterConfig.addTextInLine.mode.Devide_flexible)
-
-            if (printerReceiptData.merchantMobileNumber.isNotBlank())
-                printer?.addTextInLine(fmtAddTextInLine, "MOBILE NO : ${printerReceiptData.merchantMobileNumber}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            logger("PS_auth_rrn", (printer?.status).toString(), "e")
-
-            if (printerReceiptData.authCode == "null") {
-                printer?.addTextInLine(fmtAddTextInLine, "RRN : ${printerReceiptData.referenceNumber}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-            } else {
-                printer?.addTextInLine(fmtAddTextInLine, "AUTH CODE : ${printerReceiptData.authCode.trim()}", "", "RRN : ${printerReceiptData.referenceNumber}", PrinterConfig.addTextInLine.mode.Devide_flexible)
-            }
-
-            if (printerReceiptData.operationType != "Mag") {
-                fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-                fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
-                //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-
-                //Condition nee to be here before inflating below tvr and tsi?
-
-                if (printerReceiptData.operationType == "Chip") {
-                    logger("PS_tvr_tsi", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(fmtAddTextInLine, "TVR : ${printerReceiptData.tvr}", "", "TSI : ${printerReceiptData.tsi}", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-
-                //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                if (!printerReceiptData.aid.isBlank() && !printerReceiptData.tc.isBlank()) {
-                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
-                    logger("PS_aid", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(fmtAddTextInLine, "AID : ${printerReceiptData.aid}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-
-                    fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-                    fmtAddTextInLine.putString(PrinterConfig.addTextInLine.GlobalFont.BundleName, PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-                    logger("PS_Tc", (printer?.status).toString(), "e")
-                    printer?.addTextInLine(fmtAddTextInLine, "TC : ${printerReceiptData.tc}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-
-            }
-
-            // region =======Setting amount on Sale charge slip ==============
-            printSeperator(format)
-            fmtAddTextInLine.putInt(PrinterConfig.addTextInLine.FontSize.BundleName, PrinterConfig.addTextInLine.FontSize.NORMAL_24_24)
-            fmtAddTextInLine.putString(
-                    PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                    PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            /* val baseAmount = "%.2f".format(printerReceiptData.transactionalAmmount.toDouble() / 100)
-             // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-
-             //printing base amount for  void Case of tip adjust
-             if (printerReceiptData.transactionType == TransactionType.VOID.type && printerReceiptData.tipAmmount != "") {
-                 //  // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                 printer?.addTextInLine(fmtAddTextInLine, "BASE AMOUNT  :    Rs  ${"%.2f".format((printerReceiptData.totalAmmount.toFloat()) / 100)}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-             } else {
-                 //   // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                 printer?.addTextInLine(fmtAddTextInLine, "BASE AMOUNT  :    Rs  ${printerReceiptData.baseAmmount}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-             }
-             if (isTipAllowed && printerReceiptData.transactionType == TransactionType.TIP_SALE.type) {
-                 val tipamt = "%.2f".format((printerReceiptData.tipAmmount.toFloat()) / 100)
-                 // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                 printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT   :    Rs  $tipamt", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-
-             } else if (isTipAllowed && printerReceiptData.transactionType == TransactionType.SALE.type) {
-                 // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                 printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT   :    ...............................", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-             }
-
-             var tipAndTransAmount = 0.0
-
-             if (printerReceiptData.transactionType == TransactionType.TIP_SALE.type) {
-                 tipAndTransAmount = printerReceiptData.totalAmmount.toDouble() / 100
-             } else {
-                 tipAndTransAmount += baseAmount.toDouble()
-             }
-             // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-             printer?.addTextInLine(fmtAddTextInLine, "TOTAL AMOUNT :    Rs  ${"%.2f".format(tipAndTransAmount)}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-             //    centerText(format, "TOTAL AMOUNT :    Rs  $baseAmount")*/
-            var saleAmount = "%.2f".format(printerReceiptData.baseAmmount.toDouble())
-
-
-            val totalAmount = "%.2f".format(printerReceiptData.totalAmmount.toDouble())
-            val cashAmount = if (printerReceiptData.cashBackAmount.isEmpty()) { "%.2f".format("0".toDouble()) } else { "%.2f".format(printerReceiptData.cashBackAmount.toDouble()) }
-            val tipAmount =
-                    if (printerReceiptData.tipAmmount.isEmpty()) { "%.2f".format("0".toDouble()) } else { "%.2f".format(printerReceiptData.tipAmmount.toDouble()) }
-
-            if (isTipAllowed && tipAmount.toDouble() > 0) {
-                if (printerReceiptData.transactionType != TransactionType.TIP_SALE.type) {
-                    saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
-                }
-            }
-
-            when (printerReceiptData.transactionType) {
-                TransactionType.SALE_WITH_CASH.type -> {
-                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    printer?.addTextInLine(fmtAddTextInLine, "CASH AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(cashAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    printer?.addTextInLine(fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-                TransactionType.SALE.type -> {
-                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    if (isTipAllowed && printerReceiptData.tipAmmount.toDouble() <= 0) {
-                        printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT   :    ...............................", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    } else if (isTipAllowed && tipAmount.toDouble() > 0) {
-                        printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    }
-                    printer?.addTextInLine(
-                            fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-                TransactionType.TIP_SALE.type -> {
-                    saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
-
-                    printer?.addTextInLine(fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${
-                    MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    printer?.addTextInLine(fmtAddTextInLine, "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    printer?.addTextInLine(fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-                else -> {
-                    printer?.addTextInLine(fmtAddTextInLine, "BASE AMOUNT  :    Rs  ${
-                    MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                    printer?.addTextInLine(
-                            fmtAddTextInLine, "TOTAL AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
-                }
-            }
-
-            printSeperator(format)
-
-            // endregion=======Setting amount on Sale charge slip ==============
-
-
-            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
-            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-            if (printerReceiptData.isPinverified && !(printerReceiptData.nocvm))  {
-                //  printer?.addText(format, pinVerifyMsg)
-                centerText(format, pinVerifyMsg)
-                centerText(format, signatureMsg)
-            } else if(!(printerReceiptData.nocvm)){
-                // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                alignLeftRightText(format, pinVerifyMsg, "", "")
-                alignLeftRightText(format, signatureMsg, "", "")
-                // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
-                // printer?.addText(format, pinVerifyMsg)
-                //  printer?.addText(format, signatureMsg)
-            }
-
-            centerText(format, printerReceiptData.cardHolderName)
-            //  printer?.addText(format, printerReceiptData.cardHolderName)
-
-
-            val ipt = IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
-            val chunks: List<String>? = ipt?.volletIssuerDisclammer?.let { chunkTnC(it) }
-            if (chunks != null) {
-                for (st in chunks) {
-                    logger("TNC", st, "e")
-                    //  printer?.addText(format,st)
-                    alignLeftRightText(format, st, "", "")
-                }
-            }
-
-            //   printer?.addText(format, ipt?.volletIssuerDisclammer)
-            printer?.addText(format, copyType.pName)
-            printer?.addText(format, footerText[0])
-            printer?.addText(format, footerText[1])
-
-            printLogo("BH.bmp")
-
-            format.putInt(PrinterConfig.addText.FontSize.BundleName, PrinterConfig.addText.FontSize.NORMAL_24_24)
-            format.putInt(PrinterConfig.addText.Alignment.BundleName, PrinterConfig.addText.Alignment.CENTER)
-            printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
-            printer?.addText(format, "---------X-----------X----------")
-            printer?.feedLine(4)
-
-            // start print here
-            printer?.startPrint(IPrintListener(this, context, copyType, printerReceiptData, printerCallback))
-        } catch (ex: DeadObjectException) {
-            ex.printStackTrace()
-            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
-        } catch (e: RemoteException) {
-            e.printStackTrace()
-            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
-        } catch (ex: Exception) {
-            ex.printStackTrace()
-            failureImpl(context as Activity, "Printer Service stopped.", "Please take chargeslip from the Report menu.")
-        } finally {
-            //   VFService.connectToVFService(VerifoneApp.appContext)
-        }
-    }
-
-
-    fun testStartPrinting(
-        printerReceiptData: BatchFileDataTable,
-        copyType: EPrintCopyType,
-        context: Context?,
-        printerCallback: (Boolean, Int) -> Unit
-    ) {
-        logger("PRINT STATUS", (printer?.status).toString())
-        val signatureMsg = if (printerReceiptData.isPinverified) {
-            "SIGNATURE NOT REQUIRED"
-        } else {
-            "SIGN ..............................................."
-        }
-        val pinVerifyMsg = if (printerReceiptData.isPinverified) {
-            "PIN VERIFIED OK"
-        } else {
-            ""
-        }
-        try {
-            // bundle format for addText
-            val format = Bundle()
-
-            // bundle formate for AddTextInLine
-            val fmtAddTextInLine = Bundle()
-
-            printLogo("hdfc_print_logo.bmp")
-
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            printer?.addText(format, printerReceiptData.merchantName) // header1
-
-
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            printer?.addText(format, printerReceiptData.merchantAddress1) //header2
-
-
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            printer?.addText(format, printerReceiptData.merchantAddress2) //header3
-
-
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            val formatterdate = SimpleDateFormat("yyMMdd", Locale.getDefault())
-            val formattertime = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            //val date = formatterdate.parse(printerReceiptData.transactionDate)
-            //    val time = formattertime.parse(printerReceiptData.time)
-
-            val time = printerReceiptData.time
-            val timeFormat = SimpleDateFormat("HHmmss", Locale.getDefault())
-            val timeFormat2 = SimpleDateFormat("HH:mm:ss", Locale.getDefault())
-            var formattedTime = ""
-            try {
-                val t1 = timeFormat.parse(time)
-                formattedTime = timeFormat2.format(t1)
-                Log.e("Time", formattedTime)
-            } catch (e: ParseException) {
-                e.printStackTrace()
-            }
-
-
-            printer?.addTextInLine(
-                fmtAddTextInLine, "DATE : ${printerReceiptData.transactionDate}",
-                "", "TIME : $formattedTime", 0
-            )
-
-
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "MID : ${printerReceiptData.mid}",
-                "",
-                "TID : ${printerReceiptData.tid}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
-
-
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-
-
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "BATCH NO : ${addPad(printerReceiptData.batchNumber, "0", 6)}",
-                "",
-                "ROC : ${invoiceWithPadding(printerReceiptData.roc)}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
-
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "INVOICE : ${invoiceWithPadding(printerReceiptData.invoiceNumber)}",
-                "",
-                "",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
-
-
-            format.putInt(
-                PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_DH_24_48_IN_BOLD
-            )
-            format.putInt(
-                PrinterConfig.addText.Alignment.BundleName,
-                PrinterConfig.addText.Alignment.CENTER
-            )
-            printer?.addText(format, printerReceiptData.getTransactionType())
-
-            /* format.putInt(
-                 PrinterConfig.addText.FontSize.BundleName,
-                 PrinterConfig.addText.FontSize.NORMAL_24_24
-             )
-             format.putInt(
-                 PrinterConfig.addText.Alignment.BundleName,
-                 PrinterConfig.addText.Alignment.CENTER
-             )
-             printer?.addText(
-                 format,
-                 printerReceiptData.cardType
-             ) // Need to Discuss this field value to be print?
- */
-
-            fmtAddTextInLine.putInt(
-                PrinterConfig.addTextInLine.FontSize.BundleName,
-                PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
-            )
-            fmtAddTextInLine.putString(
-                PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "CARD TYPE : ${printerReceiptData.cardType}",
+                "CARD TYPE : ${hostCardType}",
                 "",
                 "EXP : XX/XX",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
@@ -703,18 +393,24 @@ class PrintUtil(context: Context?) {
             )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
+            logger("PS_ct_no", (printer?.status).toString(), "e")
+
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "CARD NO : ${
-                    getMaskedPan(
-                        TerminalParameterTable.selectFromSchemeTable(),
-                        printerReceiptData.cardNumber
-                    )
-                }",
+                "CARD NO : ${printerReceiptData.cardNumber}",
                 "",
                 printerReceiptData.operationType,
                 PrinterConfig.addTextInLine.mode.Devide_flexible
             )
+
+            if (printerReceiptData.merchantMobileNumber.isNotBlank())
+                printer?.addTextInLine(
+                    fmtAddTextInLine,
+                    "MOBILE NO : ${printerReceiptData.merchantMobileNumber}",
+                    "",
+                    "",
+                    PrinterConfig.addTextInLine.mode.Devide_flexible
+                )
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -726,13 +422,25 @@ class PrintUtil(context: Context?) {
             )
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
             //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "AUTH CODE : ${printerReceiptData.authCode.trim()}",
-                "",
-                "RRN : ${printerReceiptData.referenceNumber}",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
+            logger("PS_auth_rrn", (printer?.status).toString(), "e")
+
+            if (printerReceiptData.authCode == "null") {
+                printer?.addTextInLine(
+                    fmtAddTextInLine,
+                    "RRN : ${printerReceiptData.referenceNumber}",
+                    "",
+                    "",
+                    PrinterConfig.addTextInLine.mode.Devide_flexible
+                )
+            } else {
+                printer?.addTextInLine(
+                    fmtAddTextInLine,
+                    "AUTH CODE : ${printerReceiptData.authCode.trim()}",
+                    "",
+                    "RRN : ${printerReceiptData.referenceNumber}",
+                    PrinterConfig.addTextInLine.mode.Devide_flexible
+                )
+            }
 
             if (printerReceiptData.operationType != "Mag") {
                 fmtAddTextInLine.putInt(
@@ -749,6 +457,7 @@ class PrintUtil(context: Context?) {
                 //Condition nee to be here before inflating below tvr and tsi?
 
                 if (printerReceiptData.operationType == "Chip") {
+                    logger("PS_tvr_tsi", (printer?.status).toString(), "e")
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "TVR : ${printerReceiptData.tvr}",
@@ -769,7 +478,7 @@ class PrintUtil(context: Context?) {
                         PrinterConfig.addTextInLine.GlobalFont.BundleName,
                         PrinterFonts.path + PrinterFonts.FONT_AGENCYR
                     )
-
+                    logger("PS_aid", (printer?.status).toString(), "e")
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "AID : ${printerReceiptData.aid}",
@@ -788,6 +497,7 @@ class PrintUtil(context: Context?) {
                     )
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
                     //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
+                    logger("PS_Tc", (printer?.status).toString(), "e")
                     printer?.addTextInLine(
                         fmtAddTextInLine,
                         "TC : ${printerReceiptData.tc}",
@@ -799,9 +509,8 @@ class PrintUtil(context: Context?) {
 
             }
 
-
+            // region =======Setting amount on Sale charge slip ==============
             printSeperator(format)
-
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
                 PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
@@ -810,66 +519,160 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addTextInLine.GlobalFont.BundleName,
                 PrinterFonts.path + PrinterFonts.FONT_AGENCYR
             )
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            //   printer.addTextInLine( fmtAddTextInLine, "L & R", "", "Divide Equally", 0);
-            val baseAmount = "%.2f".format(printerReceiptData.transactionalAmmount.toFloat() / 100)
+            var saleAmount = "%.2f".format(printerReceiptData.baseAmmount.toDouble())
 
 
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "BASE AMOUNT  :    Rs  ${printerReceiptData.baseAmmount}",
-                "",
-                "",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
-
-            //   val ttamount=(baseAmount.toFloat())+((printerReceiptData.tipAmmount.toFloat())/100)
-            if (isTipAllowed && printerReceiptData.transactionType == TransactionType.TIP_SALE.type) {
-                val tipamt = "%.2f".format((printerReceiptData.tipAmmount.toFloat()) / 100)
-                printer?.addTextInLine(
-                    fmtAddTextInLine,
-                    "TIP AMOUNT  :    Rs  $tipamt",
-                    "",
-                    "",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible
-                )
-
-            } else if (isTipAllowed && printerReceiptData.transactionType == TransactionType.SALE.type) {
-                printer?.addTextInLine(
-                    fmtAddTextInLine,
-                    "TIP AMOUNT  :       ...............................",
-                    "",
-                    "",
-                    PrinterConfig.addTextInLine.mode.Devide_flexible
-                )
-            }
-            //  val totalAmount = "%.2f".format(printerReceiptData.totalAmmount.toFloat() / 100)
-            var tipAndTransAmount = 0f
-            /*   if(!printerReceiptData.tipAmmount.isBlank()){
-                  val tipamt=(printerReceiptData.tipAmmount.toFloat())/100
-                  tipAndTransAmount= tipamt+baseAmount.toFloat()
-              }else{
-                  tipAndTransAmount=baseAmount.toFloat()
-
-              }*/
-
-            if (printerReceiptData.transactionType == TransactionType.TIP_SALE.type) {
-                tipAndTransAmount = (printerReceiptData.totalAmmount.toFloat()) / 100
-
+            val totalAmount = "%.2f".format(printerReceiptData.totalAmmount.toDouble())
+            val cashAmount = if (printerReceiptData.cashBackAmount.isEmpty()) {
+                "%.2f".format("0".toDouble())
             } else {
-                tipAndTransAmount = baseAmount.toFloat()
+                "%.2f".format(printerReceiptData.cashBackAmount.toDouble())
+            }
+            val tipAmount =
+                if (printerReceiptData.tipAmmount.isEmpty()) {
+                    "%.2f".format("0".toDouble())
+                } else {
+                    "%.2f".format(printerReceiptData.tipAmmount.toDouble())
+                }
+
+            if (isTipAllowed && tipAmount.toDouble() > 0) {
+                if (printerReceiptData.transactionType != TransactionType.TIP_SALE.type) {
+                    saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
+                }
             }
 
+            when (printerReceiptData.transactionType) {
+                TransactionType.SALE_WITH_CASH.type -> {
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "SALE AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                saleAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "CASH AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                cashAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "TOTAL AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                totalAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                }
+                TransactionType.SALE.type -> {
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "SALE AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                saleAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    if (isTipAllowed && printerReceiptData.tipAmmount.toDouble() <= 0) {
+                        printer?.addTextInLine(
+                            fmtAddTextInLine,
+                            "TIP AMOUNT   :    ...............................",
+                            "",
+                            "",
+                            PrinterConfig.addTextInLine.mode.Devide_flexible
+                        )
+                    } else if (isTipAllowed && tipAmount.toDouble() > 0) {
+                        printer?.addTextInLine(
+                            fmtAddTextInLine,
+                            "TIP AMOUNT  :    Rs  ${
+                                MoneyUtil.fen2yuan(
+                                    tipAmount.toDouble().toLong()
+                                )
+                            }",
+                            "",
+                            "",
+                            PrinterConfig.addTextInLine.mode.Devide_flexible
+                        )
+                    }
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "TOTAL AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                totalAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                }
+                TransactionType.TIP_SALE.type -> {
+                    saleAmount = "%.2f".format((saleAmount.toDouble() - tipAmount.toDouble()))
 
-            printer?.addTextInLine(
-                fmtAddTextInLine,
-                "TOTAL AMOUNT :       Rs  ${"%.2f".format(tipAndTransAmount)}",
-                "",
-                "",
-                PrinterConfig.addTextInLine.mode.Devide_flexible
-            )
-            //    centerText(format, "TOTAL AMOUNT :    Rs  $baseAmount")
+                    printer?.addTextInLine(
+                        fmtAddTextInLine, "SALE AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(saleAmount.toDouble().toLong())
+                        }", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "TIP AMOUNT  :    Rs  ${MoneyUtil.fen2yuan(tipAmount.toDouble().toLong())}",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "TOTAL AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                totalAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                }
+                else -> {
+                    printer?.addTextInLine(
+                        fmtAddTextInLine, "BASE AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(totalAmount.toDouble().toLong())
+                        }", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                    printer?.addTextInLine(
+                        fmtAddTextInLine,
+                        "TOTAL AMOUNT  :    Rs  ${
+                            MoneyUtil.fen2yuan(
+                                totalAmount.toDouble().toLong()
+                            )
+                        }",
+                        "",
+                        "",
+                        PrinterConfig.addTextInLine.mode.Devide_flexible
+                    )
+                }
+            }
+
             printSeperator(format)
+
+            // endregion=======Setting amount on Sale charge slip ==============
+
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
@@ -879,10 +682,24 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addText.Alignment.BundleName,
                 PrinterConfig.addText.Alignment.CENTER
             )
-            printer?.addText(format, pinVerifyMsg)
-            printer?.addText(format, signatureMsg)
-            printer?.addText(format, printerReceiptData.cardHolderName)
-            printer?.addText(format, copyType.pName)
+            if ((printerReceiptData.operationType == DetectCardType.CONTACT_LESS_CARD_TYPE.cardTypeName || printerReceiptData.operationType == DetectCardType.CONTACT_LESS_CARD_WITH_MAG_TYPE.cardTypeName) && (printerReceiptData.nocvm) && !printerReceiptData.isPinverified) {
+                centerText(format, printerReceiptData.ctlsCaption)
+            } else if (printerReceiptData.isPinverified && !(printerReceiptData.nocvm)) {
+                //  printer?.addText(format, pinVerifyMsg)
+                centerText(format, pinVerifyMsg)
+                centerText(format, signatureMsg)
+            } else if (!(printerReceiptData.nocvm)) {
+                // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
+                alignLeftRightText(format, pinVerifyMsg, "", "")
+                alignLeftRightText(format, signatureMsg, "", "")
+                // -------(Remove in New VFservice 3.0)  printer?.feedLine(2)
+                // printer?.addText(format, pinVerifyMsg)
+                //  printer?.addText(format, signatureMsg)
+            }
+
+            centerText(format, printerReceiptData.cardHolderName)
+            //  printer?.addText(format, printerReceiptData.cardHolderName)
+
 
             val ipt =
                 IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
@@ -890,11 +707,13 @@ class PrintUtil(context: Context?) {
             if (chunks != null) {
                 for (st in chunks) {
                     logger("TNC", st, "e")
-                    printer?.addText(format, st)
+                    //  printer?.addText(format,st)
+                    alignLeftRightText(format, st, "", "")
                 }
             }
 
             //   printer?.addText(format, ipt?.volletIssuerDisclammer)
+            printer?.addText(format, copyType.pName)
             printer?.addText(format, footerText[0])
             printer?.addText(format, footerText[1])
 
@@ -909,7 +728,6 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addText.Alignment.CENTER
             )
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
-
             printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
 
@@ -949,7 +767,11 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReport(batch: List<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit) {
+    fun printDetailReport(
+        batch: List<BatchFileDataTable>,
+        context: Context?,
+        printCB: (Boolean) -> Unit
+    ) {
         try {
             val pp = printer?.status
             Log.e("Printer Status", pp.toString())
@@ -1132,7 +954,8 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit) {
+    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit
+    ) {
         try {
             val pp = printer?.status
             Log.e("Printer Status", pp.toString())
@@ -1155,8 +978,21 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "DETAIL REPORT", true)
 
                 batch.sortBy { it.hostTID }
-                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].hostMID}", "TID : ${batch[0].hostTID}")
-                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[0].batchNumber}", "")
+
+                if (batch.isEmpty()) {
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "MID : ${tpt?.merchantId}",
+                        "TID : ${tpt?.terminalId}"
+                    )
+                } else {
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "MID : ${batch[0].hostMID}",
+                        "TID : ${batch[0].hostTID}"
+                    )
+                }
+                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
                 printSeperator(textFormatBundle)
 
                 if (batch.isEmpty()) {
@@ -1183,19 +1019,24 @@ class PrintUtil(context: Context?) {
                         tidlist.add(item.hostTID)
                     }
                     for (item in tidlist.distinct()) {
-                        println("Frequency of item"+item + ": " + Collections.frequency(tidlist, item))
-                        frequencylist.add(""+Collections.frequency(tidlist, item))
+                        println(
+                            "Frequency of item" + item + ": " + Collections.frequency(
+                                tidlist,
+                                item
+                            )
+                        )
+                        frequencylist.add("" + Collections.frequency(tidlist, item))
                     }
 
-                    iteration = tidlist.distinct().size-1
+                    iteration = tidlist.distinct().size - 1
 
                     for (b in batch) {
                         //  || b.transactionType == TransactionType.VOID_PREAUTH.type
                         if (b.transactionType == TransactionType.PRE_AUTH.type) continue  // Do not add pre auth transactions
 
                         count++
-                        if(updatedindex <= frequencylist.size-1)
-                            frequency = frequencylist.get(updatedindex).toInt()+lastfrequecny
+                        if (updatedindex <= frequencylist.size - 1)
+                            frequency = frequencylist.get(updatedindex).toInt() + lastfrequecny
 
 
                         if (totalMap.containsKey(b.transactionType)) {
@@ -1205,25 +1046,34 @@ class PrintUtil(context: Context?) {
                                 x.total += b.transactionalAmmount.toLong()
                             }
                         } else {
-                            totalMap[b.transactionType] = SummeryTotalType(1, b.transactionalAmmount.toLong())
+                            totalMap[b.transactionType] =
+                                SummeryTotalType(1, b.transactionalAmmount.toLong())
                         }
                         val transAmount = "%.2f".format(b.transactionalAmmount.toDouble() / 100)
-                        alignLeftRightText(textInLineFormatBundle, transactionType2Name(b.transactionType), transAmount
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            transactionType2Name(b.transactionType),
+                            transAmount
                         )
                         if (b.transactionType == TransactionType.VOID_PREAUTH.type) {
-                            alignLeftRightText(textInLineFormatBundle, b.cardType, panMasking(b.encryptPan, "0000********0000"))
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                b.cardType,
+                                panMasking(b.encryptPan, "0000********0000")
+                            )
                         } else {
-                            alignLeftRightText(textInLineFormatBundle, b.cardType,
-                                    panMasking(b.cardNumber, "0000********0000")
+                            alignLeftRightText(
+                                textInLineFormatBundle, b.cardType,
+                                panMasking(b.cardNumber, "0000********0000")
                             )
                         }
                         if (b.transactionType == TransactionType.OFFLINE_SALE.type || b.transactionType == TransactionType.VOID_OFFLINE_SALE.type) {
                             try {
                                 val dat = "${b.printDate} - ${b.time}"
                                 alignLeftRightText(
-                                        textInLineFormatBundle,
-                                        dat,
-                                        invoiceWithPadding(b.invoiceNumber)
+                                    textInLineFormatBundle,
+                                    dat,
+                                    invoiceWithPadding(b.invoiceNumber)
                                 )
                             } catch (ex: Exception) {
                                 ex.printStackTrace()
@@ -1240,9 +1090,9 @@ class PrintUtil(context: Context?) {
                                 Log.e("Time", formattedTime)
                                 val dat = "${b.transactionDate} - $formattedTime"
                                 alignLeftRightText(
-                                        textInLineFormatBundle,
-                                        dat,
-                                        invoiceWithPadding(b.invoiceNumber)
+                                    textInLineFormatBundle,
+                                    dat,
+                                    invoiceWithPadding(b.invoiceNumber)
                                 )
                                 //alignLeftRightText(textInLineFormatBundle," "," ")
                             } catch (ex: Exception) {
@@ -1251,15 +1101,14 @@ class PrintUtil(context: Context?) {
                         }
 
                         printSeperator(textFormatBundle)
-                        if(frequency == count ){
+                        if (frequency == count) {
                             lastfrequecny = frequency
                             hasfrequency = true
                             updatedindex++
-                        }
-                        else {
+                        } else {
                             hasfrequency = false
                         }
-                        if(hasfrequency) {
+                        if (hasfrequency) {
                             printSeperator(textFormatBundle)
                             centerText(textFormatBundle, "***TOTAL TRANSACTIONS***")
                             val sortedMap = totalMap.toSortedMap(compareByDescending { it })
@@ -1280,19 +1129,19 @@ class PrintUtil(context: Context?) {
                              )*/
 
                                 alignLeftRightText(
-                                        textInLineFormatBundle,
-                                        transactionType2Name(k).toUpperCase(Locale.ROOT),
-                                        "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}",
-                                        "  =  " + m.count
+                                    textInLineFormatBundle,
+                                    transactionType2Name(k).toUpperCase(Locale.ROOT),
+                                    "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}",
+                                    "  =  " + m.count
 
                                 )
 
                             }
 
-                            if(iteration > 0) {
+                            if (iteration > 0) {
                                 printSeperator(textFormatBundle)
-                                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[frequency+1].hostMID}", "TID : ${batch[frequency+1].hostTID}")
-                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[frequency+1].batchNumber}", "")
+                                alignLeftRightText(textInLineFormatBundle, "MID : ${batch[frequency].hostMID}", "TID : ${batch[frequency].hostTID}")
+                                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${batch[frequency].batchNumber}", "")
                                 printSeperator(textFormatBundle)
                                 iteration--
                             }
@@ -1303,7 +1152,8 @@ class PrintUtil(context: Context?) {
 
                 }
                 // region === Below code is execute when digi txns are available on POS
-                val digiPosDataList = DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption) as ArrayList<DigiPosDataTable>
+                val digiPosDataList =
+                    DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption) as ArrayList<DigiPosDataTable>
 
                 if (digiPosDataList.isNotEmpty()) {
                     printSeperator(textFormatBundle)
@@ -1317,10 +1167,22 @@ class PrintUtil(context: Context?) {
                     alignLeftRightText(textInLineFormatBundle, "mTxnId", "pgwTxnId")
                     printSeperator(textFormatBundle)
                     //Txn Detail
-                    for(digiPosData in digiPosDataList){
-                        alignLeftRightText(textInLineFormatBundle, digiPosData.paymentMode, digiPosData.amount)
-                        alignLeftRightText(textInLineFormatBundle, digiPosData.partnerTxnId, digiPosData.txnDate+"  "+digiPosData.txnTime)
-                        alignLeftRightText(textInLineFormatBundle, digiPosData.mTxnId, digiPosData.pgwTxnId)
+                    for (digiPosData in digiPosDataList) {
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            digiPosData.paymentMode,
+                            digiPosData.amount
+                        )
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            digiPosData.partnerTxnId,
+                            digiPosData.txnDate + "  " + digiPosData.txnTime
+                        )
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            digiPosData.mTxnId,
+                            digiPosData.pgwTxnId
+                        )
                         printer?.addText(textFormatBundle, "--------------------------------")
                     }
                     //   DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
@@ -1348,23 +1210,23 @@ class PrintUtil(context: Context?) {
         } catch (ex: DeadObjectException) {
             ex.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
             )
         } catch (e: RemoteException) {
             e.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take chargeslip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take chargeslip from the Report menu."
             )
         } finally {
             //   VFService.connectToVFService(VerifoneApp.appContext)
@@ -1372,7 +1234,7 @@ class PrintUtil(context: Context?) {
     }
 
 
-    fun printReversal(context: Context?,field60Data: String,callback: (String) -> Unit) {
+    fun printReversal(context: Context?, field60Data: String, callback: (String) -> Unit) {
         val isoW = AppPreference.getReversal()
 
         if (isoW != null) {
@@ -1400,8 +1262,10 @@ class PrintUtil(context: Context?) {
                     hostInvoice = f60DataList[7]
                     hostCardType = f60DataList[8]
 
-                    println("Server MID and TID and batchumber and roc and cardType is"+
-                            "MID -> "+hostMID+"TID -> "+hostTID+"Batchnumber -> "+hostBatchNumber+"ROC ->"+hostRoc+"CardType -> "+hostCardType)
+                    println(
+                        "Server MID and TID and batchumber and roc and cardType is" +
+                                "MID -> " + hostMID + "TID -> " + hostTID + "Batchnumber -> " + hostBatchNumber + "ROC ->" + hostRoc + "CardType -> " + hostCardType
+                    )
 
                     //  batchFileData
                 } catch (ex: Exception) {
@@ -1426,11 +1290,31 @@ class PrintUtil(context: Context?) {
                 val batch = batchdata.split("|")[0]
                 val cardType = isoW.additionalData["cardType"] ?: ""
 
-                var hostMID = if (hostMID?.isNotBlank() == true) { hostMID } else { mid }
-                var hostTID = if (hostTID?.isNotBlank() == true) { hostTID } else { tid }
-                var hostBatchNumber = if (hostBatchNumber?.isNotBlank() == true) { hostBatchNumber } else { batch }
-                var hostRoc = if (hostRoc?.isNotBlank() == true) { hostRoc } else { roc }
-                var hostCardType = if (hostCardType?.isNotBlank() == true) { hostCardType } else { cardType }
+                var hostMID = if (hostMID?.isNotBlank() == true) {
+                    hostMID
+                } else {
+                    mid
+                }
+                var hostTID = if (hostTID?.isNotBlank() == true) {
+                    hostTID
+                } else {
+                    tid
+                }
+                var hostBatchNumber = if (hostBatchNumber?.isNotBlank() == true) {
+                    hostBatchNumber
+                } else {
+                    batch
+                }
+                var hostRoc = if (hostRoc?.isNotBlank() == true) {
+                    hostRoc
+                } else {
+                    roc
+                }
+                var hostCardType = if (hostCardType?.isNotBlank() == true) {
+                    hostCardType
+                } else {
+                    cardType
+                }
 
 
                 setLogoAndHeader()
@@ -1450,15 +1334,18 @@ class PrintUtil(context: Context?) {
 
                 val date = "${d.substring(0, 2)}/${d.substring(2, 4)}/${d.substring(4, d.length)}"
                 val time =
-                        "${of12.substring(0, 2)}:${of12.substring(2, 4)}:${
+                    "${of12.substring(0, 2)}:${of12.substring(2, 4)}:${
                         of12.substring(
-                                4,
-                                of12.length
+                            4,
+                            of12.length
                         )
-                        }"
+                    }"
                 alignLeftRightText(textInLineFormatBundle, "DATE : ${date}", "TIME : ${time}")
                 alignLeftRightText(textInLineFormatBundle, "MID : ${hostMID}", "TID : ${hostTID}")
-                alignLeftRightText(textInLineFormatBundle, "BATCH NO  : ${hostBatchNumber}", "ROC : ${invoiceWithPadding(hostRoc)}"
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "BATCH NO  : ${hostBatchNumber}",
+                    "ROC : ${invoiceWithPadding(hostRoc)}"
                 )
 
                 centerText(textFormatBundle, "TRANSACTION FAILED")
@@ -1466,7 +1353,11 @@ class PrintUtil(context: Context?) {
 
                 val card = isoW.additionalData["pan"] ?: ""
                 if (card.isNotEmpty())
-                    alignLeftRightText(textInLineFormatBundle, "CARD NO : $card", hostCardType)//chip,swipe,cls
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "CARD NO : $card",
+                        hostCardType
+                    )//chip,swipe,cls
 
 
                 val tvr = isoW.additionalData["tvr"] ?: ""
@@ -1490,8 +1381,8 @@ class PrintUtil(context: Context?) {
                 printSeperator(textFormatBundle)
 
                 centerText(
-                        textFormatBundle,
-                        "Please contact your card issuer for reversal of debit if any."
+                    textFormatBundle,
+                    "Please contact your card issuer for reversal of debit if any."
                 )
                 centerText(textFormatBundle, "POWERED BY")
                 printLogo("BH.bmp")
@@ -1518,25 +1409,25 @@ class PrintUtil(context: Context?) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (e: RemoteException) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 e.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (ex: Exception) {
                 context?.getString(R.string.something_went_wrong)?.let { callback(it) }
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             }
         } else {
@@ -1557,9 +1448,9 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            printLogo("smart_hub.bmp")
-
-            format.putInt(
+         //   printLogo("smart_hub.bmp")
+setLogoAndHeader(DIGI_SMART_HUB_LOGO)
+           /* format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
                 PrinterConfig.addText.FontSize.NORMAL_24_24
             )
@@ -1572,7 +1463,7 @@ class PrintUtil(context: Context?) {
             //   logger("PS_H2", (printer?.status).toString(), "e")
             printer?.addText(format, terminalData?.receiptHeaderTwo) //header2
             //   logger("PS_H3", (printer?.status).toString(), "e")
-            printer?.addText(format, terminalData?.receiptHeaderThree) //header3
+            printer?.addText(format, terminalData?.receiptHeaderThree) //header3*/
             printSeperator(format)
 
             fmtAddTextInLine.putInt(
@@ -1631,7 +1522,7 @@ class PrintUtil(context: Context?) {
 
             val str = "Txn Status : ${digiPosData.txnStatus}"
             centerText(fmtAddTextInLine, str, true)
-            centerText(fmtAddTextInLine, "Txn Amount :  Rs. ${digiPosData.amount}" , true)
+            centerText(fmtAddTextInLine, "Txn Amount :  Rs. ${digiPosData.amount}", true)
 
             printSeperator(format)
 
@@ -1702,10 +1593,11 @@ class PrintUtil(context: Context?) {
 
     private fun setHeaderWithLogo(
         format: Bundle,
-        img: String,
+        img: String?,
         headers: ArrayList<String>,
         context: Context? = null
     ) {
+        if(img!=null)
         printLogo(img)
         centerText(format, headers[0])
         centerText(format, headers[1])
@@ -1775,7 +1667,13 @@ class PrintUtil(context: Context?) {
     }
 
 
-    fun printSettlementReport(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
+    fun printSettlementReport(
+        context: Context?,
+        batch: MutableList<BatchFileDataTable>,
+        isSettlementSuccess: Boolean = false,
+        isLastSummary: Boolean = false,
+        callBack: (Boolean) -> Unit
+    ) {
         //  val format = Bundle()
         //   val fmtAddTextInLine = Bundle()
 
@@ -1784,11 +1682,11 @@ class PrintUtil(context: Context?) {
             try {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
-                val tpt = TerminalParameterTable.selectFromSchemeTable()
-                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
-                tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
-                tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
-
+               val tpt = TerminalParameterTable.selectFromSchemeTable()
+                /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                  tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
+                  tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }*/
+setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -1910,13 +1808,23 @@ class PrintUtil(context: Context?) {
                             m.count += 1
                             m.total += transAmt
                         } else {
-                            val sm = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.cardType)
+                            val sm = SummeryModel(
+                                transactionType2Name(it.transactionType),
+                                1,
+                                transAmt,
+                                it.cardType
+                            )
                             ma[it.transactionType] = sm
                         }
                     } else {
                         val hm = HashMap<Int, SummeryModel>().apply {
                             this[it.transactionType] =
-                                SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.cardType)
+                                SummeryModel(
+                                    transactionType2Name(it.transactionType),
+                                    1,
+                                    transAmt,
+                                    it.cardType
+                                )
                         }
                         map[it.cardType] = hm
                     }
@@ -2033,7 +1941,13 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printSettlementReportupdate(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
+    fun printSettlementReportupdate(
+        context: Context?,
+        batch: MutableList<BatchFileDataTable>,
+        isSettlementSuccess: Boolean = false,
+        isLastSummary: Boolean = false,
+        callBack: (Boolean) -> Unit
+    ) {
         //  val format = Bundle()
         //   val fmtAddTextInLine = Bundle()
 
@@ -2043,10 +1957,11 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-                tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+             /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
                 tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
                 tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
-
+*/
+                setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -2063,9 +1978,9 @@ class PrintUtil(context: Context?) {
                 }
 
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "TID : ${tpt?.terminalId}",
-                        "MID : ${tpt?.merchantId}"
+                    textInLineFormatBundle,
+                    "TID : ${tpt?.terminalId}",
+                    "MID : ${tpt?.merchantId}"
                 )
                 alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
                 printSeperator(textFormatBundle)
@@ -2092,23 +2007,23 @@ class PrintUtil(context: Context?) {
             } catch (ex: DeadObjectException) {
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (e: RemoteException) {
                 e.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             }
         }
@@ -2162,48 +2077,62 @@ class PrintUtil(context: Context?) {
                     }
 
 
-                    if(tempTid == it.hostTID) {
-                        if (map.containsKey(it.hostTID+it.hostMID+it.batchNumber+it.cardType)) {
+                    if (tempTid == it.hostTID) {
+                        if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.cardType)) {
 
-                            val ma = map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] as MutableMap<Int, SummeryModel>
+                            val ma =
+                                map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] as MutableMap<Int, SummeryModel>
                             if (ma.containsKey(it.transactionType)) {
                                 val m = ma[it.transactionType] as SummeryModel
                                 m.count += 1
                                 m.total += transAmt
                             } else {
-                                val sm = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
+                                val sm = SummeryModel(
+                                    transactionType2Name(it.transactionType),
+                                    1,
+                                    transAmt,
+                                    it.hostTID
+                                )
                                 ma[it.transactionType] = sm
                             }
                         } else {
                             val hm = HashMap<Int, SummeryModel>().apply {
-                                this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
+                                this[it.transactionType] = SummeryModel(
+                                    transactionType2Name(it.transactionType),
+                                    1,
+                                    transAmt,
+                                    it.hostTID
+                                )
                             }
-                            map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] = hm
+                            map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
                             list.add(it.hostTID)
                         }
-                    }
-                    else{
+                    } else {
                         tempTid = it.hostTID
                         val hm = HashMap<Int, SummeryModel>().apply {
-                            this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt,it.hostTID)
+                            this[it.transactionType] = SummeryModel(
+                                transactionType2Name(it.transactionType),
+                                1,
+                                transAmt,
+                                it.hostTID
+                            )
                         }
-                        map[it.hostTID+it.hostMID+it.batchNumber+it.cardType] = hm
+                        map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
                         list.add(it.hostTID)
                     }
 
                 }
 
                 for (item in list.distinct()) {
-                    println("Frequency of item"+item + ": " + Collections.frequency(list, item))
-                    frequencylist.add(""+Collections.frequency(list, item))
+                    println("Frequency of item" + item + ": " + Collections.frequency(list, item))
+                    frequencylist.add("" + Collections.frequency(list, item))
                 }
-
 
 
                 val totalMap = mutableMapOf<Int, SummeryTotalType>()
 
 
-                var ietration =   list.distinct().size
+                var ietration = list.distinct().size
                 var curentIndex = 0
                 var frequency = 0
                 var count = 0
@@ -2214,26 +2143,39 @@ class PrintUtil(context: Context?) {
                 for ((key, _map) in map.onEachIndexed { index, entry -> curentIndex = index }) {
 
                     count++
-                    if(updatedindex <= frequencylist.size-1)
-                        frequency = frequencylist.get(updatedindex).toInt()+lastfrequecny
+                    if (updatedindex <= frequencylist.size - 1)
+                        frequency = frequencylist.get(updatedindex).toInt() + lastfrequecny
 
                     if (key.isNotBlank()) {
 
-                        var hostTid: String? = key.subSequence(0,8).toString()
-                        var hostMid: String? =  key.subSequence(8,23).toString()
-                        var hostBatchNumber : String? = key.subSequence(23,29).toString()
-                        var cardIssuer: String= key.subSequence(29,key.length).toString()
+                        var hostTid: String? = key.subSequence(0, 8).toString()
+                        var hostMid: String? = key.subSequence(8, 23).toString()
+                        var hostBatchNumber: String? = key.subSequence(23, 29).toString()
+                        var cardIssuer: String = key.subSequence(29, key.length).toString()
 
-                        if(ietration > 0){
+                        if (ietration > 0) {
                             printSeperator(textFormatBundle)
-                            alignLeftRightText(textInLineFormatBundle, "MID : ${hostMid}", "TID : ${hostTid}")
-                            alignLeftRightText(textInLineFormatBundle, "BATCH NO  : ${hostBatchNumber}", "")
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                "MID : ${hostMid}",
+                                "TID : ${hostTid}"
+                            )
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                "BATCH NO  : ${hostBatchNumber}",
+                                ""
+                            )
                             ietration--
                         }
 
 
                         printSeperator(textFormatBundle)
-                        alignLeftRightText(textInLineFormatBundle, "CARD ISSUER:  ", "", cardIssuer.toUpperCase(Locale.ROOT))
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "CARD ISSUER:  ",
+                            "",
+                            cardIssuer.toUpperCase(Locale.ROOT)
+                        )
                         // if(ind==0){
                         alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
                         //   ind=1
@@ -2244,7 +2186,12 @@ class PrintUtil(context: Context?) {
                         if (k == TransactionType.PRE_AUTH_COMPLETE.type || k == TransactionType.VOID_PREAUTH.type) {
                             // need Not to show
                         } else {
-                            alignLeftRightText(textInLineFormatBundle, m.type.toUpperCase(Locale.ROOT), amt, m.count.toString())
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                m.type.toUpperCase(Locale.ROOT),
+                                amt,
+                                m.count.toString()
+                            )
                         }
 
                         if (totalMap.containsKey(k)) {
@@ -2259,15 +2206,14 @@ class PrintUtil(context: Context?) {
 
                     }
 
-                    if(frequency == count ){
+                    if (frequency == count) {
                         lastfrequecny = frequency
                         hasfrequency = true
                         updatedindex++
-                    }
-                    else {
+                    } else {
                         hasfrequency = false
                     }
-                    if(hasfrequency) {
+                    if (hasfrequency) {
                         printSeperator(textFormatBundle)
                         centerText(textInLineFormatBundle, "*** TOTAL TRANSACTION ***")
                         val sortedMap = totalMap.toSortedMap(compareByDescending { it })
@@ -2279,7 +2225,12 @@ class PrintUtil(context: Context?) {
 
                              )*/
 
-                            alignLeftRightText(textInLineFormatBundle, transactionType2Name(k).toUpperCase(Locale.ROOT), "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}", "  =  " + m.count)
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                transactionType2Name(k).toUpperCase(Locale.ROOT),
+                                "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}",
+                                "  =  " + m.count
+                            )
 
                         }
 
@@ -2295,14 +2246,15 @@ class PrintUtil(context: Context?) {
                     centerText(textInLineFormatBundle, "SETTLEMENT SUCCESSFUL")
                 }
                 // Below code is used for Digi POS Settlement report
-                if(!isLastSummary){
-                    val digiPosDataList=DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
-                    val requiredTxnhm= hashMapOf<String,ArrayList<DigiPosDataTable>>()
-                    if(digiPosDataList.isNotEmpty()){
-                        for (i in digiPosDataList){
-                            val digiData= arrayListOf<DigiPosDataTable>()
-                            for(j in digiPosDataList){
-                                if(i.paymentMode == j.paymentMode){
+                if (!isLastSummary) {
+                    val digiPosDataList =
+                        DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
+                    val requiredTxnhm = hashMapOf<String, ArrayList<DigiPosDataTable>>()
+                    if (digiPosDataList.isNotEmpty()) {
+                        for (i in digiPosDataList) {
+                            val digiData = arrayListOf<DigiPosDataTable>()
+                            for (j in digiPosDataList) {
+                                if (i.paymentMode == j.paymentMode) {
                                     digiData.add(j)
                                     requiredTxnhm[i.paymentMode] = digiData
                                 }
@@ -2314,23 +2266,33 @@ class PrintUtil(context: Context?) {
                         tpt?.terminalId?.let { centerText(textFormatBundle, "TID : $it") }
                         printSeperator(textFormatBundle)
                         // Txn description
-                        alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL","COUNT")
+                        alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
                         printSeperator(textFormatBundle)
-                        var totalAmount=0.0f
-                        var totalCount=0
-                        for ((k,v) in requiredTxnhm){
-                            val txnType=k
-                            val txnCount=v.size
-                            var txnTotalAmount=0.0f
-                            for(value in v){
+                        var totalAmount = 0.0f
+                        var totalCount = 0
+                        for ((k, v) in requiredTxnhm) {
+                            val txnType = k
+                            val txnCount = v.size
+                            var txnTotalAmount = 0.0f
+                            for (value in v) {
                                 txnTotalAmount += (value.amount.toFloat())
                                 totalAmount += (value.amount.toFloat())
                                 totalCount++
                             }
-                            alignLeftRightText(textInLineFormatBundle, txnType, "Rs. ${"%.2f".format(txnTotalAmount)}",txnCount.toString())
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                txnType,
+                                "Rs. ${"%.2f".format(txnTotalAmount)}",
+                                txnCount.toString()
+                            )
                         }
                         printSeperator(textFormatBundle)
-                        alignLeftRightText(textInLineFormatBundle, "Total TXNs", "Rs. ${"%.2f".format(totalAmount)}",totalCount.toString())
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "Total TXNs",
+                            "Rs. ${"%.2f".format(totalAmount)}",
+                            totalCount.toString()
+                        )
                         printSeperator(textFormatBundle)
                     }
                 }
@@ -2345,7 +2307,7 @@ class PrintUtil(context: Context?) {
                 // start print here
                 printer?.startPrint(object : PrinterListener.Stub() {
                     override fun onFinish() {
-                        if(isSettlementSuccess){
+                        if (isSettlementSuccess) {
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
                         callBack(true)
@@ -2353,7 +2315,7 @@ class PrintUtil(context: Context?) {
                     }
 
                     override fun onError(error: Int) {
-                        if(isSettlementSuccess){
+                        if (isSettlementSuccess) {
                             DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                         }
                         callBack(false)
@@ -2365,28 +2327,27 @@ class PrintUtil(context: Context?) {
             } catch (ex: DeadObjectException) {
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (e: RemoteException) {
                 e.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             } catch (ex: Exception) {
                 ex.printStackTrace()
                 failureImpl(
-                        context as Activity,
-                        "Printer Service stopped.",
-                        "Please take chargeslip from the Report menu."
+                    context as Activity,
+                    "Printer Service stopped.",
+                    "Please take chargeslip from the Report menu."
                 )
             }
         }
     }
-
 
 
     fun test1printSettlementReport(
@@ -2552,7 +2513,7 @@ class PrintUtil(context: Context?) {
                                         transactionType2Name(it.transactionType),
                                         1,
                                         transAmt,
-                                            it.cardType
+                                        it.cardType
                                     )
                                 ma[it.transactionType] = sm
                             }
@@ -2563,7 +2524,7 @@ class PrintUtil(context: Context?) {
                                         transactionType2Name(it.transactionType),
                                         1,
                                         transAmt,
-                                            it.cardType
+                                        it.cardType
                                     )
                             }
                             map[it.cardType] = hm
@@ -2696,8 +2657,8 @@ class PrintUtil(context: Context?) {
 
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
-
-            printLogo("hdfc_print_logo.bmp")
+setLogoAndHeader()
+           /* printLogo("hdfc_print_logo.bmp")
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
@@ -2730,7 +2691,7 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addText.Alignment.CENTER
             )
             printer?.addText(format, printerReceiptData.merchantAddress2) //header3
-
+*/
 
             fmtAddTextInLine.putInt(
                 PrinterConfig.addTextInLine.FontSize.BundleName,
@@ -3542,12 +3503,13 @@ class PrintUtil(context: Context?) {
 
             //===========================
             alignLeftRightText(
-                    textInLineFormatBundle, "MID : ${hostMID}", "TID : ${hostTID}")
+                textInLineFormatBundle, "MID : ${hostMID}", "TID : ${hostTID}"
+            )
 
             alignLeftRightText(
-                    textInLineFormatBundle,
-                    "BATCH NO : ${hostBatchNumber}",
-                    "ROC : ${invoiceWithPadding(hostRoc)}"
+                textInLineFormatBundle,
+                "BATCH NO : ${hostBatchNumber}",
+                "ROC : ${invoiceWithPadding(hostRoc)}"
             )
             var mBillno = ""
             if (printerReceiptData.merchantBillNumber.isNotBlank() && printerReceiptData.merchantBillNumber != "0") {
@@ -3557,57 +3519,57 @@ class PrintUtil(context: Context?) {
 
             if (printerReceiptData.merchantBillNumber.isNotBlank() && printerReceiptData.merchantBillNumber != "0") {
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "INVOICE : ${invoiceWithPadding(hostInvoice)}",
-                        mBillno
+                    textInLineFormatBundle,
+                    "INVOICE : ${invoiceWithPadding(hostInvoice)}",
+                    mBillno
                 )
             } else {
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "INVOICE : ${invoiceWithPadding(hostInvoice)}", ""
+                    textInLineFormatBundle,
+                    "INVOICE : ${invoiceWithPadding(hostInvoice)}", ""
                 )
             }
             // printer?.addText(textFormatBundle, printerReceiptData.getTransactionType())
             centerText(textFormatBundle, printerReceiptData.getTransactionType(), true)
             alignLeftRightText(
-                    textInLineFormatBundle,
-                    "CARD NO : ${printerReceiptData.cardNumber}",
-                    printerReceiptData.operationType
+                textInLineFormatBundle,
+                "CARD NO : ${printerReceiptData.cardNumber}",
+                printerReceiptData.operationType
             )
 
             alignLeftRightText(
-                    textInLineFormatBundle,
-                    "CARD TYPE : ${hostCardType}",
-                    "EXP : XX/XX"
+                textInLineFormatBundle,
+                "CARD TYPE : ${hostCardType}",
+                "EXP : XX/XX"
             )
 
             if (printerReceiptData.merchantMobileNumber.isNotBlank())
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "MOBILE NO : ${printerReceiptData.merchantMobileNumber}",
-                        ""
+                    textInLineFormatBundle,
+                    "MOBILE NO : ${printerReceiptData.merchantMobileNumber}",
+                    ""
                 )
 
             alignLeftRightText(
-                    textInLineFormatBundle,
-                    "AUTH CODE : ${printerReceiptData.authCode.trim()}",
-                    "RRN : ${printerReceiptData.referenceNumber}"
+                textInLineFormatBundle,
+                "AUTH CODE : ${printerReceiptData.authCode.trim()}",
+                "RRN : ${printerReceiptData.referenceNumber}"
             )
 
             if (printerReceiptData.operationType != "Mag") {
                 //Condition nee to be here before inflating below tvr and tsi?
                 if (printerReceiptData.operationType == "Chip") {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "TVR : ${printerReceiptData.tvr}",
-                            "TSI : ${printerReceiptData.tsi}"
+                        textInLineFormatBundle,
+                        "TVR : ${printerReceiptData.tvr}",
+                        "TSI : ${printerReceiptData.tsi}"
                     )
                 }
                 if (printerReceiptData.aid.isNotBlank() && printerReceiptData.tc.isNotBlank()) {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "AID : ${printerReceiptData.aid}",
-                            ""
+                        textInLineFormatBundle,
+                        "AID : ${printerReceiptData.aid}",
+                        ""
                     )
                     alignLeftRightText(textInLineFormatBundle, "TC : ${printerReceiptData.tc}", "")
                 }
@@ -3617,27 +3579,27 @@ class PrintUtil(context: Context?) {
 
             if (!TextUtils.isEmpty(printerReceiptData.emiTransactionAmount)) {
                 val emiTxnAmount =
-                        "%.2f".format(printerReceiptData.emiTransactionAmount.toFloat() / 100)
+                    "%.2f".format(printerReceiptData.emiTransactionAmount.toFloat() / 100)
                 val authTxnAmount = "%.2f".format(printerReceiptData.transactionAmt.toFloat() / 100)
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "TXN AMOUNT",
-                        emiTxnAmount,
-                        ":  $currencySymbol "
+                    textInLineFormatBundle,
+                    "TXN AMOUNT",
+                    emiTxnAmount,
+                    ":  $currencySymbol "
                 )
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "AUTH AMOUNT",
-                            "1.00",
-                            ":  $currencySymbol "
+                        textInLineFormatBundle,
+                        "AUTH AMOUNT",
+                        "1.00",
+                        ":  $currencySymbol "
                     )
                 } else {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "AUTH AMOUNT",
-                            authTxnAmount,
-                            ":  $currencySymbol "
+                        textInLineFormatBundle,
+                        "AUTH AMOUNT",
+                        authTxnAmount,
+                        ":  $currencySymbol "
                     )
                 }
 
@@ -3645,15 +3607,15 @@ class PrintUtil(context: Context?) {
 
             if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "CARD ISSUER",
-                        "TEST ISSUER"
+                    textInLineFormatBundle,
+                    "CARD ISSUER",
+                    "TEST ISSUER"
                 )
             } else {
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "CARD ISSUER",
-                        printerReceiptData.issuerName
+                    textInLineFormatBundle,
+                    "CARD ISSUER",
+                    printerReceiptData.issuerName
                 )
             }
 
@@ -3665,15 +3627,55 @@ class PrintUtil(context: Context?) {
 
 
             alignLeftRightText(
-                    textInLineFormatBundle,
-                    "TENURE",
-                    "${printerReceiptData.tenure} Months"
+                textInLineFormatBundle,
+                "TENURE",
+                "${printerReceiptData.tenure} Months"
             )
+
+            //region===============Processing Fee Changes And Showing On ChargeSlip:-
+            if (!TextUtils.isEmpty(printerReceiptData.processingFee)) {
+                val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "PROC-FEE ",
+                    procFee,
+                    ":  $currencySymbol "
+                )
+            }
+            if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
+                val procFeeAmount =
+                    "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "PROC-FEE AMOUNT ",
+                    procFeeAmount,
+                    ":  $currencySymbol "
+                )
+            }
+            if (!TextUtils.isEmpty(printerReceiptData.totalProcessingFee)) {
+                val totalProcFeeAmount =
+                    "%.2f".format(printerReceiptData.totalProcessingFee.toFloat() / 100)
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "T-PROC-FEE AMOUNT ",
+                    totalProcFeeAmount,
+                    ":  $currencySymbol "
+                )
+            }
+            //endregion
 
             var cashBackPercentHeadingText = ""
             var cashBackAmountHeadingText = ""
 
-            when (hostIssuerId) {
+            when (printerReceiptData.issuerId) {
+                "51" -> {
+                    cashBackPercentHeadingText = "Mfg/Merch Payback"
+                    cashBackAmountHeadingText = "Mfg/Merch Payback Amt"
+                }
+                "64" -> {
+                    cashBackPercentHeadingText = "Mfg/Merch Payback"
+                    cashBackAmountHeadingText = "Mfg/Merch Payback Amt"
+                }
                 "52" -> {
                     cashBackPercentHeadingText = "Mfg/Merch Cashback"
                     cashBackAmountHeadingText = "Mfg/Merch Cashback Amt"
@@ -3690,30 +3692,29 @@ class PrintUtil(context: Context?) {
 
             //region=============CashBack CalculatedValue====================
             if (!TextUtils.isEmpty(printerReceiptData.cashBackCalculatedValue)) {
-                alignLeftRightText(
-                        textInLineFormatBundle,
-                        cashBackPercentHeadingText,
-                        printerReceiptData.cashBackCalculatedValue
-                )
+                alignLeftRightText(textInLineFormatBundle, cashBackPercentHeadingText, printerReceiptData.cashBackCalculatedValue)
             }
             //endregion
 
             //region=============Total Discount CalculatedValue====================
             if (!TextUtils.isEmpty(printerReceiptData.cashback) && printerReceiptData.cashback != "0") {
                 val cashBackAmount = "%.2f".format(printerReceiptData.cashback.toFloat() / 100)
-                alignLeftRightText(
-                        textInLineFormatBundle,
-                        cashBackAmountHeadingText,
-                        cashBackAmount,
-                        ":  $currencySymbol "
-                )
+                alignLeftRightText(textInLineFormatBundle, cashBackAmountHeadingText, cashBackAmount, ":  $currencySymbol ")
             }
             //endregion
 
             var discountPercentHeadingText = ""
             var discountAmountHeadingText = ""
 
-            when (hostIssuerId) {
+            when (printerReceiptData.issuerId) {
+                "51" -> {
+                    discountPercentHeadingText = "Mfg/Merch Payback"
+                    discountAmountHeadingText = "Mfg/Merch Payback Amt"
+                }
+                "64" -> {
+                    discountPercentHeadingText = "Mfg/Merch Payback"
+                    discountAmountHeadingText = "Mfg/Merch Payback Amt"
+                }
                 "52" -> {
                     discountPercentHeadingText = "Mfg/Merch Cashback"
                     discountAmountHeadingText = "Mfg/Merch Cashback Amt"
@@ -3732,55 +3733,46 @@ class PrintUtil(context: Context?) {
 
             if (!TextUtils.isEmpty(printerReceiptData.cashDiscountAmt) && printerReceiptData.cashDiscountAmt != "0") {
                 val discAmount = "%.2f".format(printerReceiptData.cashDiscountAmt.toFloat() / 100)
-                alignLeftRightText(
-                        textInLineFormatBundle,
-                        discountPercentHeadingText,
-                        discAmount,
-                        ":  $currencySymbol "
-                )
+                alignLeftRightText(textInLineFormatBundle, discountAmountHeadingText, discAmount, ":  $currencySymbol ")
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.discountCalculatedValue)) {
-                alignLeftRightText(
-                        textInLineFormatBundle,
-                        discountAmountHeadingText,
-                        printerReceiptData.discountCalculatedValue,
-                )
+                alignLeftRightText(textInLineFormatBundle, discountPercentHeadingText, printerReceiptData.discountCalculatedValue)
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.loanAmt)) {
                 val loanAmount = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "LOAN AMOUNT ",
-                        loanAmount,
-                        ":  $currencySymbol "
+                    textInLineFormatBundle,
+                    "LOAN AMOUNT ",
+                    loanAmount,
+                    ":  $currencySymbol "
                 )
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.monthlyEmi)) {
                 val monthlyEmi = "%.2f".format(printerReceiptData.monthlyEmi.toFloat() / 100)
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "MONTHLY EMI ",
-                        monthlyEmi,
-                        ":  $currencySymbol "
+                    textInLineFormatBundle,
+                    "MONTHLY EMI ",
+                    monthlyEmi,
+                    ":  $currencySymbol "
                 )
             }
 
             if (!TextUtils.isEmpty(printerReceiptData.totalInterest)) {
                 val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "TOTAL INTEREST ",
-                        totalInterest,
-                        ":  $currencySymbol "
+                    textInLineFormatBundle,
+                    "TOTAL INTEREST ",
+                    totalInterest,
+                    ":  $currencySymbol "
                 )
             }
 
             var totalAmountHeadingText = ""
 
-            totalAmountHeadingText = when (hostIssuerId) {
+            totalAmountHeadingText = when (printerReceiptData.issuerId) {
                 "52" -> "TOTAL AMOUNT(incl Int)"
                 "55" -> "TOTAL EFFECTIVE PAYOUT"
                 else -> "TOTAL Amt(With Int) "
@@ -3792,10 +3784,10 @@ class PrintUtil(context: Context?) {
                 val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
                 val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        totalAmountHeadingText,
-                        totalAmt.toString(),
-                        ":  $currencySymbol "
+                    textInLineFormatBundle,
+                    totalAmountHeadingText,
+                    totalAmt.toString(),
+                    ":  $currencySymbol "
                 )
             }
 
@@ -3805,13 +3797,13 @@ class PrintUtil(context: Context?) {
             //region=======================Issuer Header Terms and Condition=================
             val issuerHeaderTAndC: List<String>
             val testTnc =
-                    "#.I have been offered the choice of normal as well as EMI for this purchase and I have chosen EMI.#.I have fully understood and accept the terms of EMI scheme and applicable charges mentioned in this charge-slip.#.EMI conversion subject to Banks discretion and by take minimum * working days.#.GST extra on the interest amount.#.For the first EMI, the interest will be calculated from the loan booking date till the payment due date.#.Convenience fee of Rs --.-- + GST will be applicable on EMI transactions."
+                "#.I have been offered the choice of normal as well as EMI for this purchase and I have chosen EMI.#.I have fully understood and accept the terms of EMI scheme and applicable charges mentioned in this charge-slip.#.EMI conversion subject to Banks discretion and by take minimum * working days.#.GST extra on the interest amount.#.For the first EMI, the interest will be calculated from the loan booking date till the payment due date.#.Convenience fee of Rs --.-- + GST will be applicable on EMI transactions."
             issuerHeaderTAndC =
-                    if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
-                        testTnc.split(SplitterTypes.POUND.splitter)
-                    } else {
-                        issuerTAndCData.headerTAndC.split(SplitterTypes.POUND.splitter)
-                    }
+                if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
+                    testTnc.split(SplitterTypes.POUND.splitter)
+                } else {
+                    issuerTAndCData.headerTAndC.split(SplitterTypes.POUND.splitter)
+                }
 
             if (issuerHeaderTAndC.size > 1) {
                 for (i in 1 until issuerHeaderTAndC.size) {
@@ -3834,7 +3826,7 @@ class PrintUtil(context: Context?) {
 
             //region=====================SCHEME TAndC===============
             val emiCustomerConsent =
-                    printerReceiptData.bankEmiTAndC.split(SplitterTypes.POUND.splitter)
+                printerReceiptData.bankEmiTAndC.split(SplitterTypes.POUND.splitter)
             if (emiCustomerConsent.size > 1) {
                 for (i in 1 until emiCustomerConsent.size) {
                     val limit = 48
@@ -3843,16 +3835,16 @@ class PrintUtil(context: Context?) {
                     for (st in chunks) {
                         logger("TNC", st, "e")
                         alignLeftRightText(
-                                textInLineFormatBundle, st.replace(bankEMIFooterTAndCSeparator, "")
+                            textInLineFormatBundle, st.replace(bankEMIFooterTAndCSeparator, "")
                                 .replace(disclaimerIssuerClose, ""), ""
                         )
                     }
                 }
             } else {
                 alignLeftRightText(
-                        textInLineFormatBundle,
-                        "# ${printerReceiptData.bankEmiTAndC}",
-                        ""
+                    textInLineFormatBundle,
+                    "# ${printerReceiptData.bankEmiTAndC}",
+                    ""
                 )
             }
             //endregion
@@ -3863,46 +3855,46 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "-----**Product Details**-----", true)
                 if (brandEmiData != null) {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "Merch/Mfr Name",
-                            brandEmiData.brandName,
-                            ":"
+                        textInLineFormatBundle,
+                        "Merch/Mfr Name",
+                        brandEmiData.brandName,
+                        ":"
                     )
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "Product Category",
-                            brandEmiData.categoryName,
-                            ":"
+                        textInLineFormatBundle,
+                        "Product Category",
+                        brandEmiData.categoryName,
+                        ":"
                     )
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "Product",
-                            brandEmiData.productName,
-                            ":"
+                        textInLineFormatBundle,
+                        "Product",
+                        brandEmiData.productName,
+                        ":"
                     )
                     if (!TextUtils.isEmpty(brandEmiData.imeiNumber)) {
                         alignLeftRightText(
-                                textInLineFormatBundle,
-                                "Product IMEI No.",
-                                brandEmiData.imeiNumber,
-                                ":"
+                            textInLineFormatBundle,
+                            "Product IMEI No.",
+                            brandEmiData.imeiNumber,
+                            ":"
                         )
                     }
                     if (!TextUtils.isEmpty(printerReceiptData.merchantMobileNumber)) {
                         when (brandEmiData.brandReservedValues.substring(1, 2)) {
                             "1" -> alignLeftRightText(
-                                    textInLineFormatBundle,
-                                    "Mobile No.",
-                                    printerReceiptData.merchantMobileNumber,
-                                    ":"
+                                textInLineFormatBundle,
+                                "Mobile No.",
+                                printerReceiptData.merchantMobileNumber,
+                                ":"
                             )
 
                             "2" ->
                                 alignLeftRightText(
-                                        textInLineFormatBundle,
-                                        "Mobile No.",
-                                        printerReceiptData.merchantMobileNumber,
-                                        ":"
+                                    textInLineFormatBundle,
+                                    "Mobile No.",
+                                    printerReceiptData.merchantMobileNumber,
+                                    ":"
                                 )
                             else -> {
                             }
@@ -3940,15 +3932,15 @@ class PrintUtil(context: Context?) {
 
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
                     centerText(
-                            textFormatBundle,
-                            "BASE AMOUNT  :     $currencySymbol  1.00",
-                            true
+                        textFormatBundle,
+                        "BASE AMOUNT  :     $currencySymbol  1.00",
+                        true
                     )
                 } else {
                     centerText(
-                            textFormatBundle,
-                            "BASE AMOUNT  :     $currencySymbol  $baseAmount",
-                            true
+                        textFormatBundle,
+                        "BASE AMOUNT  :     $currencySymbol  $baseAmount",
+                        true
                     )
                 }
             }
@@ -3962,7 +3954,7 @@ class PrintUtil(context: Context?) {
             }
 
             val ipt =
-                    IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
+                IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
             val chunks: List<String>? = ipt?.volletIssuerDisclammer?.let { chunkTnC(it) }
             if (chunks != null) {
                 for (st in chunks) {
@@ -3978,12 +3970,12 @@ class PrintUtil(context: Context?) {
             printLogo("BH.bmp")
 
             textFormatBundle.putInt(
-                    PrinterConfig.addText.FontSize.BundleName,
-                    PrinterConfig.addText.FontSize.NORMAL_24_24
+                PrinterConfig.addText.FontSize.BundleName,
+                PrinterConfig.addText.FontSize.NORMAL_24_24
             )
             textFormatBundle.putInt(
-                    PrinterConfig.addText.Alignment.BundleName,
-                    PrinterConfig.addText.Alignment.CENTER
+                PrinterConfig.addText.Alignment.BundleName,
+                PrinterConfig.addText.Alignment.CENTER
             )
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
@@ -3995,7 +3987,7 @@ class PrintUtil(context: Context?) {
             //region=======================Issuer Footer Terms and Condition=================
             if (!TextUtils.isEmpty(issuerTAndCData.footerTAndC)) {
                 val issuerFooterTAndC =
-                        issuerTAndCData.footerTAndC.split(SplitterTypes.POUND.splitter)
+                    issuerTAndCData.footerTAndC.split(SplitterTypes.POUND.splitter)
                 if (issuerFooterTAndC.size > 1) {
                     for (i in 1 until issuerFooterTAndC.size) {
                         if (!TextUtils.isEmpty(issuerFooterTAndC[i])) {
@@ -4010,9 +4002,9 @@ class PrintUtil(context: Context?) {
                     }
                 } else {
                     alignLeftRightText(
-                            textInLineFormatBundle,
-                            "# ${issuerTAndCData.footerTAndC}",
-                            ""
+                        textInLineFormatBundle,
+                        "# ${issuerTAndCData.footerTAndC}",
+                        ""
                     )
                 }
             }
@@ -4030,14 +4022,14 @@ class PrintUtil(context: Context?) {
                         EPrintCopyType.MERCHANT -> {
                             GlobalScope.launch(Dispatchers.Main) {
                                 if (printerReceiptData.transactionType == TransactionType.EMI_SALE.type ||
-                                        printerReceiptData.transactionType == TransactionType.BRAND_EMI.type ||
-                                        printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type ||
-                                        printerReceiptData.transactionType == TransactionType.TEST_EMI.type
+                                    printerReceiptData.transactionType == TransactionType.BRAND_EMI.type ||
+                                    printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type ||
+                                    printerReceiptData.transactionType == TransactionType.TEST_EMI.type
                                 )
                                     (context as VFTransactionActivity).showMerchantAlertBox(
-                                            this@PrintUtil,
-                                            printerReceiptData,
-                                            true
+                                        this@PrintUtil,
+                                        printerReceiptData,
+                                        true
                                     ) { dialogCB ->
                                         printerCallback(dialogCB, 1)
                                     }
@@ -4069,23 +4061,23 @@ class PrintUtil(context: Context?) {
         } catch (ex: DeadObjectException) {
             ex.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take ChargeSlip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take ChargeSlip from the Report menu."
             )
         } catch (e: RemoteException) {
             e.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take ChargeSlip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take ChargeSlip from the Report menu."
             )
         } catch (ex: Exception) {
             ex.printStackTrace()
             failureImpl(
-                    context as Activity,
-                    "Printer Service stopped.",
-                    "Please take ChargeSlip from the Report menu."
+                context as Activity,
+                "Printer Service stopped.",
+                "Please take ChargeSlip from the Report menu."
             )
         }
     }
@@ -4103,10 +4095,12 @@ class PrintUtil(context: Context?) {
             val fmtAddTextInLine = Bundle()
             val tpt = TerminalParameterTable.selectFromSchemeTable()
             val headers = arrayListOf<String>()
-            tpt?.receiptHeaderOne?.let { headers.add(it) }
+           /* tpt?.receiptHeaderOne?.let { headers.add(it) }
             tpt?.receiptHeaderTwo?.let { headers.add(it) }
             tpt?.receiptHeaderThree?.let { headers.add(it) }
-            setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)
+            setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)*/
+
+            setLogoAndHeader()
 
             val time = cardProcessedDataModal.getTime()
             val timeFormat = SimpleDateFormat("HHmmss", Locale.getDefault())
@@ -4371,7 +4365,10 @@ class PrintUtil(context: Context?) {
             return
         }
         centerText(textInLineFormatBundle, "Digi POS Report")
-        centerText(textInLineFormatBundle, "TID : ${TerminalParameterTable.selectAll()[0].terminalId}")
+        centerText(
+            textInLineFormatBundle,
+            "TID : ${TerminalParameterTable.selectAll()[0].terminalId}"
+        )
         printSeperator(textFormatBundle)
         alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
         printSeperator(textFormatBundle)
@@ -4456,15 +4453,27 @@ class PrintUtil(context: Context?) {
 
     }
 
-    private fun setLogoAndHeader() {
+    private fun setLogoAndHeader(logo: String?=HDFC_LOGO) {
         try {
             val tpt = TerminalParameterTable.selectFromSchemeTable()
+            val hdfcTpt = HdfcTpt.selectAllHDFCTPTData()[0]
             val headers = arrayListOf<String>()
-            tpt?.receiptHeaderOne?.let { headers.add(it) }
-            tpt?.receiptHeaderTwo?.let { headers.add(it) }
-            tpt?.receiptHeaderThree?.let { headers.add(it) }
-
-            setHeaderWithLogo(textFormatBundle, HDFC_LOGO, headers)
+            if (hdfcTpt.defaultMerchantName.isBlank()) {
+                tpt?.receiptHeaderOne?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.defaultMerchantName)
+            }
+            if (hdfcTpt.receiptL2.isBlank()) {
+                tpt?.receiptHeaderTwo?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.receiptL2)
+            }
+            if (hdfcTpt.receiptL3.isBlank()) {
+                tpt?.receiptHeaderThree?.let { headers.add(it) }
+            } else {
+                headers.add(hdfcTpt.receiptL3)
+            }
+            setHeaderWithLogo(textFormatBundle, logo, headers)
         } catch (ex: DeadObjectException) {
             throw ex
         } catch (ex: RemoteException) {
@@ -4509,12 +4518,16 @@ class PrintUtil(context: Context?) {
     }
 }
 
-fun checkForPrintReversalReceipt(context: Context?,field60Data: String,callback: (String) -> Unit) {
+fun checkForPrintReversalReceipt(
+    context: Context?,
+    field60Data: String,
+    callback: (String) -> Unit
+) {
     if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
         val tpt = TerminalParameterTable.selectFromSchemeTable()
         tpt?.cancledTransactionReceiptPrint?.let { logger("CancelPrinting", it, "e") }
         if (tpt?.cancledTransactionReceiptPrint == "01") {
-            PrintUtil(context).printReversal(context,field60Data) {
+            PrintUtil(context).printReversal(context, field60Data) {
                 callback(it)
             }
         } else {
@@ -4525,7 +4538,13 @@ fun checkForPrintReversalReceipt(context: Context?,field60Data: String,callback:
     }
 }
 
-internal data class SummeryModel(val type: String, var count: Int = 0, var total: Long = 0,var hostTid: String)
+internal data class SummeryModel(
+    val type: String,
+    var count: Int = 0,
+    var total: Long = 0,
+    var hostTid: String
+)
+
 internal data class SummeryTotalType(var count: Int = 0, var total: Long = 0)
 internal open class IPrintListener(
     var printerUtil: PrintUtil,

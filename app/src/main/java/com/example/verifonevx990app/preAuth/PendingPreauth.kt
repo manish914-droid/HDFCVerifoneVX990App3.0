@@ -272,6 +272,7 @@ class PendingPreauth(var context: Context) {
         } else {
             transISODataWriter?.mti = Mti.PRE_AUTH_MTI.mti
         }
+
         val transactionISOByteArray = transISODataWriter?.generateIsoByteRequest()
         //  val reversalPacket = Gson().toJson(transISODataWriter)
         // AppPreference.saveString(AppPreference.GENERIC_REVERSAL_KEY, reversalPacket)

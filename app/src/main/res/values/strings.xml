@@ -293,7 +293,7 @@
     <string name="last_receipt_not_available">Last Receipt Not Available</string>
     <string name="no_cancel_receipt_found">No Cancel Receipt Found</string>
     <string name="no_receipt">No Receipt</string>
-    <string name="last_summary_not_available">Last Summary Not Available</string>
+    <string name="last_summary_not_available">Last summary not available</string>
     <string name="detail_report_not_found">Detail Report Not Found</string>
     <string name="invalid_invoice">Invalid Invoice</string>
     <string name="invoice_is_invalid">Entered Invoice Is Invalid</string>
@@ -505,11 +505,18 @@
     <string name="txn_detail_page">TXN Detail Page</string>
     <string name="_0_0">0.0</string>
     <string name="scan_qr_code_to_pay_n_nwould_you_like_to_check_payment_status_now">Scan QR code to pay.\nWould you like to check payment status now.</string>
-<string name="scan_qr_pay">Scan QR code to pay.</string>
+    <string name="scan_qr_pay">Scan QR code to pay.</string>
     <string name="txn_syn">Please wait Transaction syncing.....</string>
     <string name="printing_roll_not_available">Please Check Printing roll not available</string>
     <string name="no_pending_transaction_found_want_to_search_transaction">No Pending Transaction found want to search transaction</string>
     <string name="want_print_detail">Do you want to print Detail Report</string>
     <string name="void_refund_not_allowed">Void of Refund not allowed</string>
     <string name="txn_status_still_pending">Txn Status Still Pending Check Later</string>
+    <string name="test_emi">Test EMI</string>
+    <string name="bill_num">Bill number</string>
+    <string name="brand_min_max_amt_limit_txn"><![CDATA[Entered Amount Should be in Product Min & Max Amount Range]]></string>
+    <string name="enterValid_serial_iemei_no">Enter valid serial/IMEI no</string>
+    <string name="trans_param">Trans Param</string>
+    <string name="app_update_param">App Update Param</string>
+    <string name="comm_param">Communication Param</string>
 </resources>

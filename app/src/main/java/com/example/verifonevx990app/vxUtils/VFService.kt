@@ -66,16 +66,34 @@ object VFService {
     lateinit var strnum: String
 
 
-    fun getIpPort(): InetSocketAddress? {
-        val tct = TerminalCommunicationTable.selectFromSchemeTable()
-        return if (tct != null) {
-            InetSocketAddress(
-                InetAddress.getByName(tct.hostPrimaryIp),
-                tct.hostPrimaryPortNo.toInt()
-            )
-        } else {
-            InetSocketAddress(InetAddress.getByName(NEWAMEXHDFC), NEWAMEXHDFCPort)
+    fun getIpPort(isAppUpdate:Boolean=false): InetSocketAddress? {
+        val txnCpt = TerminalCommunicationTable.selectCommTableByRecordType("1")
+        val appUpdateCpt=TerminalCommunicationTable.selectCommTableByRecordType("2")
+        if(isAppUpdate){
+            return when {
+                appUpdateCpt!=null -> {
+                    InetSocketAddress(
+                        InetAddress.getByName(appUpdateCpt.hostPrimaryIp),
+                        appUpdateCpt.hostPrimaryPortNo.toInt()
+                    )
+                }
+                else -> {
+                    if (txnCpt != null) {
+                        InetSocketAddress(InetAddress.getByName(txnCpt.hostPrimaryIp), txnCpt.hostPrimaryPortNo.toInt())
+                    } else {
+                        InetSocketAddress(InetAddress.getByName(NEWAMEXHDFC), NEWAMEXHDFCPort)
+                    }
+                }
+            }
+        }else{
+            return if (txnCpt != null) {
+                InetSocketAddress(InetAddress.getByName(txnCpt.hostPrimaryIp), txnCpt.hostPrimaryPortNo.toInt())
+            } else {
+                InetSocketAddress(InetAddress.getByName(NEWAMEXHDFC), NEWAMEXHDFCPort)
+            }
+
         }
+
     }
 
     fun connectToVFService(context: Context) {

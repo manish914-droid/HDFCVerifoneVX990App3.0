@@ -2,6 +2,8 @@ package com.example.verifonevx990app.brandemi
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
@@ -34,7 +36,7 @@ import java.util.*
 
 /**
 This is a Brand EMI Master Category Data Fragment
-Here we are Fetching Master Category Data From Host and Displaying on UI:-
+Here we are Fetching Master Category Data(Brand Data) From Host and Displaying on UI:-
 ================Written By Ajay Thakur on 8th March 2021====================
  */
 
@@ -53,11 +55,11 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     private var empty_view_placeholder: ImageView? = null
     private var isDataMatch = false
     private val brandEMIDataModel by lazy { BrandEMIDataModal() }
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
+    private var delayTime: Long = 0L
     private val brandEMIMasterCategoryAdapter by lazy {
-        BrandEMIMasterCategoryAdapter(
-            brandEmiMasterDataList,
-            ::onItemClick
-        )
+        BrandEMIMasterCategoryAdapter(brandEmiMasterDataList, ::onItemClick)
     }
 
     override fun onAttach(context: Context) {
@@ -87,6 +89,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             hideSoftKeyboard(requireActivity())
             parentFragmentManager.popBackStackImmediate()
         }
+      //  delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
 
@@ -97,10 +100,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         setUpRecyclerView()
         brandEmiMasterDataList.clear()
 
-        val issuerTAndCData = runBlocking(Dispatchers.IO) {
-            IssuerTAndCTable.getAllIssuerTAndCData()
-        }
-        Log.d("IssuerTC:- ", Gson().toJson(issuerTAndCData))
+      /*  val issuerTAndCData =
+            runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+        Log.d("IssuerTC:- ", Gson().toJson(issuerTAndCData))*/
 
         //Method to Fetch BrandEMIMasterData:-
         fetchBrandEMIMasterDataFromHost()
@@ -173,6 +175,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         }
         //endregion
 
+      //  startTimeOut()
+
         //region==============================Host Hit To Fetch BrandEMIMaster Data:-
         lifecycleScope.launch(Dispatchers.IO) {
             if (brandEMIMasterISOData != null) {
@@ -208,6 +212,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
+                                parentFragmentManager.popBackStackImmediate()
                                 /*iDialog?.alertBoxWithAction(null, null,
                                     getString(R.string.error), hostMsg,
                                     false, getString(R.string.positive_button_ok),
@@ -221,6 +226,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
+                            parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -273,6 +279,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             }
                         }
                     }
+                   /* withContext(Dispatchers.Main) {
+                        cancelTimeOut()
+                    }*/
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData = "${EMIRequestType.BRAND_DATA.requestType}^$totalRecord"
@@ -320,7 +329,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     }
     //endregion
 
-    //region=============================Load More Button CallBack Function:-
+    //region=============================On Brand Item click CallBack Function:-
     private fun onItemClick(position: Int) {
         try {
             if (position > -1) {
@@ -502,6 +511,32 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     }
     //endregion
 
+    //region==============================Start TimeOut Handler:-
+    fun startTimeOut() {
+        runnable = object : Runnable {
+            override fun run() {
+                try {
+                    Log.d("TimeOut:- ", "Loading Data Failed....")
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, delayTime)
+                }
+            }
+        }
+        handler.post(runnable as Runnable)
+    }
+    //endregion
+
+    //region==============================Cancel TimeOut Handler:-
+    fun cancelTimeOut() = runnable?.let { handler.removeCallbacks(it) }
+
+    //endregion
+
     override fun onDetach() {
         super.onDetach()
         iDialog = null
@@ -570,3 +605,5 @@ data class BrandEMIMasterDataModal(
     var mobileNumberBillNumberFlag: String
 )
 //endregion
+
+

@@ -56,6 +56,6 @@ class SyncAppUpdateToHost(
             }
         }, {
             //backToCalled(it, false, true)
-        })
+        },isAppUpdate = true)
     }
 }

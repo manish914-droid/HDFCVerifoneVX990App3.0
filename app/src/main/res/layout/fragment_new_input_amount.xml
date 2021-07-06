@@ -196,6 +196,7 @@ android:visibility="gone"
 
 
 
+
         <include
             android:id="@+id/main_keyBoard"
             layout="@layout/new_enter_amount_keyboard"

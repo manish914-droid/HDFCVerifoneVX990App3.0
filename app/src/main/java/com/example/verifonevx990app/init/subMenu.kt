@@ -17,7 +17,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
+import com.example.verifonevx990app.digiPOS.QrScanFragment
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
 import com.example.verifonevx990app.main.SubHeaderTitle
@@ -35,35 +37,37 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class EOptionGroup {
-    FUNCTIONS, REPORT, NONE
+enum class EOptionGroup(val heading: String) {
+    FUNCTIONS("BANK FUNCTIONS"), REPORT("REPORT"), NONE("NONE")
 }
 
-enum class BankOptions(val _name: String, val group: EOptionGroup, val res: Int = 0) {
-    INITT("INIT", EOptionGroup.FUNCTIONS, R.drawable.ic_init),
-    DOWNLOAD_TMK("Download TMK", EOptionGroup.FUNCTIONS, R.drawable.ic_key_exchange),
-    TEST_EMI("Test EMI", EOptionGroup.FUNCTIONS, R.drawable.ic_brand_emi),
-    TPT("Terminal Param", EOptionGroup.FUNCTIONS, R.drawable.ic_tpt_img),
-    CPT("Com Param", EOptionGroup.FUNCTIONS, R.drawable.ic_copt),
-    ENV("ENV Param", EOptionGroup.FUNCTIONS, R.drawable.ic_env),
+enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
+    INITT("INIT", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_init),
+    DOWNLOAD_TMK("Download TMK", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_key_exchange),
+    TEST_EMI("Test EMI", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_brand_emi),
+    TPT("Terminal Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_tpt_img),
+    CPT("Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
+    ENV("ENV Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_env),
 
     // CDT("CDT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_cdt),
     //  IPT("IPT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_ipt),
-    CR("Clear Reversal", EOptionGroup.FUNCTIONS, R.drawable.ic_clear_reversal),
-    CB("Clear Batch", EOptionGroup.FUNCTIONS, R.drawable.ic_clear_batch),
-    APPUPDATE("Application Update", EOptionGroup.FUNCTIONS, R.drawable.ic_app_update),
+    CR("Clear Reversal", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_reversal),
+    CB("Clear Batch", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_batch),
+    APPUPDATE("Application Update", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_app_update),
 
-    LAST_RECEIPT("Last Receipt", EOptionGroup.REPORT, R.drawable.ic_last_receipt),
-    LAST_CANCEL_RECEIPT("Last Cancel Receipt", EOptionGroup.REPORT, R.drawable.ic_clear_reversal),
-    ANY_RECEIPT("Any Receipt", EOptionGroup.REPORT, R.drawable.ic_any_report),
-    DETAIL_REPORT("Detail Report", EOptionGroup.REPORT, R.drawable.ic_detail_report),
-    SUMMERY_REPORT("Summary Report", EOptionGroup.REPORT, R.drawable.ic_summer_report),
-    LAST_SUMMERY_REPORT("Last Summary Report", EOptionGroup.REPORT, R.drawable.ic_summer_report),
+    LAST_RECEIPT("Last Receipt", EOptionGroup.REPORT.heading, R.drawable.ic_last_receipt),
+    LAST_CANCEL_RECEIPT("Last Cancel Receipt", EOptionGroup.REPORT.heading, R.drawable.ic_clear_reversal),
+    ANY_RECEIPT("Any Receipt", EOptionGroup.REPORT.heading, R.drawable.ic_any_report),
+    DETAIL_REPORT("Detail Report", EOptionGroup.REPORT.heading, R.drawable.ic_detail_report),
+    SUMMERY_REPORT("Summary Report", EOptionGroup.REPORT.heading, R.drawable.ic_summer_report),
+    LAST_SUMMERY_REPORT("Last Summary Report", EOptionGroup.REPORT.heading, R.drawable.ic_summer_report),
 
-    HOME("", EOptionGroup.NONE),
-    INIT("", EOptionGroup.NONE),
-    KEY_EXCHANGE("", EOptionGroup.NONE),
-    TMK_EXCHANGE_HDFC("", EOptionGroup.NONE);
+    HOME("", EOptionGroup.NONE.heading),
+    INIT("", EOptionGroup.NONE.heading),
+    KEY_EXCHANGE("", EOptionGroup.NONE.heading),
+    TMK_EXCHANGE_HDFC("", EOptionGroup.NONE.heading),
+    TXN_COMM_PARAM_TABLE("TXN Com Param", EOptionGroup.NONE.heading, R.drawable.ic_copt),
+    APP_UPDATE_COMM_PARAM_TABLE("App Update Com Param", EOptionGroup.NONE.heading, R.drawable.ic_copt);
 
     override fun toString(): String {
         return "[$_name, $group]"
@@ -263,6 +267,9 @@ class TableEditFragment : Fragment() {
     private fun getTable(): Any? = when (type) {
         BankOptions.TPT.ordinal -> TerminalParameterTable.selectFromSchemeTable()
         BankOptions.CPT.ordinal -> TerminalCommunicationTable.selectFromSchemeTable()
+        BankOptions.TXN_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("1")
+        BankOptions.APP_UPDATE_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("2")
+
         /* BankOptions.IPT.ordinal -> IssuerParameterTable.selectFromIssuerParameterTable(typeId)
          BankOptions.CDT.ordinal -> CardDataTable.selecteAllCardsData()
              .first { it.cardTableIndex == typeId }*/
@@ -371,8 +378,7 @@ class TableEditHelper(
 
 //region=========Setting for Sub menus==================
 
-class
-SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
+class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
 
 
@@ -387,7 +393,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
         super.onCreate(savedInstanceState)
 
         for (e in BankOptions.values()) {
-            if (e.group == option) {
+            if (e.group == option.heading) {
                 optionList.add(e)
             }
         }
@@ -408,7 +414,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
     private fun initUI(v: View) {
         iDiag?.onEvents(VxEvent.ChangeTitle(option.name))
-        binding?.fSmTitleTv?.text = option.name
+        binding?.fSmTitleTv?.text = option.heading
 
         binding?.fSmRv?.apply {
             layoutManager = LinearLayoutManager(context)
@@ -429,7 +435,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
 
     override fun onSubmenuItemSelected(type: BankOptions, data: Any?) {
-        if (type.group == EOptionGroup.FUNCTIONS) {
+        if (type.group == EOptionGroup.FUNCTIONS.heading) {
             when (type) {
                 BankOptions.INITT -> {
                     iDiag?.onEvents(VxEvent.InitTerminal)
@@ -454,33 +460,39 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                 }
 
                 BankOptions.TEST_EMI -> {
-                    verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
-                        if (correctPasswordSuccess) {
-                            if (checkInternetConnection()) {
-                                (activity as MainActivity).inflateInputFragment(
-                                    NewInputAmountFragment(),
-                                    SubHeaderTitle.TEST_EMI.title,
-                                    EDashboardItem.TEST_EMI
-                                )
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
+                    if (checkInternetConnection()) {
+                        verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
+                            if (correctPasswordSuccess) {
+                                    // open TestEMi
+                                (activity as BaseActivity).transactFragment(TestEmiOptionFragment().apply {
+                                    arguments = Bundle().apply {
+                                      //  putSerializable("type", EDashboardItem.DYNAMIC_QR)
 
+                                    }
+                                })
+
+                            }
+                        }
+                    }else {
+                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                         }
                     }
-                }
+
 
                 else -> {
                     verifySuperAdminPasswordDialog(requireActivity()) { success ->
                         if (success) {
                             when (type) {
 
-                                BankOptions.TPT, BankOptions.CPT -> {
+                                BankOptions.TPT-> {
                                     val bundle = Bundle()
                                     bundle.putInt("type", type.ordinal)
                                     iDiag?.onEvents(VxEvent.ReplaceFragment(TableEditFragment().apply {
                                         arguments = bundle
                                     }))
+                                }
+                                BankOptions.CPT->{
+                                    iDiag?.onEvents(VxEvent.ReplaceFragment(CommunicationOptionFragment()))
                                 }
 
                                 BankOptions.ENV -> changeEnvParam()
@@ -588,7 +600,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
             }
 
 
-        } else if (type.group == EOptionGroup.REPORT) {
+        } else if (type.group == EOptionGroup.REPORT.heading) {
             when (type) {
                 //   BankOptions.LAST_RECEIPT -> Log.d("REPORTS", "LAST_RECEIPT")
                 BankOptions.LAST_RECEIPT -> {
@@ -717,7 +729,7 @@ SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 val bat = BatchFileDataTable.selectBatchData()
                                 try {
                                     val b =
-                                        bat.first { it.invoiceNumber.toLong() == invoice.toLong() }
+                                        bat.first { it.hostInvoice.toLong() == invoice.toLong() }
                                     //    printBatch(b)
                                     when (b.transactionType) {
                                         TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {

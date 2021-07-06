@@ -2,14 +2,15 @@
 
 <com.example.verifonevx990app.vxUtils.BHTextView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="@dimen/pad_16"
     android:background="@drawable/background_toast"
     android:paddingStart="@dimen/pad_16"
     android:paddingTop="20dp"
     android:paddingEnd="@dimen/pad_16"
     android:paddingBottom="20dp"
-    android:textColor="@color/white"
+    android:textColor="@color/black"
     android:textSize="@dimen/text_size_small"
     app:fname="regular">
 

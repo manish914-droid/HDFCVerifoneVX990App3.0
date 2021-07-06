@@ -2,6 +2,8 @@ package com.example.verifonevx990app.brandemi
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.os.Parcelable
 import android.text.Editable
 import android.text.TextUtils
@@ -11,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -22,10 +25,7 @@ import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.*
 import kotlinx.parcelize.Parcelize
 
 class BrandEMIProductFragment : Fragment() {
@@ -43,11 +43,11 @@ class BrandEMIProductFragment : Fragment() {
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
     private var searchedProductName: String? = null
+    private val handler = Handler(Looper.getMainLooper())
+    private var runnable: Runnable? = null
+    private var delayTime: Long = 0L
     private val brandEMIProductAdapter by lazy {
-        BrandEMIProductAdapter(
-            brandEmiProductDataList,
-            ::onProductSelected
-        )
+        BrandEMIProductAdapter(brandEmiProductDataList, ::onProductSelected)
     }
 
     override fun onAttach(context: Context) {
@@ -83,6 +83,7 @@ class BrandEMIProductFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
+     //   delayTime = timeOutTime()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             if (isSubCategoryItemPresent) parentFragmentManager.popBackStackImmediate()
             else {
@@ -92,8 +93,7 @@ class BrandEMIProductFragment : Fragment() {
         }
 
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
-        field57RequestData =
-            "${EMIRequestType.BRAND_EMI_Product.requestType}^0^${brandEMIDataModal?.getBrandID()}^${brandEMIDataModal?.getCategoryID()}"
+        field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^0^${brandEMIDataModal?.getBrandID()}^${brandEMIDataModal?.getCategoryID()}"
         Log.d("57Data:-", field57RequestData.toString())
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
@@ -113,8 +113,7 @@ class BrandEMIProductFragment : Fragment() {
             searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
             totalRecord = "0"
             brandEmiSearchedProductDataList.clear()
-            field57RequestData =
-                "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
+            field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
             fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
         }
         //endregion
@@ -135,11 +134,11 @@ class BrandEMIProductFragment : Fragment() {
     }
 
     //region========================Navigate Product Page To Input Amount Fragment:-
-    private fun navigateToInputAmountFragment() {
+    private fun navigateToInputAmountFragment(brandEmiProductDataList: MutableList<BrandEMIProductDataModal>) {
         if (checkInternetConnection()) {
             //region===================Saving Selected ProductID and ProductName in BrandEMIDataModal:-
             if (selectedProductUpdatedPosition > -1) {
-                brandEMIDataModal?.setProductID(brandEmiProductDataList[selectedProductUpdatedPosition].productID)
+                brandEMIDataModal?.setProductID(brandEmiProductDataList?.get(selectedProductUpdatedPosition)?.productID)
                 brandEMIDataModal?.setProductName(brandEmiProductDataList[selectedProductUpdatedPosition].productName)
                 brandEMIDataModal?.setValidationTypeName(brandEmiProductDataList[selectedProductUpdatedPosition].validationTypeName)
                 brandEMIDataModal?.setIsRequired(brandEmiProductDataList[selectedProductUpdatedPosition].isRequired)
@@ -236,6 +235,7 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
+                                    parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
                                         false, getString(R.string.positive_button_ok),
@@ -249,11 +249,14 @@ class BrandEMIProductFragment : Fragment() {
                                         }, {})*/
                                 }
                             }
+
                             else -> {
                                 ROCProviderV2.incrementFromResponse(
                                     ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                                     AppPreference.getBankCode()
                                 )
+                                iDialog?.hideProgress()
+                                parentFragmentManager.popBackStackImmediate()
                             }
                         }
                     } else {
@@ -263,6 +266,7 @@ class BrandEMIProductFragment : Fragment() {
                         )
                         GlobalScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
+                            parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -375,6 +379,10 @@ class BrandEMIProductFragment : Fragment() {
                         brandEMIProductAdapter.refreshAdapterList(brandEmiSearchedProductDataList)
                     }
 
+                  /*  withContext(Dispatchers.Main) {
+                        cancelTimeOut()
+                    }*/
+
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
@@ -399,12 +407,12 @@ class BrandEMIProductFragment : Fragment() {
     //endregion
 
     //region==========================Perform Click Event on Product Item Click:-
-    private fun onProductSelected(position: Int) {
+    private fun onProductSelected(position: Int,dataList: MutableList<BrandEMIProductDataModal>) {
         try {
             Log.d("Product Position:- ", position.toString())
             selectedProductUpdatedPosition = position
             if (selectedProductUpdatedPosition > -1)
-                navigateToInputAmountFragment()
+                navigateToInputAmountFragment(dataList)
             else
                 VFService.showToast(getString(R.string.please_select_product))
         } catch (ex: IndexOutOfBoundsException) {
@@ -412,11 +420,38 @@ class BrandEMIProductFragment : Fragment() {
         }
     }
     //endregion
+
+    //region==============================Start TimeOut Handler:-
+    fun startTimeOut() {
+        runnable = object : Runnable {
+            override fun run() {
+                Looper.prepare()
+                try {
+                    Log.d("TimeOut:- ", "Loading Data Failed....")
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                    }
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                } finally {
+                    //also call the same runnable to call it at regular interval
+                    handler.postDelayed(this, delayTime)
+                }
+            }
+        }
+        handler.post(runnable as Runnable)
+    }
+    //endregion
+
+    //region==============================Cancel TimeOut Handler:-
+    fun cancelTimeOut() = runnable?.let { handler.removeCallbacks(it) }
+
+    //endregion
 }
 
 internal class BrandEMIProductAdapter(
     private var dataList: MutableList<BrandEMIProductDataModal>?,
-    private val onProductSelect: (Int) -> Unit
+    private val onProductSelect: (Int,MutableList<BrandEMIProductDataModal>) -> Unit
 ) :
     RecyclerView.Adapter<BrandEMIProductAdapter.BrandEMIProductViewHolder>() {
     private var index = -1
@@ -455,7 +490,7 @@ internal class BrandEMIProductAdapter(
         RecyclerView.ViewHolder(binding.root) {
         init {
             binding.brandEmiProductLv.setOnClickListener {
-                onProductSelect(absoluteAdapterPosition)
+                onProductSelect(absoluteAdapterPosition,dataList ?: ArrayList())
             }
         }
     }

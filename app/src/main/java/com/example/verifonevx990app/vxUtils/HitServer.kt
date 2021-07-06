@@ -17,7 +17,6 @@ import java.net.SocketTimeoutException
 import java.nio.channels.ServerSocketChannel
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.experimental.and
 
 interface IReversalHandler {
     suspend fun saveReversal()
@@ -39,10 +38,10 @@ object HitServer {
         data: ByteArray,
         callback: ServerMessageCallback,
         progressMsg: ProgressCallback,
-        irh: IReversalHandler? = null
+        irh: IReversalHandler? = null,isAppUpdate:Boolean=false
     ) {
         this@HitServer.callback = callback
-
+        var responseStr: String? = null
         try {
             if (checkInternetConnection()) {
                 with(ConnectionTimeStamps) {
@@ -52,47 +51,55 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket { socket ->
-                    //    try {
-                    irh?.saveReversal()
-                    logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
-                    ConnectionTimeStamps.dialConnected = getF48TimeStamp()
-                    progressMsg("Please wait sending data to Bonushub server")
-                    //println("Data send" + data.byteArr2HexStr())
-                    logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
-                    ConnectionTimeStamps.startTransaction = getF48TimeStamp()
-                    val sos = socket.getOutputStream()
-                    sos?.write(data)
-                    sos.flush()
+                openSocket( { socket ->
+                    try {
+                        irh?.saveReversal()
+                        logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
+                        ConnectionTimeStamps.dialConnected = getF48TimeStamp()
+                        progressMsg("Please wait sending data to Bonushub server")
+                        //println("Data send" + data.byteArr2HexStr())
+                        logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
+                        ConnectionTimeStamps.startTransaction = getF48TimeStamp()
+                        val sos = socket.getOutputStream()
+                        sos?.write(data)
+                        sos.flush()
 
-                    progressMsg("Please wait receiving data from Bonushub server")
-                    val dis = DataInputStream(socket.getInputStream())
-                    val len = dis.readShort().toInt()
-                    val response = ByteArray(len)
-                    dis.readFully(response)
-                    ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+                        progressMsg("Please wait receiving data from Bonushub server")
+                        val dis = DataInputStream(socket.getInputStream())
+                        val len = dis.readShort().toInt()
+                        val response = ByteArray(len)
+                        dis.readFully(response)
+                        ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
 
-                    //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
+                        //   ConnectionTimeStamps.recieveTransaction = getF48TimeStamp()
 
-                    val responseStr = response.byteArr2HexStr()
-                    val reader = readIso(responseStr, false)
-                    Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
-                        reader.isoMap[48]?.parseRaw2String() ?: ""
-                    )
+                        responseStr = response.byteArr2HexStr()
+                        val reader = readIso(responseStr ?: "", false)
+                        Field48ResponseTimestamp.saveF48IdentifierAndTxnDate(
+                            reader.isoMap[48]?.parseRaw2String() ?: ""
+                        )
 
-                    //println("Data Recieve" + response.byteArr2HexStr())
-                    logger(TAG, "len=$len, data = $responseStr")
+                        //println("Data Recieve" + response.byteArr2HexStr())
+                        logger(TAG, "len=$len, data = $responseStr")
 
-                    socket.close()
+                        socket.close()
 
-                    //    }
-                    //        catch (ex: Exception) {
-                    //         ex.printStackTrace()
-                    //       callback(responseStr ?: "", true)
-                    //    }
-                    callback(responseStr, true)
+                    } catch (ex: SocketTimeoutException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: SocketException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: ConnectException) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                        callback(responseStr ?: "", true)
+                    }
+                    callback(responseStr ?: "", true)
                     this@HitServer.callback = null
-                }
+                },isAppUpdate=isAppUpdate)
 
             } else {
                 callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
@@ -122,7 +129,7 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket { socket ->
+                openSocket( { socket ->
 
                         if (isSaveTransactionAsPending) {
                             val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
@@ -190,7 +197,7 @@ object HitServer {
                     socket.close()
                     callback(responseStr, true)
                     this@HitServer.callback = null
-                }
+                })
 
             } else {
                 callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
@@ -360,7 +367,7 @@ object HitServer {
                     reset()
                     dialStart = getF48TimeStamp()
                 }
-                openSocket { socket ->
+                openSocket ({ socket ->
 
                     logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
 
@@ -372,7 +379,7 @@ object HitServer {
                         val data =
                             keInit.createInitIso(nextCounter, isFirstCall).generateIsoByteRequest()
                         val formattedInitPackets = data.byteArr2HexStr()
-                        logger(TAG, "init iso = $formattedInitPackets")
+                        logger(TAG, "init iso = $formattedInitPackets","e")
                         //println("Init iso packet send --- > $formattedInitPackets")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
@@ -430,8 +437,10 @@ object HitServer {
                             val pCode = reader.isoMap[3]?.rawData ?: ""
                             logger(TAG, "Processing code $pCode")
                             if (pCode != ProcessingCode.INIT_MORE.code) {
+                                logger(TAG, "Table Parsing Start " ,"e")
                                 readInitServer(initList) { result, message ->
                                     callback(message, result)
+                                    logger(TAG, "Table Parsing End " ,"e")
                                 }
                                 break
                             }
@@ -445,7 +454,7 @@ object HitServer {
                     fos.close()
                     //   ROCProviderV2.resetRoc(AppPreference.getBankCode())
                     this@HitServer.callback = null
-                }
+                })
 
             } else {
                 callback("Offline, No Internet available", false)
@@ -518,7 +527,7 @@ object HitServer {
         }
     }
 
-    private suspend fun openSocket(cb: OnSocketComplete) {
+    private suspend fun openSocket(cb: OnSocketComplete,isAppUpdate:Boolean=false) {
         Log.d("Socket Start:- ", "Socket Started Here.....")
 
         try {
@@ -526,7 +535,7 @@ object HitServer {
                 TerminalCommunicationTable.selectFromSchemeTable()  // always get tct it may get refresh meanwhile
             if (tct != null) {
 
-                val sAddress = VFService.getIpPort()
+                val sAddress = VFService.getIpPort(isAppUpdate)
 
                 ServerSocketChannel.open().apply {
                     configureBlocking(false)
@@ -549,13 +558,14 @@ object HitServer {
                 socket.soTimeout = resTimeOut
                 cb(socket)
 
+
             } else callback?.invoke("No Comm Data Found", false)
 
         } catch (ex: Exception) {
             ex.printStackTrace()
             println("SOCKET CONNECT EXCEPTION")
             callback?.invoke(
-                VerifoneApp.appContext.getString(R.string.socket_timeout) ?: "Connection Error",
+                VerifoneApp.appContext.getString(R.string.socket_timeout),
                 false
             )
         } finally {

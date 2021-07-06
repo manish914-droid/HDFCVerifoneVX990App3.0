@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.*
@@ -62,7 +63,6 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
-import kotlin.jvm.Throws
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -351,7 +351,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             requestWindowFeature(Window.FEATURE_NO_TITLE)
             setContentView(R.layout.item_get_invoice_no)
             setCancelable(false)
-
+            window?.attributes?.windowAnimations = R.style.DialogAnimation
+            val windoww = this.window
+            windoww?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
             val enterTID = this.findViewById<BHEditText>(R.id.invoice_no_et)
             val titleText = this.findViewById<BHTextView>(R.id.title_tv)
             titleText.text = getString(R.string.enter_tid)
@@ -378,7 +383,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     enterTID.error = getString(R.string.please_enter_a_valid_8digit_tid)
                 }
             }
+            windoww?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         }.show()
+
     }
 
 
@@ -585,17 +592,19 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             if (!TextUtils.isEmpty(successResponseCode) && successResponseCode == "00" &&
                 responseField60Value.substring(0, 4) == AppUpdate.APP_UPDATE_AVAILABLE.updateCode
             ) {
+                val appPartialName = responseField60Value.substring(24, 36)
+                val apkData = responseField60Value.substring(96, responseField60Value.length)
+                tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
+
                 when (responseProcessingCode) {
                     ProcessingCode.APP_UPDATE_CONTINUE.code -> saveAndContinueUpdateApplication(
                         responseField60Value,
-                        responseProcessingCode
+                        responseProcessingCode,
+                        appPartialName
                     )
                     ProcessingCode.APP_UPDATE.code -> {
                         unzipZippedBytes(tcpIPImagesDataList.toByteArray())
-                        hideProgress()
-                        onBackPressed()
                         Log.d("Full ImageData:- ", Gson().toJson(tcpIPImagesDataList))
-                        VFService.showToast(getString(R.string.app_updated_successfully))
                     }
                     else -> {
                         hideProgress()
@@ -611,11 +620,10 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     //Below method is used to save application update data in DB ApplicationUpdate Table and Continue Application Update:-
     private fun saveAndContinueUpdateApplication(
-        responseField60Value: String, responseProcessingCode: String
+        responseField60Value: String,
+        responseProcessingCode: String,
+        appPartialName: String
     ) {
-        val appPartialName = responseField60Value.substring(24, 36)
-        val apkData = responseField60Value.substring(96, responseField60Value.length)
-        tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
         startTCPIPAppUpdate(
             appUpdateProccessingCode = responseProcessingCode,
             chunkValue = responseField60Value.substring(8, 24), partialName = appPartialName
@@ -717,6 +725,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             UiAction.BANK_EMI, UiAction.TEST_EMI -> {
                 var transType = TransactionType.EMI_SALE.type
                 val amt = (data as Pair<*, *>).first.toString()
+                val testEmiOpetionType = data.second.toString()
                 if (action == UiAction.TEST_EMI) {
                     transType = TransactionType.TEST_EMI.type
                 }
@@ -736,6 +745,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 putExtra("proc_code", ProcessingCode.SALE.code)
                                 putExtra("mobileNumber", extraPair?.first)
                                 putExtra("billNumber", extraPair?.second)
+                                putExtra("TestEmiOption", testEmiOpetionType)
                             }, EIntentRequest.TRANSACTION.code
                         )
                     } else {
@@ -755,6 +765,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
+                            putExtra("TestEmiOption", testEmiOpetionType)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 }
@@ -770,6 +781,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("proc_code", ProcessingCode.SALE.code)
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
+                            putExtra("uiAction", action)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 } else {
@@ -861,7 +873,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             UiAction.BRAND_EMI_CATALOGUE, UiAction.BANK_EMI_CATALOGUE -> {
                 val amt = (data as Pair<*, *>).first.toString()
-                val emiCatalogueImageList = runBlocking { readEMICatalogueAndBannerImages() }
+                val emiCatalogueImageList =
+                    runBlocking(Dispatchers.IO) { readEMICatalogueAndBannerImages() }
                 transactFragment(EMIIssuerList().apply {
                     arguments = Bundle().apply {
                         putSerializable("type", action)
@@ -1096,22 +1109,22 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             EDashboardItem.EMI_ENQUIRY -> {
                 if (checkInternetConnection()) {
-                /*    transactFragment(NewInputAmountFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable("type", action)
-                            putString(
-                                INPUT_SUB_HEADING,
-                                SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
-                            )
-                        }
-                    })*/
-
-                     transactFragment(EMICatalogue().apply {
+                    /*    transactFragment(NewInputAmountFragment().apply {
                             arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(INPUT_SUB_HEADING, "")
+                                putSerializable("type", action)
+                                putString(
+                                    INPUT_SUB_HEADING,
+                                    SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
+                                )
                             }
-                        })
+                        })*/
+
+                    transactFragment(EMICatalogue().apply {
+                        arguments = Bundle().apply {
+                            putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                            putString(INPUT_SUB_HEADING, "")
+                        }
+                    })
 
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1133,12 +1146,12 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             }
                         })
 
-                       /* transactFragment(EMICatalogue().apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(INPUT_SUB_HEADING, "")
-                            }
-                        })*/
+                        /* transactFragment(EMICatalogue().apply {
+                             arguments = Bundle().apply {
+                                 putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                 putString(INPUT_SUB_HEADING, "")
+                             }
+                         })*/
 
                     } else {
                         VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -1267,7 +1280,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
                 ) {
                     if (checkInternetConnection()) {
-                       transactFragment(EMICatalogue().apply {
+                        transactFragment(EMICatalogue().apply {
                             arguments = Bundle().apply {
                                 putSerializable("type", action)
                             }
@@ -1367,7 +1380,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     fun inflateInputFragment(
         fragment: Fragment,
         subHeading: String,
-        action: EDashboardItem
+        action: EDashboardItem, testEmiOption: String = "0"
     ) {
         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
@@ -1377,6 +1390,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 arguments = Bundle().apply {
                     putSerializable("type", action)
                     putString(INPUT_SUB_HEADING, subHeading)
+                    putString("TestEmiOption", testEmiOption)
                 }
             }, false)
         } else {
@@ -1428,41 +1442,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         }
 
     }
-
-    /*override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.home -> {
-                if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                    !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                ) {
-                    if ((AppPreference.getLogin()))
-                        transactFragment(dashBoardFragment)
-                    else transactFragment(initFragment)
-                } else {
-                    if (checkInternetConnection())
-                        checkAndPerformOperation()
-                    else VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
-            }
-            R.id.settlement ->
-                if (checkInternetConnection()) {
-                    transactFragment(SettlementFragment().apply {
-                        arguments = Bundle().apply {
-                            putSerializable("trans_type", TransactionType.VOID_REFUND)
-                            putString(
-                                INPUT_SUB_HEADING,
-                                SubHeaderTitle.SETTLEMENT_SUBHEADER_VALUE.title
-                            )
-                        }
-                    }, true)
-                } else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
-        }
-
-        return true
-    }*/
 
     override fun onBackPressed() {
         if (binding?.mainDl?.isDrawerOpen(GravityCompat.START) == true) {
@@ -1525,14 +1504,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         }
 
         GlobalScope.launch(Dispatchers.IO) {
-withContext(Dispatchers.Main){
-    (this@MainActivity as BaseActivity).showProgress("Digi POS Txn Uploading")
-}
+            withContext(Dispatchers.Main) {
+                (this@MainActivity as BaseActivity).showProgress("Digi POS Txn Uploading")
+            }
             Log.e("UPLOAD DIGI", " ----------------------->  START")
             uploadPendingDigiPosTxn(this@MainActivity as BaseActivity) {
                 Log.e("UPLOAD DIGI", " ----------------------->  BEFOR PRINT")
                 (this@MainActivity as BaseActivity).hideProgress()
-                PrintUtil(this@MainActivity).printDetailReport(
+                PrintUtil(this@MainActivity).printDetailReportupdate(
                     settlementBatchData,
                     this@MainActivity
                 ) { detailPrintStatus ->
@@ -1554,7 +1533,6 @@ withContext(Dispatchers.Main){
                 }
             }
         }
-
 
 
     }
@@ -1688,7 +1666,6 @@ withContext(Dispatchers.Main){
                         //endregion
                         PrintUtil(this).printSettlementReportupdate(this, batchList, true) {
                             if (it) {
-                                // todo digipos print here and after print delete success transactions from digiposDataTable
                                 //Added by Ajay Thakur
                                 //Saving Batch Data For Last Summary Report
                                 saveBatchInPreference(batchList)
@@ -1789,7 +1766,7 @@ withContext(Dispatchers.Main){
                                                 }
                                             }
                                         } else {
-                                            VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
+                                            //VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
                                             startTCPIPAppUpdate(
                                                 ProcessingCode.APP_UPDATE.code,
                                                 chunkValue = "0",
@@ -1835,8 +1812,6 @@ withContext(Dispatchers.Main){
                                 }
                             } else {
                                 GlobalScope.launch(Dispatchers.Main) {
-                                    // todo delete success transactions from digiposDataTable here
-
                                     hideProgress()
                                     //Added by Ajay Thakur
                                     //Saving Batch Data For Last Summary Report
@@ -2303,14 +2278,27 @@ enum class SETTLEMENT(val type: String) {
 
 //region===================BannerConfigModal:-
 data class BannerConfigModal(
+    var bannerImageBitmap: Bitmap,
     var bannerID: String,
     var bannerDisplayOrderID: String,
     var bannerShowOrHideID: String,
     var clickableOrNot: String,
     var bannerClickActionID: String,
     var bannerClickMessageData: String
-
 )
+//endregion
+
+//region======================Banner OnClick Event Enum:-
+enum class BannerClickAction(var actionCode: String) {
+    SALE("100"),
+    BANK_EMI("110"),
+    BRAND_EMI("120"),
+    EMI_CATALOGUE("130"),
+    CROSS_SELL("140"),
+    FLEXY_PAY("150"),
+    MERCHANT_PROMO("160"),
+    DIGI_POS("170"),
+}
 //endregion
 
 interface IFragmentRequest {
