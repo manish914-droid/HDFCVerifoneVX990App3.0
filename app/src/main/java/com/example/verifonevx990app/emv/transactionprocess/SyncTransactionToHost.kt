@@ -18,6 +18,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
+
 class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                             var cardProcessedDataModal: CardProcessedDataModal? = null,
                             var syncTransactionCallback: (Boolean, String, String?, Triple<String, String, String>?,String?,String?) -> Unit) {
@@ -44,8 +45,8 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
         }
         //Setting ROC again because if reversal send first and then transaction packet goes to host the ROC is similar in that case because we are creating Trans packet at initial stage
         transactionISOData?.addField(
-            11,
-            ROCProviderV2.getRoc(AppPreference.getBankCode()).toString()
+                11,
+                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString()
         )
         val transactionISOByteArray = transactionISOData?.generateIsoByteRequest()
         if (transactionISOData != null) {
@@ -67,8 +68,8 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                     if (success) {
                         //Below we are incrementing previous ROC (Because ROC will always be incremented whenever Server Hit is performed:-
                         ROCProviderV2.incrementFromResponse(
-                            ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                            AppPreference.getBankCode()
+                                ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
+                                AppPreference.getBankCode()
                         )
                         Log.d("Success Data:- ", result)
                         //if(!result.isNullOrBlank())
@@ -84,10 +85,10 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                             }
                                             DetectCardType.EMV_CARD_TYPE -> {
                                                 val reversalPacket =
-                                                    Gson().toJson(transactionISOData)
+                                                        Gson().toJson(transactionISOData)
                                                 AppPreference.saveString(
-                                                    GENERIC_REVERSAL_KEY,
-                                                    reversalPacket
+                                                        GENERIC_REVERSAL_KEY,
+                                                        reversalPacket
                                                 )
                                             }
 
@@ -108,34 +109,34 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
 
                                 //   println("Number format problem")
                                 val responseIsoData: IsoDataReader =
-                                    readIso(result.toString(), false)
+                                        readIso(result.toString(), false)
                                 logger("Transaction RESPONSE ", "---", "e")
                                 logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
                                 Log.e(
-                                    "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
+                                        "Success 39-->  ", responseIsoData.isoMap[39]?.parseRaw2String()
                                         .toString() + "---->" + responseIsoData.isoMap[58]?.parseRaw2String()
                                         .toString()
                                 )
                                 successResponseCode =
-                                    (responseIsoData.isoMap[39]?.parseRaw2String().toString())
+                                        (responseIsoData.isoMap[39]?.parseRaw2String().toString())
                                 val authCode =
-                                    (responseIsoData.isoMap[38]?.parseRaw2String().toString())
+                                        (responseIsoData.isoMap[38]?.parseRaw2String().toString())
                                 cardProcessedDataModal?.setAuthCode(authCode.trim())
                                 //Here we are getting RRN Number :-
                                 val rrnNumber = responseIsoData.isoMap[37]?.rawData ?: ""
                                 cardProcessedDataModal?.setRetrievalReferenceNumber(rrnNumber)
 
                                 val acqRefereal =
-                                    responseIsoData.isoMap[31]?.parseRaw2String().toString()
+                                        responseIsoData.isoMap[31]?.parseRaw2String().toString()
                                 cardProcessedDataModal?.setAcqReferalNumber(acqRefereal)
                                 logger(
-                                    "ACQREFERAL",
-                                    cardProcessedDataModal?.getAcqReferalNumber().toString(),
-                                    "e"
+                                        "ACQREFERAL",
+                                        cardProcessedDataModal?.getAcqReferalNumber().toString(),
+                                        "e"
                                 )
 
                                 val encrptedPan =
-                                    responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                                        responseIsoData.isoMap[57]?.parseRaw2String().toString()
                                 cardProcessedDataModal?.setEncryptedPan(encrptedPan)
 
                                 val f55 = responseIsoData.isoMap[55]?.rawData
@@ -145,8 +146,8 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                 if (successResponseCode == "00") {
 
                                     AppPreference.saveBoolean(
-                                        AppPreference.ONLINE_EMV_DECLINED,
-                                        false
+                                            AppPreference.ONLINE_EMV_DECLINED,
+                                            false
                                     )
                                     //   VFService.showToast("Transaction Success")
 
@@ -157,10 +158,14 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                         DetectCardType.MANUAL_ENTRY_TYPE -> {
                                             if(CardAid.Rupay.aid.equals(cardProcessedDataModal?.getAID())) {
 
+                                              /*  doubleTap(responseIsoData, transactionISOData, successResponseCode){it ->
+                                                    secondTap = it
+                                                }*/
+
                                                 val ta91 = 0x91
                                                 val ta8A = 0x8A
                                                 //  val field55 = "91109836BE3880804000FFFE000000000001"
-                                                //  val field55 = responseIsoData.isoMap[55]?.rawData ?: "91109836BE3880804000FFFE000000000001"
+                                               // val field55 = responseIsoData.isoMap[55]?.rawData ?: "91109836BE3880804000FFFE000000000001"
                                                 val field55 = responseIsoData.isoMap[55]?.rawData ?: ""
                                                 //   VFService.showToast(field55)
                                                 println("Filed55 value is --> $field55")
@@ -208,6 +213,7 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                                             mba.addAll(ba.asList())
                                                             mba1.addAll(ba.asList())
                                                             //
+
                                                             //rtn = EMVCallback.EMVSetTLVData(ta.toShort(), mba.toByteArray(), mba.size)
                                                             logger("Data:- ", "On setting ${Integer.toHexString(ta91)} tag status = $", "e")
                                                         }
@@ -282,22 +288,23 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                                 clearReversal()
                                                 syncTransactionCallback(true, successResponseCode.toString(), result, null,null,secondTap)
                                             }
+
                                         }
                                         DetectCardType.EMV_CARD_TYPE -> {
                                             if (TextUtils.isEmpty(
-                                                    AppPreference.getString(GENERIC_REVERSAL_KEY))) {
+                                                            AppPreference.getString(GENERIC_REVERSAL_KEY))) {
                                                 if (cardProcessedDataModal?.getTransType() != TransactionType.REFUND.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.SALE.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.PRE_AUTH.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.SALE_WITH_CASH.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.CASH_AT_POS.type &&
-                                                    cardProcessedDataModal?.getTransType() != TransactionType.TEST_EMI.type
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.SALE.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.PRE_AUTH.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.SALE_WITH_CASH.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.CASH_AT_POS.type &&
+                                                        cardProcessedDataModal?.getTransType() != TransactionType.TEST_EMI.type
                                                 ) {
-                                                    CompleteSecondGenAc(cardProcessedDataModal, responseIsoData, transactionISOData) { printExtraData,de55 ->
-                                                        syncTransactionCallback(true, successResponseCode.toString(), result, printExtraData,de55,null)
+                                                    CompleteSecondGenAc(cardProcessedDataModal, responseIsoData, transactionISOData) { printExtraData, de55 ->
+                                                        syncTransactionCallback(true, successResponseCode.toString(), result, printExtraData, de55, null)
                                                     }
                                                 } else {
                                                     clearReversal()
@@ -324,17 +331,17 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                         DetectCardType.CONTACT_LESS_CARD_WITH_MAG_TYPE,
                                         DetectCardType.MANUAL_ENTRY_TYPE -> {
                                             clearReversal()
-                                            syncTransactionCallback(true, successResponseCode.toString(), result, null,null,secondTap)
+                                            syncTransactionCallback(true, successResponseCode.toString(), result, null, null, secondTap)
                                         }
                                         DetectCardType.EMV_CARD_TYPE -> {
                                             clearReversal()
                                             if (cardProcessedDataModal?.getTransType() != TransactionType.REFUND.type &&
-                                                cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
-                                                cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
-                                                cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
-                                                cardProcessedDataModal?.getTransType() != TransactionType.SALE.type) {
-                                                CompleteSecondGenAc(cardProcessedDataModal,responseIsoData) { printExtraData,de55 ->
-                                                    syncTransactionCallback(true, successResponseCode.toString(), result, printExtraData,de55,null)
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.SALE.type) {
+                                                CompleteSecondGenAc(cardProcessedDataModal, responseIsoData) { printExtraData, de55 ->
+                                                    syncTransactionCallback(true, successResponseCode.toString(), result, printExtraData, de55, null)
                                                 }
                                             } else {
                                                 syncTransactionCallback(true, successResponseCode.toString(), result, null, null, null)
@@ -347,7 +354,7 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                 }
                             }
                         } else {
-                            syncTransactionCallback(false, "", "", null,null,null)
+                            syncTransactionCallback(false, "", "", null, null, null)
                         }
 
                     } else {
@@ -363,9 +370,9 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                     ROCProviderV2.incrementFromResponse(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
                                     SecondGenAcOnNetworkError(result.toString(), cardProcessedDataModal) { secondGenAcErrorStatus ->
                                         if (secondGenAcErrorStatus) {
-                                            syncTransactionCallback(false, successResponseCode.toString(), result, null,null,null)
+                                            syncTransactionCallback(false, successResponseCode.toString(), result, null, null, null)
                                         } else {
-                                            syncTransactionCallback(false, ConnectionError.NetworkError.errorCode.toString(), result, null,null,null)
+                                            syncTransactionCallback(false, ConnectionError.NetworkError.errorCode.toString(), result, null, null, null)
                                         }
                                     }
                                 }
@@ -376,7 +383,7 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                     clearReversal()
                                     //Below we are incrementing previous ROC (Because ROC will always be incremented whenever Server Hit is performed:-
                                     ROCProviderV2.incrementFromResponse(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
-                                    syncTransactionCallback(false, ConnectionError.ConnectionTimeout.errorCode.toString(), result, null,null,null)
+                                    syncTransactionCallback(false, ConnectionError.ConnectionTimeout.errorCode.toString(), result, null, null, null)
                                     Log.d("Failure Data:- ", result)
                                 }
                             }
@@ -385,7 +392,7 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                             clearReversal()
                             //Below we are incrementing previous ROC (Because ROC will always be incremented whenever Server Hit is performed:-
                             ROCProviderV2.incrementFromResponse(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
-                            syncTransactionCallback(false, ConnectionError.ConnectionTimeout.errorCode.toString(), result, null,null,null)
+                            syncTransactionCallback(false, ConnectionError.ConnectionTimeout.errorCode.toString(), result, null, null, null)
                             Log.d("Failure Data:- ", result)
                         }
                     }
@@ -405,4 +412,4 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
             })
         }
     }
-}
+  }
