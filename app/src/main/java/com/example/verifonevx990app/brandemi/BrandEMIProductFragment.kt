@@ -214,16 +214,11 @@ class BrandEMIProductFragment : Fragment() {
                         when (responseCode) {
                             "00" -> {
                                 ROCProviderV2.incrementFromResponse(
-                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                                    AppPreference.getBankCode()
-                                )
+                                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
                                 GlobalScope.launch(Dispatchers.Main) {
                                     //Processing BrandEMIMasterSubCategoryData:-
                                     if (isSearchedDataCall) {
-                                        stubbingBrandEMISearchedProductDataToList(
-                                            brandEMIProductData,
-                                            hostMsg
-                                        )
+                                        stubbingBrandEMISearchedProductDataToList(brandEMIProductData, hostMsg)
                                     } else {
                                         stubbingBrandEMIProductDataToList(
                                             brandEMIProductData,
@@ -235,7 +230,7 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
-                                    parentFragmentManager.popBackStackImmediate()
+                                   // parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
                                         false, getString(R.string.positive_button_ok),
@@ -256,7 +251,7 @@ class BrandEMIProductFragment : Fragment() {
                                     AppPreference.getBankCode()
                                 )
                                 iDialog?.hideProgress()
-                                parentFragmentManager.popBackStackImmediate()
+                               // parentFragmentManager.popBackStackImmediate()
                             }
                         }
                     } else {
@@ -266,7 +261,7 @@ class BrandEMIProductFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                            parentFragmentManager.popBackStackImmediate()
+                          //  parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),

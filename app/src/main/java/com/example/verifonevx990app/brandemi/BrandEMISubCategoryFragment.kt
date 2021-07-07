@@ -221,7 +221,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                                parentFragmentManager.popBackStackImmediate()
+                               // parentFragmentManager.popBackStackImmediate()
                             }
                         }
                     } else {
@@ -231,7 +231,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                            parentFragmentManager.popBackStackImmediate()
+                          //  parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -242,7 +242,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             } else {
                 lifecycleScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                    parentFragmentManager.popBackStackImmediate()
+                //    parentFragmentManager.popBackStackImmediate()
                     /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), "Something went wrong",
                         false, getString(R.string.positive_button_ok),

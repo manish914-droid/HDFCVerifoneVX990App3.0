@@ -34,12 +34,7 @@ object HitServer {
     private var callbackSale: ServerMessageCallbackSale? = null
 
     @Synchronized
-    suspend fun hitServer(
-        data: ByteArray,
-        callback: ServerMessageCallback,
-        progressMsg: ProgressCallback,
-        irh: IReversalHandler? = null,isAppUpdate:Boolean=false
-    ) {
+    suspend fun hitServer(data: ByteArray, callback: ServerMessageCallback, progressMsg: ProgressCallback, irh: IReversalHandler? = null,isAppUpdate:Boolean=false) {
         this@HitServer.callback = callback
         var responseStr: String? = null
         try {

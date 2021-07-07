@@ -334,10 +334,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         try {
             if (position > -1) {
                 Log.d("Navigate To Category:- ", position.toString())
-                val issuerTAndCData =
-                    runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
-                val brandTAndCData =
-                    runBlocking(Dispatchers.IO) { BrandTAndCTable.getAllBrandTAndCData() }
+                val issuerTAndCData = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+                val brandTAndCData = runBlocking(Dispatchers.IO) { BrandTAndCTable.getAllBrandTAndCData() }
                 iDialog?.showProgress()
                 if (issuerTAndCData?.isEmpty() == true || brandTAndCData.isEmpty() || !matchHostAndDBData()) {
                     getIssuerTAndCData { issuerTCDataSaved ->
@@ -428,6 +426,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                     cb(false)
             }
         } else {
+            cb(false)
             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
         }
     }
