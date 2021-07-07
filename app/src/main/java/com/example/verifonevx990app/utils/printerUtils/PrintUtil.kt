@@ -2124,10 +2124,11 @@ setLogoAndHeader(null)
 
                     if (key.isNotBlank()) {
 
-                        var hostTid: String? = key.subSequence(0, 8).toString()
-                        var hostMid: String? = key.subSequence(8, 23).toString()
-                        var hostBatchNumber: String? = key.subSequence(23, 29).toString()
-                        var cardIssuer: String = key.subSequence(29, key.length).toString()
+                        var hostTid = if (key.isNotBlank() && key.length >= 8) { key.subSequence(0, 8).toString() } else { "" }
+                        var hostMid = if (key.isNotBlank() && key.length >= 23) { key.subSequence(8, 23).toString() } else { "" }
+                        var hostBatchNumber = if (key.isNotBlank() && key.length >= 29) { key.subSequence(23, 29).toString() } else { "" }
+                        var cardIssuer = if (key.isNotBlank() && key.length >= 30) { key.subSequence(29, key.length).toString() } else { "" }
+
 
                         if (ietration > 0) {
                             printSeperator(textFormatBundle)
