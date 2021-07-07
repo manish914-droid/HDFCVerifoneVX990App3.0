@@ -3411,7 +3411,6 @@ setLogoAndHeader()
 
             var hostIssuerId = if (printerReceiptData.hostIssuerID.isNotBlank()) {
                 printerReceiptData.hostIssuerID
-                printerReceiptData.issuerId
             } else {
                 printerReceiptData.issuerId
             }
