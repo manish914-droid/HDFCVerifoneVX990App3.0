@@ -1001,7 +1001,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                             getString(R.string.confirmation),
                             getString(R.string.last_summary_confirmation),
                             "Yes",
-                            "Cancel",
+                            "No",
                             {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDiag?.showProgress(
@@ -1041,7 +1041,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                             iDiag?.hideProgress()
                                             iDiag?.getInfoDialog(
                                                 "Error",
-                                                "Last Summery is not available."
+                                                "Last summary is not available."
                                             ) {}
                                         }
                                     }

@@ -149,8 +149,13 @@ fun getInputDialog(
             dismiss()
         }
         okbtn.setOnClickListener {
-            dismiss()
-            callback(invoiceET.text.toString())
+            if(!invoiceET.text.toString().isNullOrEmpty()) {
+                dismiss()
+                callback(invoiceET.text.toString())
+            }
+            else{
+                VFService.showToast("Enter Invoice Number")
+            }
         }
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }.show()

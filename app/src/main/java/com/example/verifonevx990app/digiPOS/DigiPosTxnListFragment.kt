@@ -649,7 +649,7 @@ internal class DigiPosTxnListAdapter(
             }
             val amountData = "\u20B9${modal.amount}"
             holder.binding.smsPayTransactionAmount.text = amountData
-            holder.binding.dateTV.text = modal.transactionTime
+            holder.binding.dateTV.text = getDateInDisplayFormatDigipos(modal.transactionTime)
             holder.binding.mobileNumberTV.text = modal.customerMobileNumber
 
             when {
@@ -667,7 +667,8 @@ internal class DigiPosTxnListAdapter(
             holder.binding.transactionIV.visibility = View.VISIBLE
             holder.binding.parentSubHeader.visibility = View.VISIBLE
             holder.binding.transactionIV.visibility = View.VISIBLE
-            holder.binding.mobileNumberTV.visibility = View.VISIBLE
+            if(modal.customerMobileNumber.isNullOrEmpty())
+            holder.binding.mobileNumberTV.visibility = View.INVISIBLE
             holder.binding.sepraterLineView.visibility = View.VISIBLE
         }
     }
