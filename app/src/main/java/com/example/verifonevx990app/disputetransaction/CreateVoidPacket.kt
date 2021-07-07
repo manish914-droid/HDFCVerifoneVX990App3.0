@@ -1,6 +1,7 @@
 package com.example.verifonevx990app.disputetransaction
 
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.main.CardAid
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
 import com.example.verifonevx990app.realmtables.IssuerParameterTable
 import com.example.verifonevx990app.utils.HexStringConverter
@@ -42,6 +43,23 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
 
         if (batch.transactionType == TransactionType.TIP_SALE.type)
             addFieldByHex(54, addPad(batch.tipAmmount, "0", 12))
+
+        var  aidstr = if(batch.aid.isNotBlank()) { batch.aid?.subSequence(0,10).toString() } else { batch.aid = ""}
+
+        println("DE55 value in void is"+"${batch.field55Data}${batch.de55}")
+        if(batch.operationType == "Chip" && (CardAid.Rupay.aid == aidstr || CardAid.Diners.aid == aidstr || CardAid.Jcb.aid == aidstr)){
+
+            if(batch.field55Data.isNotBlank() && batch.de55.isNotBlank()) {
+                println("DE55 value in void is"+"${batch.field55Data}${batch.de55}")
+                addField(55, "${batch.field55Data}${batch.de55}")
+            }
+            else if(batch.field55Data.isNotBlank()) {
+                println("DE55 value in void is"+"${batch.field55Data}")
+                addField(55, "${batch.field55Data}")
+            }
+        }
+
+
 
 
         //Transaction's ROC, transactionDate, transaction Time
