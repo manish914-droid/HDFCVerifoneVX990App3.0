@@ -8,7 +8,7 @@ import android.text.TextUtils
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.verifonevx990app.R
@@ -29,11 +29,6 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
     private var binding: FragmentBillNumSerialNumEntryBinding? = null
 
-    /* putSerializable("uiAction", uiAction)
-            putString("mobileNum", mobNumber)
-            putString("amt", amt)
-            putBoolean("isBillRequire", isBillNumRequiredForBankEmi)
-            putBoolean("isSerialNumRequired", false)*/
     val uiAction: UiAction by lazy {
         arguments?.getSerializable("uiAction") as UiAction
     }
@@ -87,23 +82,20 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
         }
 
+        binding?.serialNumEt?.setMaxLength(brandEMIDataModal.getMaxLength()?.toInt() ?: 16)
+        binding?.billNumEt?.setMaxLength( 16)
         if (isBillRequire) {
             binding?.billnoCrdView?.visibility = View.VISIBLE
         } else {
             binding?.billnoCrdView?.visibility = View.GONE
         }
+//0therwise optional
         if (brandEMIDataModal.getIsRequired() == "1" || brandEMIDataModal.getIsRequired() == "2") {
             if (brandValidation.isSerialNumReq) {
-                binding?.serialNumEt?.filters = arrayOf<InputFilter>(
-                    InputFilter.LengthFilter(
-                        brandEMIDataModal.getMaxLength()?.toInt() ?: 20
-                    )
-                )
                 binding?.serialNumEt?.hint = "Enter serial number"
-            } else if (brandValidation.isImeiNumReq) {
-
-
-                binding?.serialNumEt?.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(brandEMIDataModal.getMaxLength()?.toInt() ?: 16))
+            }
+            else if (brandValidation.isImeiNumReq) {
+       //     binding?.serialNumEt?.filters = arrayOf<InputFilter>(InputFilter.LengthFilter(brandEMIDataModal.getMaxLength()?.toInt() ?: 16))
 
                 binding?.serialNumEt?.hint = "Enter IMEI number"
             }
@@ -121,11 +113,11 @@ class BillNumSerialNumEntryFragment : Fragment() {
         }
 
         when (brandEMIDataModal.getInputDataType()) {
-            "0" -> {
+            "1" -> {
                 binding?.serialNumEt?.inputType = InputType.TYPE_CLASS_NUMBER
 
             }
-            "1", "2" -> {
+           else-> {
                 binding?.serialNumEt?.inputType = InputType.TYPE_CLASS_TEXT
 
             }
@@ -144,7 +136,13 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
 
     }
+// extension function to set edit text maximum length
 
+    fun EditText.setMaxLength(maxLength: Int){
+
+        filters = arrayOf<InputFilter>(LengthFilter(maxLength))
+
+    }
     private fun navigateToTransaction() {
 
         if (brandValidation.isBillNumMandatory || brandValidation.isBillNumReq) {
@@ -170,7 +168,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            saveBrandEMIDataToDB( binding?.billNumEt?.text.toString().trim(),  binding?.billNumEt?.text.toString().trim(), brandEMIDataModal, transType)
+            saveBrandEMIDataToDB( binding?.serialNumEt?.text.toString().trim(),  binding?.serialNumEt?.text.toString().trim(), brandEMIDataModal, transType)
             withContext(Dispatchers.Main) {
                 (activity as MainActivity).onFragmentRequest(
                     uiAction,

@@ -3238,7 +3238,7 @@ setLogoAndHeader()
                     if (!TextUtils.isEmpty(brandData.imeiNumber)) {
                         alignLeftRightText(
                             textInLineFormatBundle,
-                            "Product IMEI No.",
+                            "Product IMEI/Serial No.",
                             brandData.imeiNumber,
                             ":"
                         )
@@ -3856,7 +3856,7 @@ setLogoAndHeader()
                     if (!TextUtils.isEmpty(brandEmiData.imeiNumber)) {
                         alignLeftRightText(
                             textInLineFormatBundle,
-                            "Product IMEI No.",
+                            "Product IMEI/Serial No.",
                             brandEmiData.imeiNumber,
                             ":"
                         )

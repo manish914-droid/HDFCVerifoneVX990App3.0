@@ -44,33 +44,45 @@ class EMICatalogue : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.emi_catalogue)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
-
         Log.d("EMI Catalogue Action:- ", (action as EDashboardItem).toString())
         tptData = TerminalParameterTable.selectFromSchemeTable()
-
+//11111011000000000000
         //region================Brand and Bank EMI Catalogue Button Hide/Show Conditions:-
-         if (tptData?.reservedValues?.substring(9, 10) == "1" && tptData?.reservedValues?.substring(
+        /* if (tptData?.reservedValues?.substring(9, 10) == "1" && tptData?.reservedValues?.substring(
                  5,
                  6
              ) == "1"
          ) {
-             binding?.buttonBrandEmi?.visibility = View.VISIBLE
-             binding?.buttonBankEmi?.visibility = View.VISIBLE
+             binding?.brandEmiCv?.visibility = View.VISIBLE
+             binding?.bankEmiCv?.visibility = View.VISIBLE
          } else if (tptData?.reservedValues?.substring(
                  9,
                  10
              ) == "1" && tptData?.reservedValues?.substring(5, 6) == "0"
          ) {
-             binding?.buttonBrandEmi?.visibility = View.VISIBLE
-             binding?.buttonBankEmi?.visibility = View.GONE
+             binding?.brandEmiCv?.visibility = View.VISIBLE
+             binding?.bankEmiCv?.visibility = View.GONE
          } else if (tptData?.reservedValues?.substring(
                  9,
                  10
              ) == "0" && tptData?.reservedValues?.substring(5, 6) == "1"
          ) {
-             binding?.buttonBrandEmi?.visibility = View.GONE
-             binding?.buttonBankEmi?.visibility = View.VISIBLE
-         }
+             binding?.brandEmiCv?.visibility = View.GONE
+             binding?.bankEmiCv?.visibility = View.VISIBLE
+         }*/
+        tptData?.let {
+            enabledEmiOptions(it) { isBankEmiOn, isBrandEmiOn ->
+                if (isBankEmiOn) {
+                    binding?.bankEmiCv?.visibility = View.VISIBLE
+                }
+                if (isBrandEmiOn) {
+                    binding?.brandEmiCv?.visibility = View.VISIBLE
+                }
+
+            }
+        }
+
+
         //endregion
 
         //region================Navigate to NewInputAmount Fragment on Click Event of BankEMI Button:-
@@ -100,4 +112,26 @@ class EMICatalogue : Fragment() {
         super.onDetach()
         iDialog = null
     }
+}
+
+fun enabledEmiOptions(tpt: TerminalParameterTable, cb: (Boolean, Boolean) -> Unit) {
+    var brandEmiOn = false
+    var bankEmiOn = false
+
+    when (tpt.reservedValues[6]) {
+        '1' -> {
+            // bank emi on
+            bankEmiOn = true
+        }
+    }
+    when (tpt.reservedValues[10]) {
+        '1' -> {
+            // brand emi on
+            brandEmiOn = true
+        }
+
+
+    }
+    cb(bankEmiOn, brandEmiOn)
+
 }

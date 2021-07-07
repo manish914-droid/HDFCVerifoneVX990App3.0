@@ -874,8 +874,8 @@ class NewInputAmountFragment : Fragment() {
     //endregion
     //region=====================Condition to check Whether we need to show Serial input or not:-
     private fun isShowSerialDialog(): Boolean {
-        return brandEMIDataModal?.getValidationTypeName() == "Serial Number" ||
-                brandEMIDataModal?.getValidationTypeName() == "serial number"
+        return brandEMIDataModal?.getValidationTypeName() == "SerialNo" ||
+                brandEMIDataModal?.getValidationTypeName() == "SerialNo"
     }
 
     //endregion

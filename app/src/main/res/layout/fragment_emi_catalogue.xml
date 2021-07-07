@@ -25,6 +25,7 @@
             app:neumorph_shadowColorDark="@color/upperShadow"
             app:neumorph_shadowColorLight="@color/lowerShadow"
             app:neumorph_shadowElevation="4dp"
+            android:visibility="gone"
             app:neumorph_shapeType="pressed">
 
             <com.example.customneumorphic.NeumorphButton
@@ -42,8 +43,10 @@
 
         <com.example.customneumorphic.NeumorphCardView
             style="@style/Widget.Neumorph.CardView"
+            android:id="@+id/brand_emi_cv"
             android:layout_width="match_parent"
             android:layout_height="@dimen/pad_80"
+            android:visibility="gone"
             app:layout_constraintTop_toBottomOf="@+id/bank_emi_cv"
             app:neumorph_shadowColorDark="@color/upperShadow"
             app:neumorph_shadowColorLight="@color/lowerShadow"

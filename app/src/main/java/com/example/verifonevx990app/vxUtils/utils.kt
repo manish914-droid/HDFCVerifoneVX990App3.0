@@ -438,7 +438,7 @@ suspend fun saveToDB(spliter: List<String>) {
             parseData(terminalParameterTable, spliter)
             //terminalParameterTable.stan = "000001"
             //Check for Enabling EMI Enquiry on terminal by reservedValues check.
-            if (terminalParameterTable.reservedValues[6].toString().toInt() == 1) {
+            if (terminalParameterTable.reservedValues[6] == '1' || terminalParameterTable.reservedValues[10] == '1') {
                 terminalParameterTable.bankEnquiry = "1"
                 //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check)
                 terminalParameterTable.bankEnquiryMobNumberEntry =

@@ -1120,16 +1120,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
             EDashboardItem.EMI_ENQUIRY -> {
                 if (checkInternetConnection()) {
-                    /*    transactFragment(NewInputAmountFragment().apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", action)
-                                putString(
-                                    INPUT_SUB_HEADING,
-                                    SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
-                                )
-                            }
-                        })*/
-
                     transactFragment(EMICatalogue().apply {
                         arguments = Bundle().apply {
                             putSerializable("type", EDashboardItem.EMI_CATALOGUE)

@@ -535,6 +535,9 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
         fun selectBatchData(): MutableList<BatchFileDataTable> = runBlocking {
             var result = mutableListOf<BatchFileDataTable>()
             getRealm {
+
+
+
                 val re = it.copyFromRealm(it.where(BatchFileDataTable::class.java).findAll())
                 if (re != null) result = re
 
@@ -1560,7 +1563,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     var bankCode = ""
 
     @field:BHFieldParseIndex(42)
-    @field:BHFieldName("TID")
+  //  @field:BHFieldName("TID")
     var tid = ""
 
     //endregion

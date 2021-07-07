@@ -951,7 +951,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                             getString(R.string.confirmation),
                             getString(R.string.last_cancel_report_confirmation),
                             "Yes",
-                            "Cancel",
+                            "No",
                             {
 
                                 GlobalScope.launch(Dispatchers.Main) {
