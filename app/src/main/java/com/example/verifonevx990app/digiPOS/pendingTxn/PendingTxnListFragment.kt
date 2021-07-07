@@ -75,8 +75,7 @@ class PendingTxnListFragment : Fragment() {
                                 tabledata.partnerTxnId =
                                     statusRespDataList[6]
                                 tabledata.transactionTimeStamp = statusRespDataList[7]
-                                tabledata.displayFormatedDate =
-                                    getDateInDisplayFormatDigipos(statusRespDataList[7])
+                                tabledata.displayFormatedDate = getDateInDisplayFormatDigipos(statusRespDataList[7])
                                 val dateTime =
                                     statusRespDataList[7].split(
                                         " "
@@ -283,7 +282,8 @@ class PendingTxnRecyclerView(
         holder.binding.transactionIV.visibility = View.VISIBLE
         holder.binding.parentSubHeader.visibility = View.VISIBLE
         holder.binding.transactionIV.visibility = View.VISIBLE
-        holder.binding.mobileNumberTV.visibility = View.VISIBLE
+        if(digiData[position].customerMobileNumber.isNullOrEmpty())
+            holder.binding.mobileNumberTV.visibility = View.INVISIBLE
         holder.binding.sepraterLineView.visibility = View.VISIBLE
     }
 

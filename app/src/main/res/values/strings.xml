@@ -202,6 +202,9 @@
     <string name="do_you_want_to_settle_batch">Updates Available Do you want to Settle Batch?</string>
     <string name="settle_batch_hint">Do you want to Settle Batch?</string>
     <string name="batch_settle">Batch Settle</string>
+    <string name="please_enter_amount">PLEASE ENTER AMOUNT</string>
+    <string name="sending_reciving_data">Sending/Receiving data from host</string>
+    <string name="sale_amount_should_greater_then_1">Sale amount should be greater than RS 1</string>
 
 
     <string name="key_1">1</string>
@@ -296,7 +299,7 @@
     <string name="last_summary_not_available">Last summary not available</string>
     <string name="detail_report_not_found">Detail Report Not Found</string>
     <string name="invalid_invoice">Invalid Invoice</string>
-    <string name="invoice_is_invalid">Entered Invoice Is Invalid</string>
+    <string name="invoice_is_invalid">Entered invoice is invalid</string>
     <string name="something_went_wrong_in_app_update">Something went wrong\n In App Update</string>
     <string name="app_update_confirmation">App Update Confirmation</string>
     <string name="click_on_ok_button_to_confirm_app_update">Click YES to Send App Update Confirmation</string>

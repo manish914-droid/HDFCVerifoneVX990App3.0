@@ -314,12 +314,15 @@ class NewInputAmountFragment : Fragment() {
         }
 
         if (saleAmount < 1) {
-            VFService.showToast("Amount should be greater than Rs 1")
+            VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
             return
         } else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
-            VFService.showToast("Cash Amount should be greater than Rs 1")
+            VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
             return
-        } else {
+        }
+
+
+        else {
             when (transactionType) {
                 EDashboardItem.SALE -> {
                     val saleAmt = saleAmount.toString().trim().toFloat()

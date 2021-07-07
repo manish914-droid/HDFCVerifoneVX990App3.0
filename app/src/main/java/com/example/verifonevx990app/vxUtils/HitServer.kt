@@ -1,6 +1,7 @@
 package com.example.verifonevx990app.vxUtils
 
 import android.content.Context.MODE_PRIVATE
+import android.provider.Settings.Global.getString
 import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
@@ -8,6 +9,7 @@ import com.example.verifonevx990app.digiPOS.getCurrentDateInDisplayFormatDigipos
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
+
 import java.io.DataInputStream
 import java.io.FileOutputStream
 import java.net.ConnectException
@@ -51,7 +53,7 @@ object HitServer {
                         irh?.saveReversal()
                         logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
-                        progressMsg("Sending/Reciving data from host")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         //println("Data send" + data.byteArr2HexStr())
                         logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
@@ -59,7 +61,7 @@ object HitServer {
                         sos?.write(data)
                         sos.flush()
 
-                        progressMsg("Sending/Reciving data from host")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         val dis = DataInputStream(socket.getInputStream())
                         val len = dis.readShort().toInt()
                         val response = ByteArray(len)
@@ -250,14 +252,14 @@ object HitServer {
                         // irh?.saveReversal()
                         logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
-                        progressMsg("Please wait sending data to Bonushub server")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         //println("Data send" + data.byteArr2HexStr())
                         logger(TAG, "Data Send = ${data.byteArr2HexStr()}")
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
                         val sos = socket.getOutputStream()
                         sos?.write(data)
                         sos.flush()
-                        progressMsg("Please wait receiving data from Bonushub server")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         val dis = DataInputStream(socket.getInputStream())
 
                         val len = dis.readShort().toInt()
@@ -378,12 +380,12 @@ object HitServer {
                         //println("Init iso packet send --- > $formattedInitPackets")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
-                        progressMsg("Sending/Reciving data from host")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         val sos = socket.getOutputStream()
                         sos?.write(data)
                         sos.flush()
 
-                        progressMsg("Sending/Reciving data from host")
+                        progressMsg(VerifoneApp.appContext.getString(R.string.sending_reciving_data))
                         val dis = DataInputStream(socket.getInputStream())
                         val len = dis.readShort().toInt()
                         val response = ByteArray(len)
