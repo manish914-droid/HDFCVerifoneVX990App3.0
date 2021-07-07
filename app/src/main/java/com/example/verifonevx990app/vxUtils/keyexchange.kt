@@ -554,34 +554,33 @@ class KeyExchanger(
                     runBlocking(Dispatchers.IO) {
                         val tpt = TerminalParameterTable.selectFromSchemeTable()
                         if (tpt != null) {
-                            getPromotionData(
-                                "000000000000",
-                                ProcessingCode.INITIALIZE_PROMOTION.code,
-                                tpt
-                            ) { isSuccess, responseMsg, responsef57, fullResponse ->
+                            getPromotionData("000000000000", ProcessingCode.INITIALIZE_PROMOTION.code, tpt) { isSuccess, responseMsg, responsef57, fullResponse ->
                                 if (isSuccess) {
-                                    val spliter = responsef57.split("|")
-                                    if (spliter[1] == "1") {
-                                        val terminalParameterTable =
-                                            TerminalParameterTable.selectFromSchemeTable()
-                                        terminalParameterTable?.isPromoAvailable = true
-                                        // CheckPromo....
-                                        if (terminalParameterTable?.reservedValues?.get(4)
-                                                .toString()
-                                                .toInt() == 1 && terminalParameterTable?.isPromoAvailable == true
-                                        ) {
-                                            terminalParameterTable.hasPromo = "1"
-                                            TerminalParameterTable.performOperation(
-                                                terminalParameterTable
+                                    println("Promotion data is"+responsef57.toString())
+                                    if(!responsef57.isNullOrBlank()) {
+                                        val spliter = responsef57.split("|")
+                                        if (spliter[1] == "1") {
+                                            val terminalParameterTable =
+                                                    TerminalParameterTable.selectFromSchemeTable()
+                                            terminalParameterTable?.isPromoAvailable = true
+                                            // CheckPromo....
+                                            if (terminalParameterTable?.reservedValues?.get(4)
+                                                            .toString()
+                                                            .toInt() == 1 && terminalParameterTable?.isPromoAvailable == true
                                             ) {
-                                                Log.i("TPT", "UPDATED with promo availability")
-                                                TerminalParameterTable.updateMerchantPromoData(
-                                                    Triple(
-                                                        spliter[0],
-                                                        spliter[1] == "1",
-                                                        spliter[2] == "1"
+                                                terminalParameterTable.hasPromo = "1"
+                                                TerminalParameterTable.performOperation(
+                                                        terminalParameterTable
+                                                ) {
+                                                    Log.i("TPT", "UPDATED with promo availability")
+                                                    TerminalParameterTable.updateMerchantPromoData(
+                                                            Triple(
+                                                                    spliter[0],
+                                                                    spliter[1] == "1",
+                                                                    spliter[2] == "1"
+                                                            )
                                                     )
-                                                )
+                                                }
                                             }
                                         }
                                     }
@@ -908,11 +907,7 @@ suspend fun downloadPromo() {
 
 }
 
-suspend fun getPromotionData(
-    field57RequestData: String,
-    processingCode: String, tpt: TerminalParameterTable,
-    cb: (Boolean, String, String, String) -> Unit
-) {
+suspend fun getPromotionData(field57RequestData: String, processingCode: String, tpt: TerminalParameterTable, cb: (Boolean, String, String, String) -> Unit) {
 
     // Promo Available or not at TID
     if ((tpt.reservedValues[4]).toString().toInt() == 1) {
@@ -1002,8 +997,7 @@ suspend fun getPromotionData(
             } else {
                 ROCProviderV2.incrementFromResponse(
                     ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                    AppPreference.getBankCode()
-                )
+                    AppPreference.getBankCode())
                 cb(isBool, responseMsg, responseField57, result)
             }
         }, {})

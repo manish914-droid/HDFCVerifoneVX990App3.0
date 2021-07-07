@@ -131,10 +131,11 @@ fun logger(tag: String, msg: HashMap<Byte, IsoField>, type: String = "d") {
 }
 
 // For doubleTap
-fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter, successResponseCode: String?) {
+fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
+              successResponseCode: String?, syncTransactionCallback: (String?) -> Unit) {
 
     val iemv: IEMV? by lazy { VFService.vfIEMV }
-
+    var secondTap : String? = null
     val ta91 = 0x91
     val ta8A = 0x8A
     //  val field55 = "91109836BE3880804000FFFE000000000001"
@@ -162,7 +163,7 @@ fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
     if (f55Hash.isNotEmpty() && (f55Hash.get(7) == "40" || f55Hash.get(7) == "80")) {
         //  VFService.showToast("Double Tap")
         AppPreference.saveString(AppPreference.doubletap, AppPreference.doubletap)
-        //secondTap = "doubletap"
+        secondTap = AppPreference.doubletap
 
         transactionISOData.apply {
             additionalData["F39reversaldoubletap"] = "E1"
@@ -241,8 +242,12 @@ fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
 
             }
         })
+       syncTransactionCallback(secondTap)
 
-
+    }
+    else{
+        AppPreference.clearReversal()
+        syncTransactionCallback(secondTap)
     }
 
 }
