@@ -59,9 +59,6 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
             }
         }
 
-
-
-
         //Transaction's ROC, transactionDate, transaction Time
         val f56 = "${batch.roc}${batch.transactionDate}${batch.transactionTime}"
 

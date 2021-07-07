@@ -278,10 +278,7 @@ object VFService {
     }
 
     //Below method is used to Open Pin Pad in Terminal:-
-    fun openPinPad(
-        cardProcessedDataModal: CardProcessedDataModal,
-        activity: Activity
-    ) {
+    fun openPinPad(cardProcessedDataModal: CardProcessedDataModal, activity: Activity) {
         //   mIsoWriter = isoPackageWriter
         //   isOnlinePin = onlinePin
         try {

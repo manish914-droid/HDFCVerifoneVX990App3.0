@@ -760,6 +760,20 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                                 }
                                             }
                                         }
+                                        TransactionType.BRAND_EMI.type -> {
+                                            PrintUtil(activity).printEMISale(
+                                                    b,
+                                                    EPrintCopyType.DUPLICATE,
+                                                    activity
+                                            ) { printCB, printingFail ->
+                                                if (printCB) {
+                                                    iDiag?.hideProgress()
+                                                    Log.e("PRINTING", "LAST_RECEIPT")
+                                                } else {
+                                                    iDiag?.hideProgress()
+                                                }
+                                            }
+                                        }
                                         TransactionType.PRE_AUTH_COMPLETE.type -> {
                                             PrintUtil(activity).printAuthCompleteChargeSlip(
                                                 b,
