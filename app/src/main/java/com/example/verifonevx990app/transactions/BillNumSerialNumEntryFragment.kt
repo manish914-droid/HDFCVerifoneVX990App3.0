@@ -82,7 +82,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
         }
 
-        binding?.serialNumEt?.setMaxLength(brandEMIDataModal.getMaxLength()?.toInt() ?: 16)
+        binding?.serialNumEt?.setMaxLength(brandEMIDataModal.getMaxLength()?.toInt() ?: 20)
         binding?.billNumEt?.setMaxLength( 16)
         if (isBillRequire) {
             binding?.billnoCrdView?.visibility = View.VISIBLE
