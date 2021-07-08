@@ -32,6 +32,7 @@ import com.example.verifonevx990app.voidrefund.VoidRefundSalePrintReceipt
 import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import com.vfi.smartpos.deviceservice.aidl.IPrinter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -388,7 +389,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
     private val mAdapter by lazy { SubMenuFragmentAdapter(optionList, this) }
     private val option by lazy { arguments?.getSerializable("option") as EOptionGroup }
     private var binding: FragmentSubmenuBinding? = null
-
+    private var printer: IPrinter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -601,77 +602,24 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
 
         } else if (type.group == EOptionGroup.REPORT.heading) {
-            when (type) {
-                //   BankOptions.LAST_RECEIPT -> Log.d("REPORTS", "LAST_RECEIPT")
-                BankOptions.LAST_RECEIPT -> {
-                    //
-                    val lastReceiptData = AppPreference.getLastSuccessReceipt()
-                    if (lastReceiptData != null) {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            iDiag?.showProgress(getString(R.string.printing_last_receipt))
-                        }
-                        when (lastReceiptData.transactionType) {
-                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
-                                PrintUtil(activity).startPrinting(
-                                    lastReceiptData,
-                                    EPrintCopyType.DUPLICATE,
-                                    activity
-                                ) { printCB, printingFail ->
-                                    if (printCB) {
-                                        iDiag?.hideProgress()
-                                        Log.e("PRINTING", "LAST_RECEIPT")
-                                    } else {
-                                        iDiag?.hideProgress()
-                                    }
-                                }
+            printer = VFService.vfPrinter
+            if (printer?.status == 0) {
+                when (type) {
+                    //   BankOptions.LAST_RECEIPT -> Log.d("REPORTS", "LAST_RECEIPT")
+                    BankOptions.LAST_RECEIPT -> {
+                        //
+
+                        val lastReceiptData = AppPreference.getLastSuccessReceipt()
+                        if (lastReceiptData != null) {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                iDiag?.showProgress(getString(R.string.printing_last_receipt))
                             }
-                            TransactionType.EMI_SALE.type -> {
-                                PrintUtil(activity).printEMISale(
-                                    lastReceiptData,
-                                    EPrintCopyType.DUPLICATE,
-                                    activity
-                                ) { printCB, printingFail ->
-                                    if (printCB) {
-                                        iDiag?.hideProgress()
-                                        Log.e("PRINTING", "LAST_RECEIPT")
-                                    } else {
-                                        iDiag?.hideProgress()
-                                    }
-                                }
-                            }
-                            TransactionType.PRE_AUTH_COMPLETE.type -> {
-                                PrintUtil(activity).printAuthCompleteChargeSlip(
-                                    lastReceiptData,
-                                    EPrintCopyType.DUPLICATE,
-                                    activity
-                                ) {
-                                    if (it) {
-                                        iDiag?.hideProgress()
-                                        Log.e("PRINTING", "LAST_RECEIPT")
-                                    } else {
-                                        iDiag?.hideProgress()
-                                    }
-                                }
-                            }
-                            TransactionType.VOID_PREAUTH.type -> {
-                                PrintUtil(activity).printAuthCompleteChargeSlip(
-                                    lastReceiptData,
-                                    EPrintCopyType.DUPLICATE,
-                                    activity
-                                ) {
-                                    if (it) {
-                                        iDiag?.hideProgress()
-                                        Log.e("PRINTING", "LAST_RECEIPT")
-                                    } else {
-                                        iDiag?.hideProgress()
-                                    }
-                                }
-                            }
-                            TransactionType.OFFLINE_SALE.type -> {
-                                activity?.let {
-                                    OfflineSalePrintReceipt().offlineSalePrint(
-                                        lastReceiptData, EPrintCopyType.DUPLICATE,
-                                        it
+                            when (lastReceiptData.transactionType) {
+                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
+                                    PrintUtil(activity).startPrinting(
+                                        lastReceiptData,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
                                     ) { printCB, printingFail ->
                                         if (printCB) {
                                             iDiag?.hideProgress()
@@ -681,118 +629,132 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         }
                                     }
                                 }
-                            }
-                            TransactionType.VOID_REFUND.type -> {
-                                VoidRefundSalePrintReceipt().startPrintingVoidRefund(
-                                    lastReceiptData,
-                                    TransactionType.VOID_REFUND.type,
-                                    EPrintCopyType.DUPLICATE,
-                                    activity
-                                ) { _, _ ->
-                                    iDiag?.hideProgress()
+                                TransactionType.EMI_SALE.type -> {
+                                    PrintUtil(activity).printEMISale(
+                                        lastReceiptData,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
+                                    ) { printCB, printingFail ->
+                                        if (printCB) {
+                                            iDiag?.hideProgress()
+                                            Log.e("PRINTING", "LAST_RECEIPT")
+                                        } else {
+                                            iDiag?.hideProgress()
+                                        }
+                                    }
+                                }
+                                TransactionType.BRAND_EMI.type -> {
+                                    PrintUtil(activity).printEMISale(
+                                        lastReceiptData,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
+                                    ) { printCB, printingFail ->
+                                        if (printCB) {
+                                            iDiag?.hideProgress()
+                                            Log.e("PRINTING", "LAST_RECEIPT")
+                                        } else {
+                                            iDiag?.hideProgress()
+                                        }
+                                    }
+                                }
+                                TransactionType.PRE_AUTH_COMPLETE.type -> {
+                                    PrintUtil(activity).printAuthCompleteChargeSlip(
+                                        lastReceiptData,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
+                                    ) {
+                                        if (it) {
+                                            iDiag?.hideProgress()
+                                            Log.e("PRINTING", "LAST_RECEIPT")
+                                        } else {
+                                            iDiag?.hideProgress()
+                                        }
+                                    }
+                                }
+                                TransactionType.VOID_PREAUTH.type -> {
+                                    PrintUtil(activity).printAuthCompleteChargeSlip(
+                                        lastReceiptData,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
+                                    ) {
+                                        if (it) {
+                                            iDiag?.hideProgress()
+                                            Log.e("PRINTING", "LAST_RECEIPT")
+                                        } else {
+                                            iDiag?.hideProgress()
+                                        }
+                                    }
+                                }
+                                TransactionType.OFFLINE_SALE.type -> {
+                                    activity?.let {
+                                        OfflineSalePrintReceipt().offlineSalePrint(
+                                            lastReceiptData, EPrintCopyType.DUPLICATE,
+                                            it
+                                        ) { printCB, printingFail ->
+                                            if (printCB) {
+                                                iDiag?.hideProgress()
+                                                Log.e("PRINTING", "LAST_RECEIPT")
+                                            } else {
+                                                iDiag?.hideProgress()
+                                            }
+                                        }
+                                    }
+                                }
+                                TransactionType.VOID_REFUND.type -> {
+                                    VoidRefundSalePrintReceipt().startPrintingVoidRefund(
+                                        lastReceiptData,
+                                        TransactionType.VOID_REFUND.type,
+                                        EPrintCopyType.DUPLICATE,
+                                        activity
+                                    ) { _, _ ->
+                                        iDiag?.hideProgress()
+                                    }
+                                }
+                                else -> {
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        iDiag?.hideProgress()
+                                        VFService.showToast("Something wrong Transaction Not Defined")
+                                    }
                                 }
                             }
-                            else -> {
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    iDiag?.hideProgress()
-                                    VFService.showToast("Something wrong Transaction Not Defined")
-                                }
-                            }
-                        }
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            //    iDiag?.hideProgress()
-                            //    iDiag?.showToast(getString(R.string.empty_batch))
-                            //-
+                        } else {
                             GlobalScope.launch(Dispatchers.Main) {
-                                iDiag?.alertBoxWithAction(null,
-                                    null,
-                                    VerifoneApp.appContext.getString(R.string.empty_batch),
-                                    VerifoneApp.appContext.getString(R.string.last_receipt_not_available),
-                                    false,
-                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                    {},
-                                    {})
+                                //    iDiag?.hideProgress()
+                                //    iDiag?.showToast(getString(R.string.empty_batch))
+                                //-
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    iDiag?.alertBoxWithAction(null,
+                                        null,
+                                        VerifoneApp.appContext.getString(R.string.empty_batch),
+                                        VerifoneApp.appContext.getString(R.string.last_receipt_not_available),
+                                        false,
+                                        VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                        {},
+                                        {})
+                                }
                             }
                         }
-                    }
 
 
-                } // End of Last Receipt case
+                    } // End of Last Receipt case
 
-                BankOptions.ANY_RECEIPT -> {
-                    context?.let {
-                        getInputDialog(it, "Enter Invoice Number", "", true) { invoice ->
-                            //   iDiag?.showProgress()
-                            iDiag?.showProgress(getString(R.string.printing_receipt))
-                            GlobalScope.launch {
-                                val bat = BatchFileDataTable.selectBatchData()
-                                try {
-                                    val b =
-                                        bat.first { it.hostInvoice.toLong() == invoice.toLong() }
-                                    //    printBatch(b)
-                                    when (b.transactionType) {
-                                        TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
-                                            PrintUtil(activity).startPrinting(
-                                                b,
-                                                EPrintCopyType.DUPLICATE,
-                                                activity
-                                            ) { printCB, printingFail ->
-                                                if (printCB) {
-                                                    iDiag?.hideProgress()
-                                                    Log.e("PRINTING", "LAST_RECEIPT")
-                                                } else {
-                                                    iDiag?.hideProgress()
-                                                }
-                                            }
-                                        }
-                                        TransactionType.EMI_SALE.type -> {
-                                            PrintUtil(activity).printEMISale(
-                                                b,
-                                                EPrintCopyType.DUPLICATE,
-                                                activity
-                                            ) { printCB, printingFail ->
-                                                if (printCB) {
-                                                    iDiag?.hideProgress()
-                                                    Log.e("PRINTING", "LAST_RECEIPT")
-                                                } else {
-                                                    iDiag?.hideProgress()
-                                                }
-                                            }
-                                        }
-                                        TransactionType.BRAND_EMI.type -> {
-                                            PrintUtil(activity).printEMISale(
+                    BankOptions.ANY_RECEIPT -> {
+                        context?.let {
+                            getInputDialog(it, "Enter Invoice Number", "", true) { invoice ->
+                                //   iDiag?.showProgress()
+                                iDiag?.showProgress(getString(R.string.printing_receipt))
+                                GlobalScope.launch {
+                                    val bat = BatchFileDataTable.selectBatchData()
+                                    try {
+                                        val b =
+                                            bat.first { it.hostInvoice.toLong() == invoice.toLong() }
+                                        //    printBatch(b)
+                                        when (b.transactionType) {
+                                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
+                                                PrintUtil(activity).startPrinting(
                                                     b,
                                                     EPrintCopyType.DUPLICATE,
                                                     activity
-                                            ) { printCB, printingFail ->
-                                                if (printCB) {
-                                                    iDiag?.hideProgress()
-                                                    Log.e("PRINTING", "LAST_RECEIPT")
-                                                } else {
-                                                    iDiag?.hideProgress()
-                                                }
-                                            }
-                                        }
-                                        TransactionType.PRE_AUTH_COMPLETE.type -> {
-                                            PrintUtil(activity).printAuthCompleteChargeSlip(
-                                                b,
-                                                EPrintCopyType.DUPLICATE,
-                                                activity
-                                            ) {
-                                                if (it) {
-                                                    iDiag?.hideProgress()
-                                                    Log.e("PRINTING", "LAST_RECEIPT")
-                                                } else {
-                                                    iDiag?.hideProgress()
-                                                }
-                                            }
-                                        }
-                                        TransactionType.OFFLINE_SALE.type -> {
-                                            activity?.let { it1 ->
-                                                OfflineSalePrintReceipt().offlineSalePrint(
-                                                    b, EPrintCopyType.DUPLICATE,
-                                                    it1
                                                 ) { printCB, printingFail ->
                                                     if (printCB) {
                                                         iDiag?.hideProgress()
@@ -802,290 +764,353 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                                     }
                                                 }
                                             }
+                                            TransactionType.EMI_SALE.type -> {
+                                                PrintUtil(activity).printEMISale(
+                                                    b,
+                                                    EPrintCopyType.DUPLICATE,
+                                                    activity
+                                                ) { printCB, printingFail ->
+                                                    if (printCB) {
+                                                        iDiag?.hideProgress()
+                                                        Log.e("PRINTING", "LAST_RECEIPT")
+                                                    } else {
+                                                        iDiag?.hideProgress()
+                                                    }
+                                                }
+                                            }
+                                            TransactionType.BRAND_EMI.type -> {
+                                                PrintUtil(activity).printEMISale(
+                                                    b,
+                                                    EPrintCopyType.DUPLICATE,
+                                                    activity
+                                                ) { printCB, printingFail ->
+                                                    if (printCB) {
+                                                        iDiag?.hideProgress()
+                                                        Log.e("PRINTING", "LAST_RECEIPT")
+                                                    } else {
+                                                        iDiag?.hideProgress()
+                                                    }
+                                                }
+                                            }
+                                            TransactionType.PRE_AUTH_COMPLETE.type -> {
+                                                PrintUtil(activity).printAuthCompleteChargeSlip(
+                                                    b,
+                                                    EPrintCopyType.DUPLICATE,
+                                                    activity
+                                                ) {
+                                                    if (it) {
+                                                        iDiag?.hideProgress()
+                                                        Log.e("PRINTING", "LAST_RECEIPT")
+                                                    } else {
+                                                        iDiag?.hideProgress()
+                                                    }
+                                                }
+                                            }
+                                            TransactionType.OFFLINE_SALE.type -> {
+                                                activity?.let { it1 ->
+                                                    OfflineSalePrintReceipt().offlineSalePrint(
+                                                        b, EPrintCopyType.DUPLICATE,
+                                                        it1
+                                                    ) { printCB, printingFail ->
+                                                        if (printCB) {
+                                                            iDiag?.hideProgress()
+                                                            Log.e("PRINTING", "LAST_RECEIPT")
+                                                        } else {
+                                                            iDiag?.hideProgress()
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            else -> {
+                                                iDiag?.hideProgress()
+                                                VFService.showToast("Something wrong Transaction Not Defined")
+                                            }
                                         }
-                                        else -> {
+                                    } catch (ex: Exception) {
+                                        launch(Dispatchers.Main) {
                                             iDiag?.hideProgress()
-                                            VFService.showToast("Something wrong Transaction Not Defined")
-                                        }
-                                    }
-                                } catch (ex: Exception) {
-                                    launch(Dispatchers.Main) {
-                                        iDiag?.hideProgress()
-                                        //    iDiag?.showToast("Invoice is invalid.")
-                                        GlobalScope.launch(Dispatchers.Main) {
-                                            iDiag?.alertBoxWithAction(null,
-                                                null,
-                                                VerifoneApp.appContext.getString(R.string.invalid_invoice),
-                                                VerifoneApp.appContext.getString(R.string.invoice_is_invalid),
-                                                false,
-                                                VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                                {},
-                                                {})
-                                        }
+                                            //    iDiag?.showToast("Invoice is invalid.")
+                                            GlobalScope.launch(Dispatchers.Main) {
+                                                iDiag?.alertBoxWithAction(null,
+                                                    null,
+                                                    VerifoneApp.appContext.getString(R.string.invalid_invoice),
+                                                    VerifoneApp.appContext.getString(R.string.invoice_is_invalid),
+                                                    false,
+                                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                                    {},
+                                                    {})
+                                            }
 
 
+                                        }
                                     }
                                 }
                             }
                         }
-                    }
-                } // End of Any Receipt case
+                    } // End of Any Receipt case
 
-                BankOptions.DETAIL_REPORT -> {
-                    val batchData = BatchFileDataTable.selectBatchData()
-                    if (batchData.isNotEmpty()) {
-                        iDiag?.getMsgDialog(
-                            getString(R.string.confirmation),
-                            getString(R.string.want_print_detail),
-                            getString(R.string.yes),
-                            getString(R.string.no),
-                            {
-                                GlobalScope.launch {
-                                    val bat = BatchFileDataTable.selectBatchData()
-                                    if (bat.isNotEmpty()) {
-                                        try {
-                                            GlobalScope.launch(Dispatchers.Main) {
-                                                iDiag?.showProgress(getString(R.string.printing_detail))
-                                            }
-                                            PrintUtil(activity).printDetailReportupdate(bat, activity) {
-                                                iDiag?.hideProgress()
+                    BankOptions.DETAIL_REPORT -> {
+                        val batchData = BatchFileDataTable.selectBatchData()
+                        if (batchData.isNotEmpty()) {
+                            iDiag?.getMsgDialog(
+                                getString(R.string.confirmation),
+                                getString(R.string.want_print_detail),
+                                getString(R.string.yes),
+                                getString(R.string.no),
+                                {
+                                    GlobalScope.launch {
+                                        val bat = BatchFileDataTable.selectBatchData()
+                                        if (bat.isNotEmpty()) {
+                                            try {
+                                                GlobalScope.launch(Dispatchers.Main) {
+                                                    iDiag?.showProgress(getString(R.string.printing_detail))
+                                                }
+                                                PrintUtil(activity).printDetailReportupdate(
+                                                    bat,
+                                                    activity
+                                                ) {
+                                                    iDiag?.hideProgress()
+                                                }
+
+                                            } catch (ex: java.lang.Exception) {
+                                                ex.message ?: getString(R.string.error_in_printing)
+                                                // "catch toast"
+                                            } finally {
+                                                GlobalScope.launch(Dispatchers.Main) {
+                                                    iDiag?.hideProgress()
+                                                    //  iDiag?.showToast(msg)
+                                                }
                                             }
 
-                                        } catch (ex: java.lang.Exception) {
-                                            ex.message ?: getString(R.string.error_in_printing)
-                                            // "catch toast"
-                                        } finally {
+                                        } else {
                                             GlobalScope.launch(Dispatchers.Main) {
                                                 iDiag?.hideProgress()
-                                                //  iDiag?.showToast(msg)
+                                                iDiag?.showToast("  Batch is empty.  ")
                                             }
                                         }
 
-                                    } else {
-                                        GlobalScope.launch(Dispatchers.Main) {
-                                            iDiag?.hideProgress()
-                                            iDiag?.showToast("  Batch is empty.  ")
-                                        }
                                     }
 
-                                }
+                                },
+                                {
+                                    //handle cancel here
+                                })
+                        } else {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                iDiag?.alertBoxWithAction(null,
+                                    null,
+                                    VerifoneApp.appContext.getString(R.string.empty_batch),
+                                    VerifoneApp.appContext.getString(R.string.detail_report_not_found),
+                                    false,
+                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                    {},
+                                    {})
+                            }
 
-                            },
-                            {
-                                //handle cancel here
-                            })
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            iDiag?.alertBoxWithAction(null,
-                                null,
-                                VerifoneApp.appContext.getString(R.string.empty_batch),
-                                VerifoneApp.appContext.getString(R.string.detail_report_not_found),
-                                false,
-                                VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                {},
-                                {})
+                        }
+                    }// End of Detail report
+
+                    BankOptions.SUMMERY_REPORT -> {
+                        val batList = BatchFileDataTable.selectBatchData()
+                        if (batList.isNotEmpty()) {
+                            iDiag?.getMsgDialog(
+                                getString(R.string.confirmation),
+                                "Do you want to print summary Report",
+                                "Yes",
+                                "No",
+                                {
+
+                                    GlobalScope.launch {
+                                        if (batList.isNotEmpty()) {
+                                            GlobalScope.launch(Dispatchers.Main) {
+                                                iDiag?.showProgress(
+                                                    getString(R.string.printing_summary_report)
+                                                )
+                                            }
+                                            try {
+                                                PrintUtil(context).printSettlementReportupdate(
+                                                    context,
+                                                    batList
+                                                ) {
+                                                    iDiag?.hideProgress()
+                                                }
+                                                //  printSummery(batList)
+                                                //  getString(R.string.summery_report_printed)
+
+                                            } catch (ex: java.lang.Exception) {
+                                                //  ex.message ?: getString(R.string.error_in_printing)
+                                                ex.printStackTrace()
+                                            } finally {
+                                                launch(Dispatchers.Main) {
+                                                    iDiag?.hideProgress()
+                                                    // iDiag?.showToast(msg)
+                                                }
+                                            }
+
+                                        } else {
+                                            launch(Dispatchers.Main) {
+                                                iDiag?.hideProgress()
+                                                iDiag?.getInfoDialog(
+                                                    "Error",
+                                                    " Summery is not available."
+                                                ) {}
+                                            }
+                                        }
+
+                                    }
+                                },
+                                {
+                                    //Cancel handle here
+
+                                })
+                        } else {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                iDiag?.alertBoxWithAction(null,
+                                    null,
+                                    VerifoneApp.appContext.getString(R.string.empty_batch),
+                                    VerifoneApp.appContext.getString(R.string.summary_report_not_available),
+                                    false,
+                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                    {},
+                                    {})
+                            }
+
                         }
 
-                    }
-                }// End of Detail report
+                    } // End of Summery Report
 
-                BankOptions.SUMMERY_REPORT -> {
-                    val batList = BatchFileDataTable.selectBatchData()
-                    if (batList.isNotEmpty()) {
-                        iDiag?.getMsgDialog(
-                            getString(R.string.confirmation),
-                            "Do you want to print summary Report",
-                            "Yes",
-                            "No",
-                            {
+                    BankOptions.LAST_CANCEL_RECEIPT -> {
+                        val isoW = AppPreference.getReversal()
+                        if (isoW != null) {
+                            iDiag?.getMsgDialog(
+                                getString(R.string.confirmation),
+                                getString(R.string.last_cancel_report_confirmation),
+                                "Yes",
+                                "No",
+                                {
 
-                                GlobalScope.launch {
-                                    if (batList.isNotEmpty()) {
-                                        GlobalScope.launch(Dispatchers.Main) {
-                                            iDiag?.showProgress(
-                                                getString(R.string.printing_summary_report)
-                                            )
-                                        }
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        iDiag?.showProgress(getString(R.string.printing_last_cancel_receipt))
+                                    }
+                                    GlobalScope.launch {
                                         try {
-                                            PrintUtil(context).printSettlementReportupdate(
-                                                context,
-                                                batList
-                                            ) {
+                                            PrintUtil(context).printReversal(context, "") {
+                                                //  VFService.showToast(it)
                                                 iDiag?.hideProgress()
                                             }
-                                            //  printSummery(batList)
-                                            //  getString(R.string.summery_report_printed)
-
                                         } catch (ex: java.lang.Exception) {
-                                            //  ex.message ?: getString(R.string.error_in_printing)
                                             ex.printStackTrace()
-                                        } finally {
-                                            launch(Dispatchers.Main) {
-                                                iDiag?.hideProgress()
-                                                // iDiag?.showToast(msg)
-                                            }
-                                        }
-
-                                    } else {
-                                        launch(Dispatchers.Main) {
-                                            iDiag?.hideProgress()
-                                            iDiag?.getInfoDialog(
-                                                "Error",
-                                                " Summery is not available."
-                                            ) {}
-                                        }
-                                    }
-
-                                }
-                            },
-                            {
-                                //Cancel handle here
-
-                            })
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            iDiag?.alertBoxWithAction(null,
-                                null,
-                                VerifoneApp.appContext.getString(R.string.empty_batch),
-                                VerifoneApp.appContext.getString(R.string.summary_report_not_available),
-                                false,
-                                VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                {},
-                                {})
-                        }
-
-                    }
-
-                } // End of Summery Report
-
-                BankOptions.LAST_CANCEL_RECEIPT -> {
-                    val isoW = AppPreference.getReversal()
-                    if (isoW != null) {
-                        iDiag?.getMsgDialog(
-                            getString(R.string.confirmation),
-                            getString(R.string.last_cancel_report_confirmation),
-                            "Yes",
-                            "No",
-                            {
-
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    iDiag?.showProgress(getString(R.string.printing_last_cancel_receipt))
-                                }
-                                GlobalScope.launch {
-                                    try {
-                                        PrintUtil(context).printReversal(context,"") {
-                                            //  VFService.showToast(it)
                                             iDiag?.hideProgress()
                                         }
-                                    } catch (ex: java.lang.Exception) {
-                                        ex.printStackTrace()
-                                        iDiag?.hideProgress()
-                                    }
 
-                                }
-                            },
-                            {
-                                //Cancel Handling
-                            })
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            iDiag?.alertBoxWithAction(null,
-                                null,
-                                VerifoneApp.appContext.getString(R.string.no_receipt),
-                                VerifoneApp.appContext.getString(R.string.no_cancel_receipt_found),
-                                false,
-                                VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                {},
-                                {})
+                                    }
+                                },
+                                {
+                                    //Cancel Handling
+                                })
+                        } else {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                iDiag?.alertBoxWithAction(null,
+                                    null,
+                                    VerifoneApp.appContext.getString(R.string.no_receipt),
+                                    VerifoneApp.appContext.getString(R.string.no_cancel_receipt_found),
+                                    false,
+                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                    {},
+                                    {})
+                            }
+
+
                         }
 
+                    }// End of last cancel receipt
 
-                    }
-
-                }// End of last cancel receipt
-
-                BankOptions.LAST_SUMMERY_REPORT -> {
-                    val str = AppPreference.getString(AppPreference.LAST_BATCH)
-                    val batList = Gson().fromJson<List<BatchFileDataTable>>(
-                        str,
-                        object : TypeToken<List<BatchFileDataTable>>() {}.type
-                    )
-                    if (batList != null) {
-                        iDiag?.getMsgDialog(
-                            getString(R.string.confirmation),
-                            getString(R.string.last_summary_confirmation),
-                            "Yes",
-                            "No",
-                            {
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    iDiag?.showProgress(
-                                        getString(
-                                            R.string.printing_last_summary_report
+                    BankOptions.LAST_SUMMERY_REPORT -> {
+                        val str = AppPreference.getString(AppPreference.LAST_BATCH)
+                        val batList = Gson().fromJson<List<BatchFileDataTable>>(
+                            str,
+                            object : TypeToken<List<BatchFileDataTable>>() {}.type
+                        )
+                        if (batList != null) {
+                            iDiag?.getMsgDialog(
+                                getString(R.string.confirmation),
+                                getString(R.string.last_summary_confirmation),
+                                "Yes",
+                                "No",
+                                {
+                                    GlobalScope.launch(Dispatchers.Main) {
+                                        iDiag?.showProgress(
+                                            getString(
+                                                R.string.printing_last_summary_report
+                                            )
                                         )
-                                    )
-                                }
-
-                                GlobalScope.launch {
-                                    val str1 = AppPreference.getString(AppPreference.LAST_BATCH)
-                                    val batList1 = Gson().fromJson<List<BatchFileDataTable>>(
-                                        str1,
-                                        object : TypeToken<List<BatchFileDataTable>>() {}.type
-                                    )
-
-                                    if (batList1 != null) {
-                                        try {
-                                            PrintUtil(context).printSettlementReportupdate(
-                                                context,
-                                                batList1 as MutableList<BatchFileDataTable>,
-                                                isSettlementSuccess = false,
-                                                isLastSummary = true
-                                            ) {
-                                                iDiag?.hideProgress()
-                                            }
-                                        } catch (ex: java.lang.Exception) {
-                                            ex.message ?: getString(R.string.error_in_printing)
-                                        } finally {
-                                            launch(Dispatchers.Main) {
-                                                iDiag?.hideProgress()
-                                                //   iDiag?.showToast(msg)
-                                            }
-                                        }
-                                    } else {
-                                        launch(Dispatchers.Main) {
-                                            iDiag?.hideProgress()
-                                            iDiag?.getInfoDialog(
-                                                "Error",
-                                                "Last summary is not available."
-                                            ) {}
-                                        }
                                     }
 
-                                }
-                            },
-                            {
-                                //Cancel Handling
-                            })
-                    } else {
-                        GlobalScope.launch(Dispatchers.Main) {
-                            iDiag?.alertBoxWithAction(null,
-                                null,
-                                VerifoneApp.appContext.getString(R.string.no_receipt),
-                                VerifoneApp.appContext.getString(R.string.last_summary_not_available),
-                                false,
-                                VerifoneApp.appContext.getString(R.string.positive_button_ok),
-                                {},
-                                {})
+                                    GlobalScope.launch {
+                                        val str1 = AppPreference.getString(AppPreference.LAST_BATCH)
+                                        val batList1 = Gson().fromJson<List<BatchFileDataTable>>(
+                                            str1,
+                                            object : TypeToken<List<BatchFileDataTable>>() {}.type
+                                        )
+
+                                        if (batList1 != null) {
+                                            try {
+                                                PrintUtil(context).printSettlementReportupdate(
+                                                    context,
+                                                    batList1 as MutableList<BatchFileDataTable>,
+                                                    isSettlementSuccess = false,
+                                                    isLastSummary = true
+                                                ) {
+                                                    iDiag?.hideProgress()
+                                                }
+                                            } catch (ex: java.lang.Exception) {
+                                                ex.message ?: getString(R.string.error_in_printing)
+                                            } finally {
+                                                launch(Dispatchers.Main) {
+                                                    iDiag?.hideProgress()
+                                                    //   iDiag?.showToast(msg)
+                                                }
+                                            }
+                                        } else {
+                                            launch(Dispatchers.Main) {
+                                                iDiag?.hideProgress()
+                                                iDiag?.getInfoDialog(
+                                                    "Error",
+                                                    "Last summary is not available."
+                                                ) {}
+                                            }
+                                        }
+
+                                    }
+                                },
+                                {
+                                    //Cancel Handling
+                                })
+                        } else {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                iDiag?.alertBoxWithAction(null,
+                                    null,
+                                    VerifoneApp.appContext.getString(R.string.no_receipt),
+                                    VerifoneApp.appContext.getString(R.string.last_summary_not_available),
+                                    false,
+                                    VerifoneApp.appContext.getString(R.string.positive_button_ok),
+                                    {},
+                                    {})
+                            }
                         }
+
+                    }// End of last Summery Report receipt
+
+                    else -> {
+                        iDiag?.showToast("No Option Found")
                     }
 
-                }// End of last Summery Report receipt
+                }// End of when
 
-                else -> {
-                    iDiag?.showToast("No Option Found")
-                }
-
-            }// End of when
-
+            }
+            else{
+                VFService.showToast("Printing roll not available..")
+            }
         }
 
     }

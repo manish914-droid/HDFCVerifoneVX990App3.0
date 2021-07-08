@@ -3929,6 +3929,8 @@ setLogoAndHeader()
             if (printerReceiptData.isPinverified) {
                 centerText(textFormatBundle, pinVerifyMsg)
                 centerText(textFormatBundle, signatureMsg)
+                centerText(textFormatBundle, printerReceiptData.cardHolderName)
+
             } else {
                 alignLeftRightText(textFormatBundle, pinVerifyMsg, "", "")
                 alignLeftRightText(textFormatBundle, signatureMsg, "", "")
