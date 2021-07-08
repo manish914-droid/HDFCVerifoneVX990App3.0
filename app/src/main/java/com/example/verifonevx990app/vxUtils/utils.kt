@@ -131,11 +131,13 @@ fun logger(tag: String, msg: HashMap<Byte, IsoField>, type: String = "d") {
 }
 
 // For doubleTap
-fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
-              successResponseCode: String?, syncTransactionCallback: (String?) -> Unit) {
+fun doubleTap(
+    responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
+    successResponseCode: String?, syncTransactionCallback: (String?) -> Unit
+) {
 
     val iemv: IEMV? by lazy { VFService.vfIEMV }
-    var secondTap : String? = null
+    var secondTap: String? = null
     val ta91 = 0x91
     val ta8A = 0x8A
     //  val field55 = "91109836BE3880804000FFFE000000000001"
@@ -205,19 +207,34 @@ fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
                 var strba = ba.byteArr2HexStr()
 
                 // rtn = EMVCallback.EMVSetTLVData(ta.toShort(), ba, ba.size)
-                logger(VFTransactionActivity.TAG, "On setting ${Integer.toHexString(ta8A)} tag status = $", "e")
+                logger(
+                    VFTransactionActivity.TAG,
+                    "On setting ${Integer.toHexString(ta8A)} tag status = $",
+                    "e"
+                )
             }
         } catch (ex: Exception) {
             logger(VFTransactionActivity.TAG, ex.message ?: "", "e")
         }
 
         val onlineResult = Bundle()
-        onlineResult.putBoolean(ConstIPBOC.inputOnlineResult.onlineResult.KEY_isOnline_boolean, true)
+        onlineResult.putBoolean(
+            ConstIPBOC.inputOnlineResult.onlineResult.KEY_isOnline_boolean,
+            true
+        )
 
-        if (null != successResponseCode && successResponseCode.toString().isNotEmpty() && hexString2String(successResponseCode.toString()).equals("00")) {
-            onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_respCode_String, "00")  //tagData8a
+        if (null != successResponseCode && successResponseCode.toString()
+                .isNotEmpty() && hexString2String(successResponseCode.toString()).equals("00")
+        ) {
+            onlineResult.putString(
+                ConstIPBOC.inputOnlineResult.onlineResult.KEY_respCode_String,
+                "00"
+            )  //tagData8a
         } else {
-            onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_respCode_String, tagData8a)
+            onlineResult.putString(
+                ConstIPBOC.inputOnlineResult.onlineResult.KEY_respCode_String,
+                tagData8a
+            )
         }
         onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_authCode_String, "00")
 
@@ -226,7 +243,10 @@ fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
             val byteArr = tagData8a.toByteArray()
             var hexvalue = Utility.byte2HexStr(byteArr)
 
-            onlineResult.putString(ConstIPBOC.inputOnlineResult.onlineResult.KEY_field55_String, field55 + Integer.toHexString(ta8A) + "02" + hexvalue)
+            onlineResult.putString(
+                ConstIPBOC.inputOnlineResult.onlineResult.KEY_field55_String,
+                field55 + Integer.toHexString(ta8A) + "02" + hexvalue
+            )
             //At least 0A length for 91
             println("Field55 value inside ---> " + field55 + Integer.toHexString(ta8A) + "02" + hexvalue)
 
@@ -242,10 +262,9 @@ fun doubleTap(responseIsoData: IsoDataReader, transactionISOData: IsoDataWriter,
 
             }
         })
-       syncTransactionCallback(secondTap)
+        syncTransactionCallback(secondTap)
 
-    }
-    else{
+    } else {
         AppPreference.clearReversal()
         syncTransactionCallback(secondTap)
     }
@@ -292,10 +311,10 @@ suspend fun readInitServer(data: ArrayList<ByteArray>, callback: (Boolean, Strin
     GlobalScope.launch(Dispatchers.IO) {
         try {
             val filename = "init_file.txt"
-           VerifoneApp.appContext.openFileOutput(filename, Context.MODE_PRIVATE).apply {
+            VerifoneApp.appContext.openFileOutput(filename, Context.MODE_PRIVATE).apply {
                 for (each in data)
                     write(each)
-                    flush()
+                flush()
             }.close()
 
             val fin =
@@ -438,28 +457,31 @@ suspend fun saveToDB(spliter: List<String>) {
             parseData(terminalParameterTable, spliter)
             //terminalParameterTable.stan = "000001"
             //Check for Enabling EMI Enquiry on terminal by reservedValues check.
-            if (terminalParameterTable.reservedValues[6] == '1' || terminalParameterTable.reservedValues[10] == '1') {
-                terminalParameterTable.bankEnquiry = "1"
-                //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check)
-                terminalParameterTable.bankEnquiryMobNumberEntry =
-                    terminalParameterTable.reservedValues[7].toString().toInt() == 1
-            }
-
-
-            TerminalParameterTable.performOperation(terminalParameterTable) {
-                logger("saveToDB", "mTpt")
-                // change the printer darkness
-                GlobalScope.launch {
-                    val tpt = TerminalParameterTable.selectFromSchemeTable()
-                    //     ROCProviderV2.setRocAsPerTpt(AppPreference.getBankCode())
-                    Log.e("R_O_C", ROCProviderV2.getRoc(AppPreference.getBankCode()).toString())
-                    /*if (tpt != null) {
-                        val darkness =
-                            if (tpt.printingImpact.isNotEmpty()) tpt.printingImpact else "0"
-                        //setPrintDarkness(darkness.toInt())
-                    }*/
+            try {
+                if (terminalParameterTable.reservedValues[6] == '1' ) {
+                    terminalParameterTable.bankEnquiry = "1"
+                    //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check
+                    terminalParameterTable.bankEnquiryMobNumberEntry =
+                        terminalParameterTable.reservedValues[7].toString().toInt() == 1
                 }
+                if (terminalParameterTable.reservedValues[10] == '1' ) {
+                    terminalParameterTable.bankEnquiry = "1"
+                    //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check
+                    terminalParameterTable.bankEnquiryMobNumberEntry =
+                        terminalParameterTable.reservedValues[7].toString().toInt() == 1
+                }
+
+
+            } catch (ex: Exception) {
+                //ex.printStackTrace()
+                print("Exception in brand catalogue display on dashboard")
+            } finally {
+                TerminalParameterTable.performOperation(terminalParameterTable) {
+                    logger("saveToDB", "mTpt")
+                }
+
             }
+
 
         }
 
@@ -1561,7 +1583,10 @@ fun showMobileBillDialog(
         dialog?.setCancelable(false)
         dialog?.window?.attributes?.windowAnimations = R.style.DialogAnimation
         val window = dialog?.window
-        window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, WindowManager.LayoutParams.WRAP_CONTENT)
+        window?.setLayout(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            WindowManager.LayoutParams.WRAP_CONTENT
+        )
         val mobileNumberET: BHTextInputEditText? = dialog?.findViewById(R.id.mobileNumberET)
         val billNumberET: BHTextInputEditText? = dialog?.findViewById(R.id.billNumberET)
         val billNumberTil: BHTextInputLayout? = dialog?.findViewById(R.id.bill_number_til)
@@ -1583,7 +1608,11 @@ fun showMobileBillDialog(
                     billNumberTil?.visibility = View.VISIBLE
             }
             else -> {
-                if ((tpt?.reservedValues?.substring(2, 3) == "1" && transactionType == TransactionType.EMI_SALE.type))
+                if ((tpt?.reservedValues?.substring(
+                        2,
+                        3
+                    ) == "1" && transactionType == TransactionType.EMI_SALE.type)
+                )
                     billNumberTil?.visibility = View.VISIBLE
                 else
                     billNumberTil?.visibility = View.GONE
@@ -1602,20 +1631,47 @@ fun showMobileBillDialog(
             when (transactionType) {
                 //region=====================Brand EMI Validation:-
                 TransactionType.BRAND_EMI.type -> {
-                    if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3) == "1") {
+                    if (brandEMIDataModal?.getBrandReservedValue()
+                            ?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()
+                            ?.substring(2, 3) == "1"
+                    ) {
                         dialog.dismiss()
-                        dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
-                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)?.toInt() ?: 0 > "1".toInt()) {
+                        dialogCB(
+                            Triple(
+                                mobileNumberET?.text.toString(),
+                                billNumberET?.text.toString(),
+                                third = true
+                            )
+                        )
+                    } else if (brandEMIDataModal?.getBrandReservedValue()
+                            ?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()
+                            ?.substring(2, 3)?.toInt() ?: 0 > "1".toInt()
+                    ) {
                         if (!TextUtils.isEmpty(billNumberET?.text.toString())) {
                             dialog.dismiss()
-                            dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
+                            dialogCB(
+                                Triple(
+                                    mobileNumberET?.text.toString(),
+                                    billNumberET?.text.toString(),
+                                    third = true
+                                )
+                            )
                         } else {
                             VFService.showToast(context.getString(R.string.enter_valid_bill_number))
                         }
-                    } else if (brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(0, 1)?.toInt() ?: 0 > "1".toInt()) {
+                    } else if (brandEMIDataModal?.getBrandReservedValue()
+                            ?.substring(2, 3) == "1" && brandEMIDataModal.getBrandReservedValue()
+                            ?.substring(0, 1)?.toInt() ?: 0 > "1".toInt()
+                    ) {
                         if (!TextUtils.isEmpty(mobileNumberET?.text.toString()) && mobileNumberET?.text.toString().length in 10..13) {
                             dialog.dismiss()
-                            dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
+                            dialogCB(
+                                Triple(
+                                    mobileNumberET?.text.toString(),
+                                    billNumberET?.text.toString(),
+                                    third = true
+                                )
+                            )
                         } else {
                             VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
                         }
@@ -1623,10 +1679,26 @@ fun showMobileBillDialog(
                         when {
                             TextUtils.isEmpty(mobileNumberET?.text.toString()) || mobileNumberET?.text.toString().length !in 10..13 ->
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
-                            TextUtils.isEmpty(billNumberET?.text.toString()) && (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()?.substring(2, 3)?.toInt() ?: 0 > "1".toInt() ) -> VFService.showToast(context.getString(R.string.enter_valid_bill_number))
+                            TextUtils.isEmpty(billNumberET?.text.toString()) && (brandEMIDataModal?.getBrandReservedValue()
+                                ?.substring(
+                                    0,
+                                    1
+                                ) == "1" && brandEMIDataModal.getBrandReservedValue()
+                                ?.substring(2, 3)
+                                ?.toInt() ?: 0 > "1".toInt()) -> VFService.showToast(
+                                context.getString(
+                                    R.string.enter_valid_bill_number
+                                )
+                            )
                             else -> {
                                 dialog.dismiss()
-                                dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
+                                dialogCB(
+                                    Triple(
+                                        mobileNumberET?.text.toString(),
+                                        billNumberET?.text.toString(),
+                                        third = true
+                                    )
+                                )
                             }
                         }
                     }
@@ -1635,7 +1707,11 @@ fun showMobileBillDialog(
 
                 //region Other Transaction Validation:-
                 else -> {
-                    if (transactionType == TransactionType.SALE.type && tpt?.reservedValues?.substring(0, 1) == "1") {
+                    if (transactionType == TransactionType.SALE.type && tpt?.reservedValues?.substring(
+                            0,
+                            1
+                        ) == "1"
+                    ) {
                         when {
                             //  when mobile number entered
                             !TextUtils.isEmpty(mobileNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
@@ -1648,12 +1724,23 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-                    }
-                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(1, 2) == "1" && tpt.reservedValues.substring(2, 3) == "1") {
+                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
+                            1,
+                            2
+                        ) == "1" && tpt.reservedValues.substring(2, 3) == "1"
+                    ) {
                         when {
-                            !TextUtils.isEmpty(mobileNumberET?.text.toString()) && !TextUtils.isEmpty(billNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
+                            !TextUtils.isEmpty(mobileNumberET?.text.toString()) && !TextUtils.isEmpty(
+                                billNumberET?.text.toString()
+                            ) -> if (mobileNumberET?.text.toString().length in 10..13) {
                                 dialog.dismiss()
-                                dialogCB(Triple(mobileNumberET?.text.toString(), billNumberET?.text.toString(), third = true))
+                                dialogCB(
+                                    Triple(
+                                        mobileNumberET?.text.toString(),
+                                        billNumberET?.text.toString(),
+                                        third = true
+                                    )
+                                )
                             } else
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
 
@@ -1668,13 +1755,18 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", billNumberET?.text.toString(), third = true))
                             }
 
-                            TextUtils.isEmpty(mobileNumberET?.text.toString()) && TextUtils.isEmpty(mobileNumberET?.text.toString()) -> {
+                            TextUtils.isEmpty(mobileNumberET?.text.toString()) && TextUtils.isEmpty(
+                                mobileNumberET?.text.toString()
+                            ) -> {
                                 dialog.dismiss()
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-                    }
-                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(1, 2) == "1") {
+                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
+                            1,
+                            2
+                        ) == "1"
+                    ) {
                         when {
                             !TextUtils.isEmpty(mobileNumberET?.text.toString()) -> if (mobileNumberET?.text.toString().length in 10..13) {
                                 dialog.dismiss()
@@ -1686,8 +1778,11 @@ fun showMobileBillDialog(
                                 dialogCB(Triple("", "", third = true))
                             }
                         }
-                    }
-                    else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(2, 3) == "1") {
+                    } else if (transactionType == TransactionType.EMI_SALE.type && tpt?.reservedValues?.substring(
+                            2,
+                            3
+                        ) == "1"
+                    ) {
                         when {
                             !TextUtils.isEmpty(billNumberET?.text.toString()) -> {
                                 dialog.dismiss()
@@ -1992,8 +2087,8 @@ fun txnSuccessToast(context: Context, msg: String = "Transaction Approved") {
         GlobalScope.launch(Dispatchers.Main) {
             VFService.vfBeeper?.startBeep(200)
             val layout = (context as Activity).layoutInflater.inflate(
-                    R.layout.new_success_toast,
-                    context.findViewById<LinearLayout>(R.id.custom_toast_layout)
+                R.layout.new_success_toast,
+                context.findViewById<LinearLayout>(R.id.custom_toast_layout)
             )
             layout.findViewById<BHTextView>(R.id.txtvw)?.text = msg
             val myToast = Toast(context)
@@ -2420,7 +2515,8 @@ fun showEditTextSelected(
     editText?.isFocusable = true
     editText?.isFocusableInTouchMode = true
     editText?.requestFocus()
-    val imm: InputMethodManager? = context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    val imm: InputMethodManager? =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
     imm?.showSoftInput(editText, 0)
     cardView?.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
     cardView?.setStrokeWidth(1f)
@@ -2436,23 +2532,23 @@ fun showEditTextUnSelected(
     runBlocking {
         editText?.isFocusable = false
         editText?.isFocusableInTouchMode = false
-      /*  val imm: InputMethodManager? =
-            context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
-        imm?.showSoftInput(editText, 0)*/
+        /*  val imm: InputMethodManager? =
+              context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+          imm?.showSoftInput(editText, 0)*/
         cardView?.setStrokeColor(null)
         cardView?.setStrokeWidth(0f)
     }
 
-    }
+}
 
 fun showOtherEditTextUnSelected(hm: HashMap<NeumorphCardView?, EditText?>, context: Context?) {
-  runBlocking {
-      for (i in hm) {
-          val cardView = i.key
-          val editText = i.value
-          showEditTextUnSelected(editText, cardView, context)
-      }
-  }
+    runBlocking {
+        for (i in hm) {
+            val cardView = i.key
+            val editText = i.value
+            showEditTextUnSelected(editText, cardView, context)
+        }
+    }
 }
 //endregion
 
