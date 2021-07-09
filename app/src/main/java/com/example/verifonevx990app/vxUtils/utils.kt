@@ -456,14 +456,16 @@ suspend fun saveToDB(spliter: List<String>) {
             val terminalParameterTable = TerminalParameterTable()
             parseData(terminalParameterTable, spliter)
             //terminalParameterTable.stan = "000001"
-            //Check for Enabling EMI Enquiry on terminal by reservedValues check.
+
             try {
+                //Check for Enabling BANK EMI Enquiry on terminal from reservedValues .
                 if (terminalParameterTable.reservedValues[6] == '1' ) {
                     terminalParameterTable.bankEnquiry = "1"
                     //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check
                     terminalParameterTable.bankEnquiryMobNumberEntry =
                         terminalParameterTable.reservedValues[7].toString().toInt() == 1
                 }
+                //Check for Enabling BRAND EMI Enquiry on terminal from reservedValues .
                 if (terminalParameterTable.reservedValues[10] == '1' ) {
                     terminalParameterTable.bankEnquiry = "1"
                     //Check for Enabling Phone number at the time of EMI Enquiry on terminal by reservedValues check
@@ -2607,6 +2609,27 @@ fun fetchAndSaveIssuerTCData(updatedIssuerTAndCTimeStamp: String?) {
         Log.d("IssuerTCData:- ", Gson().toJson(data))
 }
 //endregion
+
+fun getTransactionLimitForHDFCIssuer():Double{
+    return try {
+        val maxAmt =
+            IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)?.transactionAmountLimit?.toDouble()
+                ?.div(100)
+        ("%.2f".format((maxAmt).toString().toDouble())).toDouble()
+    }catch(ex:Exception){
+        0.00
+    }
+
+}
+
+fun maxAmountLimitDialog(iDialog: IDialog?, maxTxnLimit:Double){
+    GlobalScope.launch(Dispatchers.Main) {
+     val msg=  "Max txn limit Rs ${("%.2f".format((maxTxnLimit)))}"
+
+        iDialog?.getInfoDialog("Amount Limit", msg) {}
+    }
+
+}
 
 /*
 App Update Through FTP Steps:-

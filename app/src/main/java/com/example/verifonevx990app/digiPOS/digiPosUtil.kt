@@ -183,7 +183,6 @@ suspend fun loadStaticQrFromInternalStorage(): Bitmap? {
 
 
 suspend fun getStaticQrFromServerAndSaveToFile(activity: BaseActivity, cb: (Boolean) -> Unit) {
-    GlobalScope.launch(Dispatchers.IO) {
         withContext(Dispatchers.Main) {
             (activity as BaseActivity).showProgress()
         }
@@ -229,7 +228,6 @@ suspend fun getStaticQrFromServerAndSaveToFile(activity: BaseActivity, cb: (Bool
                 ex.printStackTrace()
             }
         }
-    }
 
 }
 

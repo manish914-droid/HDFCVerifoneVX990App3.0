@@ -151,7 +151,7 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
                 val dNow = Date()
                 val ft = SimpleDateFormat("yyMMddhhmmssMs", Locale.getDefault())
                 val uniqueID: String = ft.format(dNow)
-                println(uniqueID)
+                println("TXN UNIQUE ID -->  $uniqueID")
                 var f56 = ""
                 f56 = when (transactionType) {
                     EDashboardItem.UPI -> EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID

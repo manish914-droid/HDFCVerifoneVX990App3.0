@@ -99,6 +99,7 @@ class NewInputAmountFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        activity?.let { hideSoftKeyboard(it) }
         transactionType = arguments?.getSerializable("type") as EDashboardItem
         testEmiTxnType = (arguments?.getSerializable("TestEmiOption") ?: "") as String?
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
@@ -295,6 +296,9 @@ class NewInputAmountFragment : Fragment() {
         Log.e("SALE", "OK CLICKED  ${binding?.saleAmount?.text.toString()}")
         Log.e("CASh", "OK CLICKED  ${cashAmount?.text}")
         Log.e("AMT", "OK CLICKED  $amt")
+        val maxTxnLimit= "%.2f".format(getTransactionLimitForHDFCIssuer()).toDouble()
+        Log.e("TXN LIMIT", "Txn type = $transactionType  Txn maxLimit = $maxTxnLimit")
+
         try {
             (binding?.saleAmount?.text.toString()).toDouble()
         } catch (ex: Exception) {
@@ -316,18 +320,21 @@ class NewInputAmountFragment : Fragment() {
         if (saleAmount < 1) {
             VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
             return
-        } else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
+        }
+        else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
             VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
             return
         }
-
-
         else {
             when (transactionType) {
                 EDashboardItem.SALE -> {
                     val saleAmt = saleAmount.toString().trim().toDouble()
                     val saleTipAmt = cashAmt.toString().trim().toDouble()
                     val trnsAmt = saleAmt + saleTipAmt
+                   if(trnsAmt > maxTxnLimit){
+                       maxAmountLimitDialog(iDialog,maxTxnLimit)
+                       return
+                   }
                     if (saleTipAmt > 0) {
                         when {
                             !TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) -> if (binding?.mobNumbr?.text.toString().length in 10..13) {
@@ -345,7 +352,8 @@ class NewInputAmountFragment : Fragment() {
                         }
 
 
-                    } else {
+                    }
+                    else {
                         isMobileNumberEntryOnsale { isMobileNeeded, _ ->
                             if (isMobileNeeded) {
                                 when {
@@ -392,6 +400,10 @@ class NewInputAmountFragment : Fragment() {
                     var uiAction = UiAction.BANK_EMI
                     if (transactionType == EDashboardItem.TEST_EMI) {
                         uiAction = UiAction.TEST_EMI
+                    }
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
                     }
 
                     isMobileNumberEntryAndBillEntryRequiredOnBankEmi { isMobileNeeded, isBillNumNeeded ->
@@ -460,6 +472,10 @@ class NewInputAmountFragment : Fragment() {
                 }
 
                 EDashboardItem.CASH_ADVANCE -> {
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
+                    }
                     iFrReq?.onFragmentRequest(
                         UiAction.CASH_AT_POS,
                         Pair(
@@ -469,6 +485,10 @@ class NewInputAmountFragment : Fragment() {
                     )
                 }
                 EDashboardItem.SALE_WITH_CASH -> {
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
+                    }
                     iFrReq?.onFragmentRequest(
                         UiAction.SALE_WITH_CASH,
                         Pair(
@@ -478,12 +498,20 @@ class NewInputAmountFragment : Fragment() {
                     )
                 }
                 EDashboardItem.REFUND -> {
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
+                    }
                     iFrReq?.onFragmentRequest(
                         UiAction.REFUND,
                         Pair(saleAmount.toString().trim(), "0")
                     )
                 }
                 EDashboardItem.PREAUTH -> {
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
+                    }
                     iFrReq?.onFragmentRequest(
                         UiAction.PRE_AUTH,
                         Pair(saleAmount.toString().trim(), "0")
@@ -506,6 +534,10 @@ class NewInputAmountFragment : Fragment() {
                     }
                 }
                 EDashboardItem.FLEXI_PAY -> {
+                    if((saleAmount.toString().trim()).toDouble() > maxTxnLimit){
+                        maxAmountLimitDialog(iDialog,maxTxnLimit)
+                        return
+                    }
                     iFrReq?.onFragmentRequest(
                         UiAction.FLEXI_PAY,
                         Pair(saleAmount.toString().trim(), "0")
@@ -582,6 +614,7 @@ class NewInputAmountFragment : Fragment() {
                         }
                     }
                 }
+
                 EDashboardItem.BHARAT_QR -> {
                     if (binding?.mobNumbr?.text.toString().length !in 10..13) {
                         context?.getString(R.string.enter_valid_mobile_number)
@@ -743,134 +776,6 @@ class NewInputAmountFragment : Fragment() {
 
     }
 
-    //region===================Enable/Disable Mobile And Invoice Field For Brand EMI:-
-    private fun enableDisableMobileAndInvoiceField() {
-        if (brandEMIDataModal != null) {
-            if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "1" ||
-                brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "2" ||
-                brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "1" ||
-                brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "2"
-            ) {
-                showMobileBillDialog(
-                    activity,
-                    TransactionType.BRAND_EMI.type,
-                    brandEMIDataModal
-                ) { extraPairData ->
-                    GlobalScope.launch(Dispatchers.Main) {
-                        if (extraPairData.third) {
-                            if (isShowIMEISerialDialog()) {
-                                showIMEISerialDialog(activity, brandEMIDataModal) { cbData ->
-                                    if (cbData.third) {
-                                        GlobalScope.launch(Dispatchers.IO) {
-                                            saveBrandEMIDataToDB(
-                                                cbData.first,
-                                                cbData.second,
-                                                brandEMIDataModal,
-                                                transactionType
-                                            )
-                                            withContext(Dispatchers.Main) {
-                                                iFrReq?.onFragmentRequest(
-                                                    UiAction.BRAND_EMI,
-                                                    Pair(
-                                                        binding?.saleAmount?.text.toString().trim(),
-                                                        "0"
-                                                    ),
-                                                    extraPairData
-                                                )
-                                            }
-                                        }
-                                    } else {
-                                        startActivity(
-                                            Intent(
-                                                requireActivity(),
-                                                MainActivity::class.java
-                                            ).apply {
-                                                flags =
-                                                    Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                            })
-                                    }
-                                }
-                            } else {
-                                GlobalScope.launch(Dispatchers.IO) {
-                                    saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
-                                    withContext(Dispatchers.Main) {
-                                        iFrReq?.onFragmentRequest(
-                                            UiAction.BRAND_EMI,
-                                            Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                            extraPairData
-                                        )
-                                    }
-                                }
-                            }
-                        } else {
-                            startActivity(
-                                Intent(
-                                    requireActivity(),
-                                    MainActivity::class.java
-                                ).apply {
-                                    flags =
-                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                })
-                        }
-                    }
-                }
-            } else {
-                GlobalScope.launch(Dispatchers.Main) {
-                    if (isShowIMEISerialDialog()) {
-                        showIMEISerialDialog(activity, brandEMIDataModal) { cbData ->
-                            if (cbData.third) {
-                                GlobalScope.launch(Dispatchers.IO) {
-                                    saveBrandEMIDataToDB(
-                                        cbData.first,
-                                        cbData.second,
-                                        brandEMIDataModal,
-                                        transactionType
-                                    )
-                                    withContext(Dispatchers.Main) {
-                                        iFrReq?.onFragmentRequest(
-                                            UiAction.BRAND_EMI,
-                                            Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                            Triple("", "", true)
-                                        )
-                                    }
-                                }
-                            } else {
-                                startActivity(
-                                    Intent(
-                                        requireActivity(),
-                                        MainActivity::class.java
-                                    ).apply {
-                                        flags =
-                                            Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                    })
-                            }
-                        }
-                    } else {
-                        GlobalScope.launch(Dispatchers.IO) {
-                            saveBrandEMIDataToDB("", "", brandEMIDataModal, transactionType)
-                            withContext(Dispatchers.Main) {
-                                iFrReq?.onFragmentRequest(
-                                    UiAction.BRAND_EMI,
-                                    Pair(binding?.saleAmount?.text.toString().trim(), "0"),
-                                    Triple("", "", true)
-                                )
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-    //endregion
-
-    //region=====================Condition to check Whether we need to show IMEI/Serial Dialog or not:-
-    private fun isShowIMEISerialDialog(): Boolean {
-        return brandEMIDataModal?.getValidationTypeName() == "IMEI" ||
-                brandEMIDataModal?.getValidationTypeName() == "imei" ||
-                brandEMIDataModal?.getValidationTypeName() == "Serial Number" ||
-                brandEMIDataModal?.getValidationTypeName() == "serial number"
-    }
-
     //endregion
     //region=====================Condition to check Whether we need to show Serial input or not:-
     private fun isShowSerialDialog(): Boolean {
@@ -886,7 +791,6 @@ class NewInputAmountFragment : Fragment() {
 
     }
     //endregion
-
 
     private fun validateTIP(
         totalTransAmount: Double,

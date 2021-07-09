@@ -126,32 +126,43 @@ class DigiPosMenuFragment : Fragment() {
                     })
                 }
                 else {
-                  getStaticQrFromServerAndSaveToFile(activity as BaseActivity) {
-                      if (it) {
-                          logger("StaticQr", "Get Static Qr from server and  saves to file success ", "e")
-                          lifecycleScope.launch(Dispatchers.IO) {
-                              imgbm = loadStaticQrFromInternalStorage() // it return null when file not exist
-                          if (imgbm != null) {
-                              val bmBytes = convertBitmapToByteArray(imgbm)
-                              logger("StaticQr", "Already parsed Bitmap", "e")
-                              (activity as MainActivity).transactFragment(QrScanFragment().apply {
-                                  arguments = Bundle().apply {
-                                      putByteArray("QrByteArray", bmBytes)
-                                      putSerializable("type", transactionType)
-                                      putSerializable("type", EDashboardItem.STATIC_QR)
-                                      // putParcelable("tabledata",tabledata)
-                                  }
-                              })
-                          }
-                      }
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        getStaticQrFromServerAndSaveToFile(activity as BaseActivity) {
+                            if (it) {
+                                logger(
+                                    "StaticQr",
+                                    "Get Static Qr from server and  saves to file success ",
+                                    "e"
+                                )
+                                lifecycleScope.launch(Dispatchers.IO) {
+                                    imgbm =
+                                        loadStaticQrFromInternalStorage() // it return null when file not exist
+                                    if (imgbm != null) {
+                                        val bmBytes = convertBitmapToByteArray(imgbm)
+                                        logger("StaticQr", "Already parsed Bitmap", "e")
+                                        (activity as MainActivity).transactFragment(QrScanFragment().apply {
+                                            arguments = Bundle().apply {
+                                                putByteArray("QrByteArray", bmBytes)
+                                                putSerializable("type", transactionType)
+                                                putSerializable("type", EDashboardItem.STATIC_QR)
+                                                // putParcelable("tabledata",tabledata)
+                                            }
+                                        })
+                                    }
+                                }
 
-                  }else{
-                          logger("StaticQr", "Get Static Qr from server and  file not successfully saved", "e")
+                            } else {
+                                logger(
+                                    "StaticQr",
+                                    "Get Static Qr from server and  file not successfully saved",
+                                    "e"
+                                )
 
-                      }
+                            }
 
-                  }
-                }
+                        }
+                    }
+                    }
             }
 
 

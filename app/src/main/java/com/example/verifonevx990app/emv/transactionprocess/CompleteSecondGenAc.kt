@@ -74,10 +74,10 @@ class CompleteSecondGenAc(var cardProcessedDataModal: CardProcessedDataModal?,
             var hostBankID = f60DataList[1]
             var hostIssuerID = f60DataList[2]
             var hostMID = f60DataList[3]
-            var hostTID = f60DataList[4]
-            var hostBatchNumber = f60DataList[5]
-            var hostRoc = f60DataList[6]
-            var hostInvoice = f60DataList[7]
+            val hostTID = f60DataList[4]
+            val hostBatchNumber = f60DataList[5]
+            val hostRoc = f60DataList[6]
+            val hostInvoice = f60DataList[7]
             var hostCardType = f60DataList[8]
 
             val dateTime: Long = Calendar.getInstance().timeInMillis
