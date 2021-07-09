@@ -384,6 +384,7 @@
     <string name="select_ssuer">Select Issuer For EMI Enquiry</string>
     <string name="brand_emi_master">Brand EMI Master Category</string>
     <string name="error">Error</string>
+    <string name="socket_time_out">SocketTimeoutException</string>
     <string name="brand_name">Brand Name</string>
     <string name="load_more">Load More</string>
     <string name="brand_emi_sub_category">Brand EMI Sub Category</string>

@@ -83,15 +83,19 @@ object HitServer {
 
                     } catch (ex: SocketTimeoutException) {
                         ex.printStackTrace()
+                        logger(TAG, "hitserver, SocketTimeoutException ")
                         callback(responseStr ?: "", true)
                     } catch (ex: SocketException) {
                         ex.printStackTrace()
+                        logger(TAG, "hitserver, SocketException ")
                         callback(responseStr ?: "", true)
                     } catch (ex: ConnectException) {
                         ex.printStackTrace()
+                        logger(TAG, "hitserver, ConnectException ")
                         callback(responseStr ?: "", true)
                     } catch (ex: Exception) {
                         ex.printStackTrace()
+                        logger(TAG, "hitserver, Exception ")
                         callback(responseStr ?: "", true)
                     }
                     callback(responseStr ?: "", true)

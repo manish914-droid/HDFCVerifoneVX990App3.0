@@ -20,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentBrandEmiProductBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiProductBinding
+import com.example.verifonevx990app.init.DashboardFragment
 import com.example.verifonevx990app.main.*
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.transactions.NewInputAmountFragment
@@ -255,6 +256,7 @@ class BrandEMIProductFragment : Fragment() {
                             }
                         }
                     } else {
+                        /// for handling internet issue
                         ROCProviderV2.incrementFromResponse(
                             ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                             AppPreference.getBankCode()
@@ -262,10 +264,10 @@ class BrandEMIProductFragment : Fragment() {
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                           //  parentFragmentManager.popBackStackImmediate()
-                            /*iDialog?.alertBoxWithAction(null, null,
+                            iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})*/
+                                {  (activity as MainActivity).transactFragment(DashboardFragment())}, {})
                         }
                     }
                 }, {})

@@ -204,20 +204,22 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             stubbingBrandEMIMasterDataToList(brandEMIMasterData, hostMsg)
 
                         } else {
+                            /// for handling internet issue
                             ROCProviderV2.incrementFromResponse(
                                 ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                                 AppPreference.getBankCode()
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                                parentFragmentManager.popBackStackImmediate()
-                                /*iDialog?.alertBoxWithAction(null, null,
+                               // parentFragmentManager.popBackStackImmediate()
+                                iDialog?.alertBoxWithAction(null, null,
                                     getString(R.string.error), hostMsg,
                                     false, getString(R.string.positive_button_ok),
-                                    { parentFragmentManager.popBackStackImmediate() }, {})*/
+                                    { parentFragmentManager.popBackStackImmediate() }, {})
                             }
                         }
                     } else {
+                        /// for handling any exception like socket time out....
                         ROCProviderV2.incrementFromResponse(
                             ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                             AppPreference.getBankCode()
@@ -225,8 +227,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             parentFragmentManager.popBackStackImmediate()
-                            /*iDialog?.alertBoxWithAction(null, null,
-                                getString(R.string.error), result,
+                           /* iDialog?.alertBoxWithAction(null, null,
+                                getString(R.string.error),getString(R.string.socket_time_out) ,
                                 false, getString(R.string.positive_button_ok),
                                 { parentFragmentManager.popBackStackImmediate() }, {})*/
                         }
