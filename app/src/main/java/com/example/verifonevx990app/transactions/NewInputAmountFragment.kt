@@ -325,8 +325,8 @@ class NewInputAmountFragment : Fragment() {
         else {
             when (transactionType) {
                 EDashboardItem.SALE -> {
-                    val saleAmt = saleAmount.toString().trim().toFloat()
-                    val saleTipAmt = cashAmt.toString().trim().toFloat()
+                    val saleAmt = saleAmount.toString().trim().toDouble()
+                    val saleTipAmt = cashAmt.toString().trim().toDouble()
                     val trnsAmt = saleAmt + saleTipAmt
                     if (saleTipAmt > 0) {
                         when {
@@ -889,8 +889,8 @@ class NewInputAmountFragment : Fragment() {
 
 
     private fun validateTIP(
-        totalTransAmount: Float,
-        saleAmt: Float,
+        totalTransAmount: Double,
+        saleAmt: Double,
         extraPair: Triple<String, String, Boolean>
     ) {
         val tpt = TerminalParameterTable.selectFromSchemeTable()

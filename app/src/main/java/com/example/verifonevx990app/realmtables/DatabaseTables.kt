@@ -1563,7 +1563,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     var bankCode = ""
 
     @field:BHFieldParseIndex(42)
-  //  @field:BHFieldName("TID")
+  // @field:BHFieldName("TID")
     var tid = ""
 
     //endregion

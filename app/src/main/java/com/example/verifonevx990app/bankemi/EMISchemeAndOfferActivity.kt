@@ -169,9 +169,12 @@ internal class EMISchemeAndOfferAdapter(
     override fun onBindViewHolder(holder: EMISchemeOfferHolder, position: Int) {
         val modelData = emiSchemeDataList?.get(position)
         if (modelData != null) {
-            holder.binding.tvTransactionAmount.text = "\u20B9 " + divideAmountBy100(modelData.transactionAmount.toInt()).toString()
-            holder.binding.tvLoanAmount.text = "\u20B9 " + divideAmountBy100(modelData.loanAmount.toInt()).toString()
-            holder.binding.tvEmiAmount.text = "\u20B9 " + divideAmountBy100(modelData.emiAmount.toInt()).toString()
+           // (((modelData.transactionAmount).toDouble()).div(100)).toString()
+            "%.2f".format((((modelData.transactionAmount).toDouble()).div(100)).toString().toDouble())
+
+            holder.binding.tvTransactionAmount.text = "\u20B9 " +  "%.2f".format((((modelData.transactionAmount).toDouble()).div(100)).toString().toDouble())
+            holder.binding.tvLoanAmount.text = "\u20B9 " +   "%.2f".format((((modelData.loanAmount).toDouble()).div(100)).toString().toDouble())
+            holder.binding.tvEmiAmount.text = "\u20B9 " +   "%.2f".format((((modelData.emiAmount).toDouble()).div(100)).toString().toDouble())
             val tenureDuration = "${modelData.tenure} Months"
             val tenureHeadingDuration = "${modelData.tenure} Months Scheme"
             holder.binding.tvTenure.text = tenureDuration
@@ -189,7 +192,7 @@ internal class EMISchemeAndOfferAdapter(
                 holder.binding.discountLL.visibility = View.GONE
             }
             holder.binding.tvTotalInterestPay.text = "\u20B9 " + divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
-            holder.binding.tvTotalEmiPay.text = "\u20B9 " + divideAmountBy100(modelData.totalEmiPay.toInt()).toString()
+            holder.binding.tvTotalEmiPay.text = "\u20B9 " +   "%.2f".format((((modelData.totalEmiPay).toDouble()).div(100)).toString().toDouble())
         }
 
         holder.binding.parentEmiViewLl.setOnClickListener {

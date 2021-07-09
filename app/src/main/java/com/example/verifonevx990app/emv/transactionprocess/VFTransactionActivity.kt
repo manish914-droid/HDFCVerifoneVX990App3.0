@@ -1365,8 +1365,10 @@ class VFTransactionActivity : BaseActivity() {
                         val baseAmountValue = getString(R.string.rupees_symbol) + "1.00"
                         binding?.baseAmtTv?.text = baseAmountValue
                     } else {
+
+
                         val baseAmountValue = getString(R.string.rupees_symbol) +
-                                (((emiSelectedData?.transactionAmount)?.toFloat())?.div(100)).toString()
+                                "%.2f".format((((emiSelectedData?.transactionAmount)?.toDouble())?.div(100)).toString().toDouble())
                         binding?.baseAmtTv?.text = baseAmountValue
                     }
                 }

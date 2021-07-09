@@ -174,9 +174,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             }
         }
         //endregion
-
       //  startTimeOut()
-
         //region==============================Host Hit To Fetch BrandEMIMaster Data:-
         lifecycleScope.launch(Dispatchers.IO) {
             if (brandEMIMasterISOData != null) {

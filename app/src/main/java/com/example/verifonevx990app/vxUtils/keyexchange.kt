@@ -713,8 +713,8 @@ class KeyExchanger(
             addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
 
             //region=========adding field 61=============
-            val f61 = "3VX675 BonusHub  01.01.32.200626000000000000000000"//
-            getF61()
+            val f61 = getF61()//"3VX675 BonusHub  01.01.32.200626000000000000000000"//
+
             addFieldByHex(61, f61)
             //endregion
 

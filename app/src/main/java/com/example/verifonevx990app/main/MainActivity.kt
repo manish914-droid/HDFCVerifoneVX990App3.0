@@ -744,9 +744,11 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 ) //EMI //UiAction.BANK_EMI
                                 if(action==UiAction.TEST_EMI){
                                     putExtra("type", TransactionType.TEST_EMI.type)
+
                                 }else{
                                     putExtra("type", TransactionType.EMI_SALE.type)
                                 }
+                                putExtra("uiAction", action)
 
                                 putExtra("proc_code", ProcessingCode.SALE.code)
                                 putExtra("mobileNumber", extraPair?.first)
@@ -777,6 +779,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
                             putExtra("TestEmiOption", testEmiOpetionType)
+                            putExtra("uiAction", action)
+
                         }, EIntentRequest.TRANSACTION.code
                     )
                 }
@@ -847,6 +851,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putExtra("amt", amt)
                         putExtra("type", TransactionType.PRE_AUTH.type)
                         putExtra("proc_code", ProcessingCode.PRE_AUTH.code)
+                        putExtra("uiAction", action)
                     }, EIntentRequest.TRANSACTION.code)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -861,6 +866,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putExtra("amt", amt)
                         putExtra("type", TransactionType.REFUND.type)
                         putExtra("proc_code", ProcessingCode.REFUND.code)
+                        putExtra("uiAction", action)
                     }, EIntentRequest.TRANSACTION.code)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -893,6 +899,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putString("mobileNumber", extraPair?.first)
                         putString("enquiryAmt", amt)
                         putSerializable("imagesData", emiCatalogueImageList as HashMap<*, *>)
+
                     }
                 })
             }

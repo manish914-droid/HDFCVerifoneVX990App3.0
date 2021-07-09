@@ -81,7 +81,7 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
         R.drawable.ic_bbg
     ),
     SETTLEMENT, APP_UPDATE, PRE_AUTH(
-        title = "Pre-Auth"
+        title = "Pre-Auth",R.drawable.pre_auth
     ),
     REFUND("Refund", R.drawable.ic_refund),
     BANK_EMI(
@@ -277,8 +277,7 @@ suspend fun readInitFile(callback: suspend (Boolean, String) -> Unit) {
     GlobalScope.launch(Dispatchers.IO) {
         var reader: BufferedReader? = null
         try {
-            reader =
-                BufferedReader(InputStreamReader(VerifoneApp.appContext.assets.open("init_file.txt")))
+            reader = BufferedReader(InputStreamReader(VerifoneApp.appContext.assets.open("init_file.txt")))
             var mLine = reader.readLine()
             while (mLine != null) {
                 logger("readInitFile", mLine)
@@ -311,18 +310,19 @@ suspend fun readInitServer(data: ArrayList<ByteArray>, callback: (Boolean, Strin
     GlobalScope.launch(Dispatchers.IO) {
         try {
             val filename = "init_file.txt"
+
             VerifoneApp.appContext.openFileOutput(filename, Context.MODE_PRIVATE).apply {
+               flush()
                 for (each in data)
                     write(each)
                 flush()
             }.close()
 
-            val fin =
-                BufferedReader(InputStreamReader(VerifoneApp.appContext.openFileInput(filename)))
+            val fin = BufferedReader(InputStreamReader(VerifoneApp.appContext.openFileInput(filename)))
 
             var line: String? = fin.readLine()
 
-            TerminalCommunicationTable.clear()
+         //   TerminalCommunicationTable.clear()
 
             while (line != null) {
                 if (line.isNotEmpty()) {
@@ -474,7 +474,7 @@ suspend fun saveToDB(spliter: List<String>) {
 
             } catch (ex: Exception) {
                 //ex.printStackTrace()
-                print("Exception in brand catalogue display on dashboard")
+                println("Exception in brand catalogue display on dashboard")
             } finally {
                 TerminalParameterTable.performOperation(terminalParameterTable) {
                     logger("saveToDB", "mTpt")
