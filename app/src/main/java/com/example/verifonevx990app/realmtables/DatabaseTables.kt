@@ -1219,7 +1219,7 @@ open class IssuerParameterTable() : RealmObject(), Parcelable {
     var idendifierMasking: String = ""
 
     @field:BHFieldParseIndex(23)
-    @field:BHFieldName("Transaction Amount Limit")
+    @field:BHFieldName("Transaction Amount Limit")// ---->
     var transactionAmountLimit: String = ""
 
     @field:BHFieldParseIndex(24)

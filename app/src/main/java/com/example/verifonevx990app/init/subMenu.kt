@@ -19,13 +19,10 @@ import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
-import com.example.verifonevx990app.digiPOS.QrScanFragment
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
-import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.*
-import com.example.verifonevx990app.transactions.NewInputAmountFragment
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.voidrefund.VoidRefundSalePrintReceipt

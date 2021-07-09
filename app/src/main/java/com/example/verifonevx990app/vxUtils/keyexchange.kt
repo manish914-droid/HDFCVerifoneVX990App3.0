@@ -548,6 +548,7 @@ class KeyExchanger(
 
             HitServer.hitInitServer({ result, success ->
                 if (success) {
+                    var isStaticQrAvailable=false
                     //setAutoSettlement()  // Setting auto settlement.
                     //  downloadPromo()  // Setting
                     // region ========= checking and getting the merchant promo on terminal====
@@ -629,11 +630,7 @@ class KeyExchanger(
                                                     )
                                                 }
                                                 if (tpt1.digiPosBQRStatus == EDigiPosTerminalStatusResponseCodes.ActiveString.statusCode) {
-                                                    runBlocking {
-                                                        getStaticQrFromServerAndSaveToFile(context as BaseActivity){
-                                                            // FAIL AND SUCCESS HANDELED IN FUNCTION getStaticQrFromServerAndSaveToFile itself
-                                                        }
-                                                    }
+                                                  isStaticQrAvailable=true
                                                 }
 
                                             }
@@ -654,8 +651,19 @@ class KeyExchanger(
                         }
                     }
                     // endregion================
-                    (context as MainActivity).hideProgress()
+
                     GlobalScope.launch(Dispatchers.Main) {
+                        if(isStaticQrAvailable){
+                            // getting static qr from server if required
+                            withContext(Dispatchers.IO){
+                                getStaticQrFromServerAndSaveToFile(context as BaseActivity){
+                                    // FAIL AND SUCCESS HANDELED IN FUNCTION getStaticQrFromServerAndSaveToFile itself
+                                }
+                            }
+
+                        }
+                        (context as MainActivity).hideProgress()
+                        VFService.vfBeeper?.startBeep(200)
                         (context as MainActivity).alertBoxWithAction(null,
                             null,
                             "",
@@ -665,7 +673,7 @@ class KeyExchanger(
                             {},
                             {})
                     }
-                    VFService.vfBeeper?.startBeep(200)
+
                     AppPreference.saveBoolean(
                         PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString(),
                         false

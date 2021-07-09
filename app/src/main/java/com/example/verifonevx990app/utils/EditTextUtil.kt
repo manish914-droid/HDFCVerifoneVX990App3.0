@@ -26,14 +26,12 @@ object EditTextUtil {
             }
 
             override fun afterTextChanged(s: Editable) {
-                if (s != null && s.toString().length > 0) {
-                    edittext.setGravity(Gravity.CENTER)
+                if (s.toString().isNotEmpty()) {
+                    edittext.gravity = Gravity.CENTER
                 } else {
-                    edittext.setGravity(Gravity.START)
+                    edittext.gravity = Gravity.START
                 }
             }
         })
     }
-
-
 }
