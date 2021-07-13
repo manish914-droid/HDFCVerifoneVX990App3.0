@@ -1053,7 +1053,7 @@ class PrintUtil(context: Context?) {
                                 alignLeftRightText(
                                     textInLineFormatBundle,
                                     dat,
-                                    invoiceWithPadding(b.invoiceNumber)
+                                    invoiceWithPadding(b.hostInvoice)
                                 )
                             } catch (ex: Exception) {
                                 ex.printStackTrace()
@@ -1072,7 +1072,7 @@ class PrintUtil(context: Context?) {
                                 alignLeftRightText(
                                     textInLineFormatBundle,
                                     dat,
-                                    invoiceWithPadding(b.invoiceNumber)
+                                    invoiceWithPadding(b.hostInvoice)
                                 )
                                 //alignLeftRightText(textInLineFormatBundle," "," ")
                             } catch (ex: Exception) {
@@ -2634,7 +2634,7 @@ setLogoAndHeader(null)
 
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
-setLogoAndHeader()
+             setLogoAndHeader()
            /* printLogo("hdfc_print_logo.bmp")
 
             format.putInt(
