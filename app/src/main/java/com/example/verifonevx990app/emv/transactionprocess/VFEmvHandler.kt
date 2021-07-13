@@ -145,7 +145,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                 if (null != tlv && tlv.isNotEmpty()) {
                     Log.e("TLV F55 REQ--", "TAG--> " + Integer.toHexString(tag) + ", VALUE-->" + Utility.byte2HexStr(tlv))
                     val length = Integer.toHexString(tlv.size)
-                    count += Integer.valueOf(length)
+                 //   count += Integer.valueOf(length)
                     tagOfF55?.put(tag, Utility.byte2HexStr(tlv)) // build up the field 55
 
                     try {
