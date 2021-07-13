@@ -57,8 +57,12 @@ class PendingTxnListFragment : Fragment() {
                         try {
                             (activity as BaseActivity).hideProgress()
                             if (isSuccess) {
+
+
                                 val statusRespDataList =
                                     responsef57.split("^")
+
+
                                 val tabledata =
                                     DigiPosDataTable()
                                 tabledata.requestType =
@@ -81,6 +85,7 @@ class PendingTxnListFragment : Fragment() {
                                         " "
                                     )
                                 tabledata.txnDate = dateTime[0]
+                                if(dateTime.size==2)
                                 tabledata.txnTime = dateTime[1]
                                 tabledata.amount =
                                     statusRespDataList[8]
@@ -121,17 +126,35 @@ class PendingTxnListFragment : Fragment() {
                                                     pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
                                                     (activity as MainActivity).hideProgress()
                                                 }
-
                                             }
-
-
                                             //   binding?.recyclerView?.smoothScrollToPosition(0)
                                         }
                                     }
-
                                     else -> {
+                                        DigiPosDataTable.deletRecord(digiPosData[position].partnerTxnId)
+                                        DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                        val dp =
+                                            DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
+                                                EDigiPosPaymentStatus.Pending.desciption
+                                            )
+                                        val dpObj = Gson().toJson(dp)
+                                        logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                        Log.e("F56->>", responsef57)
+                                        runBlocking(Dispatchers.Main) {
+                                            if (dp.size == 0) {
+                                                binding?.emptyViewText?.visibility = View.VISIBLE
+                                                binding?.recyclerView?.visibility = View.GONE
+                                            } else {
+                                                binding?.recyclerView?.visibility = View.VISIBLE
+                                                binding?.emptyViewText?.visibility = View.GONE
+                                                binding?.recyclerView?.apply {
+                                                    pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
+                                                    (activity as MainActivity).hideProgress()
+                                                }
+                                            }
+                                            //   binding?.recyclerView?.smoothScrollToPosition(0)
+                                        }
 
-                                        DigiPosDataTable.deletRecord(tabledata.partnerTxnId)
                                     }
                                 }
                             } else {

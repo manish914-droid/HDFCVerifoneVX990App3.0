@@ -649,6 +649,7 @@ internal class DigiPosTxnListAdapter(
             }
             val amountData = "\u20B9${modal.amount}"
             holder.binding.smsPayTransactionAmount.text = amountData
+            if(modal.transactionTime.isNotBlank())
             holder.binding.dateTV.text = getDateInDisplayFormatDigipos(modal.transactionTime)
             holder.binding.mobileNumberTV.text = modal.customerMobileNumber
 

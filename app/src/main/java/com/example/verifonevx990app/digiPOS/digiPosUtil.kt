@@ -65,6 +65,7 @@ enum class EDigiPosPaymentStatus(val code: Int, val desciption: String) {
     Approved(1, "Success"),
     Failed(2, "SaleFailed"),
     UNKnown(3, "Something went wrong"),
+    Fail(4,"Failed"),
 
 }
 
@@ -76,9 +77,13 @@ fun saveDateInServerFormatDigipos(): String {
 
 fun getDateInDisplayFormatDigipos(dateStr: String): String {
     //val dateStr = "2021-06-11 11:00:45"//Date()
-    val ft = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateStr)
-    val ft2 = SimpleDateFormat("dd MMMM, h:mm aa", Locale.getDefault())
-    return ft2.format(ft)
+    return try {
+        val ft = SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).parse(dateStr)
+        val ft2 = SimpleDateFormat("dd MMMM, h:mm aa", Locale.getDefault())
+        ft2.format(ft)
+    }catch (ex:Exception){
+        ""
+    }
 }
 
 fun getCurrentDateInDisplayFormatDigipos(): String {

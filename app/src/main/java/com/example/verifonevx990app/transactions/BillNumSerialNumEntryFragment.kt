@@ -151,6 +151,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
                     context?.getString(R.string.enter_valid_bill_number)?.let { it1 ->
                         VFService.showToast(it1)
                     }
+
                     return
                 }
             }
@@ -158,9 +159,12 @@ class BillNumSerialNumEntryFragment : Fragment() {
         if (brandEMIDataModal.getIsRequired() == "1" || brandEMIDataModal.getIsRequired() == "2") {
             if (brandEMIDataModal.getIsRequired() == "1") {
                 if (TextUtils.isEmpty(binding?.serialNumEt?.text.toString().trim())) {
-                    context?.getString(R.string.enterValid_serial_iemei_no)?.let { it1 ->
+                   /* context?.getString(R.string.enterValid_serial_iemei_no)?.let { it1 ->
                         VFService.showToast(it1)
-                    }
+                    }*/
+
+                    VFService.showToast("Enter valid ${brandEMIDataModal.getValidationTypeName()?:context?.getString(R.string.enterValid_serial_iemei_no)}")
+
                     return
                 }
             }
