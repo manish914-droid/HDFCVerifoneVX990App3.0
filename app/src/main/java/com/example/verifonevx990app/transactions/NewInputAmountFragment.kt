@@ -706,7 +706,7 @@ class NewInputAmountFragment : Fragment() {
                             // mobile entry  optional handling
                         }
                         brandEmiValidationModel.isMobileNumMandatory -> {
-                            if (TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) || (binding?.mobNumbr?.text.toString().length !in 10..13)) {
+                            if (!TextUtils.isEmpty(binding?.mobNumbr?.text.toString()) && (binding?.mobNumbr?.text.toString().length in 10..13)) {
                                 navigateToNextScreen(
                                     uiAction,
                                     amt,

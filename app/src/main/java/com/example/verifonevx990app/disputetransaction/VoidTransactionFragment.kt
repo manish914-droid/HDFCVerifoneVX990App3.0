@@ -152,7 +152,7 @@ class VoidTransactionFragment : Fragment() {
         dialog.findViewById<BHTextView>(R.id.timeET)?.text = formattedTime
         dialog.findViewById<BHTextView>(R.id.tidET)?.text = voidData.tid
         dialog.findViewById<BHTextView>(R.id.invoiceET)?.text =
-            invoiceWithPadding(voidData.invoiceNumber)
+            invoiceWithPadding(voidData.hostInvoice)
         val amt = voidData.totalAmmount.toFloat() / 100f
         /* if (voidData.tipAmmount.toLong() <=0L) {
              dialog.findViewById<BHTextView>(R.id.amountTV)?.text = voidData.totalAmmount

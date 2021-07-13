@@ -275,6 +275,11 @@ class StubBatchData(private var de55: String?,var transactionType: Int, var card
             batchFileData.hostRoc = f60DataList[6]
             batchFileData.hostInvoice = f60DataList[7]
             batchFileData.hostCardType = f60DataList[8]
+            if (batchFileData.transactionType != TransactionType.PRE_AUTH.type) {
+                val lastSuccessReceiptData = Gson().toJson(batchFileData)
+                AppPreference.saveString(AppPreference.LAST_SUCCESS_RECEIPT_KEY, lastSuccessReceiptData)
+            }
+
             batchFileData
         } catch (ex: Exception) {
             ex.printStackTrace()

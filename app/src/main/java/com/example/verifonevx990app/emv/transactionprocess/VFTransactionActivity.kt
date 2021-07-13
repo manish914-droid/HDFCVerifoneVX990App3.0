@@ -610,8 +610,8 @@ class VFTransactionActivity : BaseActivity() {
                                         }
                                     }
                                 } else {
-                                    printAndSaveBatchDataInDB(stubbedData) { printCB ->
-                                        if (!printCB) {
+                                    printAndSaveBatchDataInDB(stubbedData) { printCB ,isPrintingRollAvailable->
+                                        if (!printCB || !isPrintingRollAvailable) {
                                             Log.e("FIRST ", "COMMENT ******")
                                             // Here we are Syncing Txn CallBack to server
                                             lifecycleScope.launch(Dispatchers.IO) {
@@ -821,7 +821,7 @@ class VFTransactionActivity : BaseActivity() {
     fun printAndSaveDoubletapData(tcValue: String?) {
         mstubbedData.tc = tcValue ?: ""
         // printerReceiptData will not be saved in Batch if transaction is pre auth
-        printAndSaveBatchDataInDB(mstubbedData){ printCB ->
+        printAndSaveBatchDataInDB(mstubbedData){ printCB ,isPrintingRollAvailable->
             if (!printCB) {
                 //Here we are Syncing Offline Sale if we have any in Batch Table and also Check Sale Response has Auto Settlement enabled or not:-
                 //If Auto Settlement Enabled Show Pop Up and User has choice whether he/she wants to settle or not:-
@@ -838,7 +838,7 @@ class VFTransactionActivity : BaseActivity() {
     }
 
     //Below method is used to save sale data in batch file data table and print the receipt of it:-
-    private fun printAndSaveBatchDataInDB(stubbedData: BatchFileDataTable, cb: (Boolean) -> Unit) {
+    private fun printAndSaveBatchDataInDB(stubbedData: BatchFileDataTable, cb: (Boolean,Boolean) -> Unit) {
         // printerReceiptData will not be saved in Batch if transaction is pre auth
         if (transactionType != TransactionTypeValues.PRE_AUTH) {
             //Here we are saving printerReceiptData in BatchFileData Table:-
@@ -859,8 +859,8 @@ class VFTransactionActivity : BaseActivity() {
                         false,
                         getString(R.string.positive_button_ok),
                         {
-                            cb(dialogCB)
-                          /*  startActivity(
+                            cb(dialogCB,false)
+                           /* startActivity(
                                 Intent(
                                     this@VFTransactionActivity,
                                     MainActivity::class.java
@@ -872,7 +872,7 @@ class VFTransactionActivity : BaseActivity() {
                         {})
                 }
             else
-                cb(dialogCB)
+                cb(dialogCB,true)
         }
     }
 
