@@ -414,9 +414,7 @@ init {
         divideAmountBy100(amount.toDouble().toInt())
         if (list[p1].transactionType == TransactionType.TIP_SALE.type || list[p1].transactionType == TransactionType.SALE_WITH_CASH.type) {
             amount = "%.2f".format(list[p1].totalAmmount.toFloat() / 100)
-        } else if (list[p1].transactionType == TransactionType.EMI_SALE.type) {
-            amount = "%.2f".format(list[p1].emiTransactionAmount.toFloat() / 100)
-        } else {
+        }else {
             amount = "%.2f".format(list[p1].transactionalAmmount.toFloat() / 100)
         }
 

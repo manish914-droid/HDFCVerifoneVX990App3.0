@@ -178,18 +178,15 @@ class EMICompareAdapter(
             }
         }
 
-        holder.viewBinding.transactionAmountTV.text =
-            divideAmountBy100(modal.transactionAmount.toInt()).toString()
-        holder.viewBinding.discountAmount.text =
-            divideAmountBy100(modal.discountAmount.toInt()).toString()
-        holder.viewBinding.loanAmount.text = divideAmountBy100(modal.loanAmount.toInt()).toString()
-        holder.viewBinding.roi.text = divideAmountBy100(modal.tenureInterestRate.toInt()).toString()
-        holder.viewBinding.emiAmount.text = divideAmountBy100(modal.emiAmount.toInt()).toString()
-        holder.viewBinding.totalWithInterest.text =
-            divideAmountBy100(modal.netPay.toInt()).toString()
-        holder.viewBinding.cashbackAmount.text =
-            divideAmountBy100(modal.cashBackAmount.toInt()).toString()
-        holder.viewBinding.netCost.text = divideAmountBy100(modal.netPay.toInt()).toString()
+        holder.viewBinding.transactionAmountTV.text =  "%.2f".format((((modal.transactionAmount).toDouble()).div(100)).toString().toDouble())
+       // divideAmountBy100(modal.transactionAmount.toInt()).toString()
+        holder.viewBinding.discountAmount.text ="%.2f".format((((modal.discountAmount).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.loanAmount.text ="%.2f".format((((modal.loanAmount).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.roi.text = "%.2f".format((((modal.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.emiAmount.text = "%.2f".format((((modal.emiAmount).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.totalWithInterest.text = "%.2f".format((((modal.netPay).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.cashbackAmount.text = "%.2f".format((((modal.cashBackAmount).toDouble()).div(100)).toString().toDouble())
+        holder.viewBinding.netCost.text =  "%.2f".format((((modal.netPay).toDouble()).div(100)).toString().toDouble())
         holder.viewBinding.additionalOffer.text = ""
     }
 
