@@ -1367,6 +1367,7 @@ fun transactionType2Name(code: Int): String {
         TransactionType.TEST_EMI.type -> "TEST EMI"
         TransactionType.BRAND_EMI.type -> "Brand EMI"
         TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> "Brand EMI By Access Code"
+        TransactionType.CASH_AT_POS.type -> "Cash only"
         else -> "Unknown"
     }
 }

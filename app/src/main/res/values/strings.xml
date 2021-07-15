@@ -182,7 +182,7 @@
     <string name="tid">TID</string>
     <string name="time">Time</string>
     <string name="no_data_found">No Data Found</string>
-    <string name="invoice_number_should_not_be_empty">Invoice Number should not be empty</string>
+    <string name="invoice_number_should_not_be_empty">Please Enter invoice number</string>
     <string name="void_offline_sale_uploaded_successfully">Void Offline Sale Uploaded Successfully</string>
     <string name="fail_to_upload_void_offline_sale">Fail to upload Void Offline Sale</string>
     <string name="app_update_failed">Application Update Failed</string>
@@ -384,7 +384,7 @@
     <string name="select_ssuer">Select Issuer For EMI Enquiry</string>
     <string name="brand_emi_master">Brand EMI Master Category</string>
     <string name="error">Error</string>
-    <string name="socket_time_out">SocketTimeoutException</string>
+    <string name="socket_time_out">SocketTimeoutEnter valid serial no/ IMEI no</string>
     <string name="brand_name">Brand Name</string>
     <string name="load_more">Load More</string>
     <string name="brand_emi_sub_category">Brand EMI Sub Category</string>
@@ -520,6 +520,8 @@
     <string name="bill_num">Bill number</string>
     <string name="brand_min_max_amt_limit_txn"><![CDATA[Entered Amount Should be in Product Min & Max Amount Range]]></string>
     <string name="enterValid_serial_iemei_no">Enter valid serial/IMEI no</string>
+    <string name="enterValid_serial">Enter valid serial number</string>
+    <string name="enterValid_iemei_no">Enter valid IMEI number</string>
     <string name="trans_param">Trans Param</string>
     <string name="app_update_param">App Update Param</string>
     <string name="comm_param">Communication Param</string>

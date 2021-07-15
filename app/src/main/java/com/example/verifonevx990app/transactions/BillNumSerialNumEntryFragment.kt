@@ -162,9 +162,29 @@ class BillNumSerialNumEntryFragment : Fragment() {
                    /* context?.getString(R.string.enterValid_serial_iemei_no)?.let { it1 ->
                         VFService.showToast(it1)
                     }*/
+                        if(brandEMIDataModal?.getValidationTypeName() == "IMEI" ||
+                            brandEMIDataModal?.getValidationTypeName() == "imei") {
 
-                    VFService.showToast("Enter valid ${brandEMIDataModal.getValidationTypeName()?:context?.getString(R.string.enterValid_serial_iemei_no)}")
+                            VFService.showToast(
+                                getString(
+                                    R.string.enterValid_iemei_no
+                                )
+                            )
+                        }else if (brandEMIDataModal?.getValidationTypeName() == "SerialNo"){
+                            VFService.showToast(
+                                getString(
+                                    R.string.enterValid_serial
+                                )
+                            )
 
+                        }
+                    else{
+                            VFService.showToast(
+                                getString(
+                                    R.string.enterValid_serial_iemei_no
+                                )
+                            )
+                        }
                     return
                 }
             }
