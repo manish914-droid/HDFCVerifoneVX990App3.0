@@ -1,10 +1,18 @@
 package com.example.verifonevx990app.preAuth
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.text.TextUtils
 import android.util.Log
+import android.view.ViewGroup
+import android.view.Window
+import android.view.WindowManager
+import android.widget.Button
+import android.widget.TextView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.emv.transactionprocess.SyncReversalToHost
@@ -63,7 +71,7 @@ class PendingPreauth(var context: Context) {
         title: String, msg: String, showCancelButton: Boolean = true,
         positiveButtonText: String = "YES"
     ) {
-        val builder = androidx.appcompat.app.AlertDialog.Builder(context)
+      /*  val builder = androidx.appcompat.app.AlertDialog.Builder(context)
         builder.setTitle(title)
         builder.setMessage(msg)
             .setCancelable(false)
@@ -79,7 +87,39 @@ class PendingPreauth(var context: Context) {
             }
         }
         val alert: androidx.appcompat.app.AlertDialog = builder.create()
-        alert.show()
+        alert.show()*/
+
+        val dialog = Dialog(context)
+        dialog.apply {
+            requestWindowFeature(Window.FEATURE_NO_TITLE)
+            setContentView(R.layout.msg_dialog)
+
+            window?.attributes?.windowAnimations = R.style.DialogAnimation
+            val window = dialog.window
+            window?.setLayout(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                WindowManager.LayoutParams.WRAP_CONTENT
+            )
+            findViewById<TextView>(R.id.msg_dialog_title).text = title
+            findViewById<TextView>(R.id.msg_dialog_msg).text = msg
+
+            with(findViewById<Button>(R.id.msg_dialog_ok)) {
+                text = "yes"
+                setOnClickListener {
+                    dismiss()
+                    doPendingPreAuth(counter)
+                }
+            }
+
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            findViewById<Button>(R.id.msg_dialog_cancel).apply {
+                text = "No"
+                setOnClickListener {
+                    dismiss()
+                    dialog.cancel()
+                }
+            }
+        }.show()
     }
 
     private suspend fun checkReversalPerformPendingPreAuthTransaction(

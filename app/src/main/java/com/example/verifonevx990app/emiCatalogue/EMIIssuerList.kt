@@ -307,7 +307,7 @@ class EMIIssuerList : Fragment() {
                         }
                     })
                 } else {
-                    VFService.showToast(getString(R.string.please_select_one_or_multiple_issuer_banks))
+                    VFService.showToast(getString(R.string.please_select_tenure))
                 }
                 Log.d("TWSIFD:- ", tenureWiseSelectedIssuerFullData.toString())
             }

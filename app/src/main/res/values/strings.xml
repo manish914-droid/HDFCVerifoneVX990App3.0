@@ -205,6 +205,7 @@
     <string name="please_enter_amount">PLEASE ENTER AMOUNT</string>
     <string name="sending_reciving_data">Sending/Receiving data from host</string>
     <string name="sale_amount_should_greater_then_1">Sale amount should be greater than RS 1</string>
+    <string name="please_enter_cash_amount">Please enter cash amount</string>
 
 
     <string name="key_1">1</string>
@@ -239,7 +240,7 @@
     <string name="empty_batch_data">Empty Batch Data</string>
     <string name="do_you_to_print_detail_reports">Do you want to print detail reports?</string>
     <string name="enter_mobile_number">Enter Mobile Number</string>
-    <string name="enter_valid_mobile_number">Enter a Valid Mobile Number</string>
+    <string name="enter_valid_mobile_number">Enter Valid Mobile Number</string>
     <string name="enter_bill_number">Enter Bill Number</string>
     <string name="enter_valid_bill_number">Enter Valid Bill Number</string>
     <string name="enter_valid_mobile_number_or_bill_number">Enter Valid Mobile Number/Bill Number</string>
@@ -444,6 +445,7 @@
     <string name="checked">Checked</string>
     <string name="selectAll">Select All</string>
     <string name="please_select_one_or_multiple_issuer_banks">Please Select Issuer(s) Bank</string>
+    <string name="please_select_tenure">Please select Tenure </string>
     <string name="please_select_one_issuer_bank">Please Select 1 Issuer Bank</string>
     <string name="total_amount_with_interest">Total Amount \n (With Intrest)</string>
     <string name="pre_auth">PREAUTH</string>

@@ -306,10 +306,14 @@ class NewInputAmountFragment : Fragment() {
             VFService.showToast("Please enter amount")
             return
         }
+
         val cashAmtStr = (cashAmount?.text.toString())
         var cashAmt = 0.toDouble()
         if (cashAmtStr != "") {
             cashAmt = (cashAmount?.text.toString()).toDouble()
+        }  else if (transactionType == EDashboardItem.SALE_WITH_CASH ) {
+            VFService.showToast(getString(R.string.please_enter_cash_amount))
+            return
         }
         val saleAmountStr = binding?.saleAmount?.text.toString()
         var saleAmount = 0.toDouble()
@@ -322,7 +326,7 @@ class NewInputAmountFragment : Fragment() {
             return
         }
         else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
-            VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
+            VFService.showToast(getString(R.string.please_enter_cash_amount))
             return
         }
         else {

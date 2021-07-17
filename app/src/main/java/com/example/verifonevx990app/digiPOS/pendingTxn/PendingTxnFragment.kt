@@ -14,6 +14,7 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPendingTxnBinding
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.VFService
+import com.example.verifonevx990app.vxUtils.hideSoftKeyboard
 
 
 class PendingTxnFragment : Fragment(), IPendingTxnListner {
@@ -80,6 +81,10 @@ class PendingTxnFragment : Fragment(), IPendingTxnListner {
         }
         //  fragmentTransaction.addToBackStack(fragment.toString())
         fragmentTransaction.commit()
+    }
+    override fun onDetach() {
+        super.onDetach()
+        hideSoftKeyboard(requireActivity())
     }
 }
 
