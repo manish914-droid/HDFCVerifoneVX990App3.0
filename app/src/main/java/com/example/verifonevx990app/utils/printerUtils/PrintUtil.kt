@@ -486,7 +486,6 @@ class PrintUtil(context: Context?) {
                         printer?.addTextInLine(fmtAddTextInLine, "TC : ${printerReceiptData.tc}", "", "", PrinterConfig.addTextInLine.mode.Devide_flexible)
                     }
 
-
             }
 
             // region =======Setting amount on Sale charge slip ==============
@@ -652,7 +651,6 @@ class PrintUtil(context: Context?) {
             printSeperator(format)
 
             // endregion=======Setting amount on Sale charge slip ==============
-
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
@@ -3216,33 +3214,31 @@ setLogoAndHeader(null)
             //region=====================Printing Merchant Brand Purchase Details:-
             if (brandData.emiType == EDashboardItem.BRAND_EMI_CATALOGUE.title) {
                 centerText(textFormatBundle, "-----**Product Details**-----", true)
-                if (brandData != null) {
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "Merch/Mfr Name",
+                    brandData.brandName,
+                    ":"
+                )
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "Product Category",
+                    brandData.categoryName,
+                    ":"
+                )
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    "Product",
+                    brandData.productName,
+                    ":"
+                )
+                if (!TextUtils.isEmpty(brandData.imeiNumber)) {
                     alignLeftRightText(
                         textInLineFormatBundle,
-                        "Merch/Mfr Name",
-                        brandData.brandName,
+                        "Product IMEI/Serial No.",
+                        brandData.imeiNumber,
                         ":"
                     )
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Product Category",
-                        brandData.categoryName,
-                        ":"
-                    )
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Product",
-                        brandData.productName,
-                        ":"
-                    )
-                    if (!TextUtils.isEmpty(brandData.imeiNumber)) {
-                        alignLeftRightText(
-                            textInLineFormatBundle,
-                            "Product IMEI/Serial No.",
-                            brandData.imeiNumber,
-                            ":"
-                        )
-                    }
                 }
             }
             //endregion
@@ -3410,40 +3406,40 @@ setLogoAndHeader(null)
             //From invoiceNumber to hostInvoice (coming from field 60)
             //From cardType to hostRoc (coming from field 60)
 
-            var hostIssuerId = if (printerReceiptData.hostIssuerID.isNotBlank()) {
+            val hostIssuerId = if (printerReceiptData.hostIssuerID.isNotBlank()) {
                 printerReceiptData.hostIssuerID
             } else {
                 printerReceiptData.issuerId
             }
 
-            var hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
+            val hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
                 printerReceiptData.hostMID
             } else {
                 printerReceiptData.mid
             }
-            var hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
+            val hostTID = if (printerReceiptData.hostTID.isNotBlank()) {
                 printerReceiptData.hostTID
             } else {
                 printerReceiptData.tid
             }
-            var hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
+            val hostBatchNumber = if (printerReceiptData.hostBatchNumber.isNotBlank()) {
                 printerReceiptData.hostBatchNumber
             } else {
                 printerReceiptData.batchNumber
             }
-            var hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
+            val hostRoc = if (printerReceiptData.hostRoc.isNotBlank()) {
                 printerReceiptData.hostRoc
             } else {
                 printerReceiptData.roc
             }
 
-            var hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
+            val hostInvoice = if (printerReceiptData.hostInvoice.isNotBlank()) {
                 printerReceiptData.hostInvoice
             } else {
                 printerReceiptData.invoiceNumber
             }
 
-            var hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
+            val hostCardType = if (printerReceiptData.hostCardType.isNotBlank()) {
                 printerReceiptData.hostCardType
             } else {
                 printerReceiptData.cardType
@@ -3473,10 +3469,24 @@ setLogoAndHeader(null)
             } else {
                 ""
             }
+             printer?.cleanCache()
+
+            /* textFormatBundle.putInt(
+               PrinterConfig.addTextInLine.FontSize.BundleName,
+               PrinterConfig.addTextInLine.FontSize.NORMAL_24_24
+           )
+            textFormatBundle.putString(
+               PrinterConfig.addTextInLine.GlobalFont.BundleName,
+               PrinterFonts.path + PrinterFonts.FONT_AGENCYR
+           )*/
+val centerTextBundle=Bundle()
+val seperatorLineBundle=Bundle()
 
             hasPin(printerReceiptData)
             setLogoAndHeader()
             printTransDatetime(printerReceiptData)
+
+
 
             //===========================
             alignLeftRightText(
@@ -3507,7 +3517,7 @@ setLogoAndHeader(null)
                 )
             }
             // printer?.addText(textFormatBundle, printerReceiptData.getTransactionType())
-            centerText(textFormatBundle, printerReceiptData.getTransactionType(), true)
+            centerText(centerTextBundle, printerReceiptData.getTransactionType(), true)
             alignLeftRightText(
                 textInLineFormatBundle,
                 "CARD NO : ${printerReceiptData.cardNumber}",
@@ -3552,7 +3562,7 @@ setLogoAndHeader(null)
                 }
             }
 
-            printSeperator(textFormatBundle)
+            printSeperator(seperatorLineBundle)
 
             if (!TextUtils.isEmpty(printerReceiptData.emiTransactionAmount)) {
                 val emiTxnAmount =
@@ -3772,9 +3782,9 @@ setLogoAndHeader(null)
                 )
             }
 
-            printSeperator(textFormatBundle)
+            printSeperator(seperatorLineBundle)
 
-            centerText(textFormatBundle, "CUSTOMER CONSENT FOR EMI", true)
+            centerText(centerTextBundle, "CUSTOMER CONSENT FOR EMI", true)
             //region=======================Issuer Header Terms and Condition=================
             val issuerHeaderTAndC: List<String>
             val testTnc =
@@ -3829,11 +3839,12 @@ setLogoAndHeader(null)
                 )
             }
             //endregion
-            printSeperator(textFormatBundle)
+
 
             //region=====================Printing Merchant Brand Purchase Details:-
             if (printerReceiptData.transactionType == TransactionType.BRAND_EMI.type) {
-                centerText(textFormatBundle, "-----**Product Details**-----", true)
+                printSeperator(seperatorLineBundle)
+                centerText(centerTextBundle, "-----**Product Details**-----", true)
                 if (brandEmiData != null) {
                     alignLeftRightText(
                         textInLineFormatBundle,
@@ -3882,7 +3893,7 @@ setLogoAndHeader(null)
                         }
                     }
                 }
-                printSeperator(textFormatBundle)
+                printSeperator(seperatorLineBundle)
             }
             //endregion
 
@@ -3906,20 +3917,20 @@ setLogoAndHeader(null)
             }
             //endregion
 
-            printSeperator(textFormatBundle)
+            printSeperator(seperatorLineBundle)
             printer?.feedLine(1)
             if (!TextUtils.isEmpty(printerReceiptData.emiTransactionAmount)) {
                 val baseAmount = "%.2f".format(printerReceiptData.transactionAmt.toFloat() / 100)
 
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
                     centerText(
-                        textFormatBundle,
+                        centerTextBundle,
                         "BASE AMOUNT  :     $currencySymbol  1.00",
                         true
                     )
                 } else {
                     centerText(
-                        textFormatBundle,
+                        centerTextBundle,
                         "BASE AMOUNT  :     $currencySymbol  $baseAmount",
                         true
                     )
@@ -3927,9 +3938,9 @@ setLogoAndHeader(null)
             }
             printer?.feedLine(2)
             if (printerReceiptData.isPinverified) {
-                centerText(textFormatBundle, pinVerifyMsg)
-                centerText(textFormatBundle, signatureMsg)
-                centerText(textFormatBundle, printerReceiptData.cardHolderName)
+                centerText(centerTextBundle, pinVerifyMsg)
+                centerText(centerTextBundle, signatureMsg)
+                centerText(centerTextBundle, printerReceiptData.cardHolderName)
 
             } else {
                 alignLeftRightText(textFormatBundle, pinVerifyMsg, "", "")
@@ -3945,6 +3956,16 @@ setLogoAndHeader(null)
                     alignLeftRightText(textFormatBundle, st, "", "")
                 }
             }
+//val bunn=Bundle()
+
+            textFormatBundle.putInt(
+                PrinterConfig.addText.FontSize.BundleName,
+                PrinterConfig.addText.FontSize.NORMAL_24_24
+            )
+            textFormatBundle.putInt(
+                PrinterConfig.addText.Alignment.BundleName,
+                PrinterConfig.addText.Alignment.CENTER
+            )
 
             printer?.addText(textFormatBundle, copyType.pName)
             printer?.addText(textFormatBundle, footerText[0])
@@ -3964,7 +3985,9 @@ setLogoAndHeader(null)
 
             printer?.addText(textFormatBundle, "---------X-----------X----------")
 
-            printSeperator(textFormatBundle)
+
+
+            //printSeperator(textFormatBundle)
 
             printer?.feedLine(1)
             //region=======================Issuer Footer Terms and Condition=================
@@ -4024,7 +4047,7 @@ setLogoAndHeader(null)
                             printerCallback(false, 1)
                         }
                         EPrintCopyType.DUPLICATE -> {
-                            VFService.showToast("Success")
+                          //  VFService.showToast("Success")
                             printerCallback(true, 1)
                         }
                     }
@@ -4456,7 +4479,7 @@ setLogoAndHeader(null)
             } else {
                 headers.add(hdfcTpt.receiptL3)
             }
-            setHeaderWithLogo(textFormatBundle, logo, headers)
+            setHeaderWithLogo(Bundle(), logo, headers)
         } catch (ex: DeadObjectException) {
             throw ex
         } catch (ex: RemoteException) {

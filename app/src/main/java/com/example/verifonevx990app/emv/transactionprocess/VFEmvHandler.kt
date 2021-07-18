@@ -489,7 +489,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
         }*/
 
         val msg = data?.getString("ERROR")
-        VFService.showToast("OnTxnResult error code is --> "+result + "error msg is _--> "+msg)
+       // VFService.showToast("OnTxnResult error code is --> "+result + "error msg is _--> "+msg)
         when {
             DetectError.SeePhone.errorCode == result -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
@@ -575,7 +575,7 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                     }
                 }
                 else{
-                    VFService.showToast("Going in buzzer cond.")
+          //          VFService.showToast("Going in buzzer cond.")
                     try {
                         GlobalScope.launch {
                             delay(1000)
