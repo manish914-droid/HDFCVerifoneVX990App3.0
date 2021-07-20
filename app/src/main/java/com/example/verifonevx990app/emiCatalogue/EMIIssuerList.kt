@@ -289,12 +289,20 @@ class EMIIssuerList : Fragment() {
                 }
             }
             CompareActionType.COMPARE_BY_TENURE.compareType -> {
-                val selectedIssuerNameData =
-                    refreshedBanksByTenure.filter { it.isIssuerSelected == true }
+                val selectedIssuerNameData = refreshedBanksByTenure.filter {
+                    it.isIssuerSelected == true
+                }
+                val selectedIssuerNameData2 =
+                    temporaryAllIssuerList.filter { it.isIssuerSelected == true }
                 val tenureWiseSelectedIssuerFullData = mutableListOf<IssuerBankModal>()
                 for (value in selectedIssuerNameData) {
-                    tenureWiseSelectedIssuerFullData.addAll(allIssuerBankList.filter { it.issuerSchemeID == value.issuerSchemeID && it.issuerBankTenure == selectedTenure })
+                    tenureWiseSelectedIssuerFullData.addAll(allIssuerBankList.filter {
+                      it.issuerSchemeID == value.issuerSchemeID && it.issuerBankTenure == selectedTenure
+
+                    })
+
                 }
+
                 if (tenureWiseSelectedIssuerFullData.isNotEmpty()) {
                     (activity as MainActivity).transactFragment(EMICompareFragment().apply {
                         arguments = Bundle().apply {
@@ -306,7 +314,10 @@ class EMIIssuerList : Fragment() {
                             )
                         }
                     })
-                } else {
+                } else if (!selectedIssuerNameData2.isNotEmpty() && selectedTenure?.isNotEmpty() == true) {
+                    VFService.showToast(getString(R.string.please_select_one_issuer_bank))
+                }
+                else {
                     VFService.showToast(getString(R.string.please_select_tenure))
                 }
                 Log.d("TWSIFD:- ", tenureWiseSelectedIssuerFullData.toString())

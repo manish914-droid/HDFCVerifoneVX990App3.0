@@ -120,14 +120,14 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
 
     private fun validateAndSyncRequestToServer(amt: String) {
         if (amt == "") {
-            VFService.showToast("Enter Amount")
+            VFService.showToast("Please Enter Amount")
             return
         }
         val formattedAmt = "%.2f".format(amt.toFloat())
         val amtValue = formattedAmt.toFloat()
         when {
             amtValue <= 0 -> {
-                VFService.showToast("Amount should be greater than 1 Rs")
+                VFService.showToast("Please Enter Amount")
             }
             transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length !in 10..13 ->
                 context?.getString(R.string.enter_valid_mobile_number)

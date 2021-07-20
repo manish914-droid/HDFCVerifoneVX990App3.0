@@ -556,5 +556,8 @@ class VoidTransactionFragment : Fragment() {
         }
     }
 
-
+    override fun onDetach() {
+        super.onDetach()
+        hideSoftKeyboard(requireActivity())
+    }
 }
