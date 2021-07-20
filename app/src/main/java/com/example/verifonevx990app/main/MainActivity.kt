@@ -684,6 +684,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     }
 
+    // ***** NAVIGATION ON ENTER AMOUNT *****
     override fun onFragmentRequest(
         action: UiAction,
         data: Any,
@@ -935,15 +936,17 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             else -> {
+
             }
         }
     }
 
-    //New HDFC
+    //   ***** DASHBOARD CLICK *****
     override fun onDashBoardItemClick(action: EDashboardItem) {
         //   NeptuneService.beepNormal()
         isDashboardOpen = false
         when (action) {
+
             EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
                 if (checkInternetConnection()) {
                     inflateInputFragment(
@@ -1210,6 +1213,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 }
             }
 
+            // EMI by access code
             EDashboardItem.EMI_PRO -> {
                 if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
                     !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&

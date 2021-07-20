@@ -13,66 +13,88 @@
             layout="@layout/sub_header_layout"
             android:visibility="visible" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="@dimen/pad_4"
-            android:orientation="vertical"
-            app:cardCornerRadius="@dimen/pad_4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view"
                 android:padding="@dimen/pad_16">
 
-                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
+                <!--TID-->
+                <com.example.customneumorphic.NeumorphCardView
                     android:id="@+id/accessCodeTil"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    style="@style/Widget.Neumorph.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pad_8">
+                    android:layout_marginTop="@dimen/pad_8"
+                    android:visibility="visible"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/title_tv"
+                    app:neumorph_inset="@dimen/pad_8"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                    app:neumorph_shapeType="flat"
+                    app:neumorph_strokeColor="@color/darkgray"
+                    app:neumorph_strokeWidth="@dimen/pad_1">
 
-
-                    <com.example.verifonevx990app.vxUtils.BHTextInputEditText
+                    <com.example.verifonevx990app.vxUtils.BHEditText
                         android:id="@+id/accessCodeET"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/height_size_navigation_item"
+                        android:layout_height="wrap_content"
                         android:layout_marginTop="@dimen/pad_8"
                         android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="true"
+                        android:textCursorDrawable="@drawable/cursorbg"
                         android:digits="0123456789"
-                        android:gravity="center|start"
-                        android:hint="@string/enter_access_code"
+                        android:drawableStart="@drawable/ic_batch_no_img"
+                        android:ems="10"
+
+                        android:gravity="center"
+
                         android:imeOptions="actionDone"
                         android:inputType="number"
-                        android:maxLength="20"
+                        android:lines="1"
+                        android:hint="@string/enter_access_code"
+                        android:maxLength="8"
                         android:paddingStart="@dimen/pad_8"
                         android:paddingEnd="@dimen/pad_8"
-                        android:textColor="@color/text_active"
-                        app:fname="bold" />
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/hint_color"
+                        android:textSize="@dimen/text_size_regular"
+                        app:fname="regular" />
+                </com.example.customneumorphic.NeumorphCardView>
 
-                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
-
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
                     android:id="@+id/brandEmiAccessCodeBT"
-                    style="@style/ActionButtonStyle"
+                    style="@style/Widget.Neumorph.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
+                    android:layout_marginStart="@dimen/pad_40"
                     android:layout_marginTop="@dimen/pad_16"
-                    android:background="@drawable/basic_button_bg"
+                    android:layout_marginEnd="@dimen/pad_40"
+
+                    android:textColor="@color/white"
+                    android:textSize="@dimen/text_size_xsmall"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:neumorph_inset="@dimen/pad_14"
                     android:text="@string/submit"
-                    app:fname="bold" />
+                    app:neumorph_lightSource="rightBottom"
+                    app:neumorph_shadowColorDark="@color/upperShadow"
+                    app:neumorph_shadowColorLight="@color/lowerShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_20" />
+
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

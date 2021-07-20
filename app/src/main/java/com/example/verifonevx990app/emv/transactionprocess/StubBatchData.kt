@@ -227,6 +227,9 @@ class StubBatchData(private var de55: String?,var transactionType: Int, var card
             "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection"//used for visa// used for ruppay//"0|54|2|00"
         batchFileData.indicator = mIndicator
 
+        batchFileData.indicator=cardProcessedDataModal.indicatorF58
+
+
         var innvoice = terminalData?.invoiceNumber?.toInt()
         if (innvoice != null) {
             innvoice += 1

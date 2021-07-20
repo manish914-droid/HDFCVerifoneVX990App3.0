@@ -106,7 +106,7 @@ class DashboardFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         isDashboardOpen = true
-
+        activity?.let { hideSoftKeyboard(it) }
         //region=============Checking If Banner Data Available in File System the Display From There else Display From Local Android Drawable:-
         val data = readAppBannerConfigurationData()
         if (data.isNotEmpty()) {

@@ -110,7 +110,7 @@ enum class TransactionType(
     EMI_ENQUIRY(32, ProcessingCode.BANK_EMI, "EMI ENQUIRY"),
     BRAND_EMI(33, ProcessingCode.BRAND_EMI, "BRAND EMI"),
     TEST_EMI(34, ProcessingCode.BRAND_EMI, "TEST EMI"),
-    BRAND_EMI_BY_ACCESS_CODE(35, ProcessingCode.BRAND_EMI, "BRAND EMI BY ACCESS CODE"),
+    BRAND_EMI_BY_ACCESS_CODE(35, ProcessingCode.BRAND_EMI, "BRAND EMI BY CODE"),
     FLEXI_PAY(36, ProcessingCode.FLEXI_PAY, "FLEXI PAY"),
 }
 

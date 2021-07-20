@@ -818,7 +818,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                 //This Override method will call when something went wrong or any kind of exception happen in case of card detecting:-
                 override fun onError(error: Int, message: String) {
                     //  cardProcessedDataModal.setReadCardType(DetectCardType.CARD_ERROR_TYPE)
-                    VFService.showToast("error:$error, msg:$message")
+                  //  VFService.showToast("error:$error, msg:$message")
                     try {
                         when (error) {
                             EFallbackCode.Swipe_fallback.fallBackCode -> {

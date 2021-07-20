@@ -3,6 +3,8 @@ package com.example.verifonevx990app.brandemibyaccesscode
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Parcelable
 import android.text.TextUtils
@@ -11,6 +13,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
@@ -217,7 +220,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                 WindowManager.LayoutParams.WRAP_CONTENT
             )
 
-            dialog.findViewById<BHButton>(R.id.cancelButton).setOnClickListener {
+            dialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
                 dialog.dismiss()
             }
 
@@ -262,10 +265,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             }
             emiAmountET.text = "%.2f".format(brandEMIAccessData.emiAmount.toFloat() / 100)
             netPayAmountET.text = "%.2f".format(brandEMIAccessData.netPayAmount.toFloat() / 100)
-
-
-
-            dialog.findViewById<BHButton>(R.id.submitButton).setOnClickListener {
+            dialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
                 dialog.dismiss()
                 if (checkInternetConnection()) {
                     GlobalScope.launch(Dispatchers.IO) {
@@ -280,14 +280,17 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                                 putExtra("proc_code", ProcessingCode.SALE.code)
                                 putExtra("mobileNumber", "")
                                 putExtra("billNumber", "")
+                                putExtra("uiAction", UiAction.BANK_EMI_BY_ACCESS_CODE)
+
                             })
                     }
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
             }
-
             dialog.show()
+            window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
         }
     }
     //endregion

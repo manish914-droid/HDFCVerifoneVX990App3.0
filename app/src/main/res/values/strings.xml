@@ -404,7 +404,7 @@
     <string name="enter_valid_serial_number">Enter a Valid Serial Number</string>
     <string name="please_select_product">Please Select Product</string>
     <string name="enter_access_code">Enter Access Code</string>
-    <string name="brand_emi_by_access_code">Brand EMI By Access Code</string>
+    <string name="brand_emi_by_access_code">Brand EMI By Code</string>
     <string name="submit">SUBMIT</string>
     <string name="please_enter_access_code">Please Enter Access Code</string>
     <string name="productName">Product Name</string>

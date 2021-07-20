@@ -612,7 +612,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 iDiag?.showProgress(getString(R.string.printing_last_receipt))
                             }
                             when (lastReceiptData.transactionType) {
-                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
+                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type, TransactionType.SALE_WITH_CASH.type-> {
                                     PrintUtil(activity).startPrinting(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,

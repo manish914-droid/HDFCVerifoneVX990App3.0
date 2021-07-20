@@ -72,6 +72,7 @@ class CardProcessedDataModal : Serializable {
     //region
 
      var testEmiOption:String="0"
+    var indicatorF58=""
 
 
 

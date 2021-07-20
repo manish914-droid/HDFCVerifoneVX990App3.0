@@ -120,15 +120,6 @@ class CreateTransactionPacket(
                         54,
                         addPad(cardProcessedData.getOtherAmount().toString(), "0", 12, true)
                     )
-
-                /* TransactionType.SALE.type->{
-                     if(cardProcessedData?.getSaleTipAmount()?:0L >0L){
-                         addFieldByHex(
-                             54,
-                             addPad(cardProcessedData?.getSaleTipAmount().toString(), "0", 12, true)
-                         )
-                     }
-                 }*/
                 else -> {
                 }
             }
@@ -223,7 +214,6 @@ class CreateTransactionPacket(
 
                 else -> {
                     indicator = if( cardProcessedData.getTransType()==TransactionType.TEST_EMI.type ){
-
                             logger("TEST OPTION",cardProcessedData.testEmiOption,"e")
                         "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection|${cardProcessedData.testEmiOption}"
                     }else
@@ -232,7 +222,7 @@ class CreateTransactionPacket(
             }
 
             Log.d("SALE Indicator:- ", indicator.toString())
-
+            additionalData["indicatorF58"] = indicator ?: ""
             //Adding Field 58
             addFieldByHex(58, indicator ?: "")
 

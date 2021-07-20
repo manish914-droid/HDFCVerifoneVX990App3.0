@@ -31,12 +31,11 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
         addField(22, batch.posEntryValue)
         addField(24, Nii.DEFAULT.nii)
 
-        if (null != batch.aqrRefNo && !batch.aqrRefNo.isNullOrBlank())
+        if (batch.aqrRefNo.isNotBlank())
             addFieldByHex(
                 31,
                 batch.aqrRefNo
             )  // going in case of Amex for visa and master check if to send or not
-
         addFieldByHex(41, batch.tid)
         addFieldByHex(42, batch.mid)
         addFieldByHex(48, Field48ResponseTimestamp.getF48Data())
@@ -65,14 +64,6 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
         val formater = SimpleDateFormat("yyMMddHHmmss", Locale.getDefault())
         val formatedDate = formater.format(batch.timeStamp)
 
-        //send 56 field in request packet as –
-        //TID           – 8 length
-        //BATCHNO       - 6 length
-        //STAN          - 6 length
-        //TXN_DATE_TIME – 12 length
-        //AUTH_CODE     - 6 length
-        //INVOICE       - 6 length
-
         //Changes By manish Kumar
         //If in Respnse field 60 data comes Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
         // then show response data otherwise show data available in database
@@ -99,10 +90,14 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
 
 
         addField(57, batch.track2Data)
-        if (batch.transactionType != TransactionType.EMI_SALE.type)
+
+
+      /*  if (batch.transactionType != TransactionType.EMI_SALE.type)
             addFieldByHex(58, batch.indicator)
         else
-            addFieldByHex(58, AppPreference.getString(batch.invoiceNumber))
+            addFieldByHex(58, AppPreference.getString(batch.invoiceNumber))*/
+
+        addFieldByHex(58,batch.indicator)
 
         addFieldByHex(60, batch.batchNumber)
 
@@ -110,7 +105,7 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
         val issuerParameterTable =
             IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
         val version = addPad(getAppVersionNameAndRevisionID(), "0", 15, false)
-        val pcNumber = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)
+        val pcNumbers = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)+addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY_2), "0", 9)
         val data = ConnectionType.GPRS.code + addPad(
             AppPreference.getString("deviceModel"),
             " ",
@@ -118,7 +113,7 @@ class CreateVoidPacket(val batch: BatchFileDataTable) : IVoidExchange {
             false
         ) +
                 addPad(VerifoneApp.appContext.getString(R.string.app_name), " ", 10, false) +
-                version + pcNumber + addPad("0", "0", 9)
+                version + pcNumbers
         val customerID =
             HexStringConverter.addPreFixer(issuerParameterTable?.customerIdentifierFiledType, 2)
 

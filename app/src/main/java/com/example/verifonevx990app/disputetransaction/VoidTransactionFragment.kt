@@ -108,7 +108,7 @@ class VoidTransactionFragment : Fragment() {
                     VFService.showToast(getString(R.string.void_refund_not_allowed))
                 }else{
                     withContext(Dispatchers.Main) {
-                        voidTransConfirmationDialog(voidData!!)
+                        voidTransConfirmationDialog(voidData?: BatchFileDataTable())
                     }
                 }
             }
@@ -194,6 +194,7 @@ class VoidTransactionFragment : Fragment() {
             if (TextUtils.isEmpty(AppPreference.getString(AppPreference.GENERIC_REVERSAL_KEY))) {
                 GlobalScope.launch {
                     delay(1000)
+                    //**** Creating void packet and send to server ****
                     VoidHelper(
                         activity as MainActivity, voidData
                     ) { code, respnosedatareader, msg ->
