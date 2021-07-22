@@ -44,11 +44,8 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
         //Setting Pos entry mode for those who did not got in Request Input Pin
 
         val tlv1:ByteArray?
-        val noCvmTagvalue = arrayOf("0x9F34")
-        val cvmresult = iemv?.getAppTLVList(noCvmTagvalue)
         tlv1 = iemv?.getCardData(Integer.toHexString(0x9F34).toUpperCase(Locale.ROOT))
         if(null != tlv1 && !(tlv1.isEmpty())) {
-            println("CVM Result Data is ----> $cvmresult")
 
             println("CVM Result Data value is ----> ${Utility.byte2HexStr(tlv1)}")
 
