@@ -4015,15 +4015,22 @@ open class IssuerTAndCTable() : RealmObject(), Parcelable {
         //region===================Method to Get All IssuerTAndC Data by Issuer ID================
         fun selectIssuerTAndCDataByID(issuerId: String): IssuerTAndCTable = runBlocking {
             var result = IssuerTAndCTable()
-            getRealm {
-                val re = it.copyFromRealm(
+            try {
+                getRealm {
+                    val re = it.copyFromRealm(
                         it.where(IssuerTAndCTable::class.java)
-                                .equalTo("issuerId", issuerId)
-                                .findFirst()
-                )
-                if (re != null) result = re
+                            .equalTo("issuerId", issuerId)
+                            .findFirst()
+                    )
+                    if (re != null) result = re
 
-            }.await()
+                }.await()
+
+            }
+            catch (ex: Exception){
+                ex.printStackTrace()
+
+            }
             result
         }
         //endregion
