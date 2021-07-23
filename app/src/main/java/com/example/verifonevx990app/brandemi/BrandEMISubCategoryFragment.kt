@@ -310,11 +310,15 @@ class BrandEMISubCategoryFragment : Fragment() {
                                     "Sub Category Data:- ",
                                     Gson().toJson(brandEmiMasterSubCategoryDataList)
                                 )
-                                brandEmiMasterSubCategoryDataList =
-                                    brandEmiMasterSubCategoryDataList.filter {
-                                        it.brandID == brandEMIDataModal?.getBrandID()
-                                    } as MutableList<BrandEMIMasterSubCategoryDataModal>
                                 brandEMIAllDataList = brandEmiMasterSubCategoryDataList
+
+                                //region=====================Line added to resolve category only issue===================== By Manish
+                                brandEmiMasterSubCategoryDataList =
+                                        brandEmiMasterSubCategoryDataList.filter {
+                                            it.brandID == brandEMIDataModal?.getBrandID() && it.parentCategoryID == "0"
+                                        } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                                //region=====================Line added to resolve category only issue end=====================
+
                                 brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                                     brandEmiMasterSubCategoryDataList
                                 )
@@ -367,8 +371,16 @@ class BrandEMISubCategoryFragment : Fragment() {
                                 value.parentCategoryID, value.categoryName)
                         )
                     }
+
                     withContext(Dispatchers.Main) {
                         brandEMIAllDataList = brandEmiMasterSubCategoryDataList
+                        //region=====================Line added to resolve category only showing issue===================== By Manish
+                        brandEmiMasterSubCategoryDataList =
+                                brandEmiMasterSubCategoryDataList.filter {
+                                    it.brandID == brandEMIDataModal?.getBrandID() && it.parentCategoryID == "0"
+                                } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                        //region=====================Line added to resolve category only issue end=====================
+
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                             brandEmiMasterSubCategoryDataList
                         )
