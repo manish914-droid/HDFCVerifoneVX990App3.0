@@ -94,7 +94,7 @@ class BrandEMIProductFragment : Fragment() {
         }
 
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
-        field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^0^${brandEMIDataModal?.getBrandID()}^${brandEMIDataModal?.getCategoryID()}"
+        field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^0^${brandEMIDataModal?.brandID}^${brandEMIDataModal?.categoryID}"
         Log.d("57Data:-", field57RequestData.toString())
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
@@ -114,7 +114,7 @@ class BrandEMIProductFragment : Fragment() {
             searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
             totalRecord = "0"
             brandEmiSearchedProductDataList.clear()
-            field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
+            field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
             fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
         }
         //endregion
@@ -139,18 +139,18 @@ class BrandEMIProductFragment : Fragment() {
         if (checkInternetConnection()) {
             //region===================Saving Selected ProductID and ProductName in BrandEMIDataModal:-
             if (selectedProductUpdatedPosition > -1) {
-                brandEMIDataModal?.setProductID(brandEmiProductDataList?.get(selectedProductUpdatedPosition)?.productID)
-                brandEMIDataModal?.setProductName(brandEmiProductDataList[selectedProductUpdatedPosition].productName)
-                brandEMIDataModal?.setValidationTypeName(brandEmiProductDataList[selectedProductUpdatedPosition].validationTypeName)
-                brandEMIDataModal?.setIsRequired(brandEmiProductDataList[selectedProductUpdatedPosition].isRequired)
-                brandEMIDataModal?.setInputDataType(brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
-                brandEMIDataModal?.setMinLength(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
-                brandEMIDataModal?.setMaxLength(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
-                brandEMIDataModal?.setProductMinAmount(
+                brandEMIDataModal?.productID=(brandEmiProductDataList?.get(selectedProductUpdatedPosition)?.productID)
+                brandEMIDataModal?.productName=(brandEmiProductDataList[selectedProductUpdatedPosition].productName)
+                brandEMIDataModal?.validationTypeName=(brandEmiProductDataList[selectedProductUpdatedPosition].validationTypeName)
+                brandEMIDataModal?.isRequired=(brandEmiProductDataList[selectedProductUpdatedPosition].isRequired)
+                brandEMIDataModal?.inputDataType=(brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
+                brandEMIDataModal?.minLength=(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
+                brandEMIDataModal?.maxLength=(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
+                brandEMIDataModal?.productMinAmount=(
                     (brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
                         .div(100).toString()
                 )
-                brandEMIDataModal?.setProductMaxAmount(
+                brandEMIDataModal?.productMaxAmount=(
                     (brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
                         .div(100).toString()
                 )
@@ -318,7 +318,7 @@ class BrandEMIProductFragment : Fragment() {
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^${brandEMIDataModal?.getCategoryID()}"
+                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^${brandEMIDataModal?.categoryID}"
                         fetchBrandEMIProductDataFromHost()
                         Log.d("FullDataList:- ", brandEmiProductDataList.toString())
                     } else {
@@ -383,7 +383,7 @@ class BrandEMIProductFragment : Fragment() {
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID()}^^$searchedProductName"
+                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
                         fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
                         Log.d("SearchedFullDataList:- ", brandEmiSearchedProductDataList.toString())
                     } else {

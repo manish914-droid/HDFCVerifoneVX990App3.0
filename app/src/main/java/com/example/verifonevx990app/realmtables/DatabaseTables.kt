@@ -27,9 +27,13 @@ enum class EDashboardItem(
 ) : Serializable {
     NONE("No Option Found", R.drawable.ic_home),
     SALE("Sale", R.drawable.sale_icon, 1),
-    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 2),
-    PREAUTH("Pre-Auth", R.drawable.pre_auth, 3),
-    EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon, 4),
+    DIGI_POS("Digi POS", R.drawable.digipos_icon, 2),
+    BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 3),
+    BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon,4),
+    EMI_PRO("Brand EMI By Code", R.drawable.emi_catalog_icon, 5),
+    EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon, 6),
+    PREAUTH("Pre-Auth", R.drawable.pre_auth, 7),
+
     PREAUTH_COMPLETE("Pre-Auth Complete", R.drawable.ic_pre_auth_complete, 5),
     PENDING_PREAUTH("Pending Preauth", R.drawable.ic_pending_preauth, 6),
     OFFLINE_SALE("Offline Sale", R.drawable.sale_icon, 7),
@@ -42,16 +46,16 @@ enum class EDashboardItem(
     CROSS_SELL("Cross Sell", R.drawable.cross_sell_icon, 14),
     SALE_WITH_CASH("Sale With Cash", R.drawable.sale_with_cash),
     CASH_ADVANCE("Cash Advance", R.drawable.ic_cash_at_pos_icon),
-    BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon),
+
     PENDING_OFFLINE_SALE("View Offline Sale", R.drawable.ic_pending_preauth),
     PRE_AUTH_CATAGORY("Pre-Auth", R.drawable.pre_auth, 9),
     MORE("View More", R.drawable.ic_arrow_down, 999),
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
-    EMI_PRO("Brand EMI By Access Code", R.drawable.emi_catalog_icon, 16),
+
     EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
     BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
     BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
-    DIGI_POS("Digi POS", R.drawable.digipos_icon, 20),
+
 
     // just for handling the test emi not used in dashboard items
     TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
@@ -1466,7 +1470,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     @field:BHFieldParseIndex(15)
     var apnUserName: String = ""
 
-    @field:BHFieldName("APN Password")
+   @field:BHFieldName("APN Password")
     @field:BHFieldParseIndex(16)
     var apnPassword: String = ""
 
@@ -1487,7 +1491,7 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
     var hostSecPortNo: String = ""
 
     /*used for ethernet*/
-    @field:BHFieldName("DNS Primary")
+  //  @field:BHFieldName("DNS Primary")
     @field:BHFieldParseIndex(21)
     var dnsPrimary: String = ""
 
@@ -1531,35 +1535,35 @@ open class TerminalCommunicationTable() : RealmObject(), Parcelable {
 
     //region=====New Fields For HDFC Sim 2 detail ======
     @field:BHFieldParseIndex(34)
-    @field:BHFieldName("APN 2")
+ //   @field:BHFieldName("APN 2")
     var apn2 = ""
 
     @field:BHFieldParseIndex(35)
-    @field:BHFieldName("GPRS User 2")
+  //  @field:BHFieldName("GPRS User 2")
     var gprsUser2 = ""
 
     @field:BHFieldParseIndex(36)
-    @field:BHFieldName("GPRS Password 2")
+ //   @field:BHFieldName("GPRS Password 2")
     var gprsPassword2 = ""
 
     @field:BHFieldParseIndex(37)
-    @field:BHFieldName("Host Primary IP 2")
+ //   @field:BHFieldName("Host Primary IP 2")
     var hostPrimaryIp2 = ""
 
     @field:BHFieldParseIndex(38)
-    @field:BHFieldName("Host Primary Port 2")
+ //   @field:BHFieldName("Host Primary Port 2")
     var hostPrimaryPort2 = ""
 
     @field:BHFieldParseIndex(39)
-    @field:BHFieldName("Host Secondary IP 2")
+ //   @field:BHFieldName("Host Secondary IP 2")
     var hostSecondaryIp2 = ""
 
     @field:BHFieldParseIndex(40)
-    @field:BHFieldName("Host Secondary Port 2")
+ //   @field:BHFieldName("Host Secondary Port 2")
     var hostSecondaryPort2 = ""
 
     @field:BHFieldParseIndex(41)
-    @field:BHFieldName("Bank Code")
+ //   @field:BHFieldName("Bank Code")
     var bankCode = ""
 
     @field:BHFieldParseIndex(42)
@@ -3939,8 +3943,8 @@ open class ProductCategoryTable() : RealmObject(), Parcelable {
             var result = listOf<ProductCategoryTable>()
             getRealm {
                 result = it.copyFromRealm(
-                        it.where(ProductCategoryTable::class.java)
-                                .findAll()
+                    it.where(ProductCategoryTable::class.java)
+                        .findAll()
                 )
             }
             result
@@ -3998,7 +4002,7 @@ open class IssuerTAndCTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: IssuerTAndCTable) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All IssuerTAndC Data================
         fun getAllIssuerTAndCData(): MutableList<IssuerTAndCTable>? = runBlocking {
@@ -4036,13 +4040,13 @@ open class IssuerTAndCTable() : RealmObject(), Parcelable {
         //endregion
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                IssuerTAndCTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        IssuerTAndCTable::class.java
+                    )
                 }
+            }
     }
 }
 //endregion
@@ -4083,7 +4087,7 @@ open class BrandTAndCTable() : RealmObject(), Parcelable {
         }
 
         fun performOperation(param: BrandTAndCTable) =
-                withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
+            withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All BrandTAndC Data================
         fun getAllBrandTAndCData(): MutableList<BrandTAndCTable> = runBlocking {
@@ -4098,13 +4102,13 @@ open class BrandTAndCTable() : RealmObject(), Parcelable {
         //endregion
 
         fun clear() =
-                withRealm {
-                    it.executeTransaction { i ->
-                        i.delete(
-                                BrandTAndCTable::class.java
-                        )
-                    }
+            withRealm {
+                it.executeTransaction { i ->
+                    i.delete(
+                        BrandTAndCTable::class.java
+                    )
                 }
+            }
     }
 }
 //endregion
@@ -4287,11 +4291,11 @@ open class BrandEMISubCategoryTable() : RealmObject(), Parcelable {
         suspend fun clear() =
             withRealm {
                 it.executeTransaction { i ->
-                        i.delete(
-                                BrandEMISubCategoryTable::class.java
-                        )
-                    }
+                    i.delete(
+                        BrandEMISubCategoryTable::class.java
+                    )
                 }
+            }
     }
 }
 //endregion
@@ -4300,6 +4304,8 @@ open class BrandEMISubCategoryTable() : RealmObject(), Parcelable {
 @RealmClass
 open class BrandEMIDataTable() : RealmObject(), Parcelable {
     @PrimaryKey
+    var hostInvoice:String=""
+
     var brandID: String = ""
     var brandName: String = ""
     var brandReservedValues: String = ""
@@ -4315,6 +4321,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
     var imeiNumber: String = ""
     var serialNumber: String = ""
     var emiType: String = ""
+
 
     private constructor(parcel: Parcel) : this() {
         brandID = parcel.readString().toString()
@@ -4370,7 +4377,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
             }
         }
 
-        fun performOperation(param: BrandEMIDataTable) =
+        fun saveBrandEMIDataTable(param: BrandEMIDataTable) =
             withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All IssuerTAndC Data================
@@ -4385,6 +4392,23 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         }
         //endregion
 
+        //region====================Method to Get BrandEMIByAccessCode Data from invoice================
+        fun getBrandEMIDataByInvoice(invoiceNumber: String): BrandEMIDataTable? =
+            runBlocking {
+                var brandEmidata: BrandEMIDataTable? = null
+                val inv = invoiceWithPadding(invoiceNumber)
+                getRealm {
+                    val data = it.where(BrandEMIDataTable::class.java)
+                        .equalTo("hostInvoice", inv)
+                        .findFirst()
+                    if (data != null) brandEmidata = it.copyFromRealm(data)
+                }.await()
+                brandEmidata
+            }
+
+        //endregion
+
+
         //region===================Method to Clear BrandEMIData Table:-
         fun clear() =
             withRealm { it.executeTransaction { i -> i.delete(BrandEMIDataTable::class.java) } }
@@ -4397,6 +4421,8 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
 //region================Brand EMI By Access Code Table:-
 open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
     @PrimaryKey
+    var hostInvoice: String = ""
+
     var emiCode: String = ""
     var bankID: String = ""
     var bankTID: String = ""
@@ -4429,6 +4455,8 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
     var schemeDBDTAndC: String = ""
     var discountCalculatedValue: String = ""
     var cashBackCalculatedValue: String = ""
+
+
 
     private constructor(parcel: Parcel) : this() {
         emiCode = parcel.readString().toString()
@@ -4535,6 +4563,23 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
             result
         }
         //endregion
+
+        //region====================Method to Get BrandEMIByAccessCode Data from invoice================
+        fun getBrandEMIAccessCodeDataByInvoice(invoiceNumber: String): BrandEMIAccessDataModalTable? =
+            runBlocking {
+                var brandEmicodeproductdata: BrandEMIAccessDataModalTable? = null
+                val inv = invoiceWithPadding(invoiceNumber)
+                getRealm {
+                    val data = it.where(BrandEMIAccessDataModalTable::class.java)
+                        .equalTo("hostInvoice", inv)
+                        .findFirst()
+                    if (data != null) brandEmicodeproductdata = it.copyFromRealm(data)
+                }.await()
+                brandEmicodeproductdata
+            }
+
+        //endregion
+
 
         //region===================Method to Clear BrandEMI By AccessCode Table:-
         fun clear() =

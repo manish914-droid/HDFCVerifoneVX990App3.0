@@ -79,11 +79,11 @@ class VoidPreAuthFragment : Fragment() {
 
             when {
                 authData.authBatchNo.isNullOrBlank() -> {
-                    VFService.showToast("Invalid BatchNo")
+                    VFService.showToast("Enter batch Number")
                     return@setOnClickListener
                 }
                 authData.authRoc.isNullOrBlank() -> {
-                    VFService.showToast("Invalid ROC")
+                    VFService.showToast("Enter ROC")
                     return@setOnClickListener
                 }
                 else -> {

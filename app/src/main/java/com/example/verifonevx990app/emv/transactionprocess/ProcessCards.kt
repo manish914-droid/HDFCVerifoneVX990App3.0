@@ -9,6 +9,7 @@ import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.EMISchemeAndOfferActivity
 import com.example.verifonevx990app.bankemi.GenericEMISchemeAndOffer
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.crosssell.FlexiPayReqSentServerAndParseData
 import com.example.verifonevx990app.main.DetectCardType
 import com.example.verifonevx990app.main.DetectError
@@ -32,7 +33,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.jvm.Throws
 
-class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, var transactionCallback: (CardProcessedDataModal) -> Unit) {
+class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var activity: Activity, var handler: Handler, var cardProcessedDataModal: CardProcessedDataModal, var brandEmiData:BrandEMIDataModal?,var transactionCallback: (CardProcessedDataModal) -> Unit) {
     var transactionalAmt = cardProcessedDataModal.getTransactionAmount() ?: 0
     var otherAmt = cardProcessedDataModal.getOtherAmount() ?: 0
 
@@ -294,7 +295,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                                                 cardProcessedDataModal,
                                                                 cardProcessedDataModal.getPanNumberData()
                                                                     ?: "",
-                                                                transactionalAmt
+                                                                transactionalAmt,brandEmiData
                                                             ) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                                 GlobalScope.launch(Dispatchers.Main) {
                                                                     if (hostResponseCodeAndMessage.first) {
@@ -368,7 +369,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                                             cardProcessedDataModal,
                                                             cardProcessedDataModal.getPanNumberData()
                                                                 ?: "",
-                                                            transactionalAmt
+                                                            transactionalAmt,brandEmiData
                                                         ) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                             GlobalScope.launch(Dispatchers.Main) {
                                                                 if (hostResponseCodeAndMessage.first) {
@@ -512,7 +513,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                             GlobalScope.launch(Dispatchers.Main) {
                                                 (activity as VFTransactionActivity).showProgress();/*iemv?.stopCheckCard()*/
                                             }
-                                            GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
+                                            GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                 GlobalScope.launch(Dispatchers.Main) {
                                                     if (hostResponseCodeAndMessage.first) {
                                                         (activity as VFTransactionActivity).startActivityForResult(
@@ -615,7 +616,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                             if (!TextUtils.isEmpty(cardBinValue)) {
                                                 GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();iemv?.stopCheckCard() }
                                                 // Below Code is executed if insta
-                                                GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessageAndHasEMI ->
+                                                GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessageAndHasEMI ->
                                                     if (hostResponseCodeAndMessageAndHasEMI.first) {
                                                         // Checking Insta Emi
                                                         if (hostResponseCodeAndMessageAndHasEMI.third) {

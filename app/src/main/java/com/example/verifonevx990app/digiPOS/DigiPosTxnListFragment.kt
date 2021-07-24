@@ -526,6 +526,11 @@ class DigiPosTxnListFragment : Fragment() {
                                                 binding?.transactionListRV?.smoothScrollToPosition(0)
                                             }
                                         }
+                                        ""->{
+                                            if(statusRespDataList[1].toLowerCase(Locale.ROOT).equals("Failed", true)){
+                                                VFService.showToast(statusRespDataList[1])
+                                            }
+                                        }
                                         else -> {
                                             withContext(Dispatchers.Main) {
                                                 iDialog?.hideProgress()

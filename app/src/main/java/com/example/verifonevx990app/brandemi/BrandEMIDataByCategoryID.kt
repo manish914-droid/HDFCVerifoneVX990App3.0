@@ -145,7 +145,7 @@ class BrandEMIDataByCategoryID : Fragment() {
         lifecycleScope.launch(Dispatchers.IO) {
             if (subCategoryData != null) {
                 displayFilteredList =
-                    subCategoryData?.filter { brandEMIDataModal?.getCategoryID() == it.parentCategoryID }
+                    subCategoryData?.filter { brandEMIDataModal?.categoryID == it.parentCategoryID }
                             as MutableList<BrandEMIMasterSubCategoryDataModal>?
                 Log.d("ChildCategoryData:- ", displayFilteredList.toString())
                 if (displayFilteredList?.isNotEmpty() == true) {
@@ -210,13 +210,13 @@ class BrandEMIDataByCategoryID : Fragment() {
     private fun navigateToProductPage(position: Int) {
         if (checkInternetConnection()) {
             //region Adding ChildSubCategoryID and Name:-
-            brandEMIDataModal?.setCategoryID(
+            brandEMIDataModal?.categoryID=(
                 displayFilteredList?.get(position)?.categoryID ?: ""
             )
-            brandEMIDataModal?.setChildSubCategoryID(
+            brandEMIDataModal?.childSubCategoryID=(
                 displayFilteredList?.get(position)?.parentCategoryID ?: ""
             )
-            brandEMIDataModal?.setChildSubCategoryName(
+            brandEMIDataModal?.childSubCategoryName=(
                 displayFilteredList?.get(position)?.categoryName ?: ""
             )
             //endregion

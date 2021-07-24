@@ -222,7 +222,7 @@ class PendingPreAuthFragment : Fragment() {
                     if (isSuccess) {
                         mAdapter.refreshListRemoveAt(position)
                     }
-                    VFService.showToast("$msg----------->  $isSuccess")
+                   // VFService.showToast("$msg----------->  $isSuccess")
                     logger("PREAUTHCOMP", "Is success --->  $isSuccess  Msg --->  $msg")
                     //   parentFragmentManager.popBackStackImmediate()
                 }

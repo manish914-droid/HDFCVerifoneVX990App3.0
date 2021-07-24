@@ -41,16 +41,15 @@ enum class EOptionGroup(val heading: String) {
 
 enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
     INITT("INIT", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_init),
-    DOWNLOAD_TMK("Download TMK", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_key_exchange),
-    TEST_EMI("Test EMI", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_brand_emi),
     TPT("Terminal Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_tpt_img),
     CPT("Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
+    TEST_EMI("Test EMI", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_brand_emi),
     ENV("ENV Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_env),
-
     // CDT("CDT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_cdt),
     //  IPT("IPT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_ipt),
     CR("Clear Reversal", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_reversal),
     CB("Clear Batch", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_batch),
+    DOWNLOAD_TMK("Download TMK", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_key_exchange),
     APPUPDATE("Application Update", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_app_update),
 
     LAST_RECEIPT("Last Receipt", EOptionGroup.REPORT.heading, R.drawable.ic_last_receipt),
@@ -144,9 +143,9 @@ class TableEditFragment : Fragment() {
                 }
 
                 //Below conditional code will only execute in case of cLEAR FBATCH :-
-                if (data[0].titleName.equals("CLEAR FBATCH", ignoreCase = true)) {
+                if (data[0].titleName.equals("F BATCH", ignoreCase = true)) {
                     if (data[0].titleValue == "0" && data[0].titleName.equals(
-                            "CLEAR FBATCH",
+                            "F BATCH",
                             ignoreCase = true
                         )
                     ) {
@@ -263,7 +262,8 @@ class TableEditFragment : Fragment() {
 
 
     private fun getTable(): Any? = when (type) {
-        BankOptions.TPT.ordinal -> TerminalParameterTable.selectFromSchemeTable()
+        BankOptions.TPT.ordinal -> {TerminalParameterTable.selectFromSchemeTable()
+        }
         BankOptions.CPT.ordinal -> TerminalCommunicationTable.selectFromSchemeTable()
         BankOptions.TXN_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("1")
         BankOptions.APP_UPDATE_COMM_PARAM_TABLE.ordinal -> TerminalCommunicationTable.selectCommTableByRecordType("2")
@@ -281,12 +281,15 @@ class TableEditFragment : Fragment() {
                 val props = table::class.java.declaredFields
                 for (prop in props) {
                     val ann = prop.getAnnotation(BHFieldName::class.java)
-                    if (ann != null && ann.isToShow) {
+                    val ann2=prop.getAnnotation(BHFieldParseIndex::class.java)
+                    if (ann != null && ann2 !=null && ann.isToShow) {
                         prop.isAccessible = true
                         val value = prop.get(table)
                         if (value is String) {
-                            dataList.add(TableEditHelper(ann.name, value))
+                            dataList.add(TableEditHelper(ann.name, value,ann2.index))
                         }
+                        dataList.sortBy { it.index }
+                        dataList.forEach {  println(it.titleName) }
                     }
                 }
 
@@ -295,7 +298,7 @@ class TableEditFragment : Fragment() {
                 if (type == BankOptions.TPT.ordinal) {
                     dataList.add(
                         TableEditHelper(
-                            "Clear FBatch",
+                            "F Batch",
                             if (AppPreference.getBoolean(PrefConstant.SERVER_HIT_STATUS.keyName.toString()))
                                 "1"
                             else
@@ -309,7 +312,7 @@ class TableEditFragment : Fragment() {
                         "STAN",
                         "Batch Number",
                         "Invoice Number",
-                        "Clear FBatch"
+                        "F Batch"
                     )
                     val requiredList =
                         dataList.filter { dl -> requiredField.any { rf -> rf == dl.titleName } } as ArrayList<TableEditHelper>
@@ -362,7 +365,7 @@ internal class TableEditAdapter(val data: List<TableEditHelper>, val callback: (
 
 class TableEditHelper(
     var titleName: String,
-    var titleValue: String,
+    var titleValue: String,var index:Int=0,
     var isUpdated: Boolean = false
 ) :
     Comparable<TableEditHelper> {
@@ -612,7 +615,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 iDiag?.showProgress(getString(R.string.printing_last_receipt))
                             }
                             when (lastReceiptData.transactionType) {
-                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type, TransactionType.SALE_WITH_CASH.type-> {
+                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type, TransactionType.SALE_WITH_CASH.type, TransactionType.CASH_AT_POS.type-> {
                                     PrintUtil(activity).startPrinting(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,
@@ -640,7 +643,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         }
                                     }
                                 }
-                                TransactionType.BRAND_EMI.type -> {
+                                TransactionType.BRAND_EMI.type , TransactionType.BRAND_EMI_BY_ACCESS_CODE.type  -> {
                                     PrintUtil(activity).printEMISale(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,
@@ -743,11 +746,10 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 GlobalScope.launch {
                                     val bat = BatchFileDataTable.selectBatchData()
                                     try {
-                                        val b =
-                                            bat.first { it.hostInvoice.toLong() == invoice.toLong() }
+                                        val b = bat.first { it.hostInvoice.toLong() == invoice.toLong() }
                                         //    printBatch(b)
                                         when (b.transactionType) {
-                                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type -> {
+                                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type,TransactionType.CASH_AT_POS.type,TransactionType.SALE_WITH_CASH.type -> {
                                                 PrintUtil(activity).startPrinting(
                                                     b,
                                                     EPrintCopyType.DUPLICATE,
@@ -775,7 +777,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                                     }
                                                 }
                                             }
-                                            TransactionType.BRAND_EMI.type -> {
+                                            TransactionType.BRAND_EMI.type , TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
                                                 PrintUtil(activity).printEMISale(
                                                     b,
                                                     EPrintCopyType.DUPLICATE,

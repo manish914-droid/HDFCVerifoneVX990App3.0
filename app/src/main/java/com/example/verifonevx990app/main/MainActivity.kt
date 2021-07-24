@@ -28,6 +28,7 @@ import com.example.verifonevx990app.appupdate.*
 import com.example.verifonevx990app.appupdate.SystemService.systemManager
 import com.example.verifonevx990app.bankEmiEnquiry.IssuerListFragment
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIByAccessCodeFragment
 import com.example.verifonevx990app.crosssell.HDFCCrossSellFragment
@@ -56,6 +57,7 @@ import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.voidofflinesale.VoidOfflineSale
 import com.example.verifonevx990app.voidrefund.VoidOfRefund
 import com.example.verifonevx990app.vxUtils.*
+
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.saveBatchInPreference
 import com.google.android.material.appbar.AppBarLayout
@@ -63,6 +65,9 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
+import java.lang.reflect.Field
+import java.util.*
+
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
@@ -688,7 +693,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     override fun onFragmentRequest(
         action: UiAction,
         data: Any,
-        extraPair: Triple<String, String, Boolean>?
+        extraPair: Triple<String, String, Boolean>?, brandEMIDataModal: BrandEMIDataModal?
     ) {
         when (action) {
             UiAction.INIT_WITH_KEY_EXCHANGE -> {
@@ -755,6 +760,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                 putExtra("mobileNumber", extraPair?.first)
                                 putExtra("billNumber", extraPair?.second)
                                 putExtra("TestEmiOption", testEmiOpetionType)
+
                             }, EIntentRequest.TRANSACTION.code
                         )
                     } else {
@@ -798,6 +804,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             putExtra("mobileNumber", extraPair?.first)
                             putExtra("billNumber", extraPair?.second)
                             putExtra("uiAction", action)
+                            putExtra("brandEMIData", brandEMIDataModal)
                         }, EIntentRequest.TRANSACTION.code
                     )
                 } else {
@@ -818,6 +825,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putExtra("saleAmt", amt)
                         //same as main amount in case of cash at pos
                         putExtra("otherAmount", amt)
+                        putExtra("uiAction", action)
                     }, EIntentRequest.TRANSACTION.code)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -838,6 +846,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putExtra("title", TransactionType.SALE_WITH_CASH.txnTitle)
                         putExtra("saleAmt", amt)
                         putExtra("otherAmount", otherAmount)
+                        putExtra("uiAction", action)
                     }, EIntentRequest.TRANSACTION.code)
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
@@ -900,6 +909,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         putString("mobileNumber", extraPair?.first)
                         putString("enquiryAmt", amt)
                         putSerializable("imagesData", emiCatalogueImageList as HashMap<*, *>)
+                        putSerializable("brandEMIDataModal", brandEMIDataModal)
 
                     }
                 })
@@ -957,6 +967,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 } else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
+
+
             }
 
             EDashboardItem.VOID_SALE -> {
@@ -2317,7 +2329,7 @@ interface IFragmentRequest {
     fun onFragmentRequest(
         action: UiAction,
         data: Any,
-        extraPair: Triple<String, String, Boolean>? = Triple("", "", third = true)
+        extraPair: Triple<String, String, Boolean>? = Triple("", "", third = true),brandEMIDataModal:BrandEMIDataModal?=null
     )
 
     fun onDashBoardItemClick(action: EDashboardItem)

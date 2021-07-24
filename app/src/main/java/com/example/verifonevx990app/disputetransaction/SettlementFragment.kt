@@ -388,10 +388,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
 
 internal class SettlementAdapter(private val list: List<BatchFileDataTable>) :
     RecyclerView.Adapter<SettlementAdapter.SettlementHolder>() {
-init {
 
-
-}
 
     companion object {
         val TAG = SettlementAdapter::class.java.simpleName

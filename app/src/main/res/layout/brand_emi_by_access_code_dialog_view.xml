@@ -59,7 +59,30 @@ android:text="@string/brand_emi_by_access_code"
         app:fname="bold"
 
         />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/pad_8"
+        android:orientation="horizontal"
+        android:weightSum="2">
 
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:gravity="center"
+            android:text="@string/brand_name" />
+
+        <com.example.verifonevx990app.vxUtils.BHTextView
+            android:id="@+id/productBrandNameET"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="@color/white"
+            android:gravity="center" />
+
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"

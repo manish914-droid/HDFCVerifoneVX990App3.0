@@ -82,7 +82,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
         }
 
-        binding?.serialNumEt?.setMaxLength(brandEMIDataModal.getMaxLength()?.toInt() ?: 20)
+        binding?.serialNumEt?.setMaxLength(brandEMIDataModal.maxLength?.toInt() ?: 20)
         binding?.billNumEt?.setMaxLength( 16)
         if (isBillRequire) {
             binding?.billnoCrdView?.visibility = View.VISIBLE
@@ -90,7 +90,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
             binding?.billnoCrdView?.visibility = View.GONE
         }
 //0therwise optional
-        if (brandEMIDataModal.getIsRequired() == "1" || brandEMIDataModal.getIsRequired() == "2") {
+        if (brandEMIDataModal.isRequired == "1" || brandEMIDataModal.isRequired == "2") {
             if (brandValidation.isSerialNumReq) {
                 binding?.serialNumEt?.hint = "Enter serial number"
             }
@@ -112,7 +112,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
             showEditTextUnSelected(binding?.billNumEt, binding?.billnoCrdView, requireContext())
         }
 
-        when (brandEMIDataModal.getInputDataType()) {
+        when (brandEMIDataModal.inputDataType) {
             "1" -> {
                 binding?.serialNumEt?.inputType = InputType.TYPE_CLASS_NUMBER
 
@@ -156,21 +156,21 @@ class BillNumSerialNumEntryFragment : Fragment() {
                 }
             }
         }
-        if (brandEMIDataModal.getIsRequired() == "1" || brandEMIDataModal.getIsRequired() == "2") {
-            if (brandEMIDataModal.getIsRequired() == "1") {
+        if (brandEMIDataModal.isRequired == "1" || brandEMIDataModal.isRequired == "2") {
+            if (brandEMIDataModal.isRequired == "1") {
                 if (TextUtils.isEmpty(binding?.serialNumEt?.text.toString().trim())) {
                    /* context?.getString(R.string.enterValid_serial_iemei_no)?.let { it1 ->
                         VFService.showToast(it1)
                     }*/
-                        if(brandEMIDataModal?.getValidationTypeName() == "IMEI" ||
-                            brandEMIDataModal?.getValidationTypeName() == "imei") {
+                        if(brandEMIDataModal?.validationTypeName == "IMEI" ||
+                            brandEMIDataModal?.validationTypeName== "imei") {
 
                             VFService.showToast(
                                 getString(
                                     R.string.enterValid_iemei_no
                                 )
                             )
-                        }else if (brandEMIDataModal?.getValidationTypeName() == "SerialNo"){
+                        }else if (brandEMIDataModal?.validationTypeName == "SerialNo"){
                             VFService.showToast(
                                 getString(
                                     R.string.enterValid_serial
@@ -192,12 +192,15 @@ class BillNumSerialNumEntryFragment : Fragment() {
         }
 
         lifecycleScope.launch(Dispatchers.IO) {
-            saveBrandEMIDataToDB( binding?.serialNumEt?.text.toString().trim(),  binding?.serialNumEt?.text.toString().trim(), brandEMIDataModal, transType)
+            //
+          //  saveBrandEMIDataToDB( binding?.serialNumEt?.text.toString().trim(),  binding?.serialNumEt?.text.toString().trim(), brandEMIDataModal, transType)
+
+           brandEMIDataModal.imeiORserailNum=binding?.serialNumEt?.text.toString().trim()
             withContext(Dispatchers.Main) {
                 (activity as MainActivity).onFragmentRequest(
                     uiAction,
                     Pair(txnAmount, "0"),
-                    Triple(mobileNumber, binding?.billNumEt?.text.toString().trim(), true)
+                    Triple(mobileNumber, binding?.billNumEt?.text.toString().trim(), true),brandEMIDataModal
                 )
             }
         }

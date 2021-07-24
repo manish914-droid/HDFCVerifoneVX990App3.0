@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Parcelable
 import android.text.TextUtils
 import android.util.Log
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMIDataTable
@@ -19,7 +20,7 @@ import kotlinx.parcelize.Parcelize
 // In triple last Boolean is for checking that card has a emi facility on sale time
 class GenericEMISchemeAndOffer(
     var context: Context, var cardProcessedDataModal: CardProcessedDataModal,
-    var cardBinValue: String, var transactionAmount: Long,
+    var cardBinValue: String, var transactionAmount: Long,var brandEmiData:BrandEMIDataModal?,
     var callback: (Pair<MutableList<BankEMIDataModal>, MutableList<BankEMIIssuerTAndCDataModal>>, Triple<Boolean, String, Boolean>) -> Unit
 ) {
     private var field57Request: String? = null
@@ -30,17 +31,15 @@ class GenericEMISchemeAndOffer(
     private var isBool = false
     private var bankEMISchemesDataList: MutableList<BankEMIDataModal> = mutableListOf()
     private var bankEMIIssuerTAndCList: MutableList<BankEMIIssuerTAndCDataModal> = mutableListOf()
-    private var brandEMIDataTable: BrandEMIDataTable? = null
+  //  private var brandEMIDataTable: BrandEMIDataTable? = null
 
     init {
         bankEMISchemesDataList.clear()
         bankEMIIssuerTAndCList.clear()
         field57Request =
             if (cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type) {
-                runBlocking(Dispatchers.IO) {
-                    brandEMIDataTable = BrandEMIDataTable.getAllEMIData()
-                }
-                "$bankEMIRequestCode^0^${brandEMIDataTable?.brandID}^${brandEMIDataTable?.productID}^^${
+
+                "$bankEMIRequestCode^0^${brandEmiData?.brandID}^${brandEmiData?.productID}^^${
                     cardBinValue.substring(0, 8)
                 }^$transactionAmount"
             } else {
@@ -225,7 +224,7 @@ class GenericEMISchemeAndOffer(
                     if (moreDataFlag == "1") {
                         field57Request =
                             if (cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type) {
-                                "$bankEMIRequestCode^$totalRecord^${brandEMIDataTable?.brandID}^${brandEMIDataTable?.productID}^^${
+                                "$bankEMIRequestCode^$totalRecord^${brandEmiData?.brandID}^${brandEmiData?.productID}^^${
                                     cardBinValue.substring(
                                         0,
                                         8

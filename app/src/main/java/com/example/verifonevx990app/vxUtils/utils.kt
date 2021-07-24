@@ -49,12 +49,16 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.*
+import java.lang.annotation.RetentionPolicy
+import java.lang.reflect.Field
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
+import java.util.Comparator
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.experimental.and
+
 
 var isDashboardOpen = false
 var isExpanded = false
@@ -1601,12 +1605,12 @@ fun showMobileBillDialog(
         when (transactionType) {
             TransactionType.BRAND_EMI.type -> {
                 //Hide Mobile Number Field:-
-                if (brandEMIDataModal?.getBrandReservedValue()?.substring(0, 1) == "0") {
+                if (brandEMIDataModal?.brandReservedValues?.substring(0, 1) == "0") {
                     mobileNumberET?.visibility = View.GONE
                 } else
                     mobileNumberET?.visibility = View.VISIBLE
                 //Hide Invoice Number Field:-
-                if (brandEMIDataModal?.getBrandReservedValue()?.substring(2, 3) == "0") {
+                if (brandEMIDataModal?.brandReservedValues?.substring(2, 3) == "0") {
                     billNumberTil?.visibility = View.GONE
                 } else
                     billNumberTil?.visibility = View.VISIBLE
@@ -1635,8 +1639,8 @@ fun showMobileBillDialog(
             when (transactionType) {
                 //region=====================Brand EMI Validation:-
                 TransactionType.BRAND_EMI.type -> {
-                    if (brandEMIDataModal?.getBrandReservedValue()
-                            ?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()
+                    if (brandEMIDataModal?.brandReservedValues
+                            ?.substring(0, 1) == "1" && brandEMIDataModal.brandReservedValues
                             ?.substring(2, 3) == "1"
                     ) {
                         dialog.dismiss()
@@ -1647,8 +1651,8 @@ fun showMobileBillDialog(
                                 third = true
                             )
                         )
-                    } else if (brandEMIDataModal?.getBrandReservedValue()
-                            ?.substring(0, 1) == "1" && brandEMIDataModal.getBrandReservedValue()
+                    } else if (brandEMIDataModal?.brandReservedValues
+                            ?.substring(0, 1) == "1" && brandEMIDataModal.brandReservedValues
                             ?.substring(2, 3)?.toInt() ?: 0 > "1".toInt()
                     ) {
                         if (!TextUtils.isEmpty(billNumberET?.text.toString())) {
@@ -1663,8 +1667,8 @@ fun showMobileBillDialog(
                         } else {
                             VFService.showToast(context.getString(R.string.enter_valid_bill_number))
                         }
-                    } else if (brandEMIDataModal?.getBrandReservedValue()
-                            ?.substring(2, 3) == "1" && brandEMIDataModal.getBrandReservedValue()
+                    } else if (brandEMIDataModal?.brandReservedValues
+                            ?.substring(2, 3) == "1" && brandEMIDataModal.brandReservedValues
                             ?.substring(0, 1)?.toInt() ?: 0 > "1".toInt()
                     ) {
                         if (!TextUtils.isEmpty(mobileNumberET?.text.toString()) && mobileNumberET?.text.toString().length in 10..13) {
@@ -1683,11 +1687,11 @@ fun showMobileBillDialog(
                         when {
                             TextUtils.isEmpty(mobileNumberET?.text.toString()) || mobileNumberET?.text.toString().length !in 10..13 ->
                                 VFService.showToast(context.getString(R.string.enter_valid_mobile_number))
-                            TextUtils.isEmpty(billNumberET?.text.toString()) && (brandEMIDataModal?.getBrandReservedValue()
+                            TextUtils.isEmpty(billNumberET?.text.toString()) && (brandEMIDataModal?.brandReservedValues
                                 ?.substring(
                                     0,
                                     1
-                                ) == "1" && brandEMIDataModal.getBrandReservedValue()
+                                ) == "1" && brandEMIDataModal.brandReservedValues
                                 ?.substring(2, 3)
                                 ?.toInt() ?: 0 > "1".toInt()) -> VFService.showToast(
                                 context.getString(
@@ -1843,7 +1847,7 @@ fun showIMEISerialDialog(
     val okButton: Button? = dialog?.findViewById(R.id.ok_btn)
 
     //region=====================Hide/Show Field Check:-
-    when (brandEMIDataModal?.getValidationTypeName()) {
+    when (brandEMIDataModal?.validationTypeName) {
         "IMEI", "imei" -> {
             tilImeiNumber?.visibility = View.VISIBLE
             tilSerialNumber?.visibility = View.GONE
@@ -1856,7 +1860,7 @@ fun showIMEISerialDialog(
     //endregion
 
     //region===================Setting Input Type:-
-    when (brandEMIDataModal?.getInputDataType()) {
+    when (brandEMIDataModal?.inputDataType) {
         "0" -> {
             imeiNumber?.inputType = InputType.TYPE_CLASS_NUMBER
             serialNumber?.inputType = InputType.TYPE_CLASS_NUMBER
@@ -1869,18 +1873,18 @@ fun showIMEISerialDialog(
     //endregion
 
     //region======================Setting Min and Max Length:-
-    when (brandEMIDataModal?.getValidationTypeName()) {
+    when (brandEMIDataModal?.validationTypeName) {
         "IMEI", "imei" -> {
             imeiNumber?.filters = arrayOf<InputFilter>(
                 InputFilter.LengthFilter(
-                    brandEMIDataModal.getMaxLength()?.toInt() ?: 16
+                    brandEMIDataModal.maxLength?.toInt() ?: 16
                 )
             )
         }
         "Serial Number", "serial number" -> {
             serialNumber?.filters = arrayOf<InputFilter>(
                 InputFilter.LengthFilter(
-                    brandEMIDataModal.getMaxLength()?.toInt() ?: 20
+                    brandEMIDataModal.maxLength?.toInt() ?: 20
                 )
             )
         }
@@ -1893,17 +1897,17 @@ fun showIMEISerialDialog(
     }
 
     okButton?.setOnClickListener {
-        when (brandEMIDataModal?.getValidationTypeName()) {
+        when (brandEMIDataModal?.validationTypeName) {
             "IMEI", "imei" -> {
                 when {
                     TextUtils.isEmpty(imeiNumber?.text) -> {
                         VFService.showToast(context.getString(R.string.enter_valid_imei_number))
                     }
-                    imeiNumber?.text?.length ?: 0 < brandEMIDataModal.getMinLength()
+                    imeiNumber?.text?.length ?: 0 < brandEMIDataModal.minLength
                         ?.toInt() ?: 0 -> {
                         VFService.showToast(
-                            "Please Enter IMEI Number Length between ${brandEMIDataModal.getMinLength() ?: "0"} to " +
-                                    (brandEMIDataModal.getMaxLength() ?: "16")
+                            "Please Enter IMEI Number Length between ${brandEMIDataModal.minLength ?: "0"} to " +
+                                    (brandEMIDataModal.maxLength ?: "16")
                         )
                     }
                     else -> {
@@ -1918,11 +1922,11 @@ fun showIMEISerialDialog(
                     TextUtils.isEmpty(serialNumber?.text) -> {
                         VFService.showToast(context.getString(R.string.enter_valid_serial_number))
                     }
-                    serialNumber?.text?.length ?: 0 < brandEMIDataModal.getMinLength()
+                    serialNumber?.text?.length ?: 0 < brandEMIDataModal.minLength
                         ?.toInt() ?: 0 -> {
                         VFService.showToast(
-                            "Please Enter Serial Number Length between ${brandEMIDataModal.getMinLength() ?: "0"} to " +
-                                    (brandEMIDataModal.getMaxLength() ?: "20")
+                            "Please Enter Serial Number Length between ${brandEMIDataModal.minLength ?: "0"} to " +
+                                    (brandEMIDataModal.maxLength?: "20")
                         )
                     }
                     else -> {
@@ -2644,6 +2648,7 @@ after that auto Download Signed apk build from FTP Server.
 6.After App Update Successfully , when app open again for the first time send server app update confirmation packet by checking
 condition - stored file app version name < updated app version name.
  */
+
 
 
 

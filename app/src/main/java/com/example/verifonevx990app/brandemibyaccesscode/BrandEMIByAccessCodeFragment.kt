@@ -29,6 +29,7 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.parcelize.Parcelize
+import java.io.Serializable
 
 class BrandEMIByAccessCodeFragment : Fragment() {
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
@@ -235,24 +236,29 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             val emiAmountET = dialog.findViewById<BHTextView>(R.id.emiAmountET)
             val netPayAmountET = dialog.findViewById<BHTextView>(R.id.netPayAmountET)
             val issuerName = dialog.findViewById<BHTextView>(R.id.issuerName)
+            val brandNameTV = dialog.findViewById<BHTextView>(R.id.productBrandNameET)
             val discountPercentageLL = dialog.findViewById<LinearLayout>(R.id.discountPercentageLL)
             val discountAmountLL = dialog.findViewById<LinearLayout>(R.id.discountAmountLL)
             val cashBackPercentageLL = dialog.findViewById<LinearLayout>(R.id.cashBackPercentageLL)
             val cashBackAmountLL = dialog.findViewById<LinearLayout>(R.id.cashBackAmountLL)
-
+           val rupeeSymbol= activity?.getString(R.string.rupees_symbol)
             productName.text = brandEMIAccessData.productName
             categoryName.text = brandEMIAccessData.productCategoryName
             issuerName.text = brandEMIAccessData.issuerName
             val tenureMonths = "${brandEMIAccessData.tenure} Months"
             tenureTime.text = tenureMonths
-            transactionAmountET.text =
-                "%.2f".format(brandEMIAccessData.transactionAmount.toFloat() / 100)
+            val txnAmt= rupeeSymbol+"%.2f".format(brandEMIAccessData.transactionAmount.toFloat() / 100)
+            transactionAmountET.text =txnAmt
+
+            brandNameTV.text=brandEMIAccessData.brandName
+
             if (!TextUtils.isEmpty(brandEMIAccessData.discountCalculatedValue)) {
                 discountPercentageET.text = brandEMIAccessData.discountCalculatedValue
                 discountPercentageLL.visibility = View.VISIBLE
             }
             if (!TextUtils.isEmpty(brandEMIAccessData.discountAmount) && brandEMIAccessData.discountAmount != "0") {
-                discountAmountET.text = brandEMIAccessData.discountAmount
+               val disAmount= rupeeSymbol+"%.2f".format(brandEMIAccessData.discountAmount.toFloat() / 100)
+                discountAmountET.text = disAmount
                 discountAmountLL.visibility = View.VISIBLE
             }
             if (!TextUtils.isEmpty(brandEMIAccessData.cashBackCalculatedValue)) {
@@ -263,13 +269,17 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                 cashBackAmountET.text = brandEMIAccessData.cashBackAmount
                 cashBackAmountLL.visibility = View.VISIBLE
             }
-            emiAmountET.text = "%.2f".format(brandEMIAccessData.emiAmount.toFloat() / 100)
-            netPayAmountET.text = "%.2f".format(brandEMIAccessData.netPayAmount.toFloat() / 100)
+            val emiAmt=rupeeSymbol+"%.2f".format(brandEMIAccessData.emiAmount.toFloat() / 100)
+                val netPayAmt=rupeeSymbol+ "%.2f".format(brandEMIAccessData.netPayAmount.toFloat() / 100)
+            emiAmountET.text = emiAmt
+            netPayAmountET.text =netPayAmt
             dialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
                 dialog.dismiss()
                 if (checkInternetConnection()) {
                     GlobalScope.launch(Dispatchers.IO) {
-                        saveDataInDB(brandEMIAccessData)
+                        // Saving brandEmiAccessData (Brand Data)
+
+                     //   saveDataInDB(brandEMIAccessData)
                         activity?.startActivity(
                             Intent(
                                 requireActivity(),
@@ -281,6 +291,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                                 putExtra("mobileNumber", "")
                                 putExtra("billNumber", "")
                                 putExtra("uiAction", UiAction.BANK_EMI_BY_ACCESS_CODE)
+                                putExtra("brandEMIAccessData", brandEMIAccessData)
 
                             })
                     }
@@ -290,56 +301,17 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             }
             dialog.show()
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
         }
     }
     //endregion
 
     //region======================Saving BrandEMI By Access Code Host Response Data in DB:-
-    private fun saveDataInDB(brandEMIAccessData: BrandEMIAccessDataModal) {
-        val modal = BrandEMIAccessDataModalTable()
-        runBlocking(Dispatchers.IO) { BrandEMIAccessDataModalTable.clear() }
 
-        //Saving BrandEMI By AccessCode Data in DB:-
-        modal.emiCode = brandEMIAccessData.emiCode
-        modal.bankID = brandEMIAccessData.bankID
-        modal.bankTID = brandEMIAccessData.bankTID
-        modal.issuerID = brandEMIAccessData.issuerID
-        modal.tenure = brandEMIAccessData.tenure
-        modal.brandID = brandEMIAccessData.brandID
-        modal.productID = brandEMIAccessData.productID
-        modal.emiSchemeID = brandEMIAccessData.emiSchemeID
-        modal.transactionAmount = brandEMIAccessData.transactionAmount
-        modal.discountAmount = brandEMIAccessData.discountAmount
-        modal.loanAmount = brandEMIAccessData.loanAmount
-        modal.interestAmount = brandEMIAccessData.interestAmount
-        modal.emiAmount = brandEMIAccessData.emiAmount
-        modal.cashBackAmount = brandEMIAccessData.cashBackAmount
-        modal.netPayAmount = brandEMIAccessData.netPayAmount
-        modal.processingFee = brandEMIAccessData.processingFee
-        modal.processingFeeRate = brandEMIAccessData.processingFeeRate
-        modal.totalProcessingFee = brandEMIAccessData.totalProcessingFee
-        modal.brandName = brandEMIAccessData.brandName
-        modal.issuerName = brandEMIAccessData.issuerName
-        modal.productName = brandEMIAccessData.productName
-        modal.productCode = brandEMIAccessData.productCode
-        modal.productModal = brandEMIAccessData.productModal
-        modal.productCategoryName = brandEMIAccessData.productCategoryName
-        modal.productSerialCode = brandEMIAccessData.productSerialCode
-        modal.skuCode = brandEMIAccessData.skuCode
-        modal.totalInterest = brandEMIAccessData.totalInterest
-        modal.schemeTAndC = brandEMIAccessData.schemeTAndC
-        modal.schemeTenureTAndC = brandEMIAccessData.schemeTenureTAndC
-        modal.schemeDBDTAndC = brandEMIAccessData.schemeDBDTAndC
-        modal.discountCalculatedValue = brandEMIAccessData.discountCalculatedValue
-        modal.cashBackCalculatedValue = brandEMIAccessData.cashBackCalculatedValue
-        runBlocking(Dispatchers.IO) { BrandEMIAccessDataModalTable.performOperation(modal) }
-    }
     //endregion
 }
 
 //region=============================Brand EMI Master Category Data Modal==========================
-@Parcelize
+
 data class BrandEMIAccessDataModal(
     var emiCode: String,
     var bankID: String,
@@ -373,5 +345,55 @@ data class BrandEMIAccessDataModal(
     var schemeDBDTAndC: String,
     var discountCalculatedValue: String,
     var cashBackCalculatedValue: String,
-) : Parcelable
+) : Serializable{
+
+
+}
 //endregion
+
+// Saving Brand EMI By access code data in database
+ fun saveBrandEMIbyCodeDataInDB(brandEMIAccessData: BrandEMIAccessDataModal?, hostInvoice:String) {
+    val modal = BrandEMIAccessDataModalTable()
+   // runBlocking(Dispatchers.IO) { BrandEMIAccessDataModalTable.clear() }
+if(brandEMIAccessData!=null) {
+    //Saving BrandEMI By AccessCode Data in DB:-
+    modal.emiCode = brandEMIAccessData.emiCode
+    modal.bankID = brandEMIAccessData.bankID
+    modal.bankTID = brandEMIAccessData.bankTID
+    modal.issuerID = brandEMIAccessData.issuerID
+    modal.tenure = brandEMIAccessData.tenure
+    modal.brandID = brandEMIAccessData.brandID
+    modal.productID = brandEMIAccessData.productID
+    modal.emiSchemeID = brandEMIAccessData.emiSchemeID
+    modal.transactionAmount = brandEMIAccessData.transactionAmount
+    modal.discountAmount = brandEMIAccessData.discountAmount
+    modal.loanAmount = brandEMIAccessData.loanAmount
+    modal.interestAmount = brandEMIAccessData.interestAmount
+    modal.emiAmount = brandEMIAccessData.emiAmount
+    modal.cashBackAmount = brandEMIAccessData.cashBackAmount
+    modal.netPayAmount = brandEMIAccessData.netPayAmount
+    modal.processingFee = brandEMIAccessData.processingFee
+    modal.processingFeeRate = brandEMIAccessData.processingFeeRate
+    modal.totalProcessingFee = brandEMIAccessData.totalProcessingFee
+    modal.brandName = brandEMIAccessData.brandName
+    modal.issuerName = brandEMIAccessData.issuerName
+    modal.productName = brandEMIAccessData.productName
+    modal.productCode = brandEMIAccessData.productCode
+    modal.productModal = brandEMIAccessData.productModal
+    modal.productCategoryName = brandEMIAccessData.productCategoryName
+    modal.productSerialCode = brandEMIAccessData.productSerialCode
+    modal.skuCode = brandEMIAccessData.skuCode
+    modal.totalInterest = brandEMIAccessData.totalInterest
+    modal.schemeTAndC = brandEMIAccessData.schemeTAndC
+    modal.schemeTenureTAndC = brandEMIAccessData.schemeTenureTAndC
+    modal.schemeDBDTAndC = brandEMIAccessData.schemeDBDTAndC
+    modal.discountCalculatedValue = brandEMIAccessData.discountCalculatedValue
+    modal.cashBackCalculatedValue = brandEMIAccessData.cashBackCalculatedValue
+
+/* below invoice is used to define the relation between
+ Emi data and Brand Emi data in "BRAND EMI BY ACCESS CODE" module.*/
+    modal.hostInvoice = hostInvoice
+
+    runBlocking(Dispatchers.IO) { BrandEMIAccessDataModalTable.performOperation(modal) }
+}
+}

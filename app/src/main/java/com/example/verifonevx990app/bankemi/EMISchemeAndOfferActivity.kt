@@ -32,7 +32,7 @@ class EMISchemeAndOfferActivity : BaseActivity() {
     private var emiTAndCDataList: MutableList<BankEMIIssuerTAndCDataModal>? = null
     private var cardProcessedDataModal: CardProcessedDataModal? = null
     private var selectedSchemeUpdatedPosition = -1
-    private var brandEMIData: BrandEMIDataTable? = null
+   // private var brandEMIData: BrandEMIDataTable? = null
     private val transactionType by lazy { intent?.getIntExtra("transactionType", -1947) }
     private val emiSchemeAndOfferAdapter: EMISchemeAndOfferAdapter by lazy {
         EMISchemeAndOfferAdapter(
@@ -75,9 +75,9 @@ class EMISchemeAndOfferActivity : BaseActivity() {
         /*region====================Checking Condition whether Previous Transaction Flow Comes from Brand EMI:-
         if(true)-------> Fetch Selected Brand EMI Data for IMEI and Other Validations if bits are on
         */
-        if (cardProcessedDataModal?.getTransType() == TransactionType.BRAND_EMI.type) {
+        /*if (cardProcessedDataModal?.getTransType() == TransactionType.BRAND_EMI.type) {
             brandEMIData = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
-        }
+        }*/
 
         //region======================Getting Parcelable Data List of Emi Scheme&Offer , Emi TAndC and CardProcessedData:-
         emiSchemeOfferDataList = intent?.getParcelableArrayListExtra("emiSchemeDataList")

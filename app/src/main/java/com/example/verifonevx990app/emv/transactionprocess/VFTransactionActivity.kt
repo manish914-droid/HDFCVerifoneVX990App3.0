@@ -18,6 +18,9 @@ import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
+import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIAccessDataModal
+import com.example.verifonevx990app.brandemibyaccesscode.saveBrandEMIbyCodeDataInDB
 import com.example.verifonevx990app.databinding.ActivityTransactionBinding
 import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
 import com.example.verifonevx990app.digiPOS.syncTxnCallBackToHost
@@ -29,6 +32,7 @@ import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.transactions.EmiCustomerDetails
 import com.example.verifonevx990app.transactions.getMaskedPan
+import com.example.verifonevx990app.transactions.saveBrandEMIDataToDB
 import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.TransactionTypeValues
 import com.example.verifonevx990app.utils.Utility
@@ -71,6 +75,11 @@ class VFTransactionActivity : BaseActivity() {
     private val mobileNumber by lazy { intent.getStringExtra("mobileNumber") ?: "" }
     private val billNumber by lazy { intent.getStringExtra("billNumber") ?: "0" }
     private val saleWithTipAmt by lazy { intent.getStringExtra("saleWithTipAmt") ?: "0" }
+
+    private val brandEMIAccessData by lazy { intent.getSerializableExtra("brandEMIAccessData") as BrandEMIAccessDataModal? }
+
+    private val brandEMIData by lazy { intent.getSerializableExtra("brandEMIData") as BrandEMIDataModal? }
+
     private val uiAction by lazy {
         (intent.getSerializableExtra("uiAction") ?: UiAction.DEFAUTL) as UiAction
     }
@@ -151,7 +160,7 @@ class VFTransactionActivity : BaseActivity() {
                                     issuerUpdateHandler,
                                     this@VFTransactionActivity,
                                     pinHandler,
-                                    globalCardProcessedModel
+                                    globalCardProcessedModel,brandEMIData
                                 ) { localCardProcessedData ->
                                     dialog.dismiss()
                                     // VFService.showToast("Second Tap callback")
@@ -185,7 +194,7 @@ class VFTransactionActivity : BaseActivity() {
                                     issuerUpdateHandler,
                                     this@VFTransactionActivity,
                                     pinHandler,
-                                    globalCardProcessedModel,
+                                    globalCardProcessedModel,brandEMIData
                                 ) { localCardProcessedData ->
                                     localCardProcessedData.setProcessingCode(
                                         transactionProcessingCode
@@ -232,7 +241,7 @@ class VFTransactionActivity : BaseActivity() {
                     issuerUpdateHandler,
                     this,
                     pinHandler,
-                    globalCardProcessedModel
+                    globalCardProcessedModel,brandEMIData
                 ) { localCardProcessedData ->
                     localCardProcessedData.setProcessingCode(transactionProcessingCode)
                     localCardProcessedData.setTransactionAmount(transactionalAmount)
@@ -355,7 +364,7 @@ class VFTransactionActivity : BaseActivity() {
             DetectCardType.MANUAL_ENTRY_TYPE -> {
                 val transactionISO =
                     CreateTransactionPacket(cardProcessedData).createTransactionPacket()
-              cardProcessedData.indicatorF58= transactionISO.additionalData["indicatorF58"]?:""
+                cardProcessedData.indicatorF58 = transactionISO.additionalData["indicatorF58"] ?: ""
                 logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")
                 //runOnUiThread { showProgress(getString(R.string.sale_data_sync)) }
                 GlobalScope.launch(Dispatchers.IO) {
@@ -452,6 +461,7 @@ class VFTransactionActivity : BaseActivity() {
         } else {
             binding?.baseAmtTv?.text = amountValue
         }
+        // "%.2f".format(transactionAmountValue.toDouble()/100)
         transactionalAmount = ((transactionAmountValue.toDouble()) * 100).toLong()
         otherTransAmount = ((transactionOtherAmountValue.toDouble()) * 100).toLong()
         globalCardProcessedModel.setOtherAmount(otherTransAmount)
@@ -574,8 +584,6 @@ class VFTransactionActivity : BaseActivity() {
                     }
 
                 } else {
-                    if (cardProcessedDataModal.getReadCardType() == DetectCardType.EMV_CARD_TYPE)
-                        logger("CHECKCALL", "CALLED", "e")
                     if (syncStatus) {
                         val responseIsoData: IsoDataReader =
                             readIso(transactionMsg.toString(), false)
@@ -609,8 +617,20 @@ class VFTransactionActivity : BaseActivity() {
                                     cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type ||
                                     cardProcessedDataModal.getTransType() == TransactionType.TEST_EMI.type
                                 ) {
-                                    stubEMI(stubbedData, emiSelectedData, emiTAndCData) { data ->
+
+                                    stubEMI(
+                                        stubbedData,
+                                        emiSelectedData,
+                                        emiTAndCData,
+                                        brandEMIAccessData
+                                    ) { data ->
                                         Log.d("StubbedEMIData:- ", data.toString())
+
+                                        saveBrandEMIDataToDB(brandEMIData, data.hostInvoice)
+                                        saveBrandEMIbyCodeDataInDB(
+                                            brandEMIAccessData,
+                                            data.hostInvoice
+                                        )
                                         printSaveSaleEmiDataInBatch(data) { printCB ->
                                             if (!printCB) {
                                                 Log.e("EMI FIRST ", "COMMENT ******")
@@ -1389,7 +1409,8 @@ class VFTransactionActivity : BaseActivity() {
 
                                     val transactionISO =
                                         CreateTransactionPacket(globalCardProcessedModel).createTransactionPacket()
-                              globalCardProcessedModel.indicatorF58=transactionISO.additionalData["indicatorF58"]?:""
+                                    globalCardProcessedModel.indicatorF58 =
+                                        transactionISO.additionalData["indicatorF58"] ?: ""
                                     logger(
                                         "Transaction REQUEST PACKET --->>",
                                         transactionISO.isoMap,
@@ -1629,9 +1650,9 @@ class VFTransactionActivity : BaseActivity() {
         val transactionISO = CreateTransactionPacket(
             cardProcessedData!!,
             emiSelectedData,
-            emiTAndCData
+            emiTAndCData, brandEMIAccessData, brandEMIData
         ).createTransactionPacket()
-        cardProcessedData.indicatorF58=transactionISO.additionalData["indicatorF58"]?:""
+        cardProcessedData.indicatorF58 = transactionISO.additionalData["indicatorF58"] ?: ""
 
         // logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")
         //  runOnUiThread { showProgress(getString(R.string.sale_data_sync)) }
@@ -1817,7 +1838,8 @@ class VFTransactionActivity : BaseActivity() {
 
                 val transactionISO =
                     CreateTransactionPacket(globalCardProcessedModel).createTransactionPacket()
-                globalCardProcessedModel.indicatorF58= transactionISO.additionalData["indicatorF58"]?:""
+                globalCardProcessedModel.indicatorF58 =
+                    transactionISO.additionalData["indicatorF58"] ?: ""
                 logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")
                 //    runOnUiThread { showProgress(getString(R.string.sale_data_sync)) }
                 GlobalScope.launch(Dispatchers.IO) {

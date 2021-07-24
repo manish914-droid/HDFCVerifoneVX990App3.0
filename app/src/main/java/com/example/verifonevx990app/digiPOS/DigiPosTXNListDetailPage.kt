@@ -116,6 +116,7 @@ class DigiPosTXNListDetailPage : Fragment() {
                     tabledata.customerMobileNumber = detailPageData?.customerMobileNumber ?: ""
                     tabledata.description = detailPageData?.description ?: ""
                     tabledata.pgwTxnId = detailPageData?.pgwTXNID ?: ""
+                    tabledata.txnStatus=detailPageData?.txnStatus ?:""
                     //tabledata.txnStatus = detailPageData.txnStatus
                 }
 
@@ -158,9 +159,25 @@ class DigiPosTXNListDetailPage : Fragment() {
                                 binding?.transactionIV?.setImageResource(R.drawable.circle_with_tick_mark_green)
                                 val message = "Transaction ${detailPageData?.status}"
                                 binding?.transactionMessageTV?.text = message
+                                detailPageData?.txnStatus= txnStatus
+                                binding?.printButton?.text = getString(R.string.print)
                             }
                             if (txnStatus.toLowerCase(Locale.ROOT).equals("InProgress", true)) {
                                VFService.showToast(getString(R.string.txn_status_still_pending))
+                            }
+                            if(txnStatus.isBlank() || statusRespDataList[1].toLowerCase(Locale.ROOT).equals("Failed", true)){
+                                iDialog?.alertBoxWithAction(null, null,
+                                    getString(R.string.error), statusRespDataList[1],
+                                    false, getString(R.string.positive_button_ok),
+                                    {}, {})
+
+                            }
+                            else{
+                                iDialog?.alertBoxWithAction(null, null,
+                                    getString(R.string.error), txnStatus,
+                                    false, getString(R.string.positive_button_ok),
+                                    {}, {})
+
                             }
                         }
 

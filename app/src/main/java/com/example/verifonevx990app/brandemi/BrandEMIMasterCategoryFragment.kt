@@ -475,10 +475,10 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         if (checkInternetConnection()) {
             val modal = brandEmiMasterDataList[position]
             //region=========Adding BrandID , BrandName and Brand ReservedValues in BrandEMIDataModal:-
-            brandEMIDataModel.setBrandID(modal.brandID)
-            brandEMIDataModel.setBrandName(modal.brandName)
-            brandEMIDataModel.setBrandReservedValue(modal.mobileNumberBillNumberFlag)
-            brandEMIDataModel.setDataTimeStampChangedOrNot(isDataMatch)
+            brandEMIDataModel.brandID=(modal.brandID)
+            brandEMIDataModel.brandName=(modal.brandName)
+            brandEMIDataModel.brandReservedValues=(modal.mobileNumberBillNumberFlag)
+            brandEMIDataModel.dataTimeStampChangedOrNot=(isDataMatch)
             //endregion
 
             (activity as MainActivity).transactFragment(BrandEMISubCategoryFragment().apply {

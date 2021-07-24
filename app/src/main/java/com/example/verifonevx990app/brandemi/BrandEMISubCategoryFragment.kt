@@ -95,7 +95,7 @@ class BrandEMISubCategoryFragment : Fragment() {
        // delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
-        Log.d("BrandID:- ", brandEMIDataModal?.getBrandID() ?: "")
+        Log.d("BrandID:- ", brandEMIDataModal?.brandID ?: "")
 
         //Save brandID in Shared Preference to use when user back from sub-category by id screen to sub-category screen for data load:-
         if (!TextUtils.isEmpty(AppPreference.getString(AppPreference.BrandID))) {
@@ -104,7 +104,7 @@ class BrandEMISubCategoryFragment : Fragment() {
 
         //Initial SetUp of RecyclerView List with Empty Data , After Fetching Data from Host we will notify List:-
         setUpRecyclerView()
-        AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.getBrandID() ?: "")
+        AppPreference.saveString(AppPreference.BrandID, brandEMIDataModal?.brandID ?: "")
         brandEmiMasterSubCategoryDataList.clear()
         brandEMIAllDataList.clear()
         checkAndLoadDataFromSourceCondition()
@@ -295,7 +295,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData =
-                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${brandEMIDataModal?.getBrandID() ?: brandIDFromPref}"
+                            "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^$totalRecord^${brandEMIDataModal?.brandID ?: brandIDFromPref}"
                         fetchBrandEMIMasterSubCategoryDataFromHost()
                         Log.d("FullDataList:- ", brandEmiMasterSubCategoryDataList.toString())
                     } else {
@@ -315,7 +315,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                                 //region=====================Line added to resolve category only issue===================== By Manish
                                 brandEmiMasterSubCategoryDataList =
                                         brandEmiMasterSubCategoryDataList.filter {
-                                            it.brandID == brandEMIDataModal?.getBrandID() && it.parentCategoryID == "0"
+                                            it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
                                         } as MutableList<BrandEMIMasterSubCategoryDataModal>
                                 //region=====================Line added to resolve category only issue end=====================
 
@@ -357,11 +357,11 @@ class BrandEMISubCategoryFragment : Fragment() {
     //region=====================Condition to check whether sub-category data need to load from DB or Host based on Data Update TimeStamp:-
     private fun checkAndLoadDataFromSourceCondition() {
         val subCategoryDataFromDB = runBlocking {
-            BrandEMISubCategoryTable.getAllSubCategoryTableDataByBrandID(brandEMIDataModal?.getBrandID() ?: brandIDFromPref ?: "")
+            BrandEMISubCategoryTable.getAllSubCategoryTableDataByBrandID(brandEMIDataModal?.brandID ?: brandIDFromPref ?: "")
         }
         //Below we are assigning initial request value of Field57 in BrandEMIMaster Data Host Hit:-
-        field57RequestData = "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^${brandEMIDataModal?.getBrandID()?:brandIDFromPref}"
-        if (brandEMIDataModal?.getDataTimeStampChangedOrNot() == true) {
+        field57RequestData = "${EMIRequestType.BRAND_SUB_CATEGORY.requestType}^0^${brandEMIDataModal?.brandID?:brandIDFromPref}"
+        if (brandEMIDataModal?.dataTimeStampChangedOrNot == true) {
             if (subCategoryDataFromDB.isNotEmpty()) {
                 lifecycleScope.launch(Dispatchers.Default) {
                     for (value in subCategoryDataFromDB) {
@@ -377,7 +377,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         //region=====================Line added to resolve category only showing issue===================== By Manish
                         brandEmiMasterSubCategoryDataList =
                                 brandEmiMasterSubCategoryDataList.filter {
-                                    it.brandID == brandEMIDataModal?.getBrandID() && it.parentCategoryID == "0"
+                                    it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
                                 } as MutableList<BrandEMIMasterSubCategoryDataModal>
                         //region=====================Line added to resolve category only issue end=====================
 
@@ -437,8 +437,8 @@ class BrandEMISubCategoryFragment : Fragment() {
         if (checkInternetConnection() && position > -1) {
             //region==========Adding BrandEMISubCategoryID , CategoryName in brandEMIDataModal:-
             if (isSubCategoryItem) {
-                brandEMIDataModal?.setCategoryID(brandEmiMasterSubCategoryDataList[position].categoryID)
-                brandEMIDataModal?.setCategoryName(brandEmiMasterSubCategoryDataList[position].categoryName)
+                brandEMIDataModal?.categoryID=(brandEmiMasterSubCategoryDataList[position].categoryID)
+                brandEMIDataModal?.categoryName=(brandEmiMasterSubCategoryDataList[position].categoryName)
             }
             //endregion
             binding?.categorySearchET?.setText("")
@@ -464,11 +464,11 @@ class BrandEMISubCategoryFragment : Fragment() {
         if (checkInternetConnection()) {
             //region===================Adding CategoryID , CategoryName:-
             if (isSubCategoryItem && position > -1) {
-                brandEMIDataModal?.setCategoryID(brandEmiMasterSubCategoryDataList[position].categoryID)
-                brandEMIDataModal?.setCategoryName(brandEmiMasterSubCategoryDataList[position].categoryName)
+                brandEMIDataModal?.categoryID=(brandEmiMasterSubCategoryDataList[position].categoryID)
+                brandEMIDataModal?.categoryName=(brandEmiMasterSubCategoryDataList[position].categoryName)
             } else {
-                brandEMIDataModal?.setCategoryID("")
-                brandEMIDataModal?.setCategoryName("")
+                brandEMIDataModal?.categoryID=("")
+                brandEMIDataModal?.categoryName=("")
             }
             //endregion
             (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {

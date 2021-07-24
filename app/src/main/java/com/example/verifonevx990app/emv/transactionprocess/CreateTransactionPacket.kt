@@ -5,6 +5,8 @@ import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
 import com.example.verifonevx990app.bankemi.BankEMIIssuerTAndCDataModal
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
+import com.example.verifonevx990app.brandemibyaccesscode.BrandEMIAccessDataModal
 import com.example.verifonevx990app.main.DetectCardType
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.vxUtils.*
@@ -16,13 +18,12 @@ import java.util.*
 class CreateTransactionPacket(
     private var cardProcessedData: CardProcessedDataModal,
     private var bankEmiSchemeData: BankEMIDataModal? = null,
-    private var bankEmiTandCData: BankEMIIssuerTAndCDataModal? = null
+    private var bankEmiTandCData: BankEMIIssuerTAndCDataModal? = null, private var brandEMIByAccessCodeDataModel: BrandEMIAccessDataModal?=null, private var brandEMIData: BrandEMIDataModal?=null
 ) :
     ITransactionPacketExchange {
-
     private var indicator: String? = null
-    private var brandEMIDataTable: BrandEMIDataTable? = null
-    private var brandEMIByAccessCodeData: BrandEMIAccessDataModalTable? = null
+  //  private var brandEMIData: brandEMIData? = null
+  //  private var brandEMIByAccessCodeData: BrandEMIAccessDataModalTable? = null
 
     //Below method is used to create Transaction Packet in all cases:-
     init {
@@ -31,15 +32,16 @@ class CreateTransactionPacket(
 
     override fun createTransactionPacket(): IsoDataWriter = IsoDataWriter().apply {
         //Condition To Check TransactionType == BrandEMIByAccessCode if it is then fetch its value from DB:-
-        if (cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+        /*if (cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
             brandEMIByAccessCodeData =
                 runBlocking(Dispatchers.IO) { BrandEMIAccessDataModalTable.getBrandEMIByAccessCodeData() }
-        }
+        }*/
 
 
-        if (cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type) {
-            brandEMIDataTable = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
-        }
+       /* if (cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type) {
+           // todo same
+          //  brandEMIData = runBlocking(Dispatchers.IO) { brandEMIData.getAllEMIData() }
+        }*/
         val terminalData = TerminalParameterTable.selectFromSchemeTable()
         if (terminalData != null) {
             logger("PINREQUIRED--->  ", cardProcessedData.getIsOnline().toString(), "e")
@@ -61,7 +63,7 @@ class CreateTransactionPacket(
             if (cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
                 addField(
                     4,
-                    addPad(brandEMIByAccessCodeData?.transactionAmount ?: "", "0", 12, true)
+                    addPad(brandEMIByAccessCodeDataModel?.transactionAmount ?: "", "0", 12, true)
                 )
             } else {
                 addField(
@@ -183,33 +185,32 @@ class CreateTransactionPacket(
 /*0|46|1|00,460133,54,135,25,586,650000,0,635960,3,1300,216596,14040,635748,12,8,,8287305603,,0,0,0,0,,*/
                 TransactionType.BRAND_EMI.type -> {
                     var imeiOrSerialNo:String?=null
-                    if(brandEMIDataTable?.imeiNumber !="" ){
-                        imeiOrSerialNo=brandEMIDataTable?.imeiNumber
-                    }else if(brandEMIDataTable?.serialNumber !="" ){
-                        imeiOrSerialNo=brandEMIDataTable?.serialNumber
+                    if(brandEMIData?.imeiORserailNum !="" ){
+                        imeiOrSerialNo=brandEMIData?.imeiORserailNum
                     }
 
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
-                            "${bankEmiTandCData?.issuerID},${bankEmiTandCData?.emiSchemeID},${brandEMIDataTable?.brandID}," +
-                            "${brandEMIDataTable?.productID},${cardProcessedData.getEmiTransactionAmount()}," +
+                            "${bankEmiTandCData?.issuerID},${bankEmiTandCData?.emiSchemeID},${brandEMIData?.brandID}," +
+                            "${brandEMIData?.productID},${cardProcessedData.getEmiTransactionAmount()}," +
                             "${bankEmiSchemeData?.discountAmount},${bankEmiSchemeData?.loanAmount},${bankEmiSchemeData?.tenure}," +
                             "${bankEmiSchemeData?.tenureInterestRate},${bankEmiSchemeData?.emiAmount},${bankEmiSchemeData?.cashBackAmount}," +
                             "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
                             "${imeiOrSerialNo ?: ""},,${cardProcessedData.getMobileBillExtraData()?.first ?: ""},,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
                             "${bankEmiSchemeData?.totalProcessingFee},,"
                 }
-
+/*                0|43|1|00,438628,54,142,11,2358,1000000,0,1000000,3,1300,340581,0,1041743,,abcdxyz,,,,0,0,200.0,20000,42942319,
+                  0|60|5|00,60832632,52,144,11,2356,800000,18320,781680,3,1400,266663,0,815623,,12qw3e,,,,0,0,200.0,15634,52429840,*/
                 TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
-                            "${brandEMIByAccessCodeData?.issuerID},${brandEMIByAccessCodeData?.emiSchemeID},${brandEMIByAccessCodeData?.brandID}," +
-                            "${brandEMIByAccessCodeData?.productID},${brandEMIByAccessCodeData?.transactionAmount}," +
-                            "${brandEMIByAccessCodeData?.discountAmount},${brandEMIByAccessCodeData?.loanAmount},${brandEMIByAccessCodeData?.tenure}," +
-                            "${brandEMIByAccessCodeData?.interestAmount},${brandEMIByAccessCodeData?.emiAmount},${brandEMIByAccessCodeData?.cashBackAmount}," +
-                            "${brandEMIByAccessCodeData?.netPayAmount},${cardProcessedData.getMobileBillExtraData()?.first ?: cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
-                            "${/*brandEMIByAccessCodeData?.imeiNumber ?: */brandEMIByAccessCodeData?.productSerialCode ?: ""},,,,0,${brandEMIByAccessCodeData?.processingFee},${brandEMIByAccessCodeData?.processingFeeRate}," +
-                            "${brandEMIByAccessCodeData?.totalProcessingFee},${brandEMIByAccessCodeData?.emiCode},"
+                            "${brandEMIByAccessCodeDataModel?.issuerID},${brandEMIByAccessCodeDataModel?.emiSchemeID},${brandEMIByAccessCodeDataModel?.brandID}," +
+                            "${brandEMIByAccessCodeDataModel?.productID},${brandEMIByAccessCodeDataModel?.transactionAmount}," +
+                            "${brandEMIByAccessCodeDataModel?.discountAmount},${brandEMIByAccessCodeDataModel?.loanAmount},${brandEMIByAccessCodeDataModel?.tenure}," +
+                            "${brandEMIByAccessCodeDataModel?.interestAmount},${brandEMIByAccessCodeDataModel?.emiAmount},${brandEMIByAccessCodeDataModel?.cashBackAmount}," +
+                            "${brandEMIByAccessCodeDataModel?.netPayAmount},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
+                            "${brandEMIByAccessCodeDataModel?.productSerialCode ?: ""},,${cardProcessedData.getMobileBillExtraData()?.first ?: ""},,0,${brandEMIByAccessCodeDataModel?.processingFee},${brandEMIByAccessCodeDataModel?.processingFeeRate}," +
+                            "${brandEMIByAccessCodeDataModel?.totalProcessingFee},${brandEMIByAccessCodeDataModel?.emiCode},"
                 }
 
                 else -> {
@@ -249,14 +250,14 @@ class CreateTransactionPacket(
             val issuerParameterTable =
                 IssuerParameterTable.selectFromIssuerParameterTable(AppPreference.WALLET_ISSUER_ID)
             val version = addPad(getAppVersionNameAndRevisionID(), "0", 15, false)
-            val pcNumber = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)
+            val pcNumbers = addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY), "0", 9)+addPad(AppPreference.getString(AppPreference.PC_NUMBER_KEY_2), "0", 9)
             val data = ConnectionType.GPRS.code + addPad(
                 AppPreference.getString("deviceModel"),
                 " ",
                 6,
                 false
             ) + addPad(VerifoneApp.appContext.getString(R.string.app_name), " ", 10, false) +
-                    version + pcNumber + addPad("0", "0", 9)
+                    version + pcNumbers
             /* val customerID = HexStringConverter.addPreFixer(
                  issuerParameterTable?.customerIdentifierFiledType,
                  2
@@ -264,16 +265,15 @@ class CreateTransactionPacket(
             val customerID =
                 issuerParameterTable?.customerIdentifierFiledType?.let { addPad(it, "0", 2) } ?: 0
 
-
-
           //  val walletIssuerID = issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
 
-            var walletIssuerID = if (cardProcessedData.getTransType() == TransactionType.EMI_SALE.type
-                    || cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type
-                    || cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+            val walletIssuerID = if (cardProcessedData.getTransType() == TransactionType.EMI_SALE.type || cardProcessedData.getTransType() == TransactionType.BRAND_EMI.type) {
                 bankEmiTandCData?.issuerID?.let { addPad(it, "0", 2) } ?: 0
-                //Changes by Ajay
-            } else {
+            }
+            else if( cardProcessedData.getTransType() == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                brandEMIByAccessCodeDataModel?.issuerID?.let { addPad(it, "0", 2) } ?: 0
+            }
+            else {
                 issuerParameterTable?.issuerId?.let { addPad(it, "0", 2) } ?: 0
             }
 

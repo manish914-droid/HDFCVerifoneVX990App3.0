@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.FragmentEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerListBinding
@@ -51,6 +52,9 @@ class EMIIssuerList : Fragment() {
     private var mobileNumberOnOff: Boolean = false
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val enquiryAmount by lazy { ((enquiryAmtStr.toFloat()) * 100).toLong() }
+
+    private val brandEMIData by lazy { arguments?.getSerializable("brandEMIDataModal") as BrandEMIDataModal? }
+
     private val issuerListAdapter by lazy {
         IssuerListAdapter(
             temporaryAllIssuerList,
@@ -68,14 +72,14 @@ class EMIIssuerList : Fragment() {
     private var refreshedBanksByTenure = mutableListOf<IssuerBankModal>()
     private var firstClick = true
     private var iDialog: IDialog? = null
-    private var brandEmiData: BrandEMIDataTable? = null
+   // private var brandEmiData: BrandEMIDataTable? = null
     private var moreDataFlag = "0"
     private var totalRecord: String? = "0"
     private var perPageRecord: String? = "0"
     private var compareActionName: String? = null
     private var field57RequestData = ""
     private var selectedTenure: String? = null
-    private var brandEMISelectedData: BrandEMIDataTable? = null
+   // private var brandEMISelectedData: BrandEMIDataTable? = null
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -100,10 +104,10 @@ class EMIIssuerList : Fragment() {
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
-            brandEMISelectedData = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
+          //  brandEMISelectedData = runBlocking(Dispatchers.IO) { BrandEMIDataTable.getAllEMIData() }
             field57RequestData =
-                "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^${brandEMISelectedData?.brandID}" +
-                        "^${brandEMISelectedData?.productID}^^^$enquiryAmount"
+                "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^${brandEMIData?.brandID}" +
+                        "^${brandEMIData?.productID}^^^$enquiryAmount"
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
