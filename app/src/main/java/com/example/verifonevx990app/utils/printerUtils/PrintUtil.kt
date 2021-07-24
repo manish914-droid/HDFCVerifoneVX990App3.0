@@ -110,6 +110,8 @@ class PrintUtil(context: Context?) {
     // bundle format for addText
     private lateinit var signatureMsg: String
     private lateinit var pinVerifyMsg: String
+    private  var _issuerName: String? = null
+    private  var _issuerNameString="ISSUER"
 
     private val textFormatBundle by lazy { Bundle() }
 
@@ -228,7 +230,7 @@ class PrintUtil(context: Context?) {
             // bundle formate for AddTextInLine
             val fmtAddTextInLine = Bundle()
 
-            //   printLogo("hdfc_print_logo.bmp")
+         //   printLogo("hdfc_print_logo.bmp")
             setLogoAndHeader()
 
             /* format.putInt(
@@ -955,8 +957,7 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReportupdate(
-        batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit
+    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit
     ) {
         try {
             val pp = printer?.status
@@ -1692,11 +1693,11 @@ class PrintUtil(context: Context?) {
             try {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
-                val tpt = TerminalParameterTable.selectFromSchemeTable()
+               val tpt = TerminalParameterTable.selectFromSchemeTable()
                 /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
                   tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
                   tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }*/
-                setLogoAndHeader(null)
+setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -1967,10 +1968,10 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-                /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
-                   tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
-                   tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
-   */
+             /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
+                tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
+*/
                 setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
@@ -2084,10 +2085,12 @@ class PrintUtil(context: Context?) {
 
 
                     if (tempTid == it.hostTID) {
-                        if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.cardType)) {
+                        _issuerName=it.cardType
+                        if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.issuerName)) {
+                            _issuerName=it.cardType
 
                             val ma =
-                                map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] as MutableMap<Int, SummeryModel>
+                                map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] as MutableMap<Int, SummeryModel>
                             if (ma.containsKey(it.transactionType)) {
                                 val m = ma[it.transactionType] as SummeryModel
                                 m.count += 1
@@ -2110,11 +2113,12 @@ class PrintUtil(context: Context?) {
                                     it.hostTID
                                 )
                             }
-                            map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
+                            map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
                             list.add(it.hostTID)
                         }
                     } else {
                         tempTid = it.hostTID
+                        _issuerName=it.cardType
                         val hm = HashMap<Int, SummeryModel>().apply {
                             this[it.transactionType] = SummeryModel(
                                 transactionType2Name(it.transactionType),
@@ -2123,7 +2127,7 @@ class PrintUtil(context: Context?) {
                                 it.hostTID
                             )
                         }
-                        map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
+                        map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
                         list.add(it.hostTID)
                     }
 
@@ -2190,12 +2194,18 @@ class PrintUtil(context: Context?) {
                             )
                             ietration--
                         }
+                        if(cardIssuer.isNullOrEmpty()){
+                           cardIssuer= _issuerName.toString()
+                            _issuerNameString="CARD ISSUER"
+
+                        }
+
 
 
                         printSeperator(textFormatBundle)
                         alignLeftRightText(
                             textInLineFormatBundle,
-                            "CARD ISSUER:  ",
+                            _issuerNameString,
                             "",
                             cardIssuer.toUpperCase(Locale.ROOT)
                         )
@@ -3464,6 +3474,8 @@ class PrintUtil(context: Context?) {
             } else {
                 printerReceiptData.issuerId
             }
+            Log.e("hostIssuerId","-->"+hostIssuerId)
+           // Log.e("issuerId","-->"+issuerId)
 
             val hostMID = if (printerReceiptData.hostMID.isNotBlank()) {
                 printerReceiptData.hostMID
@@ -3538,6 +3550,7 @@ class PrintUtil(context: Context?) {
             hasPin(printerReceiptData)
             setLogoAndHeader()
             printTransDatetime(printerReceiptData)
+
 
 
             //===========================
@@ -3843,7 +3856,7 @@ class PrintUtil(context: Context?) {
                 val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
                 val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
                 val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
-                val f_totalAmt = "%.2f".format(totalAmt)
+                val f_totalAmt="%.2f".format(totalAmt)
                 alignLeftRightText(
                     textInLineFormatBundle,
                     totalAmountHeadingText,
@@ -3870,16 +3883,22 @@ class PrintUtil(context: Context?) {
                 for (i in 1 until issuerHeaderTAndC.size) {
                     if (!TextUtils.isEmpty(issuerHeaderTAndC[i])) {
                         val limit = 48
-                        val emiTnc = "#" + issuerHeaderTAndC[i]
-                        val chunks: List<String> = chunkTnC(emiTnc, limit)
-                        for (st in chunks) {
-                            logger("TNC", st, "e")
-                            alignLeftRightText(textInLineFormatBundle, st, "")
+                        if (!(issuerHeaderTAndC[i].isNullOrBlank())) {
+                            val emiTnc = "#" + issuerHeaderTAndC[i]
+                            val chunks: List<String> = chunkTnC(emiTnc, limit)
+                            for (st in chunks) {
+
+                                logger("TNC", st, "e")
+                                alignLeftRightText(textInLineFormatBundle, st, "")
+                            }
                         }
                     }
                 }
             } else {
-                alignLeftRightText(textInLineFormatBundle, "# ${issuerTAndCData.headerTAndC}", "")
+
+                var  tnc=issuerTAndCData.headerTAndC
+                if(!tnc.isNullOrBlank())
+                alignLeftRightText(textInLineFormatBundle, "# ${tnc}", "")
             }
             //endregion
 
@@ -3891,23 +3910,26 @@ class PrintUtil(context: Context?) {
             if (emiCustomerConsent.size > 1) {
                 for (i in 1 until emiCustomerConsent.size) {
                     val limit = 48
-                    val emiTnc = "#" + emiCustomerConsent[i]
-                    val chunks: List<String> = chunkTnC(emiTnc, limit)
-                    for (st in chunks) {
-                        logger("TNC", st, "e")
-                        alignLeftRightText(
-                            textInLineFormatBundle, st.replace(bankEMIFooterTAndCSeparator, "")
-                                .replace(disclaimerIssuerClose, ""), ""
-                        )
-                    }
+                    if (!(issuerHeaderTAndC[i].isNullOrBlank())) {
+                        val emiTnc = "#" + emiCustomerConsent[i]
+                        val chunks: List<String> = chunkTnC(emiTnc, limit)
+                        for (st in chunks) {
+
+                            logger("TNC", st, "e")
+                            alignLeftRightText(
+                                textInLineFormatBundle,
+                                st.replace(bankEMIFooterTAndCSeparator, "")
+                                    .replace(disclaimerIssuerClose, ""),
+                                ""
+                            )
+                        }
+                        }
+
                 }
             } else {
-                if (printerReceiptData.bankEmiTAndC.isNotEmpty())
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "# ${printerReceiptData.bankEmiTAndC}",
-                        ""
-                    )
+                var  tnc=issuerTAndCData.headerTAndC
+                if(!tnc.isNullOrBlank())
+                    alignLeftRightText(textInLineFormatBundle, "# ${tnc}", "")
             }
             //endregion
 
@@ -4090,6 +4112,7 @@ class PrintUtil(context: Context?) {
             printer?.addText(textFormatBundle, "---------X-----------X----------")
 
 
+
             //printSeperator(textFormatBundle)
 
             printer?.feedLine(1)
@@ -4150,7 +4173,7 @@ class PrintUtil(context: Context?) {
                             printerCallback(false, 1)
                         }
                         EPrintCopyType.DUPLICATE -> {
-                            //  VFService.showToast("Success")
+                          //  VFService.showToast("Success")
                             printerCallback(true, 1)
                         }
                     }
@@ -4204,10 +4227,10 @@ class PrintUtil(context: Context?) {
             val fmtAddTextInLine = Bundle()
             val tpt = TerminalParameterTable.selectFromSchemeTable()
             val headers = arrayListOf<String>()
-            /* tpt?.receiptHeaderOne?.let { headers.add(it) }
-             tpt?.receiptHeaderTwo?.let { headers.add(it) }
-             tpt?.receiptHeaderThree?.let { headers.add(it) }
-             setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)*/
+           /* tpt?.receiptHeaderOne?.let { headers.add(it) }
+            tpt?.receiptHeaderTwo?.let { headers.add(it) }
+            tpt?.receiptHeaderThree?.let { headers.add(it) }
+            setHeaderWithLogo(format, "hdfc_print_logo.bmp", headers, context)*/
 
             setLogoAndHeader()
 
@@ -4562,7 +4585,7 @@ class PrintUtil(context: Context?) {
 
     }
 
-    private fun setLogoAndHeader(logo: String? = HDFC_LOGO) {
+    private fun setLogoAndHeader(logo: String?=HDFC_LOGO) {
         try {
             val tpt = TerminalParameterTable.selectFromSchemeTable()
             val hdfcTpt = HdfcTpt.selectAllHDFCTPTData()[0]

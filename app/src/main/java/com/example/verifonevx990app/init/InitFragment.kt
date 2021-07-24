@@ -3,6 +3,8 @@ package com.example.verifonevx990app.init
 
 import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
@@ -37,6 +39,9 @@ class InitFragment : Fragment() {
             PrefConstant.INIT_AFTER_SETTLE_BATCH_SUCCESS.keyName.toString(),
             true
         )
+        binding?.ifProceedBtn?.isEnabled = false
+        binding?.ifProceedBtn?.isClickable = false
+        binding?.ifEt?.addTextChangedListener(textWatcher)
         /* if (bottomNavigationView is BottomNavigationView) {
              bottomNavigationView.menu.findItem(R.id.home)?.isChecked = true
          }*/
@@ -49,9 +54,13 @@ class InitFragment : Fragment() {
         context?.let { writeAppRevisionIDInFile(it) }
 
         binding?.ifEt?.addTextChangedListener(OnTextChange {
-            //  binding?.ifProceedBtn?.isEnabled = it.length == 8
-            /* if(it.length==8)
-                 view.if_proceed_btn.isEnabled = true*/
+            binding?.ifProceedBtn?.isEnabled = it.length == 8
+
+             if(binding?.ifProceedBtn?.isEnabled == true)
+                 binding?.ifProceedBtn?.getContext()?.getResources()?.let { it1 ->
+                     binding?.ifProceedBtn?.setBackgroundColor(
+                         it1.getColor(R.color.hdfc_red_color))
+                 };
             //actionDone( view.if_et)
         })
 
@@ -65,6 +74,29 @@ class InitFragment : Fragment() {
             iDialog?.onEvents(
                 it
             )
+        }
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun afterTextChanged(s: Editable?) {
+        }
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            if (start < 8) {
+
+                binding?.ifProceedBtn?.getContext()?.getResources()?.let { it1 ->
+                    binding?.ifProceedBtn?.setBackgroundColor(
+                        it1.getColor(R.color.colorGrey))
+                };
+            }
+            else if(start>=8){
+                binding?.ifProceedBtn?.getContext()?.getResources()?.let { it1 ->
+                    binding?.ifProceedBtn?.setBackgroundColor(
+                        it1.getColor(R.color.hdfc_red_color))
+                };
+            }
         }
     }
 

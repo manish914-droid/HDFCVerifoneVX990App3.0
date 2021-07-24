@@ -131,7 +131,7 @@
             android:text="@string/proceed_to_init"
             android:textColor="@color/white"
             android:textSize="@dimen/text_size_small"
-            app:neumorph_backgroundColor="@color/hdfc_red_color"
+            app:neumorph_backgroundColor="@color/colorGrey"
             app:neumorph_inset="@dimen/pad_2"
             app:neumorph_lightSource="rightBottom"
             app:neumorph_shadowColorDark="@color/upperShadow"
