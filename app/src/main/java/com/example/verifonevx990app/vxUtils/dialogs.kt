@@ -70,7 +70,7 @@ private fun getPasswordDialog(
                         hint = _hint
                     }
                     val okBtn = findViewById<Button>(R.id.invoice_ok_btn)
-                    EditTextUtil.editTextCursor(enterPasswordET)
+                    //EditTextUtil.editTextCursor(enterPasswordET)
                     enterPasswordET.setOnEditorActionListener(getEditorActionListener { okBtn.performClick() })
                     findViewById<TextView>(R.id.title_tv).text = title
                     findViewById<Button>(R.id.invoice_cancel_btn).setOnClickListener {

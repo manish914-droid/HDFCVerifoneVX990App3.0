@@ -463,7 +463,9 @@ class DigiPosTxnListFragment : Fragment() {
 
     //Method to be called on Bottom Sheet Close:-
     private fun closeBottomSheet() {
+        hideSoftKeyboard(requireActivity())
         if (sheetBehavior?.state == BottomSheetBehavior.STATE_EXPANDED) {
+
             sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }
@@ -473,6 +475,7 @@ class DigiPosTxnListFragment : Fragment() {
         if (sheetBehavior?.state != BottomSheetBehavior.STATE_EXPANDED) {
             sheetBehavior?.state = BottomSheetBehavior.STATE_EXPANDED
         } else {
+            hideSoftKeyboard(requireActivity())
             sheetBehavior?.state = BottomSheetBehavior.STATE_COLLAPSED
         }
     }

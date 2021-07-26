@@ -365,6 +365,7 @@
 
     <string name="default_amount">0.00</string>
     <string name="transaction_amount">Transaction Amount</string>
+    <string name="txn_amount">Txn Amount</string>
     <string name="cash_amount">Enter Cash Amount (\u20B9)</string>
     <string name="tenure_interest_rate">Tenure Interest Rate</string>
     <string name="emi_amount">EMI Amount</string>
@@ -527,4 +528,5 @@
     <string name="trans_param">Trans Param</string>
     <string name="app_update_param">App Update Param</string>
     <string name="comm_param">Communication Param</string>
+    <string name="enter_valid_VPN">Enter valid VPN</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.example.verifonevx990app.utils.printerUtils
+    package com.example.verifonevx990app.utils.printerUtils
 
 /**
  * Created by Lucky Singh.
@@ -731,7 +731,7 @@ class PrintUtil(context: Context?) {
                 PrinterConfig.addText.Alignment.CENTER
             )
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
-            printer?.addText(format, "---------X-----------X----------")
+        ////    printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
 
             // start print here
@@ -914,7 +914,7 @@ class PrintUtil(context: Context?) {
                 printSeperator(textFormatBundle)
                 printer?.addText(textFormatBundle, "--------------------------------")
                 centerText(textFormatBundle, "App Version :$appVersion")
-                centerText(textFormatBundle, "---------X-----------X----------")
+               //// centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
                 // start print here
                 printer?.startPrint(object : PrinterListener.Stub() {
@@ -1168,7 +1168,7 @@ class PrintUtil(context: Context?) {
 
                 if (digiPosDataList.isNotEmpty()) {
                     printSeperator(textFormatBundle)
-                    centerText(textFormatBundle, "---------X-----------X----------")
+                   // centerText(textFormatBundle, "---------X-----------X----------")
                     centerText(textFormatBundle, "Digi Pos Detail Report", true)
                     tpt?.terminalId?.let { centerText(textFormatBundle, "TID : $it") }
                     printSeperator(textFormatBundle)
@@ -1201,7 +1201,7 @@ class PrintUtil(context: Context?) {
                 //endregion
                 printer?.addText(textFormatBundle, "--------------------------------")
                 centerText(textFormatBundle, "App Version :$appVersion")
-                centerText(textFormatBundle, "---------X-----------X----------")
+              //  centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
                 // start print here
                 printer?.startPrint(object : PrinterListener.Stub() {
@@ -1562,7 +1562,8 @@ class PrintUtil(context: Context?) {
             )
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
 
-            printer?.addText(format, "---------X-----------X----------")
+         //
+            //   printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
 
             // start print here
@@ -1910,7 +1911,7 @@ setLogoAndHeader(null)
                 }
                 centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-                centerText(textFormatBundle, "---------X-----------X----------")
+              //  centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
 
                 // start print here
@@ -2294,7 +2295,7 @@ setLogoAndHeader(null)
                             }
                         }
 
-                        centerText(textFormatBundle, "---------X-----------X----------")
+                      ///  centerText(textFormatBundle, "---------X-----------X----------")
                         centerText(textFormatBundle, "Digi Pos Summary Report", true)
                         tpt?.terminalId?.let { centerText(textFormatBundle, "TID : $it") }
                         printSeperator(textFormatBundle)
@@ -2333,7 +2334,7 @@ setLogoAndHeader(null)
                 centerText(textFormatBundle, "Bonushub")
                 centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-                centerText(textFormatBundle, "---------X-----------X----------")
+              ///  centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
 
 
@@ -2634,7 +2635,7 @@ setLogoAndHeader(null)
                 }
                 centerText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-                centerText(textFormatBundle, "---------X-----------X----------")
+                ///centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
 
                 // start print here
@@ -2974,7 +2975,7 @@ setLogoAndHeader(null)
             )
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
 
-            printer?.addText(format, "---------X-----------X----------")
+          ///  printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
 
             // start print here
@@ -3185,7 +3186,7 @@ setLogoAndHeader(null)
 
             printLogo("BH.bmp")
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
-            printer?.addText(textFormatBundle, "---------X-----------X----------")
+           /// printer?.addText(textFormatBundle, "---------X-----------X----------")
             printer?.feedLine(4)
 
             //  if (schemesToPrint.size > 0) {
@@ -3390,7 +3391,7 @@ setLogoAndHeader(null)
 
             printLogo("BH.bmp")
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
-            printer?.addText(textFormatBundle, "---------X-----------X----------")
+            ///printer?.addText(textFormatBundle, "---------X-----------X----------")
             printer?.feedLine(4)
 
             //  if (schemesToPrint.size > 0) {
@@ -3689,33 +3690,41 @@ setLogoAndHeader(null)
 
             //region===============Processing Fee Changes And Showing On ChargeSlip:-
             if (!TextUtils.isEmpty(printerReceiptData.processingFee)) {
+                if(!(printerReceiptData.processingFee).equals("0")) {
                 val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    "PROC-FEE ",
-                    procFee,
-                    ":  $currencySymbol "
-                )
+
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "PROC-FEE ",
+                        procFee,
+                        ":  $currencySymbol "
+                    )
+                }
             }
             if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
+                if(!(printerReceiptData.processingFeeAmount).equals("0")) {
                 val procFeeAmount =
                     "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    "PROC-FEE AMOUNT ",
-                    procFeeAmount,
-                    ":  $currencySymbol "
-                )
+
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "PROC-FEE AMOUNT ",
+                        procFeeAmount,
+                        ":  $currencySymbol "
+                    )
+                }
             }
             if (!TextUtils.isEmpty(printerReceiptData.totalProcessingFee)) {
-                val totalProcFeeAmount =
-                    "%.2f".format(printerReceiptData.totalProcessingFee.toFloat() / 100)
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    "T-PROC-FEE AMOUNT ",
-                    totalProcFeeAmount,
-                    ":  $currencySymbol "
-                )
+                if(!(printerReceiptData.totalProcessingFee).equals("0")) {
+                    val totalProcFeeAmount =
+                        "%.2f".format(printerReceiptData.totalProcessingFee.toFloat() / 100)
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "T-PROC-FEE AMOUNT ",
+                        totalProcFeeAmount,
+                        ":  $currencySymbol "
+                    )
+                }
             }
             //endregion
 
@@ -4109,7 +4118,7 @@ setLogoAndHeader(null)
             )
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-            printer?.addText(textFormatBundle, "---------X-----------X----------")
+          //  printer?.addText(textFormatBundle, "---------X-----------X----------")
 
 
 
@@ -4540,7 +4549,7 @@ setLogoAndHeader(null)
             )
             printer?.addText(format, "App Version : ${BuildConfig.VERSION_NAME}")
 
-            printer?.addText(format, "---------X-----------X----------")
+           // printer?.addText(format, "---------X-----------X----------")
             printer?.feedLine(4)
         } catch (ex: DeadObjectException) {
             throw ex

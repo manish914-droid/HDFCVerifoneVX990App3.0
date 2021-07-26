@@ -30,6 +30,7 @@ import java.util.*
 class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
     private var binding: FragmentUpiEnterDetailBinding? = null
     private lateinit var transactionType: EDashboardItem
+
     var uniqueID: String = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -129,21 +130,21 @@ class UpiSmsDynamicPayQrInputDetailFragment : Fragment() {
             amtValue <= 0 -> {
                 VFService.showToast("Please Enter Amount")
             }
-            transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length !in 10..13 ->
+            transactionType == EDashboardItem.UPI && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length != 10 ->
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
 
-            (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.BHARAT_QR) && binding?.mobilenoEt?.text.toString().length !in 10..13 -> {
+            (transactionType == EDashboardItem.SMS_PAY || transactionType == EDashboardItem.BHARAT_QR) && binding?.mobilenoEt?.text.toString().length != 10 -> {
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
             }
 
-            transactionType == EDashboardItem.BHARAT_QR && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length !in 10..13 ->
+            transactionType == EDashboardItem.BHARAT_QR && !TextUtils.isEmpty(binding?.mobilenoEt?.text.toString()) && binding?.mobilenoEt?.text.toString().length != 10 ->
                 context?.getString(R.string.enter_valid_mobile_number)
                     ?.let { VFService.showToast(it) }
 
 
-            TextUtils.isEmpty(binding?.vpaEt?.text.toString()) && transactionType == EDashboardItem.UPI -> {
+            !TextUtils.isEmpty(binding?.vpaEt?.text.toString()) && transactionType == EDashboardItem.UPI &&(!(binding?.vpaEt?.text.toString().contains('@')))-> {
                 VFService.showToast("Enter Valid VPA")
             }
             else -> {
