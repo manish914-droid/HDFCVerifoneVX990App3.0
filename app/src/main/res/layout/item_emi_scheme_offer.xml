@@ -55,8 +55,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
-                android:text="@string/transaction_amount"
+                android:gravity="left"
+                android:text="@string/txn_amount"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
 
@@ -65,7 +65,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -80,7 +80,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/tenure"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -90,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -105,7 +105,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/loan_amount"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -115,7 +115,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -130,7 +130,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/emi_amount"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -140,7 +140,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -157,7 +157,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/discount_amount"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -167,7 +167,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
+                android:text="jvjvjvjv"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -194,7 +195,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="left"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -210,7 +211,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/total_interest_pay"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -220,7 +221,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
@@ -236,7 +237,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:gravity="center"
+                android:gravity="left"
                 android:text="@string/total_emi_pay"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
@@ -246,7 +247,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1.5"
-                android:gravity="center"
+                android:gravity="right"
                 android:textColor="@color/white"
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
