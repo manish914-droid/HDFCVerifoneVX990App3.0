@@ -722,6 +722,21 @@ class VFEmvHandler(var activity: Activity, var handler: Handler, var iemv: IEMV?
                            }
                    }*/
             }
+            DetectError.TransactionDeclined.errorCode == result -> {
+                (activity as VFTransactionActivity).handleEMVFallbackFromError(
+                        activity.getString(R.string.alert),
+                        activity.getString(R.string.switch_interface_diners_error),
+                        false
+                ) { alertCBBool ->
+                    if (alertCBBool)
+                        try {
+                            (activity as VFTransactionActivity).declinedTransaction()
+                        } catch (ex: Exception) {
+                            ex.printStackTrace()
+                        }
+                }
+
+            }
             else -> {
                 (activity as VFTransactionActivity).handleEMVFallbackFromError(
                         activity.getString(R.string.alert), msg.toString(),
