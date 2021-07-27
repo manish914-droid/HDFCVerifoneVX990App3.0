@@ -80,6 +80,7 @@ class SearchTxnFragment : Fragment() {
                     (activity as BaseActivity).hideProgress()
                     if (isSuccess) {
                         val statusRespDataList = responsef57.split("^")
+
                         val tabledata = DigiPosDataTable()
                         tabledata.requestType = statusRespDataList[0].toInt()
                         //  tabledata.partnerTxnId = statusRespDataList[1]

@@ -492,12 +492,11 @@
     <string name="sms_upi_pay">SMS/UPI Pay</string>
     <string name="upi_payment_link_sent">"Payment link has been sent \n \n Would you like to check payment status now."</string>
     <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
-    <string name="socket_timeout">Socket Not Connected</string>
+    <string name="socket_timeout">Socket not connected</string>
     <string name="txn_id">Txn ID</string>
     <string name="mode_samll">Mode</string>
     <string name="mTxnID">MTxn Id</string>
     <string name="mobile">Mobile</string>
-
 
     <string name="date_hint">April 2021</string>
     <string name="filter">Filters</string>
@@ -522,12 +521,12 @@
     <string name="void_refund_not_allowed">Void of Refund not allowed</string>
     <string name="txn_status_still_pending">Txn Status Still Pending Check Later</string>
     <string name="test_emi">Test EMI</string>
-    <string name="bill_num">Bill number</string>
+    <string name="bill_num">Enter bill number</string>
     <string name="brand_min_max_amt_limit_txn"><![CDATA[Entered Amount Should be in Product Min & Max Amount Range]]></string>
     <string name="enterValid_serial_iemei_no">Enter valid serial/IMEI no</string>
     <string name="enterValid_serial">Enter valid serial number</string>
     <string name="enterValid_iemei_no">Enter valid IMEI number</string>
-    <string name="trans_param">Trans Param</string>
+    <string name="trans_param">TXN Param</string>
     <string name="app_update_param">App Update Param</string>
     <string name="comm_param">Communication Param</string>
     <string name="enter_valid_VPN">Enter valid VPN</string>

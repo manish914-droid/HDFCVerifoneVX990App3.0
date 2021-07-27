@@ -1675,7 +1675,7 @@ class PrintUtil(context: Context?) {
         } catch (ex: Exception) {
             throw ex
         }
-        // PrinterConfig.addTextInLine.mode.Devide_flexible
+      //   PrinterConfig.addTextInLine.mode.Devide_flexible
     }
 
 
@@ -3891,8 +3891,8 @@ setLogoAndHeader(null)
             if (issuerHeaderTAndC.size > 1) {
                 for (i in 1 until issuerHeaderTAndC.size) {
                     if (!TextUtils.isEmpty(issuerHeaderTAndC[i])) {
-                        val limit = 48
-                        if (!(issuerHeaderTAndC[i].isNullOrBlank())) {
+                        val limit = 46
+                        if (!(issuerHeaderTAndC[i].isBlank())) {
                             val emiTnc = "#" + issuerHeaderTAndC[i]
                             val chunks: List<String> = chunkTnC(emiTnc, limit)
                             for (st in chunks) {
@@ -3903,11 +3903,6 @@ setLogoAndHeader(null)
                         }
                     }
                 }
-            } else {
-
-                var  tnc=issuerTAndCData.headerTAndC
-                if(!tnc.isNullOrBlank())
-                alignLeftRightText(textInLineFormatBundle, "# ${tnc}", "")
             }
             //endregion
 
@@ -3923,7 +3918,6 @@ setLogoAndHeader(null)
                         val emiTnc = "#" + emiCustomerConsent[i]
                         val chunks: List<String> = chunkTnC(emiTnc, limit)
                         for (st in chunks) {
-
                             logger("TNC", st, "e")
                             alignLeftRightText(
                                 textInLineFormatBundle,
@@ -3935,13 +3929,17 @@ setLogoAndHeader(null)
                         }
 
                 }
-            } else {
-                var  tnc=issuerTAndCData.headerTAndC
-                if(!tnc.isNullOrBlank())
-                    alignLeftRightText(textInLineFormatBundle, "# ${tnc}", "")
             }
             //endregion
-
+            //region====================Printing DBD Wise TAndC==================
+            if (!TextUtils.isEmpty(printerReceiptData.tenureWiseDBDTAndC)) {
+                val tenureWiseTAndC: List<String> = chunkTnC(printerReceiptData.tenureWiseDBDTAndC)
+                for (st in tenureWiseTAndC) {
+                    logger("TNC", st, "e")
+                    alignLeftRightText(textFormatBundle, st, "", "")
+                }
+            }
+            //endregion
 
             //region=====================Printing Merchant Brand Purchase Details:-
             if (printerReceiptData.transactionType == TransactionType.BRAND_EMI.type) {
@@ -3995,8 +3993,8 @@ setLogoAndHeader(null)
                         }
                     }
                 }
-                printSeperator(seperatorLineBundle)
-            } else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+            }
+            else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
                 val productData =
                     BrandEMIAccessDataModalTable.getBrandEMIAccessCodeDataByInvoice(hostInvoice)
                 printSeperator(seperatorLineBundle)
@@ -4031,15 +4029,7 @@ setLogoAndHeader(null)
             }
             //endregion
 
-            //region====================Printing DBD Wise TAndC==================
-            if (!TextUtils.isEmpty(printerReceiptData.tenureWiseDBDTAndC)) {
-                val tenureWiseTAndC: List<String> = chunkTnC(printerReceiptData.tenureWiseDBDTAndC)
-                for (st in tenureWiseTAndC) {
-                    logger("TNC", st, "e")
-                    alignLeftRightText(textFormatBundle, st, "", "")
-                }
-            }
-            //endregion
+
 
             //region====================Printing Tenure TAndC==================
             if (!TextUtils.isEmpty(printerReceiptData.tenureTAndC)) {

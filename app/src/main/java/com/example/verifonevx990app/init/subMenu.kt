@@ -41,9 +41,9 @@ enum class EOptionGroup(val heading: String) {
 
 enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
     INITT("INIT", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_init),
-    TPT("Terminal Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_tpt_img),
-    CPT("Com Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
-    TEST_EMI("Test EMI", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_brand_emi),
+    TPT("Term Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_tpt_img),
+    CPT("Comm Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_copt),
+    TEST_EMI("Test EMI TXN", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_brand_emi),
     ENV("ENV Param", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_env),
     // CDT("CDT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_cdt),
     //  IPT("IPT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_ipt),
@@ -461,22 +461,28 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                 }
 
                 BankOptions.TEST_EMI -> {
-                    if (checkInternetConnection()) {
-                        verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
-                            if (correctPasswordSuccess) {
+
+                    if (AppPreference.getLogin()){
+                        if (checkInternetConnection()) {
+                            verifySuperAdminPasswordDialog(requireActivity()) { correctPasswordSuccess ->
+                                if (correctPasswordSuccess) {
                                     // open TestEMi
-                                (activity as BaseActivity).transactFragment(TestEmiOptionFragment().apply {
-                                    arguments = Bundle().apply {
-                                      //  putSerializable("type", EDashboardItem.DYNAMIC_QR)
+                                    (activity as BaseActivity).transactFragment(
+                                        TestEmiOptionFragment().apply {
+                                            arguments = Bundle().apply {
+                                                //  putSerializable("type", EDashboardItem.DYNAMIC_QR)
 
-                                    }
-                                })
+                                            }
+                                        })
 
+                                }
                             }
-                        }
-                    }else {
+                        } else {
                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                         }
+                }else{
+                    VFService.showToast("** Initialize Terminal **")
+                }
                     }
 
 
@@ -629,7 +635,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         }
                                     }
                                 }
-                                TransactionType.EMI_SALE.type -> {
+                                TransactionType.EMI_SALE.type ,TransactionType.TEST_EMI.type -> {
                                     PrintUtil(activity).printEMISale(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,
@@ -1225,30 +1231,41 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                         setContentView(R.layout.dialog_emv)
                         setCancelable(false)
 
-                        val container = findViewById<LinearLayout>(R.id.emv_edit_ll)
-                        val sep = findViewById<View>(R.id.emv_separator_v)
-
-                        findViewById<View>(R.id.emv_close_btn).setOnClickListener { dismiss() }
 
                         val pcEt = findViewById<EditText>(R.id.emv_pcno_et)
                         val bankEt = findViewById<EditText>(R.id.emv_bankcode_et)
-                        val issuerEt = findViewById<EditText>(R.id.emv_issuerid_et)
-                        val accEt = findViewById<EditText>(R.id.emv_ac_selection_et)
+
+                        findViewById<View>(R.id.env_save_btn).setOnClickListener {
+                            AppPreference.saveString(
+                                AppPreference.PC_NUMBER_KEY,
+                                pcEt.text.toString()
+                            )
+                            AppPreference.setBankCode(bankEt.text.toString())
+                            dismiss()
+                        }
+                        findViewById<View>(R.id.env_cancel_btn).setOnClickListener {
+
+                            dismiss()
+                        }
+
+
+                      /*  val issuerEt = findViewById<EditText>(R.id.emv_issuerid_et)
+                        val accEt = findViewById<EditText>(R.id.emv_ac_selection_et)*/
 
                         pcEt.setText(AppPreference.getString(AppPreference.PC_NUMBER_KEY))
                         bankEt.setText(AppPreference.getBankCode())
-                        if (AppPreference.getString(AppPreference.CRDB_ISSUER_ID_KEY).isEmpty()) {
+                      /*  if (AppPreference.getString(AppPreference.CRDB_ISSUER_ID_KEY).isEmpty()) {
                             val issuerId = addPad(AppPreference.WALLET_ISSUER_ID, "0", 2)
                             issuerEt.setText(issuerId)
                         } else {
                             issuerEt.setText(AppPreference.getString(AppPreference.CRDB_ISSUER_ID_KEY))
                             //  issuerEt.setText(AppPreference.getString(AppPreference.WALLET_ISSUER_ID))
                         }
-                        accEt.setText(AppPreference.getString(AppPreference.ACC_SEL_KEY))
+                        accEt.setText(AppPreference.getString(AppPreference.ACC_SEL_KEY))*/
 
-                        val rg = findViewById<RadioGroup>(R.id.emv_radio_grp_btn)
+                     //   val rg = findViewById<RadioGroup>(R.id.emv_radio_grp_btn)
 
-                        rg.setOnCheckedChangeListener { _rbg, id ->
+                       /* rg.setOnCheckedChangeListener { _rbg, id ->
                             val rb = _rbg.findViewById<RadioButton>(id)
                             val value = rb.tag as String
                             if (value.isNotEmpty()) {
@@ -1257,9 +1274,9 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         IssuerParameterTable.selectFromIssuerParameterTable(value)
                                     if (data != null) {
                                         val issuerName = data.issuerId
-                                        launch(Dispatchers.Main) {
+                                       *//* launch(Dispatchers.Main) {
                                             issuerEt.setText(issuerName)
-                                        }
+                                        }*//*
                                         AppPreference.saveString(
                                             AppPreference.CRDB_ISSUER_ID_KEY,
                                             issuerName
@@ -1268,9 +1285,9 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                     }
                                 }
                             }
-                        }
+                        }*/
 
-                        list.forEach {
+                       /* list.forEach {
                             val rBtn = RadioButton(context).apply {
                                 text = it.titleName
                                 tag = it.titleValue
@@ -1281,27 +1298,18 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 rBtn.isChecked = true
                             }
 
-                        }
+                        }*/
 
-                        fun hh(liView: Array<View>, liEt: Array<EditText>, visibility: Int) {
-                            for (e in liView) e.visibility = visibility
-                            for (e in liEt) {
-                                e.isFocusableInTouchMode = isEdit
-                                e.isClickable = isEdit
-                                e.isFocusable = isEdit
-                            }
-                        }
 
-                        hh(arrayOf(container, sep), arrayOf(pcEt, bankEt, accEt), View.GONE)
 
-                        findViewById<TextView>(R.id.emv_edit).setOnClickListener {
+                       /* findViewById<TextView>(R.id.emv_edit).setOnClickListener {
                             isEdit = !isEdit
                             val tv = it as TextView
                             if (isEdit) {
                                 hh(
-                                    arrayOf(container, sep),
-                                    arrayOf(pcEt, bankEt, accEt, issuerEt),
-                                    View.VISIBLE
+                                    arrayOf( sep),
+                                    arrayOf(pcEt, bankEt),
+                                    View.GONE
                                 )
                                 tv.text = getString(R.string.save)
                             } else {
@@ -1311,21 +1319,21 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         pcEt.text.toString()
                                     )
                                     AppPreference.setBankCode(bankEt.text.toString())
-                                    AppPreference.saveString(
+                                   *//* AppPreference.saveString(
                                         AppPreference.ACC_SEL_KEY,
                                         accEt.text.toString()
                                     )
                                     AppPreference.saveString(
                                         AppPreference.CRDB_ISSUER_ID_KEY,
                                         issuerEt.text.toString()
-                                    )
+                                    )*//*
 
                                 }
-                                hh(arrayOf(container, sep), arrayOf(pcEt, bankEt, accEt), View.GONE)
+                                hh(arrayOf( sep), arrayOf(pcEt, bankEt), View.GONE)
                                 activity?.let { it1 -> ROCProviderV2.refreshToolbarLogos(it1) }
                                 tv.text = getString(R.string.edit)
                             }
-                        }
+                        }*/
 
                     }.show()
                 }

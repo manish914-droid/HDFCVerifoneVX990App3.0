@@ -257,6 +257,16 @@ class VoidTransactionFragment : Fragment() {
                                         val f60DataList = autoSettlementCheck.split('|')
                                         //   Auto settle flag | Bank id| Issuer id | MID | TID | Batch No | Stan | Invoice | Card Type
                                         //0|1|51|000000041501002|41501369|000150|260|000260|RUPAY|
+                                        val date: Long = Calendar.getInstance().timeInMillis
+                                        val timeFormater = SimpleDateFormat("HHmmss", Locale.getDefault())
+                                        voidData.time=(timeFormater.format(date))
+                                        val dateFormater = SimpleDateFormat("MMdd", Locale.getDefault())
+                                        voidData.date=(dateFormater.format(date))
+
+
+
+
+
                                         try {
 
                                             voidData.hostBankID = f60DataList[1]

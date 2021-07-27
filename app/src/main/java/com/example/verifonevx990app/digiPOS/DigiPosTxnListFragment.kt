@@ -340,13 +340,16 @@ class DigiPosTxnListFragment : Fragment() {
         var isBool = false
         lifecycleScope.launch(Dispatchers.IO) {
             HitServer.hitDigiPosServer(idw, false) { result, success ->
+                val responseIsoData: IsoDataReader = readIso(result, false)
+             val txnMsg=   responseIsoData.isoMap[39]?.parseRaw2String().toString() +
+                        responseIsoData.isoMap[58]?.parseRaw2String().toString()
                 responseMsg = result
                 if (success) {
                     ROCProviderV2.incrementFromResponse(
                         ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                         AppPreference.getBankCode()
                     )
-                    val responseIsoData: IsoDataReader = readIso(result, false)
+
                     logger("Transaction RESPONSE ", "---", "e")
                     logger("Transaction RESPONSE --->>", responseIsoData.isoMap, "e")
                     Log.e(
@@ -382,7 +385,7 @@ class DigiPosTxnListFragment : Fragment() {
                                 digiPosTxnListAdapter.refreshAdapterList(txnDataList)
                                 hasMoreData = false
                                 iDialog?.alertBoxWithAction(null, null,
-                                    getString(R.string.error), result,
+                                    getString(R.string.error), txnMsg,
                                     false, getString(R.string.positive_button_ok),
                                     { parentFragmentManager.popBackStackImmediate() }, {})
                             }
@@ -399,7 +402,7 @@ class DigiPosTxnListFragment : Fragment() {
                         iDialog?.hideProgress()
                         hasMoreData = false
                         iDialog?.alertBoxWithAction(null, null,
-                            getString(R.string.error), result,
+                            getString(R.string.error), txnMsg,
                             false, getString(R.string.positive_button_ok),
                             { parentFragmentManager.popBackStackImmediate() }, {})
                     }
@@ -531,6 +534,7 @@ class DigiPosTxnListFragment : Fragment() {
                                         }
                                         ""->{
                                             if(statusRespDataList[1].toLowerCase(Locale.ROOT).equals("Failed", true)){
+                                                iDialog?.hideProgress()
                                                 VFService.showToast(statusRespDataList[1])
                                             }
                                         }

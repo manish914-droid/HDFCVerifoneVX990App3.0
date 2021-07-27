@@ -102,8 +102,8 @@
                 android:ems="10"
                 android:hint="@string/enter_tid_colon"
                 android:imeOptions="actionDone"
-
-                android:inputType="numberPassword"
+                android:digits="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789"
+android:inputType="text"
                 android:maxLength="8"
                 android:paddingStart="@dimen/pad_16"
                 android:paddingTop="@dimen/pad_10"
