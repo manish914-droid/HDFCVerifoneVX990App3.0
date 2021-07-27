@@ -141,6 +141,8 @@
 
     <string name="switch_interface_alert">Switch Interface Error</string>
     <string name="switch_interface_error">Contactless Limit Exceeded.\nPlease Insert/Swipe Card.</string>
+    <string name="switch_interface_diners_error">Please Insert/Swipe Card.</string>
+
     <string name="application_blocked">Application Blocked</string>
 
     <string name="print_enquiry">Print</string>
