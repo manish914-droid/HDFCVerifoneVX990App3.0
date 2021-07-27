@@ -1200,6 +1200,7 @@ class PrintUtil(context: Context?) {
                 }
                 //endregion
                 printer?.addText(textFormatBundle, "--------------------------------")
+                centerText(textFormatBundle, "Bonushub")
                 centerText(textFormatBundle, "App Version :$appVersion")
               //  centerText(textFormatBundle, "---------X-----------X----------")
                 printer?.feedLine(4)
@@ -4590,17 +4591,17 @@ setLogoAndHeader(null)
             val hdfcTpt = HdfcTpt.selectAllHDFCTPTData()[0]
             val headers = arrayListOf<String>()
             if (hdfcTpt.defaultMerchantName.isBlank()) {
-                tpt?.receiptHeaderOne?.let { headers.add(it) }
+                tpt?.receiptHeaderOne?.let { headers.add(it.trim()) }
             } else {
-                headers.add(hdfcTpt.defaultMerchantName)
+                headers.add(hdfcTpt.defaultMerchantName.trim())
             }
             if (hdfcTpt.receiptL2.isBlank()) {
-                tpt?.receiptHeaderTwo?.let { headers.add(it) }
+                tpt?.receiptHeaderTwo?.let { headers.add(it.trim()) }
             } else {
-                headers.add(hdfcTpt.receiptL2)
+                headers.add(hdfcTpt.receiptL2.trim())
             }
             if (hdfcTpt.receiptL3.isBlank()) {
-                tpt?.receiptHeaderThree?.let { headers.add(it) }
+                tpt?.receiptHeaderThree?.let { headers.add(it.trim()) }
             } else {
                 headers.add(hdfcTpt.receiptL3)
             }

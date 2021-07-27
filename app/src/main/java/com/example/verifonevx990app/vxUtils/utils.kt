@@ -1370,8 +1370,8 @@ fun transactionType2Name(code: Int): String {
         TransactionType.TIP_ADJUSTMENT.type -> "Tip Adjust"
         TransactionType.VOID_OFFLINE_SALE.type -> "Void Offline Sale"
         TransactionType.TEST_EMI.type -> "TEST EMI"
-        TransactionType.BRAND_EMI.type -> "Brand EMI"
-        TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> "Brand EMI By Access Code"
+        TransactionType.BRAND_EMI.type -> "EMI Sale"
+        TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> "EMI Sale"
         TransactionType.CASH_AT_POS.type -> "Cash only"
         else -> "Unknown"
     }

@@ -108,9 +108,9 @@ enum class TransactionType(
     VOID_OFFLINE_SALE(30, ProcessingCode.VOID_OFFLINE_SALE, "VOID OFFLINE SALE"),
     EMI_MASTER_DATA(31, ProcessingCode.BANK_EMI, "BRAND EMI"),
     EMI_ENQUIRY(32, ProcessingCode.BANK_EMI, "EMI ENQUIRY"),
-    BRAND_EMI(33, ProcessingCode.BRAND_EMI, "BRAND EMI"),
+    BRAND_EMI(33, ProcessingCode.BRAND_EMI, "EMI SALE"),
     TEST_EMI(34, ProcessingCode.BRAND_EMI, "TEST EMI"),
-    BRAND_EMI_BY_ACCESS_CODE(35, ProcessingCode.BRAND_EMI, "BRAND EMI BY CODE"),
+    BRAND_EMI_BY_ACCESS_CODE(35, ProcessingCode.BRAND_EMI, "EMI SALE"),
     FLEXI_PAY(36, ProcessingCode.FLEXI_PAY, "FLEXI PAY"),
 }
 

@@ -132,6 +132,7 @@ fun getInputDialog(
         )
         val invoiceET = findViewById<EditText>(R.id.invoice_no_et)
         val okbtn = findViewById<Button>(R.id.invoice_ok_btn)
+
         invoiceET.hint = title
         if (_text == TerminalParameterTable.selectFromSchemeTable()?.terminalId.toString()) {
             invoiceET.filters = arrayOf<InputFilter>(LengthFilter(8))
@@ -142,6 +143,7 @@ fun getInputDialog(
             setText(_text)
             inputType = if (isNumeric) InputType.TYPE_CLASS_NUMBER else InputType.TYPE_CLASS_TEXT
             setOnEditorActionListener(getEditorActionListener { okbtn.performClick() })
+            setSelection(text.toString().length)
         }
 
         findViewById<TextView>(R.id.title_tv).text = title

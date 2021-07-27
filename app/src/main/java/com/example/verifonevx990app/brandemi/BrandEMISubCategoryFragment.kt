@@ -158,10 +158,18 @@ class BrandEMISubCategoryFragment : Fragment() {
                 }
                 withContext(Dispatchers.Main) {
                     brandEmiMasterSubCategoryDataList = searchedDataList
-                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                        brandEmiMasterSubCategoryDataList
-                    )
-                    iDialog?.hideProgress()
+                    if(searchedDataList.size>0) {
+                        brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                            brandEmiMasterSubCategoryDataList
+                        )
+                        iDialog?.hideProgress()
+                    }else{
+                        brandEMIMasterSubCategoryAdapter.refreshAdapterList(
+                            brandEmiMasterSubCategoryDataList
+                        )
+                        iDialog?.hideProgress()
+                        VFService.showToast(getString(R.string.no_data_found))
+                    }
                 }
             } else
                 withContext(Dispatchers.Main) {

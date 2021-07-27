@@ -1,6 +1,7 @@
 package com.example.verifonevx990app.brandemi
 
 import android.content.Context
+import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -129,6 +130,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                 hideSoftKeyboard(requireActivity())
             } else
                 VFService.showToast(getString(R.string.please_enter_brand_name_to_search))
+            binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
         }
         //endregion
     }
@@ -152,12 +154,20 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         )
                 }
                 withContext(Dispatchers.Main) {
-                    brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
-                    iDialog?.hideProgress()
+                    if(searchedDataList.size>0) {
+                        brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
+                        iDialog?.hideProgress()
+                    }
+                    else{
+                        brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
+                        iDialog?.hideProgress()
+                        VFService.showToast(getString(R.string.no_data_found))
+                    }
                 }
             } else
                 withContext(Dispatchers.Main) {
                     iDialog?.hideProgress()
+
                 }
         }
     }

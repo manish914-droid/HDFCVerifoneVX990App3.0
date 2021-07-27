@@ -416,6 +416,9 @@ internal class SettlementAdapter(private val list: List<BatchFileDataTable>) :
         }
 
         p0.baseAmountText.text = amount
+
+
+
         p0.transactionType.text = list[p1].getTransactionType()
 
         p0.transactionDateText.text = list[p1].transactionDate
