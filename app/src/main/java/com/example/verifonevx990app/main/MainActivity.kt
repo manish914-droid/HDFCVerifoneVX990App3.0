@@ -335,7 +335,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             is VxEvent.DownloadTMKForHDFC -> {
-                Log.d("Download TMK:-", "Clicked")
+                Log.d("TMK Download :-", "Clicked")
                 val tptData =
                     runBlocking(Dispatchers.IO) { TerminalParameterTable.selectFromSchemeTable() }
                 showProgress()

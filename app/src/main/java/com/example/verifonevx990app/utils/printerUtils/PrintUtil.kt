@@ -3915,6 +3915,7 @@ setLogoAndHeader(null)
             if (emiCustomerConsent.size > 1) {
                 for (i in 1 until emiCustomerConsent.size) {
                     val limit = 48
+                    // todo Crash on size
                     if (!(issuerHeaderTAndC[i].isNullOrBlank())) {
                         val emiTnc = "#" + emiCustomerConsent[i]
                         val chunks: List<String> = chunkTnC(emiTnc, limit)

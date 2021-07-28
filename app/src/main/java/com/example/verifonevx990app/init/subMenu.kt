@@ -49,7 +49,7 @@ enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
     //  IPT("IPT Param", EOptionGroup.FUNCTIONS, R.drawable.ic_ipt),
     CR("Clear Reversal", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_reversal),
     CB("Clear Batch", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_clear_batch),
-    DOWNLOAD_TMK("Download TMK", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_key_exchange),
+    DOWNLOAD_TMK("TMK Download", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_key_exchange),
     APPUPDATE("Application Update", EOptionGroup.FUNCTIONS.heading, R.drawable.ic_app_update),
 
     LAST_RECEIPT("Last Receipt", EOptionGroup.REPORT.heading, R.drawable.ic_last_receipt),
