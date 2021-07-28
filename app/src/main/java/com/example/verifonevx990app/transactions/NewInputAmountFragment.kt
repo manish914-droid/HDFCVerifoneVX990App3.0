@@ -320,15 +320,15 @@ class NewInputAmountFragment : Fragment() {
             saleAmount = (binding?.saleAmount?.text.toString()).toDouble()
         }
 
-        if (saleAmount < 1) {
+       /* if (saleAmount < 1) {
             VFService.showToast(getString(R.string.sale_amount_should_greater_then_1))
             return
-        }
-        else if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
+        }*/
+     /*   if (transactionType == EDashboardItem.SALE_WITH_CASH && (cashAmt < 1)) {
             VFService.showToast(getString(R.string.please_enter_cash_amount))
             return
-        }
-        else {
+        }*/
+     //   else {
             when (transactionType) {
                 EDashboardItem.SALE -> {
                     val saleAmt = saleAmount.toString().trim().toDouble()
@@ -646,7 +646,7 @@ class NewInputAmountFragment : Fragment() {
                 else -> {
                 }
             }
-        }
+       // }
     }
 
     private fun checkToNavigateBillNumSerialNumScreen(
