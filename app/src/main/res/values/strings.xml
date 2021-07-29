@@ -503,6 +503,7 @@
     <string name="filter">Filters</string>
     <string name="filterBy">Filter By</string>
     <string name="apply">Apply</string>
+    <string name="reset">Reset</string>
     <string name="ptxnID">PTXN ID</string>
     <string name="mtxnID">MTXN ID</string>
     <string name="mobilNumberHint">******3211</string>

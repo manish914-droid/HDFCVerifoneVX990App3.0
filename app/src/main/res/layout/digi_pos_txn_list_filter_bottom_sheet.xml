@@ -20,41 +20,76 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
-
-        <ImageView
-            android:id="@+id/closeIconBottom"
-            android:layout_width="@dimen/pad_30"
-            android:layout_height="@dimen/pad_30"
-            android:layout_gravity="end"
-            android:layout_marginTop="@dimen/pad_16"
-            android:layout_marginEnd="@dimen/pad_24"
-            android:contentDescription="@string/cancel"
-            android:src="@drawable/ic_cirlce_close_icon" />
-
-        <TextView
-            android:id="@+id/filterByBottomTV"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/pad_16"
-            android:layout_marginEnd="@dimen/pad_24"
-            android:gravity="start|center_vertical"
-            android:text="@string/filterBy"
-            android:textColor="@color/themeBackground"
-            android:textSize="@dimen/text_size_xregular"
-            android:textStyle="bold"
-            app:drawableRightCompat="@drawable/ic_arrow_down" />
+            android:orientation="horizontal"
+            android:weightSum="1"
+            >
 
-        <Button
-            android:id="@+id/applyFilter"
-            android:layout_width="150dp"
+
+
+            <TextView
+                android:layout_weight="0.9"
+                android:id="@+id/filterByBottomTV"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+
+                android:layout_marginEnd="@dimen/pad_24"
+                android:gravity="center"
+               android:paddingLeft="@dimen/pad_100"
+                android:text="@string/filterBy"
+                android:textColor="@color/themeBackground"
+                android:textSize="@dimen/text_size_xregular"
+                android:textStyle="bold"
+                app:drawableRightCompat="@drawable/ic_arrow_down" />
+            <ImageView
+                android:id="@+id/closeIconBottom"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/pad_30"
+                android:layout_gravity="end"
+                android:layout_weight="0.1"
+                android:layout_marginTop="@dimen/pad_16"
+                android:layout_marginEnd="@dimen/pad_24"
+                android:contentDescription="@string/cancel"
+                android:src="@drawable/ic_cirlce_close_icon" />
+        </LinearLayout>
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginEnd="@dimen/pad_16"
-            android:background="@drawable/rounded_rectangle"
-            android:backgroundTint="@color/themeBackground"
-            android:text="@string/apply"
-            android:textColor="@color/white"
-            android:textSize="@dimen/text_size_small" />
+            android:weightSum="1"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/applyReset"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:layout_weight=".5"
+                android:layout_margin="@dimen/pad_12"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/themeBackground"
+                android:text="@string/reset"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <Button
+                android:id="@+id/applyFilter"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="start"
+                android:layout_margin="@dimen/pad_12"
+                android:layout_weight=".5"
+                android:background="@drawable/rounded_rectangle"
+                android:backgroundTint="@color/themeBackground"
+                android:text="@string/apply"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+        </LinearLayout>
+
+
 
         <RadioGroup
             android:id="@+id/radioGroup"
@@ -63,6 +98,7 @@
             android:layout_marginStart="@dimen/pad_16">
 
             <LinearLayout
+                android:layout_gravity=""
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content">
 
@@ -77,7 +113,7 @@
                 <RadioButton
                     android:id="@+id/dynamicQRBottomRB"
                     android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginStart="@dimen/pad_32"
                     android:buttonTint="@color/colorGrey"
                     android:text="@string/bharat_qr"
@@ -149,6 +185,7 @@
             android:layout_marginStart="@dimen/pad_24"
             android:background="@drawable/rounded_rectangle_theme"
             android:inputType="text"
+            android:maxLength="50"
             android:paddingStart="@dimen/pad_4"
             android:textColor="@color/themeBackground"
             tools:ignore="RtlSymmetry" />

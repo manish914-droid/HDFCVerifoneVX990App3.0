@@ -84,13 +84,27 @@ class DigiPosTxnListFragment : Fragment() {
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.txn_list)
 
         //filter click event to open bottom sheet:-
-        binding?.filterTV?.setOnClickListener { toggleBottomSheet() }
+        binding?.filterTV?.setOnClickListener {
+            binding?.emptyViewPlaceholder?.visibility= View.GONE
+            toggleBottomSheet() }
+        binding?.bottomSheet?.applyReset?.setOnClickListener {
+            binding?.bottomSheet?.amountBottomET?.setText("0.0")
+            binding?.bottomSheet?.transactionIDET?.text?.clear()
+            binding?.bottomSheet?.txnIDRG?.clearCheck()
+            binding?.bottomSheet?.upiCollectBottomRB?.isChecked = false
+            binding?.bottomSheet?.dynamicQRBottomRB?.isChecked=false
+            binding?.bottomSheet?.smsPayBottomRB?.isChecked=false
+            binding?.bottomSheet?.staticQRBottomRB?.isChecked=false
+            cleardata()
+
+        }
 
         //bottom sheet close icon click event to close bottom sheet:-
         binding?.bottomSheet?.closeIconBottom?.setOnClickListener { closeBottomSheet() }
 
         //region===================Filter Transaction Type's RadioButton OnClick events:-
         binding?.bottomSheet?.upiCollectBottomRB?.setOnClickListener {
+
             selectedFilterTransactionType =
                 binding?.bottomSheet?.upiCollectBottomRB?.text?.toString() ?: ""
             filterTransactionType = EnumDigiPosProcess.UPIDigiPOS.code
@@ -231,8 +245,7 @@ class DigiPosTxnListFragment : Fragment() {
             if (binding?.bottomSheet?.mtxnIDBottomRB?.isChecked == true)
                 mTransactionID = binding?.bottomSheet?.transactionIDET?.text.toString()
 
-            field57RequestData =
-                "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^1^"
+            field57RequestData = "$requestTypeID^0^$filterTransactionType^$bottomSheetAmountData^$partnerTransactionID^$mTransactionID^1^"
             closeBottomSheet()
             tempDataList.clear()
             txnDataList.clear()
@@ -374,7 +387,7 @@ class DigiPosTxnListFragment : Fragment() {
                         "-1" -> {
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                                VFService.showToast("No Data Found")
+                                binding?.emptyViewPlaceholder?.visibility= View.VISIBLE
                                 digiPosTxnListAdapter.refreshAdapterList(txnDataList)
                             }
                         }
@@ -579,22 +592,24 @@ class DigiPosTxnListFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
-        selectedFilterTransactionType = ""
-        selectedFilterTxnID = ""
-        selectedFilterTxnIDValue = ""
-        selectedFilterAmountValue = ""
-        hasMoreData = false
-        perPageRecord = "0"
-        totalRecord = "0"
-        pageNumber = "1"
-        partnerTransactionID = ""
-        mTransactionID = ""
-        bottomSheetAmountData = ""
-        filterTransactionType = ""
-        tempDataList.clear()
-        txnDataList.clear()
+        cleardata()
     }
-
+   private  fun cleardata(){
+       selectedFilterTransactionType = ""
+       selectedFilterTxnID = ""
+       selectedFilterTxnIDValue = ""
+       selectedFilterAmountValue = ""
+       hasMoreData = false
+       perPageRecord = "0"
+       totalRecord = "0"
+       pageNumber = "1"
+       partnerTransactionID = ""
+       mTransactionID = ""
+       bottomSheetAmountData = ""
+       filterTransactionType = ""
+       tempDataList.clear()
+       txnDataList.clear()
+    }
     override fun onDetach() {
         super.onDetach()
         iDialog = null
