@@ -49,12 +49,9 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import java.io.*
-import java.lang.annotation.RetentionPolicy
-import java.lang.reflect.Field
 import java.nio.charset.StandardCharsets
 import java.text.SimpleDateFormat
 import java.util.*
-import java.util.Comparator
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
 import kotlin.experimental.and
@@ -1379,20 +1376,35 @@ fun transactionType2Name(code: Int): String {
 
 
 //Create the bundle with the types of Card Supported by the hardware (Terminal)
-fun getCardOptionBundle(): Bundle {
+fun getCardOptionBundle(cardProcessedDataModal: CardProcessedDataModal): Bundle {
     val cardOption = Bundle()
-    cardOption.putBoolean(
-        ConstIPBOC.checkCard.cardOption.KEY_Contactless_boolean,
-        ConstIPBOC.checkCard.cardOption.VALUE_supported
-    )
-    cardOption.putBoolean(
-        ConstIPBOC.checkCard.cardOption.KEY_SmartCard_boolean,
-        ConstIPBOC.checkCard.cardOption.VALUE_supported
-    )
-    cardOption.putBoolean(
-        ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean,
-        ConstIPBOC.checkCard.cardOption.VALUE_supported
-    )
+    if(null != cardProcessedDataModal && cardProcessedDataModal.getTransType() != TransactionType.TEST_EMI.type && cardProcessedDataModal.getTransType() != TransactionType.EMI_SALE.type && cardProcessedDataModal.getTransType() != TransactionType.BRAND_EMI.type) {
+        if(EFallbackCode.EMV_fallback.fallBackCode == cardProcessedDataModal.getFallbackType()){
+            cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+        }
+        else if(EFallbackCode.Swipe_fallback.fallBackCode == cardProcessedDataModal.getFallbackType()){
+            cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_SmartCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+        }
+        else {
+            cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_Contactless_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+            cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_SmartCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+            cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+        }
+
+    }
+    else {
+         if(EFallbackCode.EMV_fallback.fallBackCode == cardProcessedDataModal.getFallbackType()){
+             cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+         }
+         else if(EFallbackCode.Swipe_fallback.fallBackCode == cardProcessedDataModal.getFallbackType()){
+             cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_SmartCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+         }
+        else {
+             cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_SmartCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+             cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
+         }
+
+    }
 
     return cardOption
 }

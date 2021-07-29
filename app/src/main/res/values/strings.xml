@@ -377,6 +377,7 @@
     <string name="select_scheme">"Select "</string>
     <string name="schemes">Scheme</string>
     <string name="cashback">CashBack Amount</string>
+    <string name="interest_rate">Interest Rate</string>
     <string name="total_interest_pay">Total Interest Pay</string>
     <string name="total_emi_pay">Total EMI Pay</string>
     <string name="please_select_scheme">Please Select Scheme</string>
