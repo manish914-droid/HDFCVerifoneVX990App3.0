@@ -233,8 +233,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                     }
                                     //  cardProcessedDataModal.setPanNumberData("6789878786")
                                     if (!cardProcessedDataModal.getPanNumberData()
-                                            ?.let { cardLuhnCheck(it) }!!
-                                    ) {
+                                            ?.let { cardLuhnCheck(it) }!!) {
                                         onError(
                                             DetectError.IncorrectPAN.errorCode,
                                             "Invalid Card Number"
@@ -268,70 +267,34 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                         if (cardProcessedDataModal.getFallbackType() != EFallbackCode.EMV_fallback.fallBackCode) {
                                             //Checking Fallback
                                             if (scFirstByte == '2' || scFirstByte == '6') {
-                                                onError(
-                                                    EFallbackCode.Swipe_fallback.fallBackCode,
-                                                    "FallBack"
-                                                )
+                                                onError(EFallbackCode.Swipe_fallback.fallBackCode, "FallBack")
                                             } else {
                                                 //region================Condition Check and ProcessSwipeCardWithPinOrWithoutPin:-
                                                 when (cardProcessedDataModal.getTransType()) {
-                                                    TransactionType.SALE.type -> processSwipeCardWithPINorWithoutPIN(
-                                                        isPin, cardProcessedDataModal
-                                                    )
+                                                    TransactionType.SALE.type -> processSwipeCardWithPINorWithoutPIN(isPin, cardProcessedDataModal)
                                                     TransactionType.EMI_SALE.type,
                                                     TransactionType.BRAND_EMI.type,
                                                     TransactionType.TEST_EMI.type -> {
                                                         //region==========Implementing Scheme and Offer:-
-                                                        cardProcessedDataModal.setEmiTransactionAmount(
-                                                            transactionalAmt
-                                                        )
-                                                        if (!TextUtils.isEmpty(
-                                                                cardProcessedDataModal.getPanNumberData()
-                                                            )
-                                                        ) {
+                                                        cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
+                                                        if (!TextUtils.isEmpty(cardProcessedDataModal.getPanNumberData())) {
                                                             GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();iemv?.stopCheckCard() }
-                                                            GenericEMISchemeAndOffer(
-                                                                activity,
-                                                                cardProcessedDataModal,
-                                                                cardProcessedDataModal.getPanNumberData()
-                                                                    ?: "",
-                                                                transactionalAmt,brandEmiData
-                                                            ) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
+                                                            GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardProcessedDataModal.getPanNumberData() ?: "", transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                                 GlobalScope.launch(Dispatchers.Main) {
                                                                     if (hostResponseCodeAndMessage.first) {
                                                                         (activity as VFTransactionActivity).startActivityForResult(
-                                                                            Intent(
-                                                                                activity,
-                                                                                EMISchemeAndOfferActivity::class.java
-                                                                            ).apply {
-                                                                                putParcelableArrayListExtra(
-                                                                                    "emiSchemeDataList",
-                                                                                    bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>
-                                                                                )
-                                                                                putParcelableArrayListExtra(
-                                                                                    "emiTAndCDataList",
-                                                                                    bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>
-                                                                                )
-                                                                                putExtra(
-                                                                                    "cardProcessedData",
-                                                                                    cardProcessedDataModal
-                                                                                )
+                                                                            Intent(activity, EMISchemeAndOfferActivity::class.java).apply {
+                                                                                putParcelableArrayListExtra("emiSchemeDataList", bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>)
+                                                                                putParcelableArrayListExtra("emiTAndCDataList", bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>)
+                                                                                putExtra("cardProcessedData", cardProcessedDataModal)
+                                                                                putExtra("transactionType",cardProcessedDataModal.getTransType()) // for Transaction Type
                                                                             },
                                                                             EIntentRequest.BankEMISchemeOffer.code
                                                                         )
                                                                         (activity as VFTransactionActivity).hideProgress()
                                                                     } else {
                                                                         (activity as VFTransactionActivity).hideProgress()
-                                                                        (activity as VFTransactionActivity).alertBoxWithAction(
-                                                                            null,
-                                                                            null,
-                                                                            activity.getString(R.string.error),
-                                                                            hostResponseCodeAndMessage.second,
-                                                                            false,
-                                                                            activity.getString(R.string.positive_button_ok),
-                                                                            {
-                                                                                (activity as VFTransactionActivity).declinedTransaction()
-                                                                            },
+                                                                        (activity as VFTransactionActivity).alertBoxWithAction(null, null, activity.getString(R.string.error), hostResponseCodeAndMessage.second, false, activity.getString(R.string.positive_button_ok), { (activity as VFTransactionActivity).declinedTransaction() },
                                                                             {})
                                                                     }
 
@@ -349,47 +312,23 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                         } else {
                                             //region================Condition Check and ProcessSwipeCardWithPinOrWithoutPin:-
                                             when (cardProcessedDataModal.getTransType()) {
-                                                TransactionType.SALE.type -> processSwipeCardWithPINorWithoutPIN(
-                                                    isPin, cardProcessedDataModal
-                                                )
+                                                TransactionType.SALE.type -> processSwipeCardWithPINorWithoutPIN(isPin, cardProcessedDataModal)
                                                 TransactionType.EMI_SALE.type,
                                                 TransactionType.BRAND_EMI.type,
                                                 TransactionType.TEST_EMI.type -> {
-                                                    cardProcessedDataModal.setEmiTransactionAmount(
-                                                        transactionalAmt
-                                                    )
+                                                    cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
                                                     //region==========Implementing Scheme and Offer:-
-                                                    if (!TextUtils.isEmpty(
-                                                            cardProcessedDataModal.getPanNumberData()
-                                                        )
-                                                    ) {
+                                                    if (!TextUtils.isEmpty(cardProcessedDataModal.getPanNumberData())) {
                                                         GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();iemv?.stopCheckCard() }
-                                                        GenericEMISchemeAndOffer(
-                                                            activity,
-                                                            cardProcessedDataModal,
-                                                            cardProcessedDataModal.getPanNumberData()
-                                                                ?: "",
-                                                            transactionalAmt,brandEmiData
-                                                        ) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
+                                                        GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardProcessedDataModal.getPanNumberData() ?: "", transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessage ->
                                                             GlobalScope.launch(Dispatchers.Main) {
                                                                 if (hostResponseCodeAndMessage.first) {
                                                                     (activity as VFTransactionActivity).startActivityForResult(
-                                                                        Intent(
-                                                                            activity,
-                                                                            EMISchemeAndOfferActivity::class.java
-                                                                        ).apply {
-                                                                            putParcelableArrayListExtra(
-                                                                                "emiSchemeDataList",
-                                                                                bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>
-                                                                            )
-                                                                            putParcelableArrayListExtra(
-                                                                                "emiTAndCDataList",
-                                                                                bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>
-                                                                            )
-                                                                            putExtra(
-                                                                                "cardProcessedData",
-                                                                                cardProcessedDataModal
-                                                                            )
+                                                                        Intent(activity, EMISchemeAndOfferActivity::class.java).apply {
+                                                                            putParcelableArrayListExtra("emiSchemeDataList", bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>)
+                                                                            putParcelableArrayListExtra("emiTAndCDataList", bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>)
+                                                                            putExtra("cardProcessedData", cardProcessedDataModal)
+                                                                            putExtra("transactionType",cardProcessedDataModal.getTransType())
                                                                         },
                                                                         EIntentRequest.BankEMISchemeOffer.code
                                                                     )
@@ -521,6 +460,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                                                 putParcelableArrayListExtra("emiSchemeDataList", bankEMISchemeAndTAndCData.first as ArrayList<out Parcelable>)
                                                                 putParcelableArrayListExtra("emiTAndCDataList", bankEMISchemeAndTAndCData.second as ArrayList<out Parcelable>)
                                                                 putExtra("cardProcessedData", cardProcessedDataModal)
+                                                                putExtra("transactionType",cardProcessedDataModal.getTransType())
                                                             },
                                                             EIntentRequest.BankEMISchemeOffer.code)
                                                         (activity as VFTransactionActivity).hideProgress()

@@ -19,23 +19,24 @@ import com.example.verifonevx990app.databinding.EmiSchemeOfferViewBinding
 import com.example.verifonevx990app.databinding.ItemEmiSchemeOfferBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.main.MainActivity
-import com.example.verifonevx990app.realmtables.BrandEMIDataTable
 import com.example.verifonevx990app.realmtables.BrandEMIMasterTimeStamps
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
 
 class EMISchemeAndOfferActivity : BaseActivity() {
     private var binding: EmiSchemeOfferViewBinding? = null
+    private var bankEMIDataModal: BankEMIDataModal? = null
     private var emiSchemeOfferDataList: MutableList<BankEMIDataModal>? = null
     private var emiTAndCDataList: MutableList<BankEMIIssuerTAndCDataModal>? = null
     private var cardProcessedDataModal: CardProcessedDataModal? = null
     private var selectedSchemeUpdatedPosition = -1
    // private var brandEMIData: BrandEMIDataTable? = null
-    private val transactionType by lazy { intent?.getIntExtra("transactionType", -1947) }
+   /* private var transactionType by lazy { intent?.getIntExtra("transactionType", -1947) }*/
+   private var transactionType = -1
     private val emiSchemeAndOfferAdapter: EMISchemeAndOfferAdapter by lazy {
         EMISchemeAndOfferAdapter(
+            transactionType,
             emiSchemeOfferDataList,
             ::onSchemeClickEvent
         )
@@ -82,9 +83,15 @@ class EMISchemeAndOfferActivity : BaseActivity() {
         //region======================Getting Parcelable Data List of Emi Scheme&Offer , Emi TAndC and CardProcessedData:-
         emiSchemeOfferDataList = intent?.getParcelableArrayListExtra("emiSchemeDataList")
         emiTAndCDataList = intent?.getParcelableArrayListExtra("emiTAndCDataList")
-        cardProcessedDataModal =
-            intent?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal?
+        cardProcessedDataModal = intent?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal?
+        transactionType        = intent?.getIntExtra("transactionType",-1) ?: -1
         //endregion
+
+        if(transactionType == TransactionType.TEST_EMI.type){
+            emiSchemeOfferDataList?.clear()
+            calculateEmi()
+        }
+
 
         setUpRecyclerView()
 
@@ -96,6 +103,72 @@ class EMISchemeAndOfferActivity : BaseActivity() {
                 VFService.showToast(getString(R.string.please_select_scheme))
         }
         //endregion
+    }
+
+    private fun calculateEmi() {
+        var monthlyEmi3 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,11.0f,3.0f) }
+
+        var totalInterestPay3 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi3?.times(3.0))?.minus(it) }
+
+
+        bankEMIDataModal = BankEMIDataModal("3", "1100",
+            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
+            cardProcessedDataModal?.getTransactionAmount().toString(),
+            monthlyEmi3.toString(),"","", "","",totalInterestPay3.toString(),"","",
+            "","","","")
+
+        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+
+        var monthlyEmi6 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,12.0f,6.0f) }
+
+        var totalInterestPay6 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi6?.times(6.0))?.minus(it) }
+
+        bankEMIDataModal = BankEMIDataModal("6", "1200",
+            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
+            cardProcessedDataModal?.getTransactionAmount().toString(),
+            monthlyEmi6.toString(),"","", "","",totalInterestPay6.toString(),"","",
+            "","","","")
+
+        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+
+        var monthlyEmi9 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,13.0f,9.0f) }
+
+        var totalInterestPay9 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi9?.times(9.0))?.minus(it) }
+
+
+        bankEMIDataModal = BankEMIDataModal("9", "1300",
+            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
+            cardProcessedDataModal?.getTransactionAmount().toString(),
+            monthlyEmi9.toString(),"","", "","",totalInterestPay9.toString(),"","",
+            "","","","")
+
+        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+
+        var monthlyEmi12 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,14.0f,12.0f) }
+
+        var totalInterestPay12 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi12?.times(12.0))?.minus(it) }
+
+
+        bankEMIDataModal = BankEMIDataModal("12", "1400",
+            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
+            cardProcessedDataModal?.getTransactionAmount().toString(),
+            monthlyEmi12.toString(),"","", "","",totalInterestPay12.toString(),"","",
+            "","","","")
+
+        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+    }
+
+    // Function to calculate EMI
+    fun emi_calculator(principalamount: Float, rate: Float, time: Float): Double {
+        var r = rate
+        var t = time
+        val emi: Float
+        r = r / (12 * 100) // one month interest
+        t = t  // one month period
+        emi = (principalamount * r * Math.pow((1 + r).toDouble(), t.toDouble()).toFloat()
+                / (Math.pow((1 + r).toDouble(), t.toDouble()) - 1).toFloat())
+
+        return emi.toDouble()
     }
 
     //region==========================onClickEvent==================================================
@@ -148,10 +221,7 @@ class EMISchemeAndOfferActivity : BaseActivity() {
     override fun onEvents(event: VxEvent) {}
 }
 
-internal class EMISchemeAndOfferAdapter(
-    private val emiSchemeDataList: MutableList<BankEMIDataModal>?,
-    private var schemeSelectCB: (Int) -> Unit
-) : RecyclerView.Adapter<EMISchemeAndOfferAdapter.EMISchemeOfferHolder>() {
+internal class EMISchemeAndOfferAdapter(private val transactionType: Int,private val emiSchemeDataList: MutableList<BankEMIDataModal>?, private var schemeSelectCB: (Int) -> Unit) : RecyclerView.Adapter<EMISchemeAndOfferAdapter.EMISchemeOfferHolder>() {
 
     private var index = -1
 
@@ -181,18 +251,30 @@ internal class EMISchemeAndOfferAdapter(
             holder.binding.tenureHeadingTv.text = tenureHeadingDuration
 
             //If Discount Amount Available show this else if CashBack Amount show that:-
-            if (modelData.discountAmount.toInt() != 0) {
+            if (!modelData.discountAmount.isNullOrEmpty() && modelData.discountAmount.toInt() != 0) {
                 holder.binding.tvDiscountAmount.text = "\u20B9 " + divideAmountBy100(modelData.discountAmount.toInt()).toString()
                 holder.binding.discountLL.visibility = View.VISIBLE
                 holder.binding.cashBackLL.visibility = View.GONE
             }
-            if (modelData.cashBackAmount.toInt() != 0) {
+            if (!modelData.cashBackAmount.isNullOrEmpty() && modelData.cashBackAmount.toInt() != 0) {
                 holder.binding.tvCashbackAmount.text = "\u20B9 " + divideAmountBy100(modelData.cashBackAmount.toInt()).toString()
                 holder.binding.cashBackLL.visibility = View.VISIBLE
                 holder.binding.discountLL.visibility = View.GONE
             }
-            holder.binding.tvTotalInterestPay.text = "\u20B9 " + divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
-            holder.binding.tvTotalEmiPay.text = "\u20B9 " +   "%.2f".format((((modelData.totalEmiPay).toDouble()).div(100)).toString().toDouble())
+
+            if(transactionType != TransactionType.TEST_EMI.type) {
+                holder.binding.interestRateLL.visibility = View.GONE
+                holder.binding.toatalemipayLL.visibility = View.VISIBLE
+                holder.binding.tvTotalInterestPay.text = "\u20B9 " + divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
+                holder.binding.tvTotalEmiPay.text = "\u20B9 " + "%.2f".format((((modelData.totalEmiPay).toDouble()).div(100)).toString().toDouble())
+            }
+            else {
+                holder.binding.interestRateLL.visibility = View.VISIBLE
+                holder.binding.toatalemipayLL.visibility = View.GONE
+                holder.binding.tvInterestRate.text =  ""+divideAmountBy100(modelData.tenureInterestRate.toInt()).toString() +" %"
+                holder.binding.tvTotalInterestPay.text = "\u20B9 " + "%.2f".format((((modelData.totalInterestPay).toDouble()).div(100)).toString().toDouble())
+
+            }
         }
 
         holder.binding.parentEmiViewLl.setOnClickListener {
