@@ -7,12 +7,14 @@
 
     <ImageView
         android:id="@+id/issuerBankLogo"
-        android:layout_width="80dp"
+        android:layout_width="110dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="@dimen/pad_4"
         android:contentDescription="@string/issuer_icon"
+        android:fitsSystemWindows="true"
         android:scaleType="centerCrop"
-        android:src="@drawable/kotak_issuer_icon" />
+        android:padding="@dimen/pad_4"
+        android:src="@drawable/indusind_issuer_icon" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/issuerBankName"

@@ -1,3 +1,4 @@
+
 package com.example.verifonevx990app.brandemi
 
 import android.content.Context
@@ -511,10 +512,12 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.getAllBrandEMIMasterDataTimeStamps() }
 
         if (!TextUtils.isEmpty(timeStampsData[0].brandTAndCTimeStamp) &&
-            !TextUtils.isEmpty(timeStampsData[0].issuerTAndCTimeStamp)
+            !TextUtils.isEmpty(timeStampsData[0].issuerTAndCTimeStamp) &&
+           ! TextUtils.isEmpty(timeStampsData[0].brandCategoryUpdatedTimeStamp)
         ) {
             isDataMatch = issuerTAndCTimeStamp == timeStampsData[0].issuerTAndCTimeStamp &&
-                    brandTAndCTimeStamp == timeStampsData[0].brandTAndCTimeStamp
+                    brandTAndCTimeStamp == timeStampsData[0].brandTAndCTimeStamp &&
+                    brandCategoryUpdatedTimeStamp==timeStampsData[0].brandCategoryUpdatedTimeStamp
         }
         return isDataMatch
     }

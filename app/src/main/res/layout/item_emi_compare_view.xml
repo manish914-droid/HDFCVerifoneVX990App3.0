@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/linearLayoutParent"
     style="@style/Widget.Neumorph.CardView"
-    android:layout_width="150dp"
+    android:layout_width="@dimen/pad_120"
     android:layout_height="wrap_content"
     android:orientation="vertical">
 
@@ -27,12 +27,13 @@
 
                 <com.example.customneumorphic.NeumorphButton
                     android:id="@+id/topHeaderBT"
-                    style="@style/Widget.Neumorph.Button"
-                    android:layout_width="wrap_content"
+                    style="@style/Widget.Neumorph.Button2"
+                    android:layout_width="120dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:clickable="false"
                     android:focusable="false"
+                    android:padding="@dimen/pad_8"
                     android:text="@string/hdfc"
                     android:textColor="@color/white"
                     android:textSize="@dimen/text_size_xsmall"
@@ -58,7 +59,7 @@
                 android:id="@+id/transactionAmountTV"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:layout_gravity="center"
+                android:layout_gravity="left"
                 android:gravity="center"
                 android:hint="@string/_500_00"
                 android:textColorHint="@color/white"

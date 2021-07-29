@@ -188,7 +188,7 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         cancelButtonCallback: (Boolean) -> Unit
     ) {
         val dialogBuilder = Dialog(this)
-        //  builder.setTitle(title)
+         //builder.setTitle(title)
         //  builder.setMessage(msg)
         val bindingg = NewPrintCustomerCopyBinding.inflate(LayoutInflater.from(this))
 
@@ -455,6 +455,10 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
             })
     }
 
+    override fun onDestroy() {
+        hideProgress()
+        super.onDestroy()
+    }
 
 }
 

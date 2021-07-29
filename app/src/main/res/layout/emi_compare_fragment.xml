@@ -107,7 +107,7 @@
 
                 <androidx.appcompat.widget.LinearLayoutCompat
                     android:id="@+id/side_heading_options"
-                    android:layout_width="150dp"
+                    android:layout_width="130dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/pad_24"
                     android:orientation="vertical">
@@ -134,11 +134,10 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/transactionAmountBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
-                        android:layout_gravity="start"
-                        android:text="@string/transactionAmountNew"
+                        android:text="Transaction Amount"
                         android:textColor="@color/white"
                         android:textSize="@dimen/text_size_xsmall"
                         app:neumorph_lightSource="rightBottom"
@@ -149,7 +148,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/discountAmountBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -164,7 +163,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/loanBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -179,7 +178,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/roiBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -194,7 +193,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/emiBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -209,7 +208,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/totalWithInterestBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -224,7 +223,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/cashbackBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -239,7 +238,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/netCostBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -254,7 +253,7 @@
 
                     <com.example.customneumorphic.NeumorphButton
                         android:id="@+id/additionalOfferBT"
-                        style="@style/Widget.Neumorph.Button"
+                        style="@style/Widget.Neumorph.Button2"
                         android:layout_width="match_parent"
                         android:layout_height="@dimen/pad_60"
                         android:layout_gravity="start"
@@ -272,7 +271,7 @@
                     android:id="@+id/compareRV"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="@dimen/pad_16"
+
                     android:layout_marginTop="@dimen/pad_4"
                     android:layout_weight="1" />
             </androidx.appcompat.widget.LinearLayoutCompat>
