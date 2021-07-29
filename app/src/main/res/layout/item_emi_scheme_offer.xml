@@ -200,6 +200,31 @@
                 android:textSize="@dimen/text_size_small" />
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/interestRateLL"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/pad_4"
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:gravity="left"
+                android:text="@string/interest_rate"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+
+            <TextView
+                android:id="@+id/tv_interest_rate"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1.5"
+                android:gravity="right"
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -228,6 +253,7 @@
 
 
         <LinearLayout
+            android:id="@+id/toatalemipayLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/pad_4"

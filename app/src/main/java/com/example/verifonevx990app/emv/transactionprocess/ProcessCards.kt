@@ -49,15 +49,12 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
 
         try {
             //Below checkCard process is happening with the help of IEMV AIDL Interface:-
-            iemv?.checkCard(getCardOptionBundle(), 30, object : CheckCardListener.Stub() {
+            iemv?.checkCard(getCardOptionBundle(cardProcessedDataModal), 30, object : CheckCardListener.Stub() {
 
                 //This Override Function will only execute in case of Mag stripe card type:-
                 override fun onCardSwiped(track: Bundle) {
                     // Process Swipe card with or without PIN .
-                    fun processSwipeCardWithPINorWithoutPIN(
-                        ispin: Boolean,
-                        cardProcessedDataModal: CardProcessedDataModal
-                    ) {
+                    fun processSwipeCardWithPINorWithoutPIN(ispin: Boolean, cardProcessedDataModal: CardProcessedDataModal) {
                         if (ispin) {
                             val param = Bundle()
                             val globleparam = Bundle()
@@ -554,7 +551,10 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                         Bundle(),
                                         GenericReadCardData(activity, iemv) { cardBinValue ->
                                             if (!TextUtils.isEmpty(cardBinValue)) {
-                                                GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress();iemv?.stopCheckCard() }
+                                                GlobalScope.launch(Dispatchers.Main) { (activity as VFTransactionActivity).showProgress()
+                                                    iemv?.stopCheckCard()
+                                                    (activity as VFTransactionActivity).hideProgress()
+                                                }
                                                 // Below Code is executed if insta
                                                 GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessageAndHasEMI ->
                                                     if (hostResponseCodeAndMessageAndHasEMI.first) {
@@ -764,9 +764,8 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                         when (error) {
                             EFallbackCode.Swipe_fallback.fallBackCode -> {
                                 iemv?.stopCheckCard()
-                                (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(
-                                        R.string.fallback
-                                    ), activity.getString(R.string.please_use_another_option), false) {
+                                (activity as VFTransactionActivity).handleEMVFallbackFromError(activity.getString(R.string.fallback), activity.getString(R.string.please_use_another_option), false) {
+                                    cardProcessedDataModal.setFallbackType(EFallbackCode.Swipe_fallback.fallBackCode)
                                     detectCard(error)
                                 }
                             }
@@ -783,9 +782,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                     ), activity.getString(R.string.please_use_another_option), false
                                 ) {
                                     cardProcessedDataModal.setFallbackType(EFallbackCode.EMV_fallback.fallBackCode)
-                                    detectCard(
-                                        error
-                                    )
+                                    detectCard(error)
                                 }
                             }
 
