@@ -112,6 +112,8 @@ enum class TransactionType(
     TEST_EMI(34, ProcessingCode.BRAND_EMI, "TEST EMI"),
     BRAND_EMI_BY_ACCESS_CODE(35, ProcessingCode.BRAND_EMI, "EMI SALE"),
     FLEXI_PAY(36, ProcessingCode.FLEXI_PAY, "FLEXI PAY"),
+
+    VOID_EMI(37, ProcessingCode.VOID, "VOID EMI"),
 }
 
 

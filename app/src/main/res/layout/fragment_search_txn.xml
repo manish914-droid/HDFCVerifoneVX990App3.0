@@ -2,10 +2,10 @@
 
 
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:padding="@dimen/pad_16"
     tools:context=".digiPOS.pendingTxn.SearchTxnFragment">
 
@@ -41,12 +41,12 @@
             android:background="@null"
             android:cursorVisible="false"
 
-
             android:ems="10"
-
             android:hint="@string/txn_id"
+
             android:imeOptions="actionDone"
             android:inputType="text"
+            android:maxLength="50"
             android:paddingStart="@dimen/pad_8"
 
             android:paddingEnd="@dimen/pad_8"

@@ -125,9 +125,9 @@ class TableEditFragment : Fragment() {
                  */
 
                 //Below conditional code will only execute in case of Change TID:-
-                if (data[0].titleName.equals("Terminal ID", ignoreCase = true)) {
+                if (data[0].titleName.equals("TID", ignoreCase = true)) {
                     if (data[0].titleValue != TerminalParameterTable.selectFromSchemeTable()?.terminalId
-                        && data[0].titleName.equals("Terminal ID", ignoreCase = true)
+                        && data[0].titleName.equals("TID", ignoreCase = true)
                     ) {
                         if (data[0].titleValue.length == 8) {
                             TerminalParameterTable.updateTerminalID(data[0].titleValue)
@@ -307,8 +307,8 @@ class TableEditFragment : Fragment() {
                     )
                     //In Case Of AMEX only below arrayList items options are shown to user (In TPT table)
                     val requiredField = arrayListOf(
-                        "Terminal Id",
-                        "Merchant Id",
+                        "TID",
+                        "MID",
                         "STAN",
                         "Batch Number",
                         "Invoice Number",
@@ -1239,6 +1239,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                             AppPreference.saveString(
                                 AppPreference.PC_NUMBER_KEY,
                                 pcEt.text.toString()
+
                             )
                             AppPreference.setBankCode(bankEt.text.toString())
                             dismiss()
@@ -1253,7 +1254,9 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                         val accEt = findViewById<EditText>(R.id.emv_ac_selection_et)*/
 
                         pcEt.setText(AppPreference.getString(AppPreference.PC_NUMBER_KEY))
+                        pcEt.setSelection(pcEt.text.length)
                         bankEt.setText(AppPreference.getBankCode())
+                        bankEt.setSelection(bankEt.text.length)
                       /*  if (AppPreference.getString(AppPreference.CRDB_ISSUER_ID_KEY).isEmpty()) {
                             val issuerId = addPad(AppPreference.WALLET_ISSUER_ID, "0", 2)
                             issuerEt.setText(issuerId)

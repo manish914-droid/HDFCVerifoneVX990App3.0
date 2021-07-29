@@ -1,4 +1,4 @@
-    package com.example.verifonevx990app.utils.printerUtils
+package com.example.verifonevx990app.utils.printerUtils
 
 /**
  * Created by Lucky Singh.
@@ -1612,9 +1612,9 @@ class PrintUtil(context: Context?) {
     ) {
         if (img != null)
             printLogo(img)
-        centerText(format, headers[0])
-        centerText(format, headers[1])
-        centerText(format, headers[2])
+        centerText(format, headers[0].trim())
+        centerText(format, headers[1].trim())
+        centerText(format, headers[2].trim())
     }
 
     private fun centerText(format: Bundle, text: String, bold: Boolean = false) {
@@ -3692,7 +3692,7 @@ setLogoAndHeader(null)
             //region===============Processing Fee Changes And Showing On ChargeSlip:-
             if (!TextUtils.isEmpty(printerReceiptData.processingFee)) {
                 if(!(printerReceiptData.processingFee).equals("0")) {
-                val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
+                    val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
 
                     alignLeftRightText(
                         textInLineFormatBundle,
@@ -3704,8 +3704,8 @@ setLogoAndHeader(null)
             }
             if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
                 if(!(printerReceiptData.processingFeeAmount).equals("0")) {
-                val procFeeAmount =
-                    "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
+                    val procFeeAmount =
+                        "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
 
                     alignLeftRightText(
                         textInLineFormatBundle,
@@ -3874,7 +3874,6 @@ setLogoAndHeader(null)
                     ":  $currencySymbol "
                 )
             }
-
             printSeperator(seperatorLineBundle)
 
             centerText(centerTextBundle, "CUSTOMER CONSENT FOR EMI", true)
@@ -3910,10 +3909,9 @@ setLogoAndHeader(null)
             printer?.feedLine(1)
 
             //region=====================SCHEME TAndC===============
-            val emiCustomerConsent =
-                printerReceiptData.bankEmiTAndC.split(SplitterTypes.POUND.splitter)
+            val emiCustomerConsent = printerReceiptData.bankEmiTAndC.split(SplitterTypes.POUND.splitter)
             if (emiCustomerConsent.size > 1) {
-                for (i in 1 until emiCustomerConsent.size) {
+                for (i in emiCustomerConsent.indices) {
                     val limit = 48
                     if (!(emiCustomerConsent[i].isNullOrBlank())) {
                         val emiTnc = "#" + emiCustomerConsent[i]
@@ -4868,6 +4866,13 @@ internal open class ISettlementPrintListener(
         }, 400)
 
     }
+}
+
+fun formatTextLMR(leftTxt:String,middleText:String,rightTxt:String):String{
+
+    val padded= addPad(leftTxt, " ", 24, false)
+    return  "$padded $middleText       $rightTxt"
+
 }
 
 enum class EPrintCopyType(val pName: String) {

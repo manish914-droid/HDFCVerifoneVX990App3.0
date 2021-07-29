@@ -288,8 +288,12 @@ class VoidTransactionFragment : Fragment() {
                                         if (voidData.transactionType == TransactionType.REFUND.type) {
                                             voidData.transactionType =
                                                 TransactionType.VOID_REFUND.type
-                                        } else {
+                                        }
+                                        else if(voidData.transactionType == TransactionType.EMI_SALE.type||voidData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type||voidData.transactionType == TransactionType.BRAND_EMI.type){
                                             voidData.transactionType = TransactionType.VOID.type
+                                        }
+                                        else {
+                                            voidData.transactionType = TransactionType.VOID_EMI.type
                                         }
                                         //   voidData.isRefundSale=false
                                         //   (activity as MainActivity).showProgress()

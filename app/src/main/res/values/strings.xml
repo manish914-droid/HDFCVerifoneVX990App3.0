@@ -532,4 +532,5 @@
     <string name="app_update_param">App Update Param</string>
     <string name="comm_param">Communication Param</string>
     <string name="enter_valid_VPN">Enter valid VPN</string>
+    <string name="roi_pa">ROI (p.a)</string>
 </resources>

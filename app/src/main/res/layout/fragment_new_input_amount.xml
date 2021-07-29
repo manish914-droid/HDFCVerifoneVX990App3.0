@@ -140,7 +140,7 @@ android:visibility="gone"
 
                 android:drawableStart="@drawable/ic_mobile_icon"
                 android:inputType="none"
-                android:maxLength="13"
+                android:maxLength="10"
                 android:maxLines="1"
                 android:gravity="end"
                 android:textColorHint="@color/colorGrey"

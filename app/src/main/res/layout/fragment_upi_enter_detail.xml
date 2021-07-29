@@ -160,7 +160,7 @@
                 android:imeOptions="actionDone"
                 android:inputType="number"
                 android:lines="1"
-                android:maxLength="13"
+                android:maxLength="10"
                 android:paddingStart="@dimen/pad_8"
                 android:paddingEnd="@dimen/pad_8"
                 android:textColor="@color/white"

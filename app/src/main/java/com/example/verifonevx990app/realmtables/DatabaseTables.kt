@@ -1775,11 +1775,11 @@ open class TerminalParameterTable() : RealmObject(), Parcelable {
     var isActive: String = ""
 
     @field:BHFieldParseIndex(4)
-    @field: BHFieldName("Terminal Id")
+    @field: BHFieldName("TID")
     var terminalId: String = ""
 
     @field:BHFieldParseIndex(5)
-    @field:BHFieldName("Merchant Id")
+    @field:BHFieldName("MID")
     var merchantId: String = ""
 
     @field:BHFieldParseIndex(6)
