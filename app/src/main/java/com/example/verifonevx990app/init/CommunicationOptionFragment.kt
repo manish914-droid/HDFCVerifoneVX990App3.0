@@ -45,7 +45,7 @@ class CommunicationOptionFragment : Fragment() {
                 (activity as MainActivity).transactFragment(TableEditFragment().apply {
                     arguments = Bundle().apply {
                         putInt("type", BankOptions.APP_UPDATE_COMM_PARAM_TABLE.ordinal)
-                      putString("heading", "APP UPDATE")
+                      putString("heading", "APP UPDATE PARAM")
                     }
                 })
             }
