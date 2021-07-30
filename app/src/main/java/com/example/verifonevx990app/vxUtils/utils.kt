@@ -793,14 +793,11 @@ object ROCProvider {
 
 }
 
-
 object ROCProviderV2 {
-
     private var mRocHash = mutableMapOf<String, Int>()
     private val mType = object : TypeToken<MutableMap<String, Int>>() {}.type
     private val mGson = Gson()
     private val TAG = ROCProviderV2::class.java.simpleName
-
 
     init {
         mRocHash = try {
@@ -876,7 +873,6 @@ object ROCProviderV2 {
             TerminalParameterTable.updateTerminalDataROCNumber(0)
         }
     }
-
 
     fun incrementFromResponse(num: String, bankCode: String) {
         try {
@@ -1359,7 +1355,6 @@ fun transactionType2Name(code: Int): String {
         TransactionType.REFUND.type -> "Refund"
         TransactionType.PRE_AUTH.type -> "Pre-Auth"
         TransactionType.PRE_AUTH_COMPLETE.type -> "Auth Complete"
-        TransactionType.EMI_SALE.type -> "EMI Sale"
         TransactionType.VOID_PREAUTH.type -> "Void Pre-Auth"
         TransactionType.OFFLINE_SALE.type -> "Offline Sale"
         TransactionType.TIP_SALE.type -> "Tip Sale"
@@ -1367,9 +1362,9 @@ fun transactionType2Name(code: Int): String {
         TransactionType.TIP_ADJUSTMENT.type -> "Tip Adjust"
         TransactionType.VOID_OFFLINE_SALE.type -> "Void Offline Sale"
         TransactionType.TEST_EMI.type -> "TEST EMI"
-        TransactionType.BRAND_EMI.type -> "EMI Sale"
-        TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> "EMI Sale"
+        TransactionType.BRAND_EMI.type, TransactionType.BRAND_EMI_BY_ACCESS_CODE.type , TransactionType.EMI_SALE.type -> "EMI Sale"
         TransactionType.CASH_AT_POS.type -> "Cash only"
+        TransactionType.VOID_EMI.type -> "Void EMI"
         else -> "Unknown"
     }
 }

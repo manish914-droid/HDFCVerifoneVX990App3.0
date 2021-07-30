@@ -30,6 +30,8 @@ class TestEmiOptionFragment : Fragment() {
         option
     }
 
+    private val transactionType by lazy { arguments?.getSerializable("type") as EDashboardItem }
+
     //creating our adapter
     private val mAdapter by lazy {
         TestEmiOptionAdapter(testEmiOptionList) {
@@ -52,7 +54,8 @@ class TestEmiOptionFragment : Fragment() {
             parentFragmentManager.popBackStackImmediate()
         }
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.test_emi)
-
+        binding?.subHeaderView?.headerImage?.visibility = View.VISIBLE
+        binding?.subHeaderView?.headerImage?.setImageResource(transactionType.res)
         binding?.pendingPreAuthPrintBtn?.visibility = View.GONE
 
 

@@ -491,7 +491,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                     (activity as BaseActivity).transactFragment(
                                         TestEmiOptionFragment().apply {
                                             arguments = Bundle().apply {
-                                                //  putSerializable("type", EDashboardItem.DYNAMIC_QR)
+                                                putSerializable("type", type)
 
                                             }
                                         })

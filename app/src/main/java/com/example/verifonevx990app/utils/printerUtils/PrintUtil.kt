@@ -1037,6 +1037,11 @@ class PrintUtil(context: Context?) {
                         //  || b.transactionType == TransactionType.VOID_PREAUTH.type
                         if (b.transactionType == TransactionType.PRE_AUTH.type) continue  // Do not add pre auth transactions
 
+                        if(b.transactionType==TransactionType.EMI_SALE.type || b.transactionType==TransactionType.BRAND_EMI.type || b.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                            b.transactionType= TransactionType.EMI_SALE.type
+                        }
+
+
                         count++
                         if (updatedindex <= frequencylist.size - 1)
                             frequency = frequencylist.get(updatedindex).toInt() + lastfrequecny
@@ -3807,11 +3812,13 @@ setLogoAndHeader(null)
 
             if (!TextUtils.isEmpty(printerReceiptData.cashDiscountAmt) && printerReceiptData.cashDiscountAmt != "0") {
                 val discAmount = "%.2f".format(printerReceiptData.cashDiscountAmt.toFloat() / 100)
+
+
                 alignLeftRightText(
                     textInLineFormatBundle,
-                    discountAmountHeadingText,
-                    discAmount,
-                    ":  $currencySymbol "
+                    formatTextLMR(discountAmountHeadingText,":  $currencySymbol ",discAmount),
+                    "",
+                    ""
                 )
             }
 
@@ -4701,7 +4708,7 @@ internal open class IPrintListener(
         when (copyType) {
             EPrintCopyType.MERCHANT -> {
                 GlobalScope.launch(Dispatchers.Main) {
-                    if (batch.transactionType == TransactionType.TIP_SALE.type || batch.transactionType == TransactionType.VOID.type) {
+                    if (batch.transactionType == TransactionType.TIP_SALE.type || batch.transactionType == TransactionType.VOID.type || batch.transactionType == TransactionType.VOID_EMI.type) {
                         (context as BaseActivity).showMerchantAlertBoxForTipSale(
                             printerUtil,
                             batch
@@ -4870,7 +4877,7 @@ internal open class ISettlementPrintListener(
 
 fun formatTextLMR(leftTxt:String,middleText:String,rightTxt:String):String{
 
-    val padded= addPad(leftTxt, " ", 24, false)
+    val padded= addPad(leftTxt, " ", 30, false)
     return  "$padded $middleText       $rightTxt"
 
 }

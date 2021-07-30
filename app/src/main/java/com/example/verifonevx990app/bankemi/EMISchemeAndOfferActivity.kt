@@ -252,7 +252,8 @@ internal class EMISchemeAndOfferAdapter(private val transactionType: Int,private
 
             //If Discount Amount Available show this else if CashBack Amount show that:-
             if (!modelData.discountAmount.isNullOrEmpty() && modelData.discountAmount.toInt() != 0) {
-                holder.binding.tvDiscountAmount.text = "\u20B9 " + divideAmountBy100(modelData.discountAmount.toInt()).toString()
+
+                holder.binding.tvDiscountAmount.text = "\u20B9 " + "%.2f".format((((modelData.discountAmount).toDouble()).div(100)).toString().toDouble())
                 holder.binding.discountLL.visibility = View.VISIBLE
                 holder.binding.cashBackLL.visibility = View.GONE
             }
@@ -262,11 +263,17 @@ internal class EMISchemeAndOfferAdapter(private val transactionType: Int,private
                 holder.binding.discountLL.visibility = View.GONE
             }
 
+
             if(transactionType != TransactionType.TEST_EMI.type) {
                 holder.binding.interestRateLL.visibility = View.GONE
                 holder.binding.toatalemipayLL.visibility = View.VISIBLE
-                holder.binding.tvTotalInterestPay.text = "\u20B9 " + divideAmountBy100(modelData.tenureInterestRate.toInt()).toString()
+
+                holder.binding.tvTotalInterestPay.text = "\u20B9 " +  "%.2f".format((((modelData.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
+
                 holder.binding.tvTotalEmiPay.text = "\u20B9 " + "%.2f".format((((modelData.totalEmiPay).toDouble()).div(100)).toString().toDouble())
+                val roi=  "%.2f".format((((modelData.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
+                holder.binding.tvRoi.text = "$roi %"
+
             }
             else {
                 holder.binding.interestRateLL.visibility = View.VISIBLE
