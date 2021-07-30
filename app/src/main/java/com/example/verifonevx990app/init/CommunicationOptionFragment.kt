@@ -28,17 +28,13 @@ class CommunicationOptionFragment : Fragment() {
             parentFragmentManager.popBackStackImmediate()
         }
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.comm_param)
-
         binding?.transComParamOption?.setOnClickListener {
-
             (activity as MainActivity).transactFragment(TableEditFragment().apply {
                 arguments = Bundle().apply {
                     putInt("type", BankOptions.TXN_COMM_PARAM_TABLE.ordinal)
                    putString("heading", "TXN PARM")
                 }
             })
-
-
         }
         binding?.appUpdateComParamOption?.setOnClickListener {
             if (TerminalCommunicationTable.selectCommTableByRecordType("2") != null) {
@@ -56,5 +52,4 @@ class CommunicationOptionFragment : Fragment() {
             }
         }
     }
-
 }

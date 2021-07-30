@@ -27,7 +27,6 @@ interface IReversalHandler {
 
 object HitServer {
 
-
     private val TAG = HitServer::class.java.simpleName
 
     private var tct: TerminalCommunicationTable? = null
@@ -238,10 +237,8 @@ object HitServer {
     suspend fun hitServersale(
         data: ByteArray,
         callbackSale: ServerMessageCallbackSale,
-        progressMsg: ProgressCallback
-    ) {
+        progressMsg: ProgressCallback) {
         this@HitServer.callbackSale = callbackSale
-
         try {
             if (checkInternetConnection()) {
                 with(ConnectionTimeStamps) {

@@ -189,12 +189,15 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                                 splitData[24], splitData[25],
                                 splitData[26], splitData[27],
                                 splitData[28], splitData[29],
-                                splitData[30], splitData[31],
+                                splitData[30], splitData[31],splitData[32]
                             )
                         )
+
                     }
                     //Show Confirmation BrandEMI ByAccessCode Data Dialog:-
                     iDialog?.hideProgress()
+
+
                     if (brandEmiAccessCodeList.isNotEmpty())
                         showConfirmationDataDialog(brandEmiAccessCodeList[0])
                 }
@@ -222,6 +225,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             )
 
             dialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
+                brandEmiAccessCodeList.clear()
                 dialog.dismiss()
             }
 
@@ -241,7 +245,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             val discountAmountLL = dialog.findViewById<LinearLayout>(R.id.discountAmountLL)
             val cashBackPercentageLL = dialog.findViewById<LinearLayout>(R.id.cashBackPercentageLL)
             val cashBackAmountLL = dialog.findViewById<LinearLayout>(R.id.cashBackAmountLL)
-           val rupeeSymbol= activity?.getString(R.string.rupees_symbol)
+            val rupeeSymbol= activity?.getString(R.string.rupees_symbol)
             productName.text = brandEMIAccessData.productName
             categoryName.text = brandEMIAccessData.productCategoryName
             issuerName.text = brandEMIAccessData.issuerName
@@ -345,6 +349,7 @@ data class BrandEMIAccessDataModal(
     var schemeDBDTAndC: String,
     var discountCalculatedValue: String,
     var cashBackCalculatedValue: String,
+    var orignalTxnAmt:String
 ) : Serializable{
 
 
