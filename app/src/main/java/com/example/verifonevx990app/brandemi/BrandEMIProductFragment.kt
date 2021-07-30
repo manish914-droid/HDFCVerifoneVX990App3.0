@@ -109,11 +109,13 @@ class BrandEMIProductFragment : Fragment() {
 
 
         //region=================Search Button to Fetch Searched Product From Host on Click event:-
+        ////Initially on searching of product we were not showing the products category with requestType 3.But now with request type 11,product category name is coming
         binding?.searchButton?.setOnClickListener {
             hideSoftKeyboard(requireActivity())
             searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
             totalRecord = "0"
             brandEmiSearchedProductDataList.clear()
+            //Initially on searching of product we were not showing the products category with requestType 3.But now with request type 11,product category name is coming
             field57RequestData = "${EMIRequestType.BRAND_EMI_Product_WithCategory.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
             Log.d("57Data:-", field57RequestData.toString())
             fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
@@ -510,3 +512,4 @@ data class BrandEMIProductDataModal(
     var productCategoryName: String,
 ) : Parcelable
 //endregion
+//Initially on searching of product we were not showing the products category with requestType 3.But now with request type 11,product category name is coming

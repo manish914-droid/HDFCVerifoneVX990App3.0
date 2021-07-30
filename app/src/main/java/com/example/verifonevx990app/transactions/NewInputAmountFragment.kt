@@ -100,7 +100,7 @@ class NewInputAmountFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity?.let { hideSoftKeyboard(it) }
         transactionType = (arguments?.getSerializable("type")) as EDashboardItem
-        testEmiTxnType = (arguments?.getSerializable("TestEmiOption") ?: "") as? String?
+        testEmiTxnType = (arguments?.getSerializable("TestEmiOption") ?: "") as? String
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
 
         Log.e("Selected Brand EMI Data", Gson().toJson(brandEMIDataModal))

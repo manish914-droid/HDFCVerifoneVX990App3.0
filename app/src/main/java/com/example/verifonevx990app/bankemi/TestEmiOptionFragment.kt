@@ -30,7 +30,7 @@ class TestEmiOptionFragment : Fragment() {
         option
     }
 
-    private val transactionType by lazy { arguments?.getSerializable("type") as? EDashboardItem }
+    private val transactionType by lazy { (arguments?.getSerializable("type")) as? EDashboardItem }
 
     //creating our adapter
     private val mAdapter by lazy {
