@@ -16,11 +16,13 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.customneumorphic.NeumorphCardView
+import com.example.customneumorphic.NeumorphImageButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
+import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -79,6 +81,8 @@ class TableEditFragment : Fragment() {
     private val dataList = ArrayList<TableEditHelper>()
     private var type: Int = 0
     private var typeId = ""
+
+    private var headerTitle = ""
     private val mAdapter = TableEditAdapter(dataList, ::itemClicked)
 
     companion object {
@@ -92,7 +96,23 @@ class TableEditFragment : Fragment() {
     ): View? {
         type = arguments?.getInt("type") ?: 0
         typeId = arguments?.getString("id") ?: ""
+        headerTitle=arguments?.getString("heading")?: ""
         val v = inflater.inflate(R.layout.fragment_table_edit, container, false)
+        v.findViewById<TextView>(R.id.sub_header_text).apply {
+            text=headerTitle
+        }
+        v.findViewById<NeumorphImageButton>(R.id.back_image_button).apply {
+           setOnClickListener { parentFragmentManager.popBackStackImmediate() }
+        }
+        if(headerTitle.equals("Term Param")){
+            v.findViewById<ImageView>(R.id.header_Image).apply {
+               setImageResource(R.drawable.ic_tpt_img)
+            }
+        }else{
+            v.findViewById<ImageView>(R.id.header_Image).apply {
+                setImageResource(R.drawable.ic_copt)
+            }
+        }
         initUI(v)
         return v
     }
@@ -275,6 +295,7 @@ class TableEditFragment : Fragment() {
     }
 
     private fun initUI(v: View) {
+
         GlobalScope.launch {
             val table: Any? = getTable()
             if (table != null) {
@@ -392,7 +413,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
     private var printer: IPrinter? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
+        hideSoftKeyboard(requireActivity())
         for (e in BankOptions.values()) {
             if (e.group == option.heading) {
                 optionList.add(e)
@@ -495,7 +516,12 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                     val bundle = Bundle()
                                     bundle.putInt("type", type.ordinal)
                                     iDiag?.onEvents(VxEvent.ReplaceFragment(TableEditFragment().apply {
-                                        arguments = bundle
+                                        arguments = bundle.apply {
+                                            putString(
+                                                "heading",
+                                                "Term Param"
+                                            )
+                                        }
                                     }))
                                 }
                                 BankOptions.CPT->{

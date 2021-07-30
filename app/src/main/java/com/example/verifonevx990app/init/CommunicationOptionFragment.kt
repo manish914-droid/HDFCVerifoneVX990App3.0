@@ -34,7 +34,7 @@ class CommunicationOptionFragment : Fragment() {
             (activity as MainActivity).transactFragment(TableEditFragment().apply {
                 arguments = Bundle().apply {
                     putInt("type", BankOptions.TXN_COMM_PARAM_TABLE.ordinal)
-                    // putString(INPUT_SUB_HEADING, "")
+                   putString("heading", "TXN PARM")
                 }
             })
 
@@ -45,7 +45,7 @@ class CommunicationOptionFragment : Fragment() {
                 (activity as MainActivity).transactFragment(TableEditFragment().apply {
                     arguments = Bundle().apply {
                         putInt("type", BankOptions.APP_UPDATE_COMM_PARAM_TABLE.ordinal)
-                        // putString(INPUT_SUB_HEADING, "")
+                      putString("heading", "APP UPDATE")
                     }
                 })
             }

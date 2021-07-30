@@ -37,7 +37,7 @@
         <ImageView
             android:id="@+id/header_Image"
             android:layout_width="40dp"
-            android:layout_height="50dp"
+            android:layout_height="@dimen/pad_40"
             android:padding="@dimen/pad_8"
             android:scaleType="fitXY"
 
