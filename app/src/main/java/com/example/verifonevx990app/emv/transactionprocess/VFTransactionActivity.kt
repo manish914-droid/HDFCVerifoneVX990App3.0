@@ -156,12 +156,7 @@ class VFTransactionActivity : BaseActivity() {
                         ) { alertPositiveCallback, dialog ->
                             globalCardProcessedModel.setDoubeTap(true)
                             if (alertPositiveCallback)
-                                ProcessCard(
-                                    issuerUpdateHandler,
-                                    this@VFTransactionActivity,
-                                    pinHandler,
-                                    globalCardProcessedModel,brandEMIData
-                                ) { localCardProcessedData ->
+                                ProcessCard(issuerUpdateHandler, this@VFTransactionActivity, pinHandler, globalCardProcessedModel,brandEMIData) { localCardProcessedData ->
                                     dialog.dismiss()
                                     // VFService.showToast("Second Tap callback")
                                     //  processDoubleTapTimeout(localCardProcessedData)
@@ -181,24 +176,10 @@ class VFTransactionActivity : BaseActivity() {
             // Checking printer status that the printing roll is present or not and handling that the merchant/user wants proceed the transaction without printing roll
             if (printer?.status != 0) {
                 GlobalScope.launch(Dispatchers.Main) {
-                    alertBoxWithAction(
-                        null,
-                        null,
-                        getString(R.string.printer_error),
-                        "Want to Proceed Transaction with no charge slip",
-                        true,
-                        getString(R.string.yes),
-                        { alertPositiveCallback ->
+                    alertBoxWithAction(null, null, getString(R.string.printer_error), "Want to Proceed Transaction with no charge slip", true, getString(R.string.yes), { alertPositiveCallback ->
                             if (alertPositiveCallback)
-                                ProcessCard(
-                                    issuerUpdateHandler,
-                                    this@VFTransactionActivity,
-                                    pinHandler,
-                                    globalCardProcessedModel,brandEMIData
-                                ) { localCardProcessedData ->
-                                    localCardProcessedData.setProcessingCode(
-                                        transactionProcessingCode
-                                    )
+                                ProcessCard(issuerUpdateHandler, this@VFTransactionActivity, pinHandler, globalCardProcessedModel,brandEMIData) { localCardProcessedData ->
+                                    localCardProcessedData.setProcessingCode(transactionProcessingCode)
                                     localCardProcessedData.setTransactionAmount(transactionalAmount)
                                     localCardProcessedData.setOtherAmount(otherTransAmount)
                                     localCardProcessedData.setMobileBillExtraData(
@@ -237,32 +218,40 @@ class VFTransactionActivity : BaseActivity() {
                         })
                 }
             } else {
-                ProcessCard(
-                    issuerUpdateHandler,
-                    this,
-                    pinHandler,
-                    globalCardProcessedModel,brandEMIData
-                ) { localCardProcessedData ->
-                    localCardProcessedData.setProcessingCode(transactionProcessingCode)
-                    localCardProcessedData.setTransactionAmount(transactionalAmount)
-                    localCardProcessedData.setOtherAmount(otherTransAmount)
-                    localCardProcessedData.setMobileBillExtraData(Pair(mobileNumber, billNumber))
-                    //    localCardProcessedData.setTransType(transactionType)
-                    globalCardProcessedModel = localCardProcessedData
-                    Log.d("CardProcessedData:- ", Gson().toJson(localCardProcessedData))
-                    val maskedPan = localCardProcessedData.getPanNumberData()?.let {
-                        getMaskedPan(TerminalParameterTable.selectFromSchemeTable(), it)
+
+                    ProcessCard(
+                        issuerUpdateHandler,
+                        this,
+                        pinHandler,
+                        globalCardProcessedModel,
+                        brandEMIData
+                    ) { localCardProcessedData ->
+                        localCardProcessedData.setProcessingCode(transactionProcessingCode)
+                        localCardProcessedData.setTransactionAmount(transactionalAmount)
+                        localCardProcessedData.setOtherAmount(otherTransAmount)
+                        localCardProcessedData.setMobileBillExtraData(
+                            Pair(
+                                mobileNumber,
+                                billNumber
+                            )
+                        )
+                        //    localCardProcessedData.setTransType(transactionType)
+                        globalCardProcessedModel = localCardProcessedData
+                        Log.d("CardProcessedData:- ", Gson().toJson(localCardProcessedData))
+                        val maskedPan = localCardProcessedData.getPanNumberData()?.let {
+                            getMaskedPan(TerminalParameterTable.selectFromSchemeTable(), it)
+                        }
+                        runOnUiThread {
+                            binding?.atCardNoTv?.text = maskedPan
+                            cardView_l.visibility = View.VISIBLE
+                            //  tv_card_number_heading.visibility = View.VISIBLE
+                            tv_insert_card.visibility = View.INVISIBLE
+                            //  binding?.paymentGif?.visibility = View.INVISIBLE
+                        }
+                        //Below Different Type of Transaction check Based ISO Packet Generation happening:-
+                        processAccordingToCardType(localCardProcessedData)
                     }
-                    runOnUiThread {
-                        binding?.atCardNoTv?.text = maskedPan
-                        cardView_l.visibility = View.VISIBLE
-                        //  tv_card_number_heading.visibility = View.VISIBLE
-                        tv_insert_card.visibility = View.INVISIBLE
-                        //  binding?.paymentGif?.visibility = View.INVISIBLE
-                    }
-                    //Below Different Type of Transaction check Based ISO Packet Generation happening:-
-                    processAccordingToCardType(localCardProcessedData)
-                }
+
 
             }
         } catch (ex: DeadObjectException) {
@@ -618,12 +607,7 @@ class VFTransactionActivity : BaseActivity() {
                                     cardProcessedDataModal.getTransType() == TransactionType.TEST_EMI.type
                                 ) {
 
-                                    stubEMI(
-                                        stubbedData,
-                                        emiSelectedData,
-                                        emiTAndCData,
-                                        brandEMIAccessData
-                                    ) { data ->
+                                    stubEMI(stubbedData, emiSelectedData, emiTAndCData, brandEMIAccessData) { data ->
                                         Log.d("StubbedEMIData:- ", data.toString())
 
                                         saveBrandEMIDataToDB(brandEMIData, data.hostInvoice)
@@ -1443,8 +1427,7 @@ class VFTransactionActivity : BaseActivity() {
             }
 
             EIntentRequest.BankEMISchemeOffer.code -> {
-                val cardProcessedData =
-                    data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
+                val cardProcessedData = data?.getSerializableExtra("cardProcessedData") as CardProcessedDataModal
                 val maskedPan = cardProcessedData.getPanNumberData()?.let {
                     getMaskedPan(TerminalParameterTable.selectFromSchemeTable(), it)
                 }
@@ -1466,12 +1449,7 @@ class VFTransactionActivity : BaseActivity() {
                     } else {
 
 
-                        val baseAmountValue = getString(R.string.rupees_symbol) +
-                                "%.2f".format(
-                                    (((emiSelectedData?.transactionAmount)?.toDouble())?.div(
-                                        100
-                                    )).toString().toDouble()
-                                )
+                        val baseAmountValue = getString(R.string.rupees_symbol) + "%.2f".format((((emiSelectedData?.transactionAmount)?.toDouble())?.div(100)).toString().toDouble())
                         binding?.baseAmtTv?.text = baseAmountValue
                     }
                 }
@@ -1482,9 +1460,7 @@ class VFTransactionActivity : BaseActivity() {
                 cardProcessedData.setTransactionAmount(emiSelectedTransactionAmount ?: 0L)
 
                 //region===============Check Transaction Type and Perform Action Accordingly:-
-                if (cardProcessedData.getReadCardType() == DetectCardType.MAG_CARD_TYPE &&
-                    cardProcessedData.getTransType() != TransactionType.TEST_EMI.type
-                ) {
+                if (cardProcessedData.getReadCardType() == DetectCardType.MAG_CARD_TYPE && cardProcessedData.getTransType() != TransactionType.TEST_EMI.type) {
                     val isPin = cardProcessedData.getIsOnline() == 1
                     cardProcessedData.setProcessingCode(transactionProcessingCode)
                     processSwipeCardWithPINorWithoutPIN(isPin, cardProcessedData)
@@ -1493,22 +1469,13 @@ class VFTransactionActivity : BaseActivity() {
                         VFService.showToast("Connect to BH_HOST1...")
                         Log.e("WWW", "-----")
                         cardProcessedData.setTransactionAmount(100)
-                        DoEmv(
-                            issuerUpdateHandler,
-                            this,
-                            pinHandler,
-                            cardProcessedData,
-                            ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card
-                        ) { cardProcessedDataModal ->
+
+                        DoEmv(issuerUpdateHandler, this, pinHandler, cardProcessedData, ConstIPBOC.startEMV.intent.VALUE_cardType_smart_card) { cardProcessedDataModal ->
                             cardProcessedDataModal.setProcessingCode(transactionProcessingCode)
                             cardProcessedDataModal.setTransactionAmount(100)
                             cardProcessedDataModal.setOtherAmount(otherTransAmount)
                             cardProcessedDataModal.setMobileBillExtraData(
-                                Pair(
-                                    mobileNumber,
-                                    billNumber
-                                )
-                            )
+                                Pair(mobileNumber, billNumber))
                             //    localCardProcessedData.setTransType(transactionType)
                             globalCardProcessedModel = cardProcessedDataModal
                             Log.d("CardProcessedData:- ", Gson().toJson(cardProcessedDataModal))
@@ -1647,11 +1614,7 @@ class VFTransactionActivity : BaseActivity() {
 
     // Creating transaction packet and
     private fun emvProcessNext(cardProcessedData: CardProcessedDataModal?) {
-        val transactionISO = CreateTransactionPacket(
-            cardProcessedData!!,
-            emiSelectedData,
-            emiTAndCData, brandEMIAccessData, brandEMIData
-        ).createTransactionPacket()
+        val transactionISO = CreateTransactionPacket(cardProcessedData!!, emiSelectedData, emiTAndCData, brandEMIAccessData, brandEMIData).createTransactionPacket()
         cardProcessedData.indicatorF58 = transactionISO.additionalData["indicatorF58"] ?: ""
 
         // logger("Transaction REQUEST PACKET --->>", transactionISO.isoMap, "e")

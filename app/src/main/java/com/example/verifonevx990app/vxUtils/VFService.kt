@@ -74,8 +74,7 @@ object VFService {
                 appUpdateCpt!=null -> {
                     InetSocketAddress(
                         InetAddress.getByName(appUpdateCpt.hostPrimaryIp),
-                        appUpdateCpt.hostPrimaryPortNo.toInt()
-                    )
+                        appUpdateCpt.hostPrimaryPortNo.toInt())
                 }
                 else -> {
                     if (txnCpt != null) {

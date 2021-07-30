@@ -114,7 +114,8 @@ class BrandEMIProductFragment : Fragment() {
             searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
             totalRecord = "0"
             brandEmiSearchedProductDataList.clear()
-            field57RequestData = "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
+            field57RequestData = "${EMIRequestType.BRAND_EMI_Product_WithCategory.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
+            Log.d("57Data:-", field57RequestData.toString())
             fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
         }
         //endregion
@@ -150,10 +151,11 @@ class BrandEMIProductFragment : Fragment() {
                     (brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
                         .div(100).toString()
                 )
-                brandEMIDataModal?.productMaxAmount=(
-                    (brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
-                        .div(100).toString()
-                )
+                brandEMIDataModal?.productMaxAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
+                        .div(100).toString())
+                if(!brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName.isNullOrEmpty()) {
+                    brandEMIDataModal?.categoryName = (brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName)
+                }
             }
             //endregion
                 (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
@@ -219,12 +221,9 @@ class BrandEMIProductFragment : Fragment() {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     //Processing BrandEMIMasterSubCategoryData:-
                                     if (isSearchedDataCall) {
-                                        stubbingBrandEMISearchedProductDataToList(brandEMIProductData, hostMsg)
+                                        stubbingBrandEMISearchedProductDataToList(brandEMIProductData, hostMsg,isSearchedDataCall)
                                     } else {
-                                        stubbingBrandEMIProductDataToList(
-                                            brandEMIProductData,
-                                            hostMsg
-                                        )
+                                        stubbingBrandEMIProductDataToList(brandEMIProductData, hostMsg)
                                     }
                                 }
                             }
@@ -285,8 +284,7 @@ class BrandEMIProductFragment : Fragment() {
                 if (dataList.isNotEmpty()) {
                     moreDataFlag = dataList[0]
                     perPageRecord = dataList[1]
-                    totalRecord =
-                        (totalRecord?.toInt()?.plus(perPageRecord?.toInt() ?: 0)).toString()
+                    totalRecord = (totalRecord?.toInt()?.plus(perPageRecord?.toInt() ?: 0)).toString()
                     //Store DataList in Temporary List and remove first 2 index values to get sublist from 2nd index till dataList size
                     // and iterate further on record data only:-
                     var tempDataList = mutableListOf<String>()
@@ -305,8 +303,7 @@ class BrandEMIProductFragment : Fragment() {
                                     splitData[4], splitData[5],
                                     splitData[6], splitData[7],
                                     splitData[8], splitData[9],
-                                    splitData[10]
-                                )
+                                    splitData[10],"")
                             )
                         }
                     }
@@ -336,10 +333,7 @@ class BrandEMIProductFragment : Fragment() {
     //endregion
 
     //region=================================Stubbing BrandEMI Searched Product Data and Display in List:-
-    private fun stubbingBrandEMISearchedProductDataToList(
-        brandEMIProductData: String,
-        hostMsg: String
-    ) {
+    private fun stubbingBrandEMISearchedProductDataToList(brandEMIProductData: String, hostMsg: String, isSearchedDataCall: Boolean) {
         GlobalScope.launch(Dispatchers.Main) {
             if (!TextUtils.isEmpty(brandEMIProductData)) {
                 val dataList = parseDataListWithSplitter("|", brandEMIProductData)
@@ -366,7 +360,7 @@ class BrandEMIProductFragment : Fragment() {
                                     splitData[4], splitData[5],
                                     splitData[6], splitData[7],
                                     splitData[8], splitData[9],
-                                    splitData[10]
+                                    splitData[10],splitData[11]
                                 )
                             )
                         }
@@ -382,8 +376,7 @@ class BrandEMIProductFragment : Fragment() {
 
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
-                        field57RequestData =
-                            "${EMIRequestType.BRAND_EMI_Product.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
+                        field57RequestData = "${EMIRequestType.BRAND_EMI_Product_WithCategory.requestType}^$totalRecord^${brandEMIDataModal?.brandID}^^$searchedProductName"
                         fetchBrandEMIProductDataFromHost(isSearchedDataCall = true)
                         Log.d("SearchedFullDataList:- ", brandEmiSearchedProductDataList.toString())
                     } else {
@@ -514,5 +507,6 @@ data class BrandEMIProductDataModal(
     var inputDataType: String,
     var minLength: String,
     var maxLength: String,
+    var productCategoryName: String,
 ) : Parcelable
 //endregion

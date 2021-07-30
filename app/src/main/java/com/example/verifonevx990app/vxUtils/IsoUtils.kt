@@ -123,7 +123,7 @@ enum class Mti(val mti: String) {
     PRE_AUTH_MTI("0100"),
     PRE_AUTH_COMPLETE_MTI("0220"),  //also used in tipsale
     SETTLEMENT_MTI("0500"),
-    DEFAULT_MTI("0200"),
+    DEFAULT_MTI("0200"),  //0200
     REVERSAL("0400"),
     APP_UPDATE_MTI("0800"),
     CROSS_SELL_MTI("0800"),

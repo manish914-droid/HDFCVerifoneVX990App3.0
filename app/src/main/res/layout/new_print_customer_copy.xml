@@ -18,6 +18,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
+
+
         <LinearLayout
             android:id="@+id/linearLayout2"
             android:layout_width="match_parent"
@@ -33,10 +35,10 @@
                 android:id="@+id/dialog_msg"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-          android:gravity="center"
+                android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_marginTop="26dp"
-               android:padding="@dimen/pad_8"
+                android:padding="@dimen/pad_8"
                 android:textColor="@color/themeBackground"
                 android:textSize="@dimen/text_size_regular" />
 

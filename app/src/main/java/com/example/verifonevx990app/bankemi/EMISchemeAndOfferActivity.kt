@@ -265,21 +265,20 @@ internal class EMISchemeAndOfferAdapter(private val transactionType: Int,private
 
 
             if(transactionType != TransactionType.TEST_EMI.type) {
-                holder.binding.interestRateLL.visibility = View.GONE
+
                 holder.binding.toatalemipayLL.visibility = View.VISIBLE
-
                 holder.binding.tvTotalInterestPay.text = "\u20B9 " +  "%.2f".format((((modelData.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
-
                 holder.binding.tvTotalEmiPay.text = "\u20B9 " + "%.2f".format((((modelData.totalEmiPay).toDouble()).div(100)).toString().toDouble())
                 val roi=  "%.2f".format((((modelData.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
                 holder.binding.tvRoi.text = "$roi %"
 
             }
             else {
-                holder.binding.interestRateLL.visibility = View.VISIBLE
                 holder.binding.toatalemipayLL.visibility = View.GONE
                 holder.binding.tvInterestRate.text =  ""+divideAmountBy100(modelData.tenureInterestRate.toInt()).toString() +" %"
                 holder.binding.tvTotalInterestPay.text = "\u20B9 " + "%.2f".format((((modelData.totalInterestPay).toDouble()).div(100)).toString().toDouble())
+                val roi=  "%.2f".format((((modelData.tenureInterestRate).toDouble()).div(100)).toString().toDouble())
+                holder.binding.tvRoi.text = "$roi %"
 
             }
         }

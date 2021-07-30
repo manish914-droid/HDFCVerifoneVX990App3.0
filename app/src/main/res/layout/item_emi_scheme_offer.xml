@@ -202,6 +202,7 @@
 
         <LinearLayout
             android:id="@+id/interestRateLL"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/pad_4"
@@ -252,6 +253,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/rateofInterestLL"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/pad_4"
