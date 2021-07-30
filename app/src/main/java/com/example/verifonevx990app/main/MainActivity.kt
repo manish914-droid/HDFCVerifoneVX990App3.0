@@ -57,6 +57,9 @@ import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.voidofflinesale.VoidOfflineSale
 import com.example.verifonevx990app.voidrefund.VoidOfRefund
 import com.example.verifonevx990app.vxUtils.*
+import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getChargerStatus
+import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getOtherInfo
+import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getbatteryinfo
 
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.saveBatchInPreference
@@ -72,6 +75,8 @@ import java.util.*
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
     private var isToExit = false
+    private var battery:String?=null
+    private var batteryINper:Int?=null
     private val initFragment by lazy { InitFragment() }
     private val dashBoardFragment by lazy { DashboardFragment() }
     var appBarLayout: AppBarLayout? = null
@@ -695,7 +700,15 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         data: Any,
         extraPair: Triple<String, String, Boolean>?, brandEMIDataModal: BrandEMIDataModal?
     ) {
+        try {
+
+            battery= getbatteryinfo()
+            batteryINper= battery?.toDouble()?.toInt()
+        } catch (nfe: NumberFormatException) {
+            // not a valid int
+        }
         when (action) {
+
             UiAction.INIT_WITH_KEY_EXCHANGE -> {
                 if (checkInternetConnection()) {
                     val tid = data as String
@@ -709,23 +722,38 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             UiAction.START_SALE -> {
-                if (checkInternetConnection()) {
-                    //  val amt = data as String
-                    val amt = (data as Pair<*, *>).first.toString()
-                    val saleWithTipAmt = data.second.toString()
-                    startActivityForResult(Intent(this, VFTransactionActivity::class.java).apply {
-                        val formattedTransAmount = "%.2f".format(amt.toDouble())
-                        putExtra("amt", formattedTransAmount)
-                        putExtra("type", TransactionType.SALE.type)
-                        putExtra("proc_code", ProcessingCode.SALE.code)
-                        putExtra("mobileNumber", extraPair?.first)
-                        putExtra("billNumber", extraPair?.second)
-                        putExtra("saleWithTipAmt", saleWithTipAmt)
-                        putExtra("uiAction", action)
-                    }, EIntentRequest.TRANSACTION.code)
-                } else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                when{
+                    ((batteryINper!! > 10 )) || ( (batteryINper!! <10)||getChargerStatus(this)) ->{
+                        if (checkInternetConnection()) {
+                            //  val amt = data as String
+                            val amt = (data as Pair<*, *>).first.toString()
+                            val saleWithTipAmt = data.second.toString()
+                            startActivityForResult(
+                                Intent(
+                                    this,
+                                    VFTransactionActivity::class.java
+                                ).apply {
+                                    val formattedTransAmount = "%.2f".format(amt.toDouble())
+                                    putExtra("amt", formattedTransAmount)
+                                    putExtra("type", TransactionType.SALE.type)
+                                    putExtra("proc_code", ProcessingCode.SALE.code)
+                                    putExtra("mobileNumber", extraPair?.first)
+                                    putExtra("billNumber", extraPair?.second)
+                                    putExtra("saleWithTipAmt", saleWithTipAmt)
+                                    putExtra("uiAction", action)
+                                }, EIntentRequest.TRANSACTION.code
+                            )
+                        } else {
+                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                        }
+                    }
+                    else -> {
+                        VFService.showToast(getString(R.string.please_connect_the_charger))
+                    }
+
                 }
+
+
             }
 
             UiAction.BANK_EMI, UiAction.TEST_EMI -> {
@@ -737,36 +765,44 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                 }
                 val data = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
                 if (data?.isEmpty() == true) {
-                    if (checkInternetConnection()) {
-                        Log.d("Bank EMI Clicked:- ", "Clicked")
-                        startActivityForResult(
-                            Intent(
-                                this@MainActivity,
-                                VFTransactionActivity::class.java
-                            ).apply {
-                                putExtra("amt", amt)
-                                putExtra(
-                                    "type", transType
-                                ) //EMI //UiAction.BANK_EMI
-                                if(action==UiAction.TEST_EMI){
-                                    putExtra("type", TransactionType.TEST_EMI.type)
+                    when{
+                        ((batteryINper!! > 10 )) || ( (batteryINper!! <10)||getChargerStatus(this)) -> {
+                            if (checkInternetConnection()) {
+                                Log.d("Bank EMI Clicked:- ", "Clicked")
+                                startActivityForResult(
+                                    Intent(
+                                        this@MainActivity,
+                                        VFTransactionActivity::class.java
+                                    ).apply {
+                                        putExtra("amt", amt)
+                                        putExtra(
+                                            "type", transType
+                                        ) //EMI //UiAction.BANK_EMI
+                                        if (action == UiAction.TEST_EMI) {
+                                            putExtra("type", TransactionType.TEST_EMI.type)
 
-                                }else{
-                                    putExtra("type", TransactionType.EMI_SALE.type)
-                                }
-                                putExtra("uiAction", action)
+                                        } else {
+                                            putExtra("type", TransactionType.EMI_SALE.type)
+                                        }
+                                        putExtra("uiAction", action)
 
-                                putExtra("proc_code", ProcessingCode.SALE.code)
-                                putExtra("mobileNumber", extraPair?.first)
-                                putExtra("billNumber", extraPair?.second)
-                                putExtra("TestEmiOption", testEmiOpetionType)
+                                        putExtra("proc_code", ProcessingCode.SALE.code)
+                                        putExtra("mobileNumber", extraPair?.first)
+                                        putExtra("billNumber", extraPair?.second)
+                                        putExtra("TestEmiOption", testEmiOpetionType)
 
-                            }, EIntentRequest.TRANSACTION.code
-                        )
+                                    }, EIntentRequest.TRANSACTION.code
+                                )
+                            } else {
+                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                            }
+                        }
+                        else -> {
+                            VFService.showToast(getString(R.string.please_connect_the_charger))
+                        }
+                        }
+
                     } else {
-                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                    }
-                } else {
                     startActivityForResult(
                         Intent(this, VFTransactionActivity::class.java).apply {
                             putExtra("amt", amt)
@@ -788,22 +824,29 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             UiAction.BRAND_EMI -> {
-                if (checkInternetConnection()) {
-                    val amt = (data as Pair<*, *>).first.toString()
-                    startActivityForResult(
-                        Intent(this, VFTransactionActivity::class.java).apply {
-                            putExtra("amt", amt)
-                            putExtra("type", TransactionType.BRAND_EMI.type)
-                            putExtra("proc_code", ProcessingCode.SALE.code)
-                            putExtra("mobileNumber", extraPair?.first)
-                            putExtra("billNumber", extraPair?.second)
-                            putExtra("uiAction", action)
-                            putExtra("brandEMIData", brandEMIDataModal)
-                        }, EIntentRequest.TRANSACTION.code
-                    )
-                } else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
+                when{
+                    ((batteryINper!! > 10 )) || ( (batteryINper!! <10)||getChargerStatus(this)) -> {
+                        if (checkInternetConnection()) {
+                            val amt = (data as Pair<*, *>).first.toString()
+                            startActivityForResult(
+                                Intent(this, VFTransactionActivity::class.java).apply {
+                                    putExtra("amt", amt)
+                                    putExtra("type", TransactionType.BRAND_EMI.type)
+                                    putExtra("proc_code", ProcessingCode.SALE.code)
+                                    putExtra("mobileNumber", extraPair?.first)
+                                    putExtra("billNumber", extraPair?.second)
+                                    putExtra("uiAction", action)
+                                    putExtra("brandEMIData", brandEMIDataModal)
+                                }, EIntentRequest.TRANSACTION.code
+                            )
+                        } else {
+                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                        }
+                    }
+                    else -> {
+                        VFService.showToast(getString(R.string.please_connect_the_charger))
+                    }
+            }
             }
 
             UiAction.CASH_AT_POS -> {

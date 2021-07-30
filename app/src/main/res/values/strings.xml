@@ -260,6 +260,7 @@
     <string name="data_sync">Data Sync</string>
     <string name="reversal_found_please_clear_or_settle_first_before_init">Reversal is found  , Please clear or settle it first before init</string>
     <string name="no_internet_available_please_check_your_internet">No Internet Available , Please check your Internet and try again</string>
+    <string name="please_connect_the_charger">Please connect the charger</string>
     <string name="please_clear_fbatch_before_init">Please clear FBatch before init</string>
     <string name="enter_terminal_id_must_be_valid_8digit">Entered Terminal ID must be a valid 8 digit length</string>
     <string name="void_of_offline_sale_done_successfully">Void of Offline done successfully</string>

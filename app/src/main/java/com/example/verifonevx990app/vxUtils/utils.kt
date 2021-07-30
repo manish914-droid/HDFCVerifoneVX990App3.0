@@ -5,6 +5,7 @@ import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.IntentFilter
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.graphics.BitmapFactory
@@ -723,6 +724,44 @@ object ConnectionTimeStamps {
             "~${VerifoneApp.networkStrength}~${VerifoneApp.batteryStrength}~${VerifoneApp.imeiNo}~${VerifoneApp.simNo}~${VerifoneApp.operatorName}"
         }
     }
+
+    //region == this fun for getting battry
+    fun getbatteryinfo(): String? {
+    //return VFService.vfDeviceService?.deviceInfo?.batteryLevel
+        return "10"
+    }
+    //endrgion
+
+
+    //region  ==== this fun is return charger is connected or not
+    fun getChargerStatus(context: Context):Boolean{
+        val batteryStatus: Intent? =
+            IntentFilter(Intent.ACTION_BATTERY_CHANGED).let { ifilter ->
+                context.registerReceiver(null, ifilter)
+            }
+        val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
+        var isCharging: Boolean = status == BatteryManager.BATTERY_STATUS_CHARGING
+                || status == BatteryManager.BATTERY_STATUS_FULL
+        val chargePlug: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
+        val usbCharge: Boolean = chargePlug == BatteryManager.BATTERY_PLUGGED_USB
+        val acCharge: Boolean = chargePlug == BatteryManager.BATTERY_PLUGGED_AC
+        when {
+            usbCharge -> {
+
+                isCharging=true
+            }
+            acCharge -> {
+                isCharging=true
+            }
+
+            else -> {
+                isCharging=false
+            }
+        }
+        return isCharging
+    }
+
+    //endregion
 
 }
 
