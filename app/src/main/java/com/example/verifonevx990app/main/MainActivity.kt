@@ -972,8 +972,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         isDashboardOpen = false
         try {
             //getting battery per here
-            battery= getbatteryinfo()
-            batteryINper= battery?.toDouble()?.toInt() ?: 0
+            battery= getbatteryinfo(this)
+            batteryINper= battery?.toDouble()?.toInt()?: 0
         } catch (nfe: NumberFormatException) {
             // not a valid int
         }

@@ -4321,6 +4321,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
     var imeiNumber: String = ""
     var serialNumber: String = ""
     var emiType: String = ""
+    var producatDesc: String = ""
 
 
     private constructor(parcel: Parcel) : this() {
@@ -4339,6 +4340,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         imeiNumber = parcel.readString().toString()
         serialNumber = parcel.readString().toString()
         emiType = parcel.readString().toString()
+        producatDesc = parcel.readString().toString()
     }
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
@@ -4357,6 +4359,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
         p0?.writeString(imeiNumber)
         p0?.writeString(serialNumber)
         p0?.writeString(emiType)
+        p0?.writeString(producatDesc)
     }
 
     override fun describeContents(): Int {

@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.DatePickerDialog
 import android.app.Dialog
 import android.content.Context
+import android.content.Context.BATTERY_SERVICE
 import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.ColorStateList
@@ -725,16 +726,25 @@ object ConnectionTimeStamps {
         }
     }
 
-    //region == this fun for getting battry
-    fun getbatteryinfo(): String? {
+    //region == this fun for getting battry from vfService
+    fun getbatteryinfo(context: Context): String? {
         return try {
             VFService.vfDeviceService?.deviceInfo?.batteryLevel
         } catch (e: Exception) {
-            null
+            getbatteryinfoAndroid(context)
         }
     }
-    //endrgion
+    //endregion
 
+    //region === this is for getting battery from android
+    fun getbatteryinfoAndroid (context: Context):String{
+        // Call battery manager service
+        val bm = context.getSystemService(BATTERY_SERVICE) as BatteryManager
+        // Get the battery percentage and store it in a INT variable
+        val batLevel:Int = bm.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY)
+        return batLevel.toString()
+    }
+    //endregion
 
     //region  ==== this fun is return charger is connected or not
     fun getChargerStatus(context: Context):Boolean{

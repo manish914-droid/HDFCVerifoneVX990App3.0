@@ -149,6 +149,7 @@ class BrandEMIProductFragment : Fragment() {
                 brandEMIDataModal?.inputDataType=(brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
                 brandEMIDataModal?.minLength=(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
                 brandEMIDataModal?.maxLength=(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
+                brandEMIDataModal?.producatDesc=(brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc)
                 brandEMIDataModal?.productMinAmount=(
                     (brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
                         .div(100).toString()
@@ -305,7 +306,7 @@ class BrandEMIProductFragment : Fragment() {
                                     splitData[4], splitData[5],
                                     splitData[6], splitData[7],
                                     splitData[8], splitData[9],
-                                    splitData[10],"")
+                                    splitData[10],"","subCat")
                             )
                         }
                     }
@@ -362,7 +363,8 @@ class BrandEMIProductFragment : Fragment() {
                                     splitData[4], splitData[5],
                                     splitData[6], splitData[7],
                                     splitData[8], splitData[9],
-                                    splitData[10],splitData[11]
+                                    splitData[10],splitData[11],
+                                    "search"
                                 )
                             )
                         }
@@ -510,6 +512,7 @@ data class BrandEMIProductDataModal(
     var minLength: String,
     var maxLength: String,
     var productCategoryName: String,
+    var producatDesc:String,
 ) : Parcelable
 //endregion
 //Initially on searching of product we were not showing the products category with requestType 3.But now with request type 11,product category name is coming

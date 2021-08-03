@@ -1208,6 +1208,7 @@ fun saveBrandEMIDataToDB(
     modal.inputDataType = brandEMIDataModal?.inputDataType ?: ""
     modal.imeiNumber = brandEMIDataModal?.imeiORserailNum ?: ""
     modal.serialNumber = brandEMIDataModal?.imeiORserailNum ?: ""
+    modal.producatDesc= brandEMIDataModal?.producatDesc?: ""
   //  modal.emiType = transactionType.title
 modal.hostInvoice=hostInvoice
     runBlocking(Dispatchers.IO) { BrandEMIDataTable.saveBrandEMIDataTable(modal) }

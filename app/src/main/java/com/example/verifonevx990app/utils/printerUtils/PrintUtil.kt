@@ -3973,6 +3973,15 @@ setLogoAndHeader(null)
                         brandEmiData.productName,
                         ":"
                     )
+                    if(brandEmiData.producatDesc == "subCat"){
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "Prod desc",
+                            brandEmiData.childSubCategoryName,
+                            ":"
+                        )
+                    }
+
                     if (!TextUtils.isEmpty(brandEmiData.imeiNumber)) {
                         alignLeftRightText(
                             textInLineFormatBundle,
@@ -4117,7 +4126,7 @@ setLogoAndHeader(null)
             )
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-          //  printer?.addText(textFormatBundle, "---------X-----------X----------")
+           printer?.addText(textFormatBundle, "---------X-----------X----------")
 
 
 
