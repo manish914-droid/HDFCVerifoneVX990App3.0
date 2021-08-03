@@ -727,7 +727,11 @@ object ConnectionTimeStamps {
 
     //region == this fun for getting battry
     fun getbatteryinfo(): String? {
-   return VFService.vfDeviceService?.deviceInfo?.batteryLevel
+        return try {
+            VFService.vfDeviceService?.deviceInfo?.batteryLevel
+        } catch (e: Exception) {
+            null
+        }
     }
     //endrgion
 

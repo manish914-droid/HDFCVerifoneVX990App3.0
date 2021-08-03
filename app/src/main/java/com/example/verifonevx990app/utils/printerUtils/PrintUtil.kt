@@ -2083,6 +2083,9 @@ setLogoAndHeader(null)
                 for (it in batch) {  // Do not count preauth transaction
 // || it.transactionType == TransactionType.VOID_PREAUTH.type
                     if (it.transactionType == TransactionType.PRE_AUTH.type) continue
+                    if(it.transactionType==TransactionType.EMI_SALE.type || it.transactionType==TransactionType.BRAND_EMI.type || it.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                        it.transactionType= TransactionType.EMI_SALE.type
+                    }
 
                     val transAmt = try {
                         it.transactionalAmmount.toLong()

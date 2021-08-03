@@ -76,7 +76,7 @@ import java.util.*
 class MainActivity : BaseActivity(), IFragmentRequest {
     private var isToExit = false
     private var battery:String?=null
-    private var batteryINper:Int?=null
+    private var batteryINper:Int=0
     private val initFragment by lazy { InitFragment() }
     private val dashBoardFragment by lazy { DashboardFragment() }
     var appBarLayout: AppBarLayout? = null
@@ -973,429 +973,427 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         try {
             //getting battery per here
             battery= getbatteryinfo()
-            batteryINper= battery?.toDouble()?.toInt()
+            batteryINper= battery?.toDouble()?.toInt() ?: 0
         } catch (nfe: NumberFormatException) {
             // not a valid int
         }
-
+         
         when {
             //this case for checking condition of batery is above 10 and if below then charger is connected or not
-            ((batteryINper!! > 10)) || ((batteryINper!! < 10) || getChargerStatus(this)) -> {
-                when (action) {
+                 ((batteryINper > 10)) || ((batteryINper < 10) || getChargerStatus(this) || (batteryINper == 0) ) -> when (action) {
 
-                    EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
-                        if (checkInternetConnection()) {
-                            inflateInputFragment(
-                                NewInputAmountFragment(),
-                                SubHeaderTitle.SALE_SUBHEADER_VALUE.title,
-                                action
-                            )
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-
-
-                    }
-
-                    EDashboardItem.VOID_SALE -> {
-                        if (checkInternetConnection()) {
-                            val bundle = Bundle()
-                            bundle.putSerializable("type", action)
-                            checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)
-
-                            if (checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)) {
-                                verifyAdminPasswordFromHDFCTPT(this) {
-                                    if (it) {
-                                        transactFragment(VoidTransactionFragment().apply {
-                                            arguments = Bundle().apply {
-                                                putSerializable("type", action)
-                                                putString(
-                                                    INPUT_SUB_HEADING,
-                                                    SubHeaderTitle.VOID_SUBHEADER_VALUE.title
-                                                )
-                                            }
-                                        })
-                                    }
-                                }
-                            } else {
-                                transactFragment(VoidTransactionFragment().apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.VOID_SUBHEADER_VALUE.title
-                                        )
-                                    }
-                                })
-                            }
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
-
-                    EDashboardItem.REFUND -> {
-                        if (checkInternetConnection()) {
-                            verifyAdminPasswordDialog(this) {
-                                if (it) {
-                                    transactFragment(NewInputAmountFragment().apply {
-                                        arguments = Bundle().apply {
-                                            putSerializable("type", action)
-                                            putString(
-                                                INPUT_SUB_HEADING,
-                                                SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
-                                            )
-                                        }
-                                    })
-                                }
-                            }
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
+                     EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
+                         if (checkInternetConnection()) {
+                             inflateInputFragment(
+                                 NewInputAmountFragment(),
+                                 SubHeaderTitle.SALE_SUBHEADER_VALUE.title,
+                                 action
+                             )
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
 
 
-                    }
+                     }
 
-                    EDashboardItem.PREAUTH_COMPLETE -> {
-                        if (checkInternetConnection()) {
-                            transactFragment(PreAuthCompleteInputDetailFragment()
-                                .apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.PRE_AUTH_COMPLETE.title
-                                        )
-                                    }
-                                })
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
+                     EDashboardItem.VOID_SALE -> {
+                         if (checkInternetConnection()) {
+                             val bundle = Bundle()
+                             bundle.putSerializable("type", action)
+                             checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)
 
-                    EDashboardItem.VOID_PREAUTH -> {
-                        if (checkInternetConnection()) {
-                            transactFragment(
-                                VoidPreAuthFragment()
-                                    .apply {
-                                        arguments = Bundle().apply {
-                                            putSerializable("type", TransactionType.VOID_PREAUTH)
-                                            putString(
-                                                INPUT_SUB_HEADING,
-                                                SubHeaderTitle.VOID_PRE_AUTH.title
-                                            )
-                                        }
-                                    })
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
+                             if (checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)) {
+                                 verifyAdminPasswordFromHDFCTPT(this) {
+                                     if (it) {
+                                         transactFragment(VoidTransactionFragment().apply {
+                                             arguments = Bundle().apply {
+                                                 putSerializable("type", action)
+                                                 putString(
+                                                     INPUT_SUB_HEADING,
+                                                     SubHeaderTitle.VOID_SUBHEADER_VALUE.title
+                                                 )
+                                             }
+                                         })
+                                     }
+                                 }
+                             } else {
+                                 transactFragment(VoidTransactionFragment().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.VOID_SUBHEADER_VALUE.title
+                                         )
+                                     }
+                                 })
+                             }
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
 
-                    }
-
-                    EDashboardItem.PENDING_PREAUTH -> {
-                        if (checkInternetConnection()) {
-                            PendingPreauth(this).confirmationAlert(
-                                getString(R.string.confirmation),
-                                getString(R.string.pending_preauth_alert_msg)
-                            )
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
-
-                    EDashboardItem.PRE_AUTH_CATAGORY -> {
-                        if (!action.childList.isNullOrEmpty()) {
-                            // dashBoardCatagoryDialog(action.childList!!)
-                            if (checkInternetConnection()) {
-                                (transactFragment(PreAuthFragment()
-                                    .apply {
-                                        arguments = Bundle().apply {
-                                            putSerializable(
-                                                "preAuthOptionList",
-                                                (action.childList) as ArrayList
-                                            )
-                                        }
-                                    }))
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
-                        } else {
-                            showToast("PreAuth Not Found")
-                            return
-                        }
+                     EDashboardItem.REFUND -> {
+                         if (checkInternetConnection()) {
+                             verifyAdminPasswordDialog(this) {
+                                 if (it) {
+                                     transactFragment(NewInputAmountFragment().apply {
+                                         arguments = Bundle().apply {
+                                             putSerializable("type", action)
+                                             putString(
+                                                 INPUT_SUB_HEADING,
+                                                 SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
+                                             )
+                                         }
+                                     })
+                                 }
+                             }
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
 
 
-                    }
+                     }
 
-                    EDashboardItem.SALE_TIP -> {
-                        if (checkInternetConnection()) {
-                            (transactFragment(TipAdjustFragment()
-                                .apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", TransactionType.TIP_SALE)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.TIP_SALE.title
-                                        )
-                                        putSerializable("action", action)
-                                    }
-                                }))
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
+                     EDashboardItem.PREAUTH_COMPLETE -> {
+                         if (checkInternetConnection()) {
+                             transactFragment(PreAuthCompleteInputDetailFragment()
+                                 .apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.PRE_AUTH_COMPLETE.title
+                                         )
+                                     }
+                                 })
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
 
-                    EDashboardItem.CROSS_SELL -> {
-                        if (checkInternetConnection()) {
-                            val tpt = TerminalParameterTable.selectFromSchemeTable()
-                            if (tpt != null) {
-                                // tpt.reservedValues = "00000000000001111000"
-                                transactFragment(HDFCCrossSellFragment().apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                        putString(RESERVED_VALUE, tpt.reservedValues)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.CROSS_SELL_SUBHEADER_VALUE.title
-                                        )
-                                    }
-                                })
-                            } else
-                                VFService.showToast(getString(R.string.something_went_wrong))
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
+                     EDashboardItem.VOID_PREAUTH -> {
+                         if (checkInternetConnection()) {
+                             transactFragment(
+                                 VoidPreAuthFragment()
+                                     .apply {
+                                         arguments = Bundle().apply {
+                                             putSerializable("type", TransactionType.VOID_PREAUTH)
+                                             putString(
+                                                 INPUT_SUB_HEADING,
+                                                 SubHeaderTitle.VOID_PRE_AUTH.title
+                                             )
+                                         }
+                                     })
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
 
-                    EDashboardItem.EMI_ENQUIRY -> {
-                        if (checkInternetConnection()) {
-                            transactFragment(EMICatalogue().apply {
-                                arguments = Bundle().apply {
-                                    putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                    putString(INPUT_SUB_HEADING, "")
-                                }
-                            })
+                     }
 
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
+                     EDashboardItem.PENDING_PREAUTH -> {
+                         if (checkInternetConnection()) {
+                             PendingPreauth(this).confirmationAlert(
+                                 getString(R.string.confirmation),
+                                 getString(R.string.pending_preauth_alert_msg)
+                             )
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
 
-                    EDashboardItem.BRAND_EMI -> {
-                        if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                        ) {
-                            if (checkInternetConnection()) {
-                                transactFragment(BrandEMIMasterCategoryFragment().apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.Brand_EMI_Master_Category.title
-                                        )
-                                    }
-                                })
+                     EDashboardItem.PRE_AUTH_CATAGORY -> {
+                         if (!action.childList.isNullOrEmpty()) {
+                             // dashBoardCatagoryDialog(action.childList!!)
+                             if (checkInternetConnection()) {
+                                 (transactFragment(PreAuthFragment()
+                                     .apply {
+                                         arguments = Bundle().apply {
+                                             putSerializable(
+                                                 "preAuthOptionList",
+                                                 (action.childList) as ArrayList
+                                             )
+                                         }
+                                     }))
+                             } else {
+                                 VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                             }
+                         } else {
+                             showToast("PreAuth Not Found")
+                             return
+                         }
 
-                                /* transactFragment(EMICatalogue().apply {
+
+                     }
+
+                     EDashboardItem.SALE_TIP -> {
+                         if (checkInternetConnection()) {
+                             (transactFragment(TipAdjustFragment()
+                                 .apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", TransactionType.TIP_SALE)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.TIP_SALE.title
+                                         )
+                                         putSerializable("action", action)
+                                     }
+                                 }))
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
+
+                     EDashboardItem.CROSS_SELL -> {
+                         if (checkInternetConnection()) {
+                             val tpt = TerminalParameterTable.selectFromSchemeTable()
+                             if (tpt != null) {
+                                 // tpt.reservedValues = "00000000000001111000"
+                                 transactFragment(HDFCCrossSellFragment().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                         putString(RESERVED_VALUE, tpt.reservedValues)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.CROSS_SELL_SUBHEADER_VALUE.title
+                                         )
+                                     }
+                                 })
+                             } else
+                                 VFService.showToast(getString(R.string.something_went_wrong))
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
+
+                     EDashboardItem.EMI_ENQUIRY -> {
+                         if (checkInternetConnection()) {
+                             transactFragment(EMICatalogue().apply {
+                                 arguments = Bundle().apply {
+                                     putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                     putString(INPUT_SUB_HEADING, "")
+                                 }
+                             })
+
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
+
+                     EDashboardItem.BRAND_EMI -> {
+                         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                         ) {
+                             if (checkInternetConnection()) {
+                                 transactFragment(BrandEMIMasterCategoryFragment().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.Brand_EMI_Master_Category.title
+                                         )
+                                     }
+                                 })
+
+                                 /* transactFragment(EMICatalogue().apply {
+                              arguments = Bundle().apply {
+                                  putSerializable("type", EDashboardItem.EMI_CATALOGUE)
+                                  putString(INPUT_SUB_HEADING, "")
+                              }
+                          })*/
+
+                             } else {
+                                 VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                             }
+                         } else {
+                             checkAndPerformOperation()
+                         }
+                     }
+
+                     EDashboardItem.VOID_REFUND -> {
+                         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                         ) {
+                             if (checkInternetConnection()) {
+                                 /*transactFragment(EMICatalogue().apply {
                              arguments = Bundle().apply {
                                  putSerializable("type", EDashboardItem.EMI_CATALOGUE)
                                  putString(INPUT_SUB_HEADING, "")
                              }
                          })*/
 
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
-                        } else {
-                            checkAndPerformOperation()
-                        }
-                    }
+                             } else {
+                                 VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                             }
+                         } else {
+                             checkAndPerformOperation()
+                         }
+                     }
 
-                    EDashboardItem.VOID_REFUND -> {
-                        if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                        ) {
-                            if (checkInternetConnection()) {
-                                /*transactFragment(EMICatalogue().apply {
-                            arguments = Bundle().apply {
-                                putSerializable("type", EDashboardItem.EMI_CATALOGUE)
-                                putString(INPUT_SUB_HEADING, "")
-                            }
-                        })*/
+                     EDashboardItem.BONUS_PROMO -> {
+                         if (checkInternetConnection()) {
+                             val tpt = TerminalParameterTable.selectFromSchemeTable()
+                             if (tpt != null) {
+                                 GlobalScope.launch(Dispatchers.IO) {
+                                     Log.e(
+                                         "PROMO",
+                                         "PRMO VERSION --->  ${tpt.promoVersionNo} , PRMO AVAILABLE --->  ${tpt.isPromoAvailable} ,PRMO AVAILABLE SALE --->  ${tpt.isPromoAvailableOnPayment} "
+                                     )
 
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
-                        } else {
-                            checkAndPerformOperation()
-                        }
-                    }
+                                     transactFragment(PromoFragment())
+                                 }
 
-                    EDashboardItem.BONUS_PROMO -> {
-                        if (checkInternetConnection()) {
-                            val tpt = TerminalParameterTable.selectFromSchemeTable()
-                            if (tpt != null) {
-                                GlobalScope.launch(Dispatchers.IO) {
-                                    Log.e(
-                                        "PROMO",
-                                        "PRMO VERSION --->  ${tpt.promoVersionNo} , PRMO AVAILABLE --->  ${tpt.isPromoAvailable} ,PRMO AVAILABLE SALE --->  ${tpt.isPromoAvailableOnPayment} "
-                                    )
+                             } else
+                                 VFService.showToast(getString(R.string.something_went_wrong))
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                     }
 
-                                    transactFragment(PromoFragment())
-                                }
+                     // EMI by access code
+                     EDashboardItem.EMI_PRO -> {
+                         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                         ) {
+                             val data =
+                                 runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+                             if (data?.isEmpty() == true) {
+                                 if (checkInternetConnection()) {
+                                     showProgress()
+                                     Log.d("Bank EMI Clicked:- ", "Clicked")
+                                     GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
+                                         val issuerTAndCData = issuerTermsAndConditionData.first
+                                         val responseBool = issuerTermsAndConditionData.second
+                                         if (issuerTAndCData.isNotEmpty() && responseBool) {
+                                             //region================Insert IssuerTAndC and Brand TAndC in DB:-
+                                             //Issuer TAndC Inserting:-
+                                             for (i in 0 until issuerTAndCData.size) {
+                                                 val issuerModel = IssuerTAndCTable()
+                                                 if (!TextUtils.isEmpty(issuerTAndCData[i])) {
+                                                     val splitData = parseDataListWithSplitter(
+                                                         SplitterTypes.CARET.splitter,
+                                                         issuerTAndCData[i]
+                                                     )
 
-                            } else
-                                VFService.showToast(getString(R.string.something_went_wrong))
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    }
+                                                     if (splitData.size > 2) {
+                                                         issuerModel.issuerId = splitData[0]
+                                                         issuerModel.headerTAndC = splitData[1]
+                                                         issuerModel.footerTAndC = splitData[2]
+                                                     } else {
+                                                         issuerModel.issuerId = splitData[0]
+                                                         issuerModel.headerTAndC = splitData[1]
+                                                     }
 
-                    // EMI by access code
-                    EDashboardItem.EMI_PRO -> {
-                        if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                        ) {
-                            val data =
-                                runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
-                            if (data?.isEmpty() == true) {
-                                if (checkInternetConnection()) {
-                                    showProgress()
-                                    Log.d("Bank EMI Clicked:- ", "Clicked")
-                                    GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
-                                        val issuerTAndCData = issuerTermsAndConditionData.first
-                                        val responseBool = issuerTermsAndConditionData.second
-                                        if (issuerTAndCData.isNotEmpty() && responseBool) {
-                                            //region================Insert IssuerTAndC and Brand TAndC in DB:-
-                                            //Issuer TAndC Inserting:-
-                                            for (i in 0 until issuerTAndCData.size) {
-                                                val issuerModel = IssuerTAndCTable()
-                                                if (!TextUtils.isEmpty(issuerTAndCData[i])) {
-                                                    val splitData = parseDataListWithSplitter(
-                                                        SplitterTypes.CARET.splitter,
-                                                        issuerTAndCData[i]
-                                                    )
+                                                     runBlocking(Dispatchers.IO) {
+                                                         IssuerTAndCTable.performOperation(
+                                                             issuerModel
+                                                         )
+                                                     }
+                                                 }
+                                             }
+                                             GlobalScope.launch(Dispatchers.Main) { hideProgress() }
+                                             transactFragment(BrandEMIByAccessCodeFragment().apply {
+                                                 arguments = Bundle().apply {
+                                                     putSerializable("type", action)
+                                                     putString(
+                                                         INPUT_SUB_HEADING,
+                                                         SubHeaderTitle.Brand_EMI_BY_ACCESS_CODE.title
+                                                     )
+                                                 }
+                                             })
+                                         } else {
+                                             VFService.showToast(issuerHostResponseCodeAndMsg.second)
+                                         }
+                                     }
+                                 } else {
+                                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                                 }
+                             } else {
+                                 transactFragment(BrandEMIByAccessCodeFragment().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                         putString(
+                                             INPUT_SUB_HEADING,
+                                             SubHeaderTitle.Brand_EMI_BY_ACCESS_CODE.title
+                                         )
+                                     }
+                                 })
+                             }
+                         } else {
+                             checkAndPerformOperation()
+                         }
+                     }
 
-                                                    if (splitData.size > 2) {
-                                                        issuerModel.issuerId = splitData[0]
-                                                        issuerModel.headerTAndC = splitData[1]
-                                                        issuerModel.footerTAndC = splitData[2]
-                                                    } else {
-                                                        issuerModel.issuerId = splitData[0]
-                                                        issuerModel.headerTAndC = splitData[1]
-                                                    }
+                     EDashboardItem.EMI_CATALOGUE -> {
+                         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                         ) {
+                             if (checkInternetConnection()) {
+                                 transactFragment(EMICatalogue().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                     }
+                                 })
+                             } else {
+                                 VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                             }
+                         } else {
+                             checkAndPerformOperation()
+                         }
+                     }
 
-                                                    runBlocking(Dispatchers.IO) {
-                                                        IssuerTAndCTable.performOperation(
-                                                            issuerModel
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                            GlobalScope.launch(Dispatchers.Main) { hideProgress() }
-                                            transactFragment(BrandEMIByAccessCodeFragment().apply {
-                                                arguments = Bundle().apply {
-                                                    putSerializable("type", action)
-                                                    putString(
-                                                        INPUT_SUB_HEADING,
-                                                        SubHeaderTitle.Brand_EMI_BY_ACCESS_CODE.title
-                                                    )
-                                                }
-                                            })
-                                        } else {
-                                            VFService.showToast(issuerHostResponseCodeAndMsg.second)
-                                        }
-                                    }
-                                } else {
-                                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                                }
-                            } else {
-                                transactFragment(BrandEMIByAccessCodeFragment().apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                        putString(
-                                            INPUT_SUB_HEADING,
-                                            SubHeaderTitle.Brand_EMI_BY_ACCESS_CODE.title
-                                        )
-                                    }
-                                })
-                            }
-                        } else {
-                            checkAndPerformOperation()
-                        }
-                    }
+                     EDashboardItem.DIGI_POS -> {
+                         /* if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                      !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                      !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                  ) {*/
+                         if (checkInternetConnection()) {
+                             transactFragment(DigiPosMenuFragment().apply {
+                                 //   DigiPosDataTable.clear()
 
-                    EDashboardItem.EMI_CATALOGUE -> {
-                        if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                            !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                        ) {
-                            if (checkInternetConnection()) {
-                                transactFragment(EMICatalogue().apply {
-                                    arguments = Bundle().apply {
-                                        putSerializable("type", action)
-                                    }
-                                })
-                            } else {
-                                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                            }
-                        } else {
-                            checkAndPerformOperation()
-                        }
-                    }
+                                 val dp = DigiPosDataTable.selectAllDigiPosData()
+                                 val dpObj = Gson().toJson(dp)
+                                 logger("UPDATEDIGI", dpObj, "e")
 
-                    EDashboardItem.DIGI_POS -> {
-                        /* if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                     !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                     !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                 ) {*/
-                        if (checkInternetConnection()) {
-                            transactFragment(DigiPosMenuFragment().apply {
-                                //   DigiPosDataTable.clear()
+                                 arguments = Bundle().apply {
+                                     putSerializable("type", EDashboardItem.DIGI_POS)
+                                     // putString(INPUT_SUB_HEADING, "")
+                                 }
+                             })
 
-                                val dp = DigiPosDataTable.selectAllDigiPosData()
-                                val dpObj = Gson().toJson(dp)
-                                logger("UPDATEDIGI", dpObj, "e")
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
+                         /*} else {
+                     checkAndPerformOperation()
+                 }*/
 
-                                arguments = Bundle().apply {
-                                    putSerializable("type", EDashboardItem.DIGI_POS)
-                                    // putString(INPUT_SUB_HEADING, "")
-                                }
-                            })
+                     }
 
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                        /*} else {
-                    checkAndPerformOperation()
-                }*/
-
-                    }
-
-                    EDashboardItem.BHARAT_QR -> {
-                        if (checkInternetConnection()) {
-                            transactFragment(NewInputAmountFragment().apply {
-                                arguments = Bundle().apply {
-                                    putSerializable("type", action)
-                                    putString(
-                                        INPUT_SUB_HEADING,
-                                        SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
-                                    )
-                                }
-                            })
+                     EDashboardItem.BHARAT_QR -> {
+                         if (checkInternetConnection()) {
+                             transactFragment(NewInputAmountFragment().apply {
+                                 arguments = Bundle().apply {
+                                     putSerializable("type", action)
+                                     putString(
+                                         INPUT_SUB_HEADING,
+                                         SubHeaderTitle.REFUND_SUBHEADER_VALUE.title
+                                     )
+                                 }
+                             })
 
 
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
 
-                    }
+                     }
 
-                    else -> showToast("To be implemented...")
-                }
-            }
+                     else -> showToast("To be implemented...")
+                 }
             else -> {
                 VFService.showToast(getString(R.string.please_connect_the_charger))
             }
