@@ -9,7 +9,7 @@ android {
     compileSdkVersion 30
     signingConfigs {
         release {
-            storeFile file('/home/manishkumar/Documents/app_release_keys/bonus.jks')
+            storeFile file('/home/manishkumar/Documents/app_release_keys/bonushdfc.jks')
             storePassword 'Bonus@123'
             keyAlias 'Android'
             keyPassword "Bonus@123"
@@ -20,7 +20,7 @@ android {
         viewBinding true
     }
 
-    /*buildTypes {
+    buildTypes {
         release {
            debuggable false
            minifyEnabled false
@@ -34,7 +34,7 @@ android {
 
         }
 
-    }*/
+    }
     defaultConfig {
         applicationId "com.example.verifonevx990app"
         minSdkVersion 21
@@ -51,7 +51,14 @@ android {
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
+    android {
+        lintOptions {
+            checkReleaseBuilds false
+            // Or, if you prefer, you can continue to check for errors in release builds,
+            // but continue the build even when errors are found:
+            abortOnError false
+        }
+    }
     buildToolsVersion "29.0.3"
     sourceSets {
         main {

@@ -1425,7 +1425,9 @@ fun transactionType2Name(code: Int): String {
 //Create the bundle with the types of Card Supported by the hardware (Terminal)
 fun getCardOptionBundle(cardProcessedDataModal: CardProcessedDataModal): Bundle {
     val cardOption = Bundle()
-    if(null != cardProcessedDataModal && cardProcessedDataModal.getTransType() != TransactionType.TEST_EMI.type && cardProcessedDataModal.getTransType() != TransactionType.EMI_SALE.type && cardProcessedDataModal.getTransType() != TransactionType.BRAND_EMI.type) {
+    if(null != cardProcessedDataModal && cardProcessedDataModal.getTransType() != TransactionType.TEST_EMI.type && cardProcessedDataModal.getTransType() != TransactionType.EMI_SALE.type
+        && cardProcessedDataModal.getTransType() != TransactionType.BRAND_EMI.type
+        && cardProcessedDataModal.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
         if(EFallbackCode.EMV_fallback.fallBackCode == cardProcessedDataModal.getFallbackType()){
             cardOption.putBoolean(ConstIPBOC.checkCard.cardOption.KEY_MagneticCard_boolean, ConstIPBOC.checkCard.cardOption.VALUE_supported)
         }

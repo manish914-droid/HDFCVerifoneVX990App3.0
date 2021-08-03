@@ -957,8 +957,7 @@ class PrintUtil(context: Context?) {
         }
     }
 
-    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit
-    ) {
+    fun printDetailReportupdate(batch: MutableList<BatchFileDataTable>, context: Context?, printCB: (Boolean) -> Unit) {
         try {
             val pp = printer?.status
             Log.e("Printer Status", pp.toString())
@@ -2085,6 +2084,11 @@ setLogoAndHeader(null)
                 for (it in batch) {  // Do not count preauth transaction
 // || it.transactionType == TransactionType.VOID_PREAUTH.type
                     if (it.transactionType == TransactionType.PRE_AUTH.type) continue
+
+                    if(it.transactionType==TransactionType.EMI_SALE.type || it.transactionType==TransactionType.BRAND_EMI.type || it.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                        it.transactionType= TransactionType.EMI_SALE.type
+                    }
+
                     if(it.transactionType==TransactionType.EMI_SALE.type || it.transactionType==TransactionType.BRAND_EMI.type || it.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
                         it.transactionType= TransactionType.EMI_SALE.type
                     }
@@ -3459,12 +3463,7 @@ setLogoAndHeader(null)
     }
 
     //region=======================Method to Print BankEMI ChargeSlip:-
-    fun printEMISale(
-        printerReceiptData: BatchFileDataTable,
-        copyType: EPrintCopyType,
-        context: Context?,
-        printerCallback: (Boolean, Int) -> Unit
-    ) {
+    fun printEMISale(printerReceiptData: BatchFileDataTable, copyType: EPrintCopyType, context: Context?, printerCallback: (Boolean, Int) -> Unit) {
         var currencySymbol: String? = "Rs"
         var brandEmiData: BrandEMIDataTable? = null
         try {

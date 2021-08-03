@@ -233,8 +233,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         /// for handling any exception like socket time out....
                         ROCProviderV2.incrementFromResponse(
                             ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                            AppPreference.getBankCode()
-                        )
+                            AppPreference.getBankCode())
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             parentFragmentManager.popBackStackImmediate()

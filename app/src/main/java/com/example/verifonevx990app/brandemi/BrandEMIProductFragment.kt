@@ -150,12 +150,8 @@ class BrandEMIProductFragment : Fragment() {
                 brandEMIDataModal?.minLength=(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
                 brandEMIDataModal?.maxLength=(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
                 brandEMIDataModal?.producatDesc=(brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc)
-                brandEMIDataModal?.productMinAmount=(
-                    (brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
-                        .div(100).toString()
-                )
-                brandEMIDataModal?.productMaxAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
-                        .div(100).toString())
+                brandEMIDataModal?.productMinAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble().div(100).toString())
+                brandEMIDataModal?.productMaxAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble().div(100).toString())
                 if(!brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName.isNullOrEmpty()) {
                     brandEMIDataModal?.categoryName = (brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName)
                 }

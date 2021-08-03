@@ -104,8 +104,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
 
                         val responseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
                         val hostMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
-                        val brandEmiAccessCodeData =
-                            responseIsoData.isoMap[57]?.parseRaw2String().toString()
+                        val brandEmiAccessCodeData = responseIsoData.isoMap[57]?.parseRaw2String().toString()
 
                         when (responseCode) {
                             "00" -> {
