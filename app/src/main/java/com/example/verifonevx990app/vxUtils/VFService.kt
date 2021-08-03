@@ -66,19 +66,38 @@ object VFService {
     lateinit var strnum: String
 
 
-    fun getIpPort(isAppUpdate:Boolean=false): InetSocketAddress? {
+    fun getIpPort(isAppUpdate:Boolean=false,isPrimaryIpPort:Int=1): InetSocketAddress? {
         val txnCpt = TerminalCommunicationTable.selectCommTableByRecordType("1")
         val appUpdateCpt=TerminalCommunicationTable.selectCommTableByRecordType("2")
         if(isAppUpdate){
             return when {
                 appUpdateCpt!=null -> {
-                    InetSocketAddress(
-                        InetAddress.getByName(appUpdateCpt.hostPrimaryIp),
-                        appUpdateCpt.hostPrimaryPortNo.toInt())
+                    if(isPrimaryIpPort==1) {
+                        InetSocketAddress(
+                            InetAddress.getByName(appUpdateCpt.hostPrimaryIp),
+                            appUpdateCpt.hostPrimaryPortNo.toInt()
+                        )
+                    }
+                    else{
+                        InetSocketAddress(
+                            InetAddress.getByName(appUpdateCpt.hostSecIp),
+                            appUpdateCpt.hostSecPortNo.toInt()
+                        )
+                    }
                 }
                 else -> {
                     if (txnCpt != null) {
-                        InetSocketAddress(InetAddress.getByName(txnCpt.hostPrimaryIp), txnCpt.hostPrimaryPortNo.toInt())
+                        if(isPrimaryIpPort==1) {
+                            InetSocketAddress(
+                                InetAddress.getByName(txnCpt.hostPrimaryIp),
+                                txnCpt.hostPrimaryPortNo.toInt()
+                            )
+                        }else{
+                            InetSocketAddress(
+                                InetAddress.getByName(txnCpt.hostSecIp),
+                                txnCpt.hostSecPortNo.toInt()
+                            )
+                        }
                     } else {
                         InetSocketAddress(InetAddress.getByName(NEWAMEXHDFC), NEWAMEXHDFCPort)
                     }
@@ -86,7 +105,17 @@ object VFService {
             }
         }else{
             return if (txnCpt != null) {
-                InetSocketAddress(InetAddress.getByName(txnCpt.hostPrimaryIp), txnCpt.hostPrimaryPortNo.toInt())
+                if(isPrimaryIpPort==1) {
+                    InetSocketAddress(
+                        InetAddress.getByName(txnCpt.hostPrimaryIp),
+                        txnCpt.hostPrimaryPortNo.toInt()
+                    )
+                }else{
+                    InetSocketAddress(
+                        InetAddress.getByName(txnCpt.hostSecIp),
+                        txnCpt.hostSecPortNo.toInt()
+                    )
+                }
             } else {
                 InetSocketAddress(InetAddress.getByName(NEWAMEXHDFC), NEWAMEXHDFCPort)
             }

@@ -201,11 +201,18 @@ class CreateTransactionPacket(
                 }
 /*                0|43|1|00,438628,54,142,11,2358,1000000,0,1000000,3,1300,340581,0,1041743,,abcdxyz,,,,0,0,200.0,20000,42942319,
                   0|60|5|00,60832632,52,144,11,2356,800000,18320,781680,3,1400,266663,0,815623,,12qw3e,,,,0,0,200.0,15634,52429840,*/
+
                 TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
+                    val txnAmt: String = if(brandEMIByAccessCodeDataModel?.issuerID=="64"){
+                        brandEMIByAccessCodeDataModel?.orignalTxnAmt.toString()
+                    }else{
+                        brandEMIByAccessCodeDataModel?.transactionAmount.toString()
+                    }
+
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
                             "${brandEMIByAccessCodeDataModel?.issuerID},${brandEMIByAccessCodeDataModel?.emiSchemeID},${brandEMIByAccessCodeDataModel?.brandID}," +
-                            "${brandEMIByAccessCodeDataModel?.productID},${brandEMIByAccessCodeDataModel?.orignalTxnAmt}," +
+                            "${brandEMIByAccessCodeDataModel?.productID},${txnAmt}," +
                             "${brandEMIByAccessCodeDataModel?.discountAmount},${brandEMIByAccessCodeDataModel?.loanAmount},${brandEMIByAccessCodeDataModel?.tenure}," +
                             "${brandEMIByAccessCodeDataModel?.interestAmount},${brandEMIByAccessCodeDataModel?.emiAmount},${brandEMIByAccessCodeDataModel?.cashBackAmount}," +
                             "${brandEMIByAccessCodeDataModel?.netPayAmount},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +

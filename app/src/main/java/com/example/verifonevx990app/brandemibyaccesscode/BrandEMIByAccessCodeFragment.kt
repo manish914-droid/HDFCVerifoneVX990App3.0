@@ -23,6 +23,7 @@ import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMIAccessDataModalTable
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -32,7 +33,7 @@ import kotlinx.parcelize.Parcelize
 import java.io.Serializable
 
 class BrandEMIByAccessCodeFragment : Fragment() {
-    private val action by lazy { arguments?.getSerializable("type") ?: "" }
+    private val action by lazy { arguments?.getSerializable("type")as EDashboardItem }
     private var iDialog: IDialog? = null
     private var binding: BrandEmiByAccessCodeViewBinding? = null
     private var field57Request: String? = null
@@ -52,6 +53,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brand_emi_by_access_code)
+        binding?.subHeaderView?.headerImage?.setImageResource(action.res)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
 
         binding?.brandEmiAccessCodeBT?.setOnClickListener {
@@ -350,10 +352,7 @@ data class BrandEMIAccessDataModal(
     var discountCalculatedValue: String,
     var cashBackCalculatedValue: String,
     var orignalTxnAmt:String
-) : Serializable{
-
-
-}
+) : Serializable
 //endregion
 
 // Saving Brand EMI By access code data in database

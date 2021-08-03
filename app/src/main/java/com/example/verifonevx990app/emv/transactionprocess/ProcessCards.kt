@@ -544,6 +544,7 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                 }
                                 // Condition executes, If insta EMI is Available on card
                                 if (limitAmt <= transactionalAmt && hasInstaEmi) {
+
                                     //region=========This Field is use only in case of BankEMI Field58 Transaction Amount:-
                                     cardProcessedDataModal.setEmiTransactionAmount(transactionalAmt)
                                     //endregion
@@ -556,7 +557,9 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                                     (activity as VFTransactionActivity).hideProgress()
                                                 }
                                                 // Below Code is executed if insta
+                                                GlobalScope.launch(Dispatchers.Main){   (activity as VFTransactionActivity).showProgress()}
                                                 GenericEMISchemeAndOffer(activity, cardProcessedDataModal, cardBinValue, transactionalAmt,brandEmiData) { bankEMISchemeAndTAndCData, hostResponseCodeAndMessageAndHasEMI ->
+                                                    (activity as VFTransactionActivity).hideProgress()
                                                     if (hostResponseCodeAndMessageAndHasEMI.first) {
                                                         // Checking Insta Emi
                                                         if (hostResponseCodeAndMessageAndHasEMI.third) {

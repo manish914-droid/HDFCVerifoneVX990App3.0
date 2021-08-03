@@ -270,6 +270,8 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
     var hostCardType: String = ""
     var ctlsCaption:String=""
 
+    var orignalTxnAmt:String=""
+
 
     private constructor(parcel: Parcel) : this() {
         authCode = parcel.readString().toString()
@@ -4458,6 +4460,7 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
     var schemeDBDTAndC: String = ""
     var discountCalculatedValue: String = ""
     var cashBackCalculatedValue: String = ""
+    var orignalTxnAmt:String=""
 
 
 
@@ -4495,6 +4498,7 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
         schemeDBDTAndC = parcel.readString().toString()
         discountCalculatedValue = parcel.readString().toString()
         cashBackCalculatedValue = parcel.readString().toString()
+        orignalTxnAmt = parcel.readString().toString()
     }
 
     override fun writeToParcel(p0: Parcel?, p1: Int) {
@@ -4531,6 +4535,7 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
         p0?.writeString(schemeDBDTAndC)
         p0?.writeString(discountCalculatedValue)
         p0?.writeString(cashBackCalculatedValue)
+        p0?.writeString(orignalTxnAmt)
     }
 
     override fun describeContents(): Int {

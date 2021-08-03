@@ -1813,7 +1813,9 @@ setLogoAndHeader(null)
                 for (it in batch) {  // Do not count preauth transaction
 // || it.transactionType == TransactionType.VOID_PREAUTH.type
                     if (it.transactionType == TransactionType.PRE_AUTH.type) continue
-
+                    if(it.transactionType==TransactionType.EMI_SALE.type || it.transactionType==TransactionType.BRAND_EMI.type || it.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                        it.transactionType= TransactionType.EMI_SALE.type
+                    }
                     val transAmt = try {
                         it.transactionalAmmount.toLong()
                     } catch (ex: Exception) {
@@ -3640,9 +3642,13 @@ setLogoAndHeader(null)
             printSeperator(seperatorLineBundle)
 
             if (!TextUtils.isEmpty(printerReceiptData.emiTransactionAmount)) {
-                val emiTxnAmount =
+                var emiTxnAmount =
                     "%.2f".format(printerReceiptData.emiTransactionAmount.toFloat() / 100)
                 val authTxnAmount = "%.2f".format(printerReceiptData.transactionAmt.toFloat() / 100)
+                if(printerReceiptData.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type && printerReceiptData.issuerId=="64"){
+                    emiTxnAmount =
+                        "%.2f".format(printerReceiptData.orignalTxnAmt.toFloat() / 100)
+                }
                 alignLeftRightText(
                     textInLineFormatBundle,
                     "TXN AMOUNT",

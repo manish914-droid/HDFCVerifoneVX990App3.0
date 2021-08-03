@@ -558,12 +558,7 @@ class VFTransactionActivity : BaseActivity() {
                 hideProgress()
                 if (doubletap == AppPreference.getString(AppPreference.doubletap)) {
 
-                    StubBatchData(
-                        de55,
-                        cardProcessedDataModal.getTransType(),
-                        cardProcessedDataModal,
-                        printExtraData,
-                        ""
+                    StubBatchData(de55, cardProcessedDataModal.getTransType(), cardProcessedDataModal, printExtraData, ""
                     ) { stubbedData ->
                         mstubbedData = stubbedData
                         val responseIsoData: IsoDataReader =

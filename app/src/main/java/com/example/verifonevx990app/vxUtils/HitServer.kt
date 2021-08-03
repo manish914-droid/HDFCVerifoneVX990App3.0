@@ -1,7 +1,6 @@
 package com.example.verifonevx990app.vxUtils
 
 import android.content.Context.MODE_PRIVATE
-import android.provider.Settings.Global.getString
 import android.util.Log
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.digiPOS.EnumDigiPosProcess
@@ -9,7 +8,6 @@ import com.example.verifonevx990app.digiPOS.getCurrentDateInDisplayFormatDigipos
 import com.example.verifonevx990app.main.ConnectionError
 import com.example.verifonevx990app.realmtables.DigiPosDataTable
 import com.example.verifonevx990app.realmtables.TerminalCommunicationTable
-
 import java.io.DataInputStream
 import java.io.FileOutputStream
 import java.net.ConnectException
@@ -20,13 +18,17 @@ import java.nio.channels.ServerSocketChannel
 import java.util.*
 import kotlin.collections.ArrayList
 
+/**
+ * Author Lucky (Server communication)
+ */
+
 interface IReversalHandler {
     suspend fun saveReversal()
     fun clearReversal()
 }
 
 object HitServer {
-
+    var hitCounter = 1
     private val TAG = HitServer::class.java.simpleName
 
     private var tct: TerminalCommunicationTable? = null
@@ -35,7 +37,13 @@ object HitServer {
     private var callbackSale: ServerMessageCallbackSale? = null
 
     @Synchronized
-    suspend fun hitServer(data: ByteArray, callback: ServerMessageCallback, progressMsg: ProgressCallback, irh: IReversalHandler? = null,isAppUpdate:Boolean=false) {
+    suspend fun hitServer(
+        data: ByteArray,
+        callback: ServerMessageCallback,
+        progressMsg: ProgressCallback,
+        irh: IReversalHandler? = null,
+        isAppUpdate: Boolean = false
+    ) {
         this@HitServer.callback = callback
         var responseStr: String? = null
         try {
@@ -47,7 +55,7 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket( { socket ->
+                openSocket({ socket ->
                     try {
                         irh?.saveReversal()
                         logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
@@ -99,7 +107,7 @@ object HitServer {
                     }
                     callback(responseStr ?: "", true)
                     this@HitServer.callback = null
-                },isAppUpdate=isAppUpdate)
+                }, isAppUpdate = isAppUpdate)
 
             } else {
                 callback(VerifoneApp.appContext.getString(R.string.no_internet_error), false)
@@ -129,41 +137,41 @@ object HitServer {
                 Log.d("OpenSocket:- ", "Socket Start")
                 logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
                 // var responseStr : String? = null
-                openSocket( { socket ->
+                openSocket({ socket ->
 
-                        if (isSaveTransactionAsPending) {
-                            val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
-                            logger(TAG, "SAVED TO DIGIPOS -->$datatosave", "e")
-                            val datalist = datatosave.split("^")
-                            // EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
-                            // EnumDigiPosProcess.SMS_PAYDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
+                    if (isSaveTransactionAsPending) {
+                        val datatosave = isoWriterData.isoMap[57]?.parseRaw2String().toString()
+                        logger(TAG, "SAVED TO DIGIPOS -->$datatosave", "e")
+                        val datalist = datatosave.split("^")
+                        // EnumDigiPosProcess.UPIDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + binding?.vpaEt?.text?.toString() + "^" + uniqueID
+                        // EnumDigiPosProcess.SMS_PAYDigiPOS.code + "^" + formattedAmt + "^" + binding?.descriptionEt?.text?.toString() + "^" + binding?.mobilenoEt?.text?.toString() + "^" + uniqueID
 
-                            val digiposData = DigiPosDataTable()
-                            digiposData.requestType = datalist[0].toInt()
-                            digiposData.amount = datalist[1]
-                            digiposData.description = datalist[2]
-                            digiposData.customerMobileNumber = datalist[3]
-                            digiposData.displayFormatedDate= getCurrentDateInDisplayFormatDigipos()
+                        val digiposData = DigiPosDataTable()
+                        digiposData.requestType = datalist[0].toInt()
+                        digiposData.amount = datalist[1]
+                        digiposData.description = datalist[2]
+                        digiposData.customerMobileNumber = datalist[3]
+                        digiposData.displayFormatedDate = getCurrentDateInDisplayFormatDigipos()
 
-                            when {
-                                datalist[0].toInt()== EnumDigiPosProcess.UPIDigiPOS.code.toInt() -> {
-                                    digiposData.vpa = datalist[4]
-                                    digiposData.partnerTxnId=datalist[5]
-                                    digiposData.paymentMode="UPI Pay"
-                                }
-                                datalist[0].toInt()== EnumDigiPosProcess.DYNAMIC_QR.code.toInt() -> {
-                                    digiposData.partnerTxnId = datalist[4]
-                                    digiposData.paymentMode="Bhqr Pay"
-                                }
-                                else -> {
-                                    digiposData.partnerTxnId = datalist[4]
-                                    digiposData.paymentMode="SMS Pay"
-                                }
+                        when {
+                            datalist[0].toInt() == EnumDigiPosProcess.UPIDigiPOS.code.toInt() -> {
+                                digiposData.vpa = datalist[4]
+                                digiposData.partnerTxnId = datalist[5]
+                                digiposData.paymentMode = "UPI Pay"
                             }
-                          //
-
-                            DigiPosDataTable.insertOrUpdateDigiposData(digiposData)
+                            datalist[0].toInt() == EnumDigiPosProcess.DYNAMIC_QR.code.toInt() -> {
+                                digiposData.partnerTxnId = datalist[4]
+                                digiposData.paymentMode = "Bhqr Pay"
+                            }
+                            else -> {
+                                digiposData.partnerTxnId = datalist[4]
+                                digiposData.paymentMode = "SMS Pay"
+                            }
                         }
+                        //
+
+                        DigiPosDataTable.insertOrUpdateDigiposData(digiposData)
+                    }
 
                     logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
                     ConnectionTimeStamps.dialConnected = getF48TimeStamp()
@@ -204,13 +212,11 @@ object HitServer {
                 this@HitServer.callback = null
             }
 
-        }
-        catch (ex: SocketTimeoutException) {
-          //  println("CHECK EXCEPTION SOCKET")
+        } catch (ex: SocketTimeoutException) {
+            //  println("CHECK EXCEPTION SOCKET")
             callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
             this@HitServer.callback = null
-        }
-        catch (ex: Exception) {
+        } catch (ex: Exception) {
             callback(VerifoneApp.appContext.getString(R.string.connection_error), false)
             this@HitServer.callback = null
         }
@@ -219,6 +225,7 @@ object HitServer {
     /**
      * Added by lucky (to convert byte[] to hesString)
      */
+
     @Synchronized
     fun bytesToHex(bytes: ByteArray): String {
         val hexChars = CharArray(bytes.size * 2)
@@ -230,14 +237,15 @@ object HitServer {
         }
         return String(hexChars)
     }
-    private val hexArray = "0123456789ABCDEF".toCharArray()
 
+    private val hexArray = "0123456789ABCDEF".toCharArray()
 
     @Synchronized
     suspend fun hitServersale(
         data: ByteArray,
         callbackSale: ServerMessageCallbackSale,
-        progressMsg: ProgressCallback) {
+        progressMsg: ProgressCallback
+    ) {
         this@HitServer.callbackSale = callbackSale
         try {
             if (checkInternetConnection()) {
@@ -246,7 +254,7 @@ object HitServer {
                     dialStart = getF48TimeStamp()
                 }
                 Log.d("OpenSocket:- ", "Socket Start")
-                logger("Connection Details:- ", VFService.getIpPort().toString(), "d")
+
                 var responseStr: String? = null
                 openSocketSale { socket ->
                     try {
@@ -365,7 +373,7 @@ object HitServer {
                     reset()
                     dialStart = getF48TimeStamp()
                 }
-                openSocket ({ socket ->
+                openSocket({ socket ->
 
                     logger(TAG, "address = ${socket.inetAddress}, port = ${socket.port}", "e")
 
@@ -377,7 +385,7 @@ object HitServer {
                         val data =
                             keInit.createInitIso(nextCounter, isFirstCall).generateIsoByteRequest()
                         val formattedInitPackets = data.byteArr2HexStr()
-                        logger(TAG, "init iso = $formattedInitPackets","e")
+                        logger(TAG, "init iso = $formattedInitPackets", "e")
                         //println("Init iso packet send --- > $formattedInitPackets")
                         ConnectionTimeStamps.dialConnected = getF48TimeStamp()
                         ConnectionTimeStamps.startTransaction = getF48TimeStamp()
@@ -435,10 +443,10 @@ object HitServer {
                             val pCode = reader.isoMap[3]?.rawData ?: ""
                             logger(TAG, "Processing code $pCode")
                             if (pCode != ProcessingCode.INIT_MORE.code) {
-                                logger(TAG, "Table Parsing Start " ,"e")
+                                logger(TAG, "Table Parsing Start ", "e")
                                 readInitServer(initList) { result, message ->
                                     callback(message, result)
-                                    logger(TAG, "Table Parsing End " ,"e")
+                                    logger(TAG, "Table Parsing End ", "e")
                                 }
                                 break
                             }
@@ -465,17 +473,20 @@ object HitServer {
         }
     }
 
-
     private suspend fun openSocketSale(cb: OnSocketComplete) {
-        Log.d("Socket Start:- ", "Socket Started Here.....")
-
+        Log.d("Socket Start:- ", "Sale Socket Started Here.....")
         try {
+
             tct =
-                TerminalCommunicationTable.selectFromSchemeTable()  // always get tct it may get refresh meanwhile
+                TerminalCommunicationTable.selectCommTableByRecordType("1")  // always get tct it may get refresh meanwhile
             if (tct != null) {
 
-                val sAddress = VFService.getIpPort()
-
+                val sAddress = VFService.getIpPort(isPrimaryIpPort = hitCounter)
+                logger(
+                    "Connection Details:- ",
+                    VFService.getIpPort(isPrimaryIpPort = hitCounter).toString(),
+                    "d"
+                )
                 ServerSocketChannel.open().apply {
                     configureBlocking(false)
                 }
@@ -493,54 +504,66 @@ object HitServer {
                 } catch (ex: Exception) {
                     30 * 1000
                 }
-                socket.connect(sAddress, connTimeOut)//
+                socket.connect(sAddress, connTimeOut)//creating connection
                 socket.soTimeout = resTimeOut
                 cb(socket)
 
             } else callbackSale?.invoke("No Comm Data Found", false, "")
 
         } catch (ex: SocketTimeoutException) {
-            println("Error in ConnectionTimeout child is --> " + ex.message)
-            callbackSale?.invoke(
-                ex.message ?: "Connection Error",
-                false,
-                ConnectionError.ConnectionTimeout.errorCode.toString()
-            )
+            println("SocketTimeoutException -> " + ex.message)
+            if (hitCounter == 1) {
+                hitCounter = 2
+                openSocketSale {
+                    hitCounter = 1
+                    cb(it)
+                }
+            } else {
+                callbackSale?.invoke(
+                    ex.message ?: "Connection Error",
+                    false,
+                    ConnectionError.ConnectionTimeout.errorCode.toString()
+                )
+            }
+
         } catch (ex: ConnectException) {
-            println("Error in ConnectionTimeout child is --> " + ex.message)
+            println("ConnectException ->" + ex.message)
             callbackSale?.invoke(
                 ex.message ?: "Connection Error",
                 false,
                 ConnectionError.ConnectionRefusedorOtherError.errorCode.toString()
             )
         } catch (ex: Exception) {
-            println("Error in ConnectionTimeout child is --> " + ex.message)
+            println("Parent Exception-> " + ex.message)
             callbackSale?.invoke(
                 ex.message ?: "Connection Error",
                 false,
                 ConnectionError.ConnectionRefusedorOtherError.errorCode.toString()
             )
         } finally {
-            Log.d("Finally Call:- ", "Final Block Runs Here.....")
+            Log.d("Finally Call:- ", "HIT SERVER SALE --> Final Block Runs Here.....")
         }
     }
 
-    private suspend fun openSocket(cb: OnSocketComplete,isAppUpdate:Boolean=false) {
+    private suspend fun openSocket(cb: OnSocketComplete, isAppUpdate: Boolean = false) {
         Log.d("Socket Start:- ", "Socket Started Here.....")
 
         try {
             tct =
                 TerminalCommunicationTable.selectCommTableByRecordType("1")  // always get tct it may get refresh meanwhile
             if (tct != null) {
-
-                val sAddress = VFService.getIpPort(isAppUpdate)
+                val sAddress = VFService.getIpPort(isAppUpdate, isPrimaryIpPort = hitCounter)
+                logger(
+                    "Connection Details:- ",
+                    VFService.getIpPort(isPrimaryIpPort = hitCounter).toString(),
+                    "d"
+                )
 
                 ServerSocketChannel.open().apply {
                     configureBlocking(false)
                 }
 
                 val socket = Socket()
-
                 val connTimeOut = try {
                     (tct as TerminalCommunicationTable).connectTimeOut.toInt() * 1000
                 } catch (ex: Exception) {
@@ -552,25 +575,39 @@ object HitServer {
                 } catch (ex: Exception) {
                     30 * 1000
                 }
-                socket.connect(sAddress, connTimeOut)//
+                socket.connect(sAddress, connTimeOut)//creating conn to server
                 socket.soTimeout = resTimeOut
                 cb(socket)
 
 
             } else callback?.invoke("No Comm Data Found", false)
 
+        }
+        catch (ex: SocketTimeoutException) {
+            println("SocketTimeoutException -> " + ex.message)
+            if (hitCounter == 1) {
+                hitCounter = 2
+                openSocket({
+                    hitCounter = 1
+                    cb(it)
+
+                }, isAppUpdate)
+            } else {
+                callback?.invoke(
+                    ex.message ?: "Connection Error",
+                    false
+                )
+            }
         } catch (ex: Exception) {
             ex.printStackTrace()
-            println("SOCKET CONNECT EXCEPTION")
-            callback?.invoke(
-                VerifoneApp.appContext.getString(R.string.socket_timeout),
-                false
-            )
+            println("SOCKET CONNECT Parent EXCEPTION")
+            callback?.invoke(VerifoneApp.appContext.getString(R.string.socket_timeout), false)
         } finally {
             Log.d("Finally Call:- ", "Final Block Runs Here.....")
         }
     }
 
+    //below function till now not used
     suspend fun openSocket(): Socket? {
         try {
             tct =
@@ -607,7 +644,6 @@ object HitServer {
             return null
         }
     }
-
 
 }
 

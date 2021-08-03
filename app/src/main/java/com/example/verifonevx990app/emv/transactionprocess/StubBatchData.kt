@@ -331,6 +331,7 @@ fun stubEMI(
                        batchData.transactionalAmmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.baseAmmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.totalAmmount = brandEMIByAccessCodeData.transactionAmount
+                       batchData.orignalTxnAmt=brandEMIByAccessCodeData.orignalTxnAmt
 
                    }
                }
