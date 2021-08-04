@@ -111,7 +111,7 @@ class KeyExchanger(
             val isoW = createKeyExchangeIso()
             val bData = isoW.generateIsoByteRequest()
             HitServer.hitServer(bData, { result, success ->
-                if (success) {
+                if (success && result.isNotBlank()) {
                     launch {
                         val iso = readIso(result)
                         logger(TAG, iso.isoMap)
@@ -335,7 +335,7 @@ class KeyExchanger(
             val isoW = createKeyExchangeIso()
             val bData = isoW.generateIsoByteRequest()
             HitServer.hitServer(bData, { result, success ->
-                if (success) {
+                if (success && result.isNotBlank()) {
                     launch {
                         val iso = readIso(result)
                         logger(TAG, iso.isoMap)
@@ -978,7 +978,7 @@ suspend fun getPromotionData(field57RequestData: String, processingCode: String,
         var isBool = false
         HitServer.hitServer(idwByteArray, { result, success ->
             responseMsg = result
-            if (success) {
+            if (success && result.isNotBlank()) {
                 ROCProviderV2.incrementFromResponse(
                     ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                     AppPreference.getBankCode()

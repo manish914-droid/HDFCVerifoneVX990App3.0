@@ -85,28 +85,29 @@ object HitServer {
 
                         //println("Data Recieve" + response.byteArr2HexStr())
                         logger(TAG, "len=$len, data = $responseStr")
-
                         socket.close()
+
+                        callback(responseStr ?: "", true)
+                        this@HitServer.callback = null
 
                     } catch (ex: SocketTimeoutException) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, SocketTimeoutException ")
-                        callback(responseStr ?: "", true)
+                        callback(responseStr ?: ex.message.toString(), false)
                     } catch (ex: SocketException) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, SocketException ")
-                        callback(responseStr ?: "", true)
+                        callback(responseStr ?:  ex.message.toString(), false)
                     } catch (ex: ConnectException) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, ConnectException ")
-                        callback(responseStr ?: "", true)
+                        callback(responseStr ?:  ex.message.toString(), false)
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, Exception ")
-                        callback(responseStr ?: "", true)
+                        callback(responseStr ?:  ex.message.toString(), false)
                     }
-                    callback(responseStr ?: "", true)
-                    this@HitServer.callback = null
+
                 }, isAppUpdate = isAppUpdate)
 
             } else {
