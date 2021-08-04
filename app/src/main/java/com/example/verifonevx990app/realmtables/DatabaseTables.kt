@@ -30,7 +30,7 @@ enum class EDashboardItem(
     DIGI_POS("Digi POS", R.drawable.digipos_icon, 2),
     BANK_EMI("Bank EMI", R.drawable.emi_catalog_icon, 3),
     BRAND_EMI("Brand EMI", R.drawable.brand_emi_icon,4),
-    EMI_PRO("Brand EMI By Code", R.drawable.emi_catalog_icon, 5),
+    EMI_PRO("Brand EMI By Code", R.drawable.ic_emi_by_code, 5),
     EMI_ENQUIRY("EMI Catalogue", R.drawable.emi_catalog_icon, 6),
     PREAUTH("Pre-Auth", R.drawable.pre_auth, 7),
 
@@ -53,7 +53,7 @@ enum class EDashboardItem(
     BONUS_PROMO("Bonus Promo", R.drawable.ic_cash_advance, 15),
 
     EMI_CATALOGUE("EMI Catalogue", R.drawable.emi_catalog_icon, 17),
-    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale, 18),
+    BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_emi, 18),
     BANK_EMI_CATALOGUE("Bank EMI Catalogue", R.drawable.ic_sale, 19),
 
 

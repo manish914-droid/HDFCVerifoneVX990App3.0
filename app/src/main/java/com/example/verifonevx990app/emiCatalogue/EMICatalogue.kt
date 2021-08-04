@@ -43,6 +43,7 @@ class EMICatalogue : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.emi_catalogue)
+        binding?.subHeaderView?.headerImage?.setImageResource((action as EDashboardItem).res)
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
         Log.d("EMI Catalogue Action:- ", (action as EDashboardItem).toString())
         tptData = TerminalParameterTable.selectFromSchemeTable()
