@@ -4131,15 +4131,17 @@ setLogoAndHeader(null)
             )
             printer?.addText(textFormatBundle, "App Version : ${BuildConfig.VERSION_NAME}")
 
-           printer?.addText(textFormatBundle, "---------X-----------X----------")
+
 
 
 
             //printSeperator(textFormatBundle)
 
-            printer?.feedLine(1)
+
             //region=======================Issuer Footer Terms and Condition=================
             if (!TextUtils.isEmpty(issuerTAndCData.footerTAndC)) {
+                printer?.addText(textFormatBundle, "--------------------------------")
+                printer?.feedLine(1)
                 val issuerFooterTAndC =
                     issuerTAndCData.footerTAndC.split(SplitterTypes.POUND.splitter)
                 if (issuerFooterTAndC.size > 1) {

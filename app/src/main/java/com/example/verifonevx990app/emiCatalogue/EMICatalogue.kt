@@ -11,6 +11,7 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.BrandEMIMasterCategoryFragment
 import com.example.verifonevx990app.databinding.FragmentEmiCatalogueBinding
 import com.example.verifonevx990app.main.IFragmentRequest
+
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
@@ -23,7 +24,6 @@ class EMICatalogue : Fragment() {
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var tptData: TerminalParameterTable? = null
     private var iFrReq: IFragmentRequest? = null
-
     override fun onAttach(context: Context) {
         super.onAttach(context)
         if (context is IFragmentRequest) iFrReq = context

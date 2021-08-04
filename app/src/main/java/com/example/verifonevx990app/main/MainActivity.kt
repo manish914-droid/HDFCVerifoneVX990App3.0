@@ -74,9 +74,10 @@ import java.util.*
 
 // BottomNavigationView.OnNavigationItemSelectedListener
 class MainActivity : BaseActivity(), IFragmentRequest {
+
     private var isToExit = false
-    private var battery:String?=null
-    private var batteryINper:Int=0
+    private var battery: String? = null
+    private var batteryINper: Int = 0
     private val initFragment by lazy { InitFragment() }
     private val dashBoardFragment by lazy { DashboardFragment() }
     var appBarLayout: AppBarLayout? = null
@@ -89,6 +90,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     private var tempSettlementByteArray: ByteArray? = null
     private var settlementServerHitCount: Int = 0
     private var offlineTransactionAmountLimit: Double? = 0.0
+    private var actionHome: EDashboardItem? = null
     private val alertDialog by lazy { AlertDialog.Builder(this).create() }
     private val subCatogoryDashBoardAdapter by lazy {
         SubCatagoryDashboardAdapter(
@@ -402,6 +404,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     @SuppressLint("SetTextI18n")
     private fun initUI() {
         binding?.toolbarView?.mainToolbarStart?.setOnClickListener { toggleDrawer() }
+
+        binding?.toolbarView?.toolbarBankLogo?.setOnClickListener {
+            onHomeClick() }
         arrayOf<View>(
             // app_update_ll,
             findViewById<LinearLayout>(R.id.report_ll),
@@ -970,37 +975,38 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     override fun onDashBoardItemClick(action: EDashboardItem) {
         //   NeptuneService.beepNormal()
         isDashboardOpen = false
+        actionHome=action
         try {
             //getting battery per here
-            battery= getbatteryinfo(this)
-            batteryINper= battery?.toDouble()?.toInt()?: 0
+            battery = getbatteryinfo(this)
+            batteryINper = battery?.toDouble()?.toInt() ?: 0
         } catch (nfe: NumberFormatException) {
             // not a valid int
         }
 
         when {
             //this case for checking condition of batery is above 10 and if below then charger is connected or not
-            ((batteryINper > 10)) || ((batteryINper < 10) || getChargerStatus(this) || (batteryINper == 0) ) -> when (action) {
+                 ((batteryINper > 10)) || ((batteryINper < 10) || getChargerStatus(this) || (batteryINper == 0) ) -> when (action) {
 
-                EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
-                    if (checkInternetConnection()) {
-                        inflateInputFragment(
-                            NewInputAmountFragment(),
-                            SubHeaderTitle.SALE_SUBHEADER_VALUE.title,
-                            action
-                        )
-                    } else {
-                        VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                    }
+                     EDashboardItem.SALE, EDashboardItem.BANK_EMI, EDashboardItem.SALE_WITH_CASH, EDashboardItem.CASH_ADVANCE, EDashboardItem.PREAUTH -> {
+                         if (checkInternetConnection()) {
+                             inflateInputFragment(
+                                 NewInputAmountFragment(),
+                                 SubHeaderTitle.SALE_SUBHEADER_VALUE.title,
+                                 action
+                             )
+                         } else {
+                             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                         }
 
 
                 }
 
-                EDashboardItem.VOID_SALE -> {
-                    if (checkInternetConnection()) {
-                        val bundle = Bundle()
-                        bundle.putSerializable("type", action)
-                        checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)
+                     EDashboardItem.VOID_SALE -> {
+                         if (checkInternetConnection()) {
+                             val bundle = Bundle()
+                             bundle.putSerializable("type", action)
+                             checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)
 
                         if (checkHDFCTPTFieldsBitOnOff(TransactionType.VOID)) {
                             verifyAdminPasswordFromHDFCTPT(this) {
@@ -1326,24 +1332,24 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                     }
                 }
 
-                EDashboardItem.EMI_CATALOGUE -> {
-                    if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
-                        !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
-                        !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
-                    ) {
-                        if (checkInternetConnection()) {
-                            transactFragment(EMICatalogue().apply {
-                                arguments = Bundle().apply {
-                                    putSerializable("type", action)
-                                }
-                            })
-                        } else {
-                            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                        }
-                    } else {
-                        checkAndPerformOperation()
-                    }
-                }
+                     EDashboardItem.EMI_CATALOGUE -> {
+                         if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INSERT_PPK_DPK.keyName.toString()) &&
+                             !AppPreference.getBoolean(PrefConstant.INIT_AFTER_SETTLEMENT.keyName.toString())
+                         ) {
+                             if (checkInternetConnection()) {
+                                 transactFragment(EMICatalogue().apply {
+                                     arguments = Bundle().apply {
+                                         putSerializable("type", action)
+                                     }
+                                 })
+                             } else {
+                                 VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+                             }
+                         } else {
+                             checkAndPerformOperation()
+                         }
+                     }
 
                 EDashboardItem.DIGI_POS -> {
                     /* if (!AppPreference.getBoolean(PrefConstant.BLOCK_MENU_OPTIONS.keyName.toString()) &&
@@ -2063,6 +2069,14 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }, {
                 //backToCalled(it, false, true)
             })
+        }
+    }
+    private fun onHomeClick(){
+        when(actionHome){
+            EDashboardItem.EMI_ENQUIRY->{
+              transactFragment(DashboardFragment())
+            }
+
         }
     }
 }
