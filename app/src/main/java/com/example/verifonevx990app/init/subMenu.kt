@@ -647,7 +647,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 iDiag?.showProgress(getString(R.string.printing_last_receipt))
                             }
                             when (lastReceiptData.transactionType) {
-                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type, TransactionType.SALE_WITH_CASH.type, TransactionType.CASH_AT_POS.type-> {
+                                TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type, TransactionType.SALE_WITH_CASH.type, TransactionType.CASH_AT_POS.type ,TransactionType.VOID_EMI.type-> {
                                     PrintUtil(activity).startPrinting(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,
@@ -745,7 +745,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                 else -> {
                                     GlobalScope.launch(Dispatchers.Main) {
                                         iDiag?.hideProgress()
-                                        VFService.showToast("Something wrong Transaction Not Defined")
+                                        VFService.showToast("Report not found")
                                     }
                                 }
                             }

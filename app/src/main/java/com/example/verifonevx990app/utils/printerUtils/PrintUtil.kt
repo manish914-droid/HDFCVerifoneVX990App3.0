@@ -1348,7 +1348,7 @@ class PrintUtil(context: Context?) {
                 val amt = amountStr.toFloat() / 100
                 amountStr = "%.2f".format(amt)
 
-                val date = "${d.substring(0, 2)}/${d.substring(2, 4)}/${d.substring(4, d.length)}"
+                val date = "${d.substring(2, 4)}/${d.substring(0, 2)}/${d.substring(4, d.length)}"
                 val time =
                     "${of12.substring(0, 2)}:${of12.substring(2, 4)}:${
                         of12.substring(
