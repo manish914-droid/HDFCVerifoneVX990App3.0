@@ -58,7 +58,7 @@ enum class EDashboardItem(
 
 
     // just for handling the test emi not used in dashboard items
-    TEST_EMI("Test Emi", R.drawable.ic_sale, 777),
+    TEST_EMI("Test Emi TXN", R.drawable.ic_brand_emi_catalogue, 777),
     FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance, 666),
     LESS("View Less", R.drawable.ic_arrow_up, 888),
 

@@ -962,43 +962,36 @@ class PrintUtil(context: Context?) {
             val pp = printer?.status
             Log.e("Printer Status", pp.toString())
             if (pp == 0) {
-                //-----------------------------------------------
-                setLogoAndHeader()
-                //  ------------------------------------------
+
                 val appVersion = BuildConfig.VERSION_NAME
-
-                val td = System.currentTimeMillis()
-                val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
-                val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
-
-                val date = formatdate.format(td)
-                val time = formattime.format(td)
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-
-                alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
-
-                centerText(textFormatBundle, "DETAIL REPORT", true)
 
                 batch.sortBy { it.hostTID }
 
                 if (batch.isEmpty()) {
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "MID : ${tpt?.merchantId}",
-                        "TID : ${tpt?.terminalId}"
-                    )
+                   // alignLeftRightText(textInLineFormatBundle, "MID : ${tpt?.merchantId}", "TID : ${tpt?.terminalId}")
                 } else {
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "MID : ${batch[0].hostMID}",
-                        "TID : ${batch[0].hostTID}"
-                    )
+                    //-----------------------------------------------
+                    setLogoAndHeader()
+                    //  ------------------------------------------
+                    val td = System.currentTimeMillis()
+                    val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
+                    val formattime = SimpleDateFormat("HH:mm:ss", Locale.ENGLISH)
+
+                    val date = formatdate.format(td)
+                    val time = formattime.format(td)
+
+
+                    alignLeftRightText(textInLineFormatBundle, "DATE : $date", "TIME : $time")
+
+                    centerText(textFormatBundle, "DETAIL REPORT", true)
+                    alignLeftRightText(textInLineFormatBundle, "MID : ${batch[0].hostMID}", "TID : ${batch[0].hostTID}")
+                    alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
+                    printSeperator(textFormatBundle)
                 }
-                alignLeftRightText(textInLineFormatBundle, "BATCH NO : ${tpt?.batchNumber}", "")
-                printSeperator(textFormatBundle)
 
                 if (batch.isEmpty()) {
-                    alignLeftRightText(textInLineFormatBundle, "Total Transaction", "0")
+                   // alignLeftRightText(textInLineFormatBundle, "Total Transaction", "0")
                 } else {
                     alignLeftRightText(textInLineFormatBundle, "TRANS-TYPE", "AMOUNT")
                     alignLeftRightText(textInLineFormatBundle, "ISSUER", "PAN/CID")
@@ -1203,11 +1196,13 @@ class PrintUtil(context: Context?) {
                     //   DigiPosDataTable.deletAllRecordAccToTxnStatus(EDigiPosPaymentStatus.Approved.desciption)
                 }
                 //endregion
-                printer?.addText(textFormatBundle, "--------------------------------")
-                centerText(textFormatBundle, "Bonushub")
-                centerText(textFormatBundle, "App Version :$appVersion")
-              //  centerText(textFormatBundle, "---------X-----------X----------")
-                printer?.feedLine(4)
+                if(batch.isNotEmpty()) {
+                    printer?.addText(textFormatBundle, "--------------------------------")
+                    centerText(textFormatBundle, "Bonushub")
+                    centerText(textFormatBundle, "App Version :$appVersion")
+                    //  centerText(textFormatBundle, "---------X-----------X----------")
+                    printer?.feedLine(4)
+                }
                 // start print here
                 printer?.startPrint(object : PrinterListener.Stub() {
                     override fun onFinish() {
@@ -1973,7 +1968,7 @@ setLogoAndHeader(null)
 //below if condition is for zero settlement
         if (batch.size <= 0) {
             try {
-                centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
+               // centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
              /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }

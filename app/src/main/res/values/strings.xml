@@ -524,7 +524,7 @@
     <string name="want_print_detail">Do you want to print Detail Report</string>
     <string name="void_refund_not_allowed">Void of Refund not allowed</string>
     <string name="txn_status_still_pending">Txn Status Still Pending Check Later</string>
-    <string name="test_emi">Test EMI</string>
+    <string name="test_emi">Test EMI TXN</string>
     <string name="bill_num">Enter bill number</string>
     <string name="brand_min_max_amt_limit_txn"><![CDATA[Entered Amount Should be in Product Min & Max Amount Range]]></string>
     <string name="enterValid_serial_iemei_no">Enter valid serial/IMEI no</string>

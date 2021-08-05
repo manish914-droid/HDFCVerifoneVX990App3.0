@@ -87,9 +87,6 @@ object HitServer {
                         logger(TAG, "len=$len, data = $responseStr")
                         socket.close()
 
-                        callback(responseStr ?: "", true)
-                        this@HitServer.callback = null
-
                     } catch (ex: SocketTimeoutException) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, SocketTimeoutException ")
@@ -107,6 +104,9 @@ object HitServer {
                         logger(TAG, "hitserver, Exception ")
                         callback(responseStr ?:  ex.message.toString(), false)
                     }
+
+                    callback(responseStr ?: "", true)
+                    this@HitServer.callback = null
 
                 }, isAppUpdate = isAppUpdate)
 

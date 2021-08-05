@@ -763,8 +763,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         Log.d("Bank EMI Clicked:- ", "Clicked")
                         startActivityForResult(
                             Intent(
-                                this@MainActivity,
-                                VFTransactionActivity::class.java
+                                this@MainActivity, VFTransactionActivity::class.java
                             ).apply {
                                 putExtra("amt", amt)
                                 putExtra(
@@ -2152,7 +2151,7 @@ enum class SubHeaderTitle(val title: String) {
     Brand_EMI_SUB_Category("Brand EMI Sub Category"),
     Brand_EMI("Brand EMI Sale"),
     Brand_EMI_BY_ACCESS_CODE("Brand EMI By Access Code"),
-    TEST_EMI("Test EMI"),
+    TEST_EMI("Test EMI TXN"),
     Flexi_PAY("Flexi Pay"),
 }
 

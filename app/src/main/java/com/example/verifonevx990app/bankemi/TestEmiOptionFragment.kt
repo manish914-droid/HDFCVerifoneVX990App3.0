@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPendingPreAuthBinding
+import com.example.verifonevx990app.init.BankOptions
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.realmtables.EDashboardItem
@@ -53,6 +54,7 @@ class TestEmiOptionFragment : Fragment() {
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
         }
+
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.test_emi)
         binding?.subHeaderView?.headerImage?.visibility = View.VISIBLE
         transactionType?.res?.let { binding?.subHeaderView?.headerImage?.setImageResource(it) }
@@ -70,7 +72,8 @@ class TestEmiOptionFragment : Fragment() {
         (activity as MainActivity).inflateInputFragment(
             NewInputAmountFragment(),
             SubHeaderTitle.TEST_EMI.title,
-            EDashboardItem.TEST_EMI, testEmiOption.id
+            EDashboardItem.TEST_EMI,
+            testEmiOption.id
         )
     }
 }

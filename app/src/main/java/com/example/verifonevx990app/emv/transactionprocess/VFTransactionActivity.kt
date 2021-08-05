@@ -70,6 +70,8 @@ class VFTransactionActivity : BaseActivity() {
     //used for other cash amount
     private val transactionOtherAmountValue by lazy { intent.getStringExtra("otherAmount") ?: "0" }
 
+    private val testEmiOperationType by lazy { intent.getStringExtra("TestEmiOption") ?: "0" }
+
     //used in case of sale with cash
     private val saleAmt by lazy { intent.getStringExtra("saleAmt") ?: "0" }
     private val mobileNumber by lazy { intent.getStringExtra("mobileNumber") ?: "" }
@@ -122,6 +124,8 @@ class VFTransactionActivity : BaseActivity() {
         }
         /*main_toolbar_tv.visibility = View.GONE
         main_toolbar_tv.text = title*/
+
+      //  globalCardProcessedModel.testEmiOption = testEmiOperationType
 
         tpt = TerminalParameterTable.selectFromSchemeTable()
         isManualEntryAllowed = tpt?.fManEntry == "1"

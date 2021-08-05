@@ -101,7 +101,7 @@ enum class UiAction(val title: String = "Not Declared", val res: Int = R.drawabl
         R.drawable.emi_catalog_icon
     ),
     BRAND_EMI("Brand EMI", R.drawable.ic_brand_emi),
-    TEST_EMI("Test Emi", R.drawable.ic_sale),
+    TEST_EMI("Test EMI TXN", R.drawable.ic_brand_emi_catalogue),
     FLEXI_PAY("Flexi Pay", R.drawable.ic_cash_advance),
     DEFAUTL("Not Declared", R.drawable.ic_sad),
     BRAND_EMI_CATALOGUE("Brand EMI Catalogue", R.drawable.ic_sale),
