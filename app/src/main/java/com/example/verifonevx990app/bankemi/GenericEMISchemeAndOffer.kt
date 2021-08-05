@@ -38,7 +38,7 @@ class GenericEMISchemeAndOffer(
         bankEMIIssuerTAndCList.clear()
         field57Request =
             if (cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type) {
-
+                      //Added imei or serial number and card bin value will be empty // lates change //only in brand emi
                 "$bankEMIRequestCode^0^${brandEmiData?.brandID}^${brandEmiData?.productID}^${brandEmiData?.imeiORserailNum}" +
                         "^${/*cardBinValue.substring(0, 8)*/""}^$transactionAmount"
             } else {
@@ -89,7 +89,7 @@ class GenericEMISchemeAndOffer(
                     isBool = false
                     callback(
                         Pair(bankEMISchemesDataList, bankEMIIssuerTAndCList),
-                        Triple(isBool, "", false)
+                        Triple(isBool, result, false)
                     )
                 }
             }, {})
@@ -114,6 +114,14 @@ class GenericEMISchemeAndOffer(
 
             //TID Field 41
             addFieldByHex(41, terminalData.terminalId)
+
+            //This is for bankemi/insta emi/brand emi
+            //New field 56 added by Manish Kumar for getting tenure
+            //adding Field 56
+            addField56(56, getEncryptedPan(cardBinValue))
+
+            //adding Field 56
+            //addFieldByHex(56, getEncryptedPan(cardBinValue))
 
             //adding Field 57
             addFieldByHex(57, field57Request ?: "")

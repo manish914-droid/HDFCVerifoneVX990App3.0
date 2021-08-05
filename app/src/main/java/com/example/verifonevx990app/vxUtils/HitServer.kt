@@ -87,6 +87,10 @@ object HitServer {
                         logger(TAG, "len=$len, data = $responseStr")
                         socket.close()
 
+
+                        callback(responseStr ?: "", true)
+                        this@HitServer.callback = null
+
                     } catch (ex: SocketTimeoutException) {
                         ex.printStackTrace()
                         logger(TAG, "hitserver, SocketTimeoutException ")
@@ -105,8 +109,6 @@ object HitServer {
                         callback(responseStr ?:  ex.message.toString(), false)
                     }
 
-                    callback(responseStr ?: "", true)
-                    this@HitServer.callback = null
 
                 }, isAppUpdate = isAppUpdate)
 
@@ -288,6 +290,11 @@ object HitServer {
                         logger(TAG, "len=$len, data = $responseStr")
                         socket.close()
                         //   irh?.clearReversal()
+
+                        println("Outside the Readtimeout error5")
+                        callbackSale(responseStr ?: "", true, "")
+                        this@HitServer.callback = null
+
                     } catch (ex: SocketTimeoutException) {
                         println("Read Time out error1" + ex.message)
                         //println("Read Time out error"+ex.message)
@@ -337,9 +344,7 @@ object HitServer {
                         return@openSocketSale
                         //println("Read Time out error3"+ex.message)
                     }
-                    println("Outside the Readtimeout error5")
-                    callbackSale(responseStr ?: "", true, "")
-                    this@HitServer.callback = null
+
                 }
 
             } else {
@@ -588,8 +593,7 @@ object HitServer {
             println("SocketTimeoutException -> " + ex.message)
             if (hitCounter == 1) {
                 hitCounter = 2
-                openSocket({
-                    hitCounter = 1
+                openSocket({ hitCounter = 1
                     cb(it)
 
                 }, isAppUpdate)

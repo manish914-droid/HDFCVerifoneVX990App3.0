@@ -495,7 +495,7 @@
     <string name="sms_upi_pay">SMS/UPI Pay</string>
     <string name="upi_payment_link_sent">"Payment link has been sent \n \n Would you like to check payment status now."</string>
     <string name="sms_payment_link_sent">"SMS payment link has been sent \n \n Would you like to check payment status now."</string>
-    <string name="socket_timeout">Socket not connected</string>
+    <string name="socket_timeout">Connection Failed</string>
     <string name="txn_id">Txn ID</string>
     <string name="mode_samll">Mode</string>
     <string name="mTxnID">MTxn Id</string>
