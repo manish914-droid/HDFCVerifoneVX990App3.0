@@ -21,6 +21,7 @@ import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.FragmentEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerListBinding
 import com.example.verifonevx990app.databinding.ItemEmiIssuerTenureBinding
+import com.example.verifonevx990app.init.DashboardFragment
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -100,7 +101,8 @@ class EMIIssuerList : Fragment() {
         mobileNumberOnOff = !TextUtils.isEmpty(mobileNumber)
         emiCatalogueImageList = arguments?.getSerializable("imagesData") as MutableMap<String, Uri>
         setUpRecyclerViews()
-
+        binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+        binding?.subHeaderView?.headerHome?.setOnClickListener {   (activity as MainActivity).transactFragment(DashboardFragment()) }
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)

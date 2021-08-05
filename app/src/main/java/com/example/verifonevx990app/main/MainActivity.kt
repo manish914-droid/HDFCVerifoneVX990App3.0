@@ -404,9 +404,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     @SuppressLint("SetTextI18n")
     private fun initUI() {
         binding?.toolbarView?.mainToolbarStart?.setOnClickListener { toggleDrawer() }
-
-        binding?.toolbarView?.toolbarBankLogo?.setOnClickListener {
-            onHomeClick() }
         arrayOf<View>(
             // app_update_ll,
             findViewById<LinearLayout>(R.id.report_ll),
@@ -1082,7 +1079,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             VoidPreAuthFragment()
                                 .apply {
                                     arguments = Bundle().apply {
-                                        putSerializable("type", TransactionType.VOID_PREAUTH)
+                                        putSerializable("type", EDashboardItem.VOID_PREAUTH)
                                         putString(
                                             INPUT_SUB_HEADING,
                                             SubHeaderTitle.VOID_PRE_AUTH.title
@@ -1117,6 +1114,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                             "preAuthOptionList",
                                             (action.childList) as ArrayList
                                         )
+                                        putSerializable("type", EDashboardItem.PRE_AUTH_CATAGORY)
                                     }
                                 }))
                         } else {
@@ -2070,14 +2068,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             })
         }
     }
-    private fun onHomeClick(){
-        when(actionHome){
-            EDashboardItem.EMI_ENQUIRY->{
-              transactFragment(DashboardFragment())
-            }
 
-        }
-    }
 }
 
 

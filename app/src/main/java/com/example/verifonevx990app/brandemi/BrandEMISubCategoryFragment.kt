@@ -23,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentBrandEmiSubCategoryBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiSubCategoryBinding
+import com.example.verifonevx990app.init.DashboardFragment
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -88,6 +89,10 @@ class BrandEMISubCategoryFragment : Fragment() {
         if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
+            binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+            binding?.subHeaderView?.headerHome?.setOnClickListener { (activity as MainActivity).transactFragment(
+                DashboardFragment()
+            ) }
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
@@ -115,6 +120,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
+                    binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                     brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                         brandEMIAllDataList
                     )
@@ -168,7 +174,8 @@ class BrandEMISubCategoryFragment : Fragment() {
                             brandEmiMasterSubCategoryDataList
                         )
                         iDialog?.hideProgress()
-                        VFService.showToast(getString(R.string.no_data_found))
+                        binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                       // VFService.showToast(getString(R.string.no_data_found))
                     }
                 }
             } else

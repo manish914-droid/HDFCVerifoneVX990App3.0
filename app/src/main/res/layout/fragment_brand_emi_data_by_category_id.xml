@@ -78,5 +78,16 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/searchViewLV" />
+        <ImageView
+            android:id="@+id/empty_view_placeholder"
+            android:layout_width="@dimen/standard_placeholder_size"
+            android:layout_height="@dimen/standard_placeholder_size"
+            android:background="@drawable/no_data_found"
+            android:contentDescription="@string/app_name"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

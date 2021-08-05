@@ -16,6 +16,7 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentVoidPreAuthBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.main.MainActivity
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -30,6 +31,7 @@ class VoidPreAuthFragment : Fragment() {
     private val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
     private val authData: AuthCompletionData by lazy { AuthCompletionData() }
     private var binding: FragmentVoidPreAuthBinding? = null
+    private val action by lazy { arguments?.getSerializable("type") ?: "" }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -49,7 +51,7 @@ class VoidPreAuthFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = title
-
+      binding?.subHeaderView?.headerImage?.setImageResource((action as EDashboardItem).res)
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             parentFragmentManager.popBackStackImmediate()
 

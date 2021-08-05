@@ -29,6 +29,7 @@ import com.example.verifonevx990app.emv.transactionprocess.SyncVoidTransactionTo
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.offlinemanualsale.SyncOfflineSaleToHost
 import com.example.verifonevx990app.realmtables.BatchFileDataTable
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.realmtables.TerminalParameterTable
 import com.example.verifonevx990app.realmtables.TxnCallBackRequestTable
 import com.example.verifonevx990app.utils.MoneyUtil
@@ -49,6 +50,7 @@ class VoidTransactionFragment : Fragment() {
     private var invoiceNumberET: BHEditText? = null
     private var voidRefundBT: NeumorphButton? = null
     private var binding: FragmentVoidRefundViewBinding? = null
+    private val action by lazy { arguments?.getSerializable("type") ?: "" }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -63,6 +65,7 @@ class VoidTransactionFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding?.subHeaderView?.subHeaderText?.text = title
+        binding?.subHeaderView?.headerImage?.setImageResource((action as EDashboardItem).res)
         logger("ConnectionAddress:- ", VFService.getIpPort().toString(), "d")
         invoiceNumberET = view.findViewById(R.id.invoiceNumberET)
         voidRefundBT = view.findViewById(R.id.voidRefundBT)
@@ -166,9 +169,12 @@ class VoidTransactionFragment : Fragment() {
         }
         dialog.findViewById<Button>(R.id.ok_btnn).setOnClickListener {
             dialog.dismiss()
-
             // todo One More Confirmation dialog
-            onContinueClicked(voidData)
+            if (checkInternetConnection()) {
+                onContinueClicked(voidData)
+            }else{
+                VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+            }
         }
         dialog.show()
         window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -262,11 +268,6 @@ class VoidTransactionFragment : Fragment() {
                                         voidData.time=(timeFormater.format(date))
                                         val dateFormater = SimpleDateFormat("MMdd", Locale.getDefault())
                                         voidData.date=(dateFormater.format(date))
-
-
-
-
-
                                         try {
 
                                             voidData.hostBankID = f60DataList[1]
@@ -458,6 +459,7 @@ class VoidTransactionFragment : Fragment() {
                     } else {
                         (context).runOnUiThread {
                             (context).hideProgress()
+                            VFService.showToast("No Internet Available , Please check your Internet and try again")
                             callback(2, null, "")
                         }
                         //  val responseIsoData: IsoDataReader = readIso(transactionMsg, false)

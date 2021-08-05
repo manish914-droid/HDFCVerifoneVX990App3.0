@@ -47,6 +47,8 @@ class EMICatalogue : Fragment() {
             binding?.subHeaderView?.headerImage?.setImageResource(it)
         }
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
+        binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+        binding?.subHeaderView?.headerHome?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
         Log.d("EMI Catalogue Action:- ", (action as EDashboardItem).toString())
         tptData = TerminalParameterTable.selectFromSchemeTable()
 //11111011000000000000

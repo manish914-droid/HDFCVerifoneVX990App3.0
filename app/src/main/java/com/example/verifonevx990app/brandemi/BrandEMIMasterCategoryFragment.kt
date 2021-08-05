@@ -24,6 +24,7 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.databinding.BrandEmiMasterCategoryFragmentBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiMasterBinding
+import com.example.verifonevx990app.init.DashboardFragment
 import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
@@ -83,6 +84,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
+            binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+            binding?.subHeaderView?.headerHome?.setOnClickListener { (activity as MainActivity).transactFragment(DashboardFragment()) }
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
@@ -115,6 +118,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
+                    binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                     brandEMIMasterCategoryAdapter.refreshAdapterList(brandEmiMasterDataList)
                     binding?.brandEmiMasterRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -125,15 +129,16 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
         //region=================Search Button onClick event:-
         binding?.searchButton?.setOnClickListener {
+            binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
             if (!TextUtils.isEmpty(binding?.brandSearchET?.text?.toString())) {
                 iDialog?.showProgress(getString(R.string.searchingBrand))
                 getSearchedBrands(binding?.brandSearchET?.text?.trim()?.toString())
                 hideSoftKeyboard(requireActivity())
             } else
                 VFService.showToast(getString(R.string.please_enter_brand_name_to_search))
-            binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
         }
         //endregion
+
     }
 
     //region===================Get Searched Results from Brand List:-
@@ -162,7 +167,8 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                     else{
                         brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
-                        VFService.showToast(getString(R.string.no_data_found))
+                        binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                        //VFService.showToast(getString(R.string.no_data_found))
                     }
                 }
             } else

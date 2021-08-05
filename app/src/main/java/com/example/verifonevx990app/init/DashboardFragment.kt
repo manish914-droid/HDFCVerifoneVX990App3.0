@@ -501,6 +501,7 @@ class DashBoardAdapter(
     private val fragReq: IFragmentRequest?,
     var lessMoreClick: (item: EDashboardItem) -> Unit
 ) : RecyclerView.Adapter<DashBoardAdapter.DashBoardViewHolder>() {
+
     var mList: ArrayList<EDashboardItem> = arrayListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DashBoardViewHolder {

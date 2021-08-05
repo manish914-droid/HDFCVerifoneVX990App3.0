@@ -18,7 +18,7 @@ class PreAuthFragment : Fragment() {
     val preAuthOptionList by lazy {
         arguments?.getSerializable("preAuthOptionList") as ArrayList<EDashboardItem>
     }
-
+    private val action by lazy { arguments?.getSerializable("type") ?: "" }
     //creating our adapter
     val mAdapter by lazy {
         PreAuthOptionAdapter(preAuthOptionList) {
@@ -41,7 +41,7 @@ class PreAuthFragment : Fragment() {
             parentFragmentManager.popBackStackImmediate()
         }
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.pre_auth)
-
+        binding?.subHeaderView?.headerImage?.setImageResource((action as EDashboardItem).res)
         binding?.pendingPreAuthPrintBtn?.visibility = View.GONE
 
 

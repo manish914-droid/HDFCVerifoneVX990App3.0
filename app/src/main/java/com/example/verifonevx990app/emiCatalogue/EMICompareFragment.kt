@@ -14,6 +14,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.EmiCompareFragmentBinding
 import com.example.verifonevx990app.databinding.ItemEmiCompareViewBinding
+import com.example.verifonevx990app.init.DashboardFragment
+import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.vxUtils.IDialog
 import com.example.verifonevx990app.vxUtils.UiAction
 import com.example.verifonevx990app.vxUtils.divideAmountBy100
@@ -62,6 +64,10 @@ class EMICompareFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
         }
+        binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+        binding?.subHeaderView?.headerHome?.setOnClickListener {   (activity as MainActivity).transactFragment(
+            DashboardFragment()
+        ) }
 
 
         //region=============Show/Hide Compare By Tenure and Compare By Bank Buttons:-

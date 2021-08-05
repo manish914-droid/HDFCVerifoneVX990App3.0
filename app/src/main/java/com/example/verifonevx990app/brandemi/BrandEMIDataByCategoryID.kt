@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentBrandEmiDataByCategoryIdBinding
 import com.example.verifonevx990app.databinding.ItemBrandEmiSubCategoryItemBinding
+import com.example.verifonevx990app.init.DashboardFragment
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.IDialog
@@ -70,6 +71,10 @@ class BrandEMIDataByCategoryID : Fragment() {
         if (action as EDashboardItem == EDashboardItem.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
+            binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
+            binding?.subHeaderView?.headerHome?.setOnClickListener { (activity as MainActivity).transactFragment(
+                DashboardFragment()
+            ) }
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
@@ -88,6 +93,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
+                    binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                     brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
                     binding?.brandCategoryByIDRecyclerView?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())

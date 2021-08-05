@@ -17,6 +17,7 @@ import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.FragmentPreAuthCompleteDetailBinding
 import com.example.verifonevx990app.emv.transactionprocess.CardProcessedDataModal
 import com.example.verifonevx990app.main.MainActivity
+import com.example.verifonevx990app.realmtables.EDashboardItem
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.VFService.showToast
 import kotlinx.coroutines.Dispatchers
@@ -32,7 +33,7 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
     private val cardProcessedData: CardProcessedDataModal by lazy { CardProcessedDataModal() }
     private val authData: AuthCompletionData by lazy { AuthCompletionData() }
     private var binding: FragmentPreAuthCompleteDetailBinding? = null
-
+    private val action by lazy { arguments?.getSerializable("type") ?: "" }
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -99,6 +100,7 @@ class PreAuthCompleteInputDetailFragment : Fragment() {
             Log.d("RocET:- ", "Clicked")
         }
         binding?.subHeaderView?.subHeaderText?.text = title
+        binding?.subHeaderView?.headerImage?.setImageResource((action as EDashboardItem).res)
         binding?.tidEt?.isFocusableInTouchMode = true
         binding?.tidEt?.requestFocus()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
