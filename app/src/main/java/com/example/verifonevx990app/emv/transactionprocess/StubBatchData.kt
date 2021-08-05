@@ -326,12 +326,14 @@ fun stubEMI(
                        batchData.cashback = brandEMIByAccessCodeData.cashBackAmount
                        batchData.netPay = brandEMIByAccessCodeData.netPayAmount
                        batchData.processingFee = brandEMIByAccessCodeData.processingFee
+                       batchData.processingFeeAmount=brandEMIByAccessCodeData.processingFeeRate
                        batchData.totalInterest = brandEMIByAccessCodeData.totalInterest
                        batchData.emiTransactionAmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.transactionalAmmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.baseAmmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.totalAmmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.orignalTxnAmt=brandEMIByAccessCodeData.orignalTxnAmt
+
 
                    }
                }

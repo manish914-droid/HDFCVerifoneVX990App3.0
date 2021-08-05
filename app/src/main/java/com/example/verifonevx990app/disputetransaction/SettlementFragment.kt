@@ -43,6 +43,7 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
     private var settlementByteArray: ByteArray? = null
     private var back_image_button: ImageView? = null
     private var sub_header_text: TextView? = null
+    private var emptyBatchTv: TextView? = null
     private var header_cardview: NeumorphCardView? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -56,7 +57,8 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
         lv_heading_view = view.findViewById(R.id.lv_heading_view)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
         header_cardview = view.findViewById(R.id.header_cardview)
-
+        emptyBatchTv=view.findViewById(R.id.batch_emty_txt)
+        view.findViewById<ImageView>(R.id.header_Image)?.setImageResource(R.drawable.ic_new_settlement)
         batchList = BatchFileDataTable.selectBatchData()
         getAndInflateSettlementData()
 
@@ -370,11 +372,13 @@ class SettlementFragment : Fragment(R.layout.activity_settlement_view) {
             header_cardview?.visibility = View.GONE
             settlement_rv?.visibility = View.GONE
             empty_view_placeholder?.visibility = View.VISIBLE
+            emptyBatchTv?.visibility=View.VISIBLE
         } else {
             lv_heading_view?.visibility = View.VISIBLE
             header_cardview?.visibility = View.VISIBLE
             settlement_rv?.visibility = View.VISIBLE
             empty_view_placeholder?.visibility = View.GONE
+            emptyBatchTv?.visibility = View.GONE
         }
     }
 

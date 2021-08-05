@@ -1975,7 +1975,7 @@ setLogoAndHeader(null)
                 tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
                 tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }
 */
-                setLogoAndHeader(null)
+                setLogoAndHeader()
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -2048,7 +2048,7 @@ setLogoAndHeader(null)
                 val map1 = mutableMapOf<String, MutableMap<Int, SummeryModel>>()
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
 
-                setLogoAndHeader(null)
+                setLogoAndHeader()
 
                 val td = System.currentTimeMillis()
                 val formatdate = SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH)
@@ -3712,15 +3712,26 @@ setLogoAndHeader(null)
             }
             if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
                 if(!(printerReceiptData.processingFeeAmount).equals("0")) {
-                    val procFeeAmount =
-                        "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
+                    if(printerReceiptData.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
+                        val procFee = "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)+" %"
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "PROC-FEE ",
+                            procFee,
+                            ":  $currencySymbol "
+                        )
 
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "PROC-FEE AMOUNT ",
-                        procFeeAmount,
-                        ":  $currencySymbol "
-                    )
+                    }else {
+                        val procFeeAmount =
+                            "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
+
+                        alignLeftRightText(
+                            textInLineFormatBundle,
+                            "PROC-FEE AMOUNT ",
+                            procFeeAmount,
+                            ":  $currencySymbol "
+                        )
+                    }
                 }
             }
             if (!TextUtils.isEmpty(printerReceiptData.totalProcessingFee)) {
