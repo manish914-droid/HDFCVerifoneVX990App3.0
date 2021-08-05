@@ -39,9 +39,8 @@ class GenericEMISchemeAndOffer(
         field57Request =
             if (cardProcessedDataModal.getTransType() == TransactionType.BRAND_EMI.type) {
 
-                "$bankEMIRequestCode^0^${brandEmiData?.brandID}^${brandEmiData?.productID}^^${
-                    cardBinValue.substring(0, 8)
-                }^$transactionAmount"
+                "$bankEMIRequestCode^0^${brandEmiData?.brandID}^${brandEmiData?.productID}^${brandEmiData?.imeiORserailNum}" +
+                        "^${/*cardBinValue.substring(0, 8)*/""}^$transactionAmount"
             } else {
                 //9^0^^200000
                 "$bankEMIRequestCode^0^1^0^^${cardBinValue.substring(0, 8)}^$transactionAmount"

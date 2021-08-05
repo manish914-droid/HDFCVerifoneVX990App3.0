@@ -124,8 +124,8 @@ class VFTransactionActivity : BaseActivity() {
         }
         /*main_toolbar_tv.visibility = View.GONE
         main_toolbar_tv.text = title*/
-
-      //  globalCardProcessedModel.testEmiOption = testEmiOperationType
+         //Test emi options
+       globalCardProcessedModel.testEmiOption = testEmiOperationType
 
         tpt = TerminalParameterTable.selectFromSchemeTable()
         isManualEntryAllowed = tpt?.fManEntry == "1"
