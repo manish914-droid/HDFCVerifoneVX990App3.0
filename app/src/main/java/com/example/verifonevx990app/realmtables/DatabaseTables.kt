@@ -221,7 +221,7 @@ open class BatchFileDataTable() : RealmObject(), Parcelable {
     var tenureWiseDBDTAndC = ""
     var discountCalculatedValue = ""
     var cashBackCalculatedValue = ""
-    var processingFeeAmount = ""
+    var processingFeeRate = ""
     var totalProcessingFee = ""
 
     //EMI BrandDetail

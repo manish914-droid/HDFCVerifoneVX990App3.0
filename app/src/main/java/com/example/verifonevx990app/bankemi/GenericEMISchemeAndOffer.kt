@@ -279,8 +279,10 @@ data class BankEMIDataModal(
     var loanAmount: String = "0",
     var emiAmount: String,
     var totalEmiPay: String,
+
     var processingFee: String,
     var processingRate: String,
+
     var totalProcessingFee: String,
     var totalInterestPay: String = "0",
     val cashBackAmount: String = "0",

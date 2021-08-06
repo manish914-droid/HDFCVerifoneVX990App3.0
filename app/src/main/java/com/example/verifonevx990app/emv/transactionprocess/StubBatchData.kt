@@ -326,7 +326,8 @@ fun stubEMI(
                        batchData.cashback = brandEMIByAccessCodeData.cashBackAmount
                        batchData.netPay = brandEMIByAccessCodeData.netPayAmount
                        batchData.processingFee = brandEMIByAccessCodeData.processingFee
-                       batchData.processingFeeAmount=brandEMIByAccessCodeData.processingFeeRate
+                       batchData.processingFeeRate=brandEMIByAccessCodeData.processingFeeRate
+                       batchData.totalProcessingFee = brandEMIByAccessCodeData.totalProcessingFee
                        batchData.totalInterest = brandEMIByAccessCodeData.totalInterest
                        batchData.emiTransactionAmount = brandEMIByAccessCodeData.transactionAmount
                        batchData.transactionalAmmount = brandEMIByAccessCodeData.transactionAmount
@@ -358,7 +359,7 @@ fun stubEMI(
             batchData.cashback = emiCustomerDetails?.cashBackAmount.toString()
             batchData.netPay = emiCustomerDetails?.netPay.toString()
             batchData.processingFee = emiCustomerDetails?.processingFee.toString()
-            batchData.processingFeeAmount = emiCustomerDetails?.processingRate.toString()
+            batchData.processingFeeRate = emiCustomerDetails?.processingRate.toString()
             batchData.totalProcessingFee = emiCustomerDetails?.totalProcessingFee.toString()
             batchData.totalInterest = emiCustomerDetails?.totalInterestPay.toString()
         }

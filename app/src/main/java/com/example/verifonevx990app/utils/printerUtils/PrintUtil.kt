@@ -3699,39 +3699,30 @@ setLogoAndHeader(null)
 
             //region===============Processing Fee Changes And Showing On ChargeSlip:-
             if (!TextUtils.isEmpty(printerReceiptData.processingFee)) {
-                if(!(printerReceiptData.processingFee).equals("0")) {
+                if((printerReceiptData.processingFee) != "0") {
                     val procFee = "%.2f".format(printerReceiptData.processingFee.toFloat() / 100)
 
                     alignLeftRightText(
                         textInLineFormatBundle,
-                        "PROC-FEE ",
+                        "PROC-FEE AMOUNT ",
                         procFee,
                         ":  $currencySymbol "
                     )
                 }
             }
-            if (!TextUtils.isEmpty(printerReceiptData.processingFeeAmount)) {
-                if(!(printerReceiptData.processingFeeAmount).equals("0")) {
-                    if(printerReceiptData.transactionType==TransactionType.BRAND_EMI_BY_ACCESS_CODE.type){
-                        val procFee = "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)+" %"
+            if (!TextUtils.isEmpty(printerReceiptData.processingFeeRate)) {
+                if((printerReceiptData.processingFeeRate) != "0") {
+
+                        val procFeeAmount =
+                            "%.2f".format(printerReceiptData.processingFeeRate.toFloat() / 100)+" %"
+
                         alignLeftRightText(
                             textInLineFormatBundle,
                             "PROC-FEE ",
-                            procFee,
-                            ":  $currencySymbol "
-                        )
-
-                    }else {
-                        val procFeeAmount =
-                            "%.2f".format(printerReceiptData.processingFeeAmount.toFloat() / 100)
-
-                        alignLeftRightText(
-                            textInLineFormatBundle,
-                            "PROC-FEE AMOUNT ",
                             procFeeAmount,
                             ":  $currencySymbol "
                         )
-                    }
+
                 }
             }
             if (!TextUtils.isEmpty(printerReceiptData.totalProcessingFee)) {
@@ -3824,6 +3815,14 @@ setLogoAndHeader(null)
                 }
             }
 
+            if (!TextUtils.isEmpty(printerReceiptData.discountCalculatedValue)) {
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    discountPercentHeadingText,
+                    printerReceiptData.discountCalculatedValue
+                )
+            }
+
             if (!TextUtils.isEmpty(printerReceiptData.cashDiscountAmt) && printerReceiptData.cashDiscountAmt != "0") {
                 val discAmount = "%.2f".format(printerReceiptData.cashDiscountAmt.toFloat() / 100)
 
@@ -3833,14 +3832,6 @@ setLogoAndHeader(null)
                     formatTextLMR(discountAmountHeadingText,":  $currencySymbol ",discAmount),
                     "",
                     ""
-                )
-            }
-
-            if (!TextUtils.isEmpty(printerReceiptData.discountCalculatedValue)) {
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    discountPercentHeadingText,
-                    printerReceiptData.discountCalculatedValue
                 )
             }
 
@@ -3884,10 +3875,10 @@ setLogoAndHeader(null)
 
 
             if (!TextUtils.isEmpty(printerReceiptData.totalInterest)) {
-                val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
+               /* val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
                 val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
-                val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
-                val f_totalAmt="%.2f".format(totalAmt)
+                val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())*/
+                val f_totalAmt="%.2f".format(printerReceiptData.netPay.toFloat() / 100)
                 alignLeftRightText(
                     textInLineFormatBundle,
                     totalAmountHeadingText,
@@ -3978,12 +3969,6 @@ setLogoAndHeader(null)
                         brandEmiData.categoryName,
                         ":"
                     )
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Product",
-                        brandEmiData.productName,
-                        ":"
-                    )
                     if(brandEmiData.producatDesc == "subCat"){
                         alignLeftRightText(
                             textInLineFormatBundle,
@@ -3992,6 +3977,14 @@ setLogoAndHeader(null)
                             ":"
                         )
                     }
+
+                    alignLeftRightText(
+                        textInLineFormatBundle,
+                        "Product",
+                        brandEmiData.productName,
+                        ":"
+                    )
+
 
                     if (!TextUtils.isEmpty(brandEmiData.imeiNumber)) {
                         alignLeftRightText(
