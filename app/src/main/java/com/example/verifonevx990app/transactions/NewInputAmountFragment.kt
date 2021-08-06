@@ -958,7 +958,7 @@ class NewInputAmountFragment : Fragment() {
                 brandEntryValidationModel?.isSerialNumReq = isShowSerialDialog()
                 brandEntryValidationModel?.isImeiNumReq = isShowIMEIDialog()
                 brandEntryValidationModel?.isIemeiOrSerialNumReq =
-                    brandEMIDataModal?.isRequired == "1" || brandEMIDataModal?.isRequired == "2"
+                    brandEMIDataModal?.isRequired == "1" || brandEMIDataModal?.isRequired == "0"
 
                 cb(brandEntryValidationModel)
             }
