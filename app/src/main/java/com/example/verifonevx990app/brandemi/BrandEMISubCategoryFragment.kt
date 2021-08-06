@@ -121,8 +121,9 @@ class BrandEMISubCategoryFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
+
                     brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                        brandEMIAllDataList
+                        brandEmiMasterSubCategoryDataList
                     )
                     binding?.brandEmiMasterSubCategoryRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -177,6 +178,10 @@ class BrandEMISubCategoryFragment : Fragment() {
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
                        // VFService.showToast(getString(R.string.no_data_found))
                     }
+                    brandEmiMasterSubCategoryDataList =
+                        brandEMIAllDataList.filter {
+                            it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
+                        } as MutableList<BrandEMIMasterSubCategoryDataModal>
                 }
             } else
                 withContext(Dispatchers.Main) {
@@ -427,7 +432,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     @SuppressLint("LongLogTag")
     private fun onCategoryItemClick(position: Int) {
         try {
-            Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
+          //  Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
             Log.d("Category & Subcategory data- ", Gson().toJson(brandEMIAllDataList))
             val childFilteredList = brandEMIAllDataList.filter {
                 brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID

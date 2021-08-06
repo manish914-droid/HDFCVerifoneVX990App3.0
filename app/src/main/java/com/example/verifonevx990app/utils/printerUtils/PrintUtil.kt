@@ -3784,7 +3784,7 @@ class PrintUtil(context: Context?) {
                 alignLeftRightText(
                     textInLineFormatBundle,
                     cashBackPercentHeadingText,
-                    printerReceiptData.cashBackCalculatedValue
+                    printerReceiptData.cashBackCalculatedValue, ":  $currencySymbol "
                 )
             }
             //endregion
@@ -3833,7 +3833,7 @@ class PrintUtil(context: Context?) {
                 alignLeftRightText(
                     textInLineFormatBundle,
                     discountPercentHeadingText,
-                    printerReceiptData.discountCalculatedValue
+                    printerReceiptData.discountCalculatedValue,": $currencySymbol"
                 )
             }
 

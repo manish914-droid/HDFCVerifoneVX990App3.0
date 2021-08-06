@@ -88,8 +88,11 @@ class BrandEMIProductFragment : Fragment() {
         }
      //   delayTime = timeOutTime()
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
-            if (isSubCategoryItemPresent) parentFragmentManager.popBackStackImmediate()
+            if (isSubCategoryItemPresent) {
+                parentFragmentManager.popBackStackImmediate()
+            }
             else {
+               // parentFragmentManager.popBackStackImmediate()
                 parentFragmentManager.popBackStack()
                 parentFragmentManager.popBackStack()
             }
@@ -130,6 +133,7 @@ class BrandEMIProductFragment : Fragment() {
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
+                    binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                     brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
                     binding?.brandEmiProductRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -217,6 +221,7 @@ class BrandEMIProductFragment : Fragment() {
 
                         when (responseCode) {
                             "00" -> {
+                               // binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                                 ROCProviderV2.incrementFromResponse(
                                     ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
                                 GlobalScope.launch(Dispatchers.Main) {
@@ -231,6 +236,7 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
+                                    binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
                                    // parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
@@ -369,6 +375,7 @@ class BrandEMIProductFragment : Fragment() {
                     }
 
                     if (brandEmiSearchedProductDataList.isNotEmpty()) {
+                        binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                         brandEMIProductAdapter.refreshAdapterList(brandEmiSearchedProductDataList)
                     }
 
