@@ -3875,16 +3875,18 @@ setLogoAndHeader(null)
 
 
             if (!TextUtils.isEmpty(printerReceiptData.totalInterest)) {
-               /* val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
-                val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
-                val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())*/
-                val f_totalAmt="%.2f".format(printerReceiptData.netPay.toFloat() / 100)
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    totalAmountHeadingText,
-                    f_totalAmt.toString(),
-                    ":  $currencySymbol "
-                )
+
+                if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
+
+                    val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
+                    val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
+                    val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
+                    alignLeftRightText(textInLineFormatBundle, totalAmountHeadingText, totalAmt.toString(), ":  $currencySymbol ")
+                }
+                else {
+                    val f_totalAmt = "%.2f".format(printerReceiptData.netPay.toFloat() / 100)
+                    alignLeftRightText(textInLineFormatBundle, totalAmountHeadingText, f_totalAmt.toString(), ":  $currencySymbol ")
+                }
             }
             printSeperator(seperatorLineBundle)
 

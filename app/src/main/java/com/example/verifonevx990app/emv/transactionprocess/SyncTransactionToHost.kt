@@ -339,6 +339,7 @@ class SyncTransactionToHost(var transactionISOByteArray: IsoDataWriter?,
                                                     cardProcessedDataModal?.getTransType() != TransactionType.EMI_SALE.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.BRAND_EMI_BY_ACCESS_CODE.type &&
+                                                    cardProcessedDataModal?.getTransType() != TransactionType.TEST_EMI.type &&
                                                     cardProcessedDataModal?.getTransType() != TransactionType.SALE.type) {
                                                 CompleteSecondGenAc(cardProcessedDataModal, responseIsoData) { printExtraData, de55 ->
                                                     syncTransactionCallback(true, successResponseCode.toString(), result, printExtraData, de55, null)
