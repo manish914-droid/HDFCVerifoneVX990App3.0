@@ -82,6 +82,8 @@ class BrandEMIDataByCategoryID : Fragment() {
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
         brandEMIDataModal = arguments?.getSerializable("modal") as BrandEMIDataModal
         subCategoryData = arguments?.getParcelableArrayList("subCategoryData")
+        Log.d("subCategoryData:- ", brandEMIDataModal.toString())
+
 
         //Method to Filter child category data from SubCategory Data According to Selected Category and display on UI:-
         setUpRecyclerView()
@@ -94,6 +96,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
+                    displayFilteredList=displayAllDataList
                     brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
                     binding?.brandCategoryByIDRecyclerView?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -135,8 +138,14 @@ class BrandEMIDataByCategoryID : Fragment() {
                 }
                 withContext(Dispatchers.Main) {
                     displayFilteredList = searchedDataList
-                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
-                    iDialog?.hideProgress()
+                    if(searchedDataList.size>0) {
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
+                        iDialog?.hideProgress()
+                    }else{
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
+                        iDialog?.hideProgress()
+                        binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                    }
                 }
             } else
                 withContext(Dispatchers.Main) {
@@ -156,9 +165,15 @@ class BrandEMIDataByCategoryID : Fragment() {
                 Log.d("ChildCategoryData:- ", displayFilteredList.toString())
                 if (displayFilteredList?.isNotEmpty() == true) {
                     withContext(Dispatchers.Main) {
+                        displayAllDataList=displayFilteredList
                         brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     }
-                } else {
+                } else if (displayAllDataList?.isNotEmpty() == true) {
+                    withContext(Dispatchers.Main) {
+
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
+                    }
+                }else {
                     withContext(Dispatchers.Main) {
                         (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
                             arguments = Bundle().apply {
@@ -228,7 +243,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             //endregion
             (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
                 arguments = Bundle().apply {
-                    putBoolean("isSubCategoryItemPresent", false)
+                    putBoolean("isSubCategoryItemPresent", true)
                     putSerializable("modal", brandEMIDataModal)
                     putSerializable("type", action)
                 }

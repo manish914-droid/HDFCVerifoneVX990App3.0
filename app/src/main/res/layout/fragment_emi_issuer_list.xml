@@ -38,6 +38,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/sub_header_view" />
 
+
             <androidx.appcompat.widget.LinearLayoutCompat
                 android:id="@+id/compare_buttons_ll"
                 android:layout_width="match_parent"

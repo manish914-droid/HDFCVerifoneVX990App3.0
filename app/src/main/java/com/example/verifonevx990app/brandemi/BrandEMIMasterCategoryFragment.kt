@@ -14,6 +14,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.DefaultItemAnimator
@@ -55,7 +56,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     private var brandCategoryUpdatedTimeStamp: String? = null
     private var issuerTAndCTimeStamp: String? = null
     private var brandTAndCTimeStamp: String? = null
-    private var empty_view_placeholder: ImageView? = null
+    private var empty_view_placeholder: TextView? = null
     private var isDataMatch = false
     private val brandEMIDataModel by lazy { BrandEMIDataModal() }
     private val handler = Handler(Looper.getMainLooper())
