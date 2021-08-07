@@ -547,6 +547,7 @@ internal class BrandEMIMasterSubCategoryAdapter(
         mutableListOf()
 
     init {
+        this.subCategoryDataList.clear()
         if (dataList?.isNotEmpty() == true)
             subCategoryDataList.addAll(dataList!!)
     }

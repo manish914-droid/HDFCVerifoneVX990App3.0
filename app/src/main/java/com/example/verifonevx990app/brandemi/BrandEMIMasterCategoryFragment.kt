@@ -93,6 +93,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         }
         binding?.subHeaderView?.backImageButton?.setOnClickListener {
             hideSoftKeyboard(requireActivity())
+
             parentFragmentManager.popBackStackImmediate()
         }
       //  delayTime = timeOutTime()
