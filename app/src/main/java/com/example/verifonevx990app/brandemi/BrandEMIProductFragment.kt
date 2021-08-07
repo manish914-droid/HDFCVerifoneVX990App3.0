@@ -93,7 +93,7 @@ class BrandEMIProductFragment : Fragment() {
             }
             else {
                // parentFragmentManager.popBackStackImmediate()
-                parentFragmentManager.popBackStack()
+               parentFragmentManager.popBackStack()
                 parentFragmentManager.popBackStack()
             }
         }
@@ -117,6 +117,7 @@ class BrandEMIProductFragment : Fragment() {
         ////Initially on searching of product we were not showing the products category with requestType 3.But now with request type 11,product category name is coming
         binding?.searchButton?.setOnClickListener {
             hideSoftKeyboard(requireActivity())
+            binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
             searchedProductName = binding?.productSearchET?.text?.toString() ?: ""
             totalRecord = "0"
             brandEmiSearchedProductDataList.clear()
@@ -227,8 +228,10 @@ class BrandEMIProductFragment : Fragment() {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     //Processing BrandEMIMasterSubCategoryData:-
                                     if (isSearchedDataCall) {
+
                                         stubbingBrandEMISearchedProductDataToList(brandEMIProductData, hostMsg,isSearchedDataCall)
                                     } else {
+
                                         stubbingBrandEMIProductDataToList(brandEMIProductData, hostMsg)
                                     }
                                 }
@@ -236,7 +239,8 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
-                                    binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                                   if(!isSearchedDataCall)
+                                   binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
                                    // parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",
@@ -257,6 +261,7 @@ class BrandEMIProductFragment : Fragment() {
                                     ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
                                     AppPreference.getBankCode()
                                 )
+
                                 iDialog?.hideProgress()
                                // parentFragmentManager.popBackStackImmediate()
                             }
@@ -316,6 +321,7 @@ class BrandEMIProductFragment : Fragment() {
                     }
 
                     if (brandEmiProductDataList.isNotEmpty()) {
+                        binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
                         brandEMIProductAdapter.refreshAdapterList(brandEmiProductDataList)
                     }
 
