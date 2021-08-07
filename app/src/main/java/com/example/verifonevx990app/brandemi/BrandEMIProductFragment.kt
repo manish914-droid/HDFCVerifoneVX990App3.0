@@ -239,8 +239,11 @@ class BrandEMIProductFragment : Fragment() {
                             "-1" -> {
                                 GlobalScope.launch(Dispatchers.Main) {
                                     iDialog?.hideProgress()
-                                   if(!isSearchedDataCall)
-                                   binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                                   if(!isSearchedDataCall) {
+                                       binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
+                                   }else{
+                                       VFService.showToast(getString(R.string.no_data_found))
+                                   }
                                    // parentFragmentManager.popBackStackImmediate()
                                     /*iDialog?.alertBoxWithAction(null, null,
                                         getString(R.string.info), "No Record Found",

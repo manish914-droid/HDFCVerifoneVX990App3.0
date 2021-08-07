@@ -121,7 +121,6 @@ class BrandEMISubCategoryFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
-
                     brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                         brandEmiMasterSubCategoryDataList
                     )
@@ -164,24 +163,21 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                 }
                 withContext(Dispatchers.Main) {
-                    brandEmiMasterSubCategoryDataList = searchedDataList
                     if(searchedDataList.size>0) {
+                        brandEmiMasterSubCategoryDataList = searchedDataList
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                             brandEmiMasterSubCategoryDataList
                         )
                         iDialog?.hideProgress()
                     }else{
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                            brandEmiMasterSubCategoryDataList
+                            searchedDataList
                         )
                         iDialog?.hideProgress()
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
                        // VFService.showToast(getString(R.string.no_data_found))
                     }
-                    brandEmiMasterSubCategoryDataList =
-                        brandEMIAllDataList.filter {
-                            it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
-                        } as MutableList<BrandEMIMasterSubCategoryDataModal>
+
                 }
             } else
                 withContext(Dispatchers.Main) {

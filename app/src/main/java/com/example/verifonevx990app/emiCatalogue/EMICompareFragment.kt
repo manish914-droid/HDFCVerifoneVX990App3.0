@@ -56,13 +56,13 @@ class EMICompareFragment : Fragment() {
         dataList =
             arguments?.getParcelableArrayList<IssuerBankModal>("dataModal") as MutableList<IssuerBankModal>
         Log.d("Data:- ", Gson().toJson(dataList))
-
+        binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
-            binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
+
         }
         binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
         binding?.subHeaderView?.headerHome?.setOnClickListener {   (activity as MainActivity).transactFragment(
