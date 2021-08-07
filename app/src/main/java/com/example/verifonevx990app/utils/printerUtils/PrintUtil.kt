@@ -1041,6 +1041,10 @@ class PrintUtil(context: Context?) {
                             b.transactionType = TransactionType.EMI_SALE.type
                         }
 
+                        if(b.transactionType == TransactionType.TEST_EMI.type){
+                            b.transactionType = TransactionType.SALE.type
+                        }
+
 
                         count++
                         if (updatedindex <= frequencylist.size - 1)
@@ -1687,13 +1691,7 @@ class PrintUtil(context: Context?) {
     }
 
 
-    fun printSettlementReport(
-        context: Context?,
-        batch: MutableList<BatchFileDataTable>,
-        isSettlementSuccess: Boolean = false,
-        isLastSummary: Boolean = false,
-        callBack: (Boolean) -> Unit
-    ) {
+/*    fun printSettlementReport(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
         //  val format = Bundle()
         //   val fmtAddTextInLine = Bundle()
 
@@ -1703,9 +1701,9 @@ class PrintUtil(context: Context?) {
                 centerText(textFormatBundle, "SETTLEMENT SUCCESSFUL")
 
                 val tpt = TerminalParameterTable.selectFromSchemeTable()
-                /*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
+                *//*   tpt?.receiptHeaderOne?.let { centerText(textInLineFormatBundle, it) }
                   tpt?.receiptHeaderTwo?.let { centerText(textInLineFormatBundle, it) }
-                  tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }*/
+                  tpt?.receiptHeaderThree?.let { centerText(textInLineFormatBundle, it) }*//*
                 setLogoAndHeader(null)
 
                 val td = System.currentTimeMillis()
@@ -1897,12 +1895,12 @@ class PrintUtil(context: Context?) {
                 centerText(textInLineFormatBundle, "*** TOTAL TRANSACTION ***")
                 val sortedMap = totalMap.toSortedMap(compareByDescending { it })
                 for ((k, m) in sortedMap) {
-                    /* alignLeftRightText(
+                    *//* alignLeftRightText(
                          textInLineFormatBundle,
                          "${transactionType2Name(k).toUpperCase(Locale.ROOT)}${"     =" + m.count}",
                          "Rs.     ${"%.2f".format(((m.total).toDouble() / 100))}"
 
-                     )*/
+                     )*//*
 
                     alignLeftRightText(
                         textInLineFormatBundle,
@@ -1961,7 +1959,7 @@ class PrintUtil(context: Context?) {
                 )
             }
         }
-    }
+    }*/
 
     fun printSettlementReportupdate(
         context: Context?,
@@ -2092,8 +2090,8 @@ class PrintUtil(context: Context?) {
                         it.transactionType = TransactionType.EMI_SALE.type
                     }
 
-                    if (it.transactionType == TransactionType.EMI_SALE.type || it.transactionType == TransactionType.BRAND_EMI.type || it.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
-                        it.transactionType = TransactionType.EMI_SALE.type
+                    if(it.transactionType == TransactionType.TEST_EMI.type){
+                        it.transactionType = TransactionType.SALE.type
                     }
 
                     val transAmt = try {

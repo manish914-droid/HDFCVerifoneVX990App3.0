@@ -1413,7 +1413,7 @@ fun transactionType2Name(code: Int): String {
         TransactionType.SALE_WITH_CASH.type -> "Sale Cash"
         TransactionType.TIP_ADJUSTMENT.type -> "Tip Adjust"
         TransactionType.VOID_OFFLINE_SALE.type -> "Void Offline Sale"
-        TransactionType.TEST_EMI.type -> "TEST EMI"
+        TransactionType.TEST_EMI.type -> "TEST EMI TXN"
         TransactionType.BRAND_EMI.type, TransactionType.BRAND_EMI_BY_ACCESS_CODE.type , TransactionType.EMI_SALE.type -> "EMI Sale"
         TransactionType.CASH_AT_POS.type -> "Cash only"
         TransactionType.VOID_EMI.type -> "Void EMI"
