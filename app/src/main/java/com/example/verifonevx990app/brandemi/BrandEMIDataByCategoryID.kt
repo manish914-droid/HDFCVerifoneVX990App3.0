@@ -168,11 +168,7 @@ class BrandEMIDataByCategoryID : Fragment() {
                         displayAllDataList=displayFilteredList
                         brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     }
-                } else if (displayAllDataList?.isNotEmpty() == true) {
-                    withContext(Dispatchers.Main) {
 
-                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
-                    }
                 }else {
                     withContext(Dispatchers.Main) {
                         (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
@@ -243,7 +239,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             //endregion
             (activity as MainActivity).transactFragment(BrandEMIProductFragment().apply {
                 arguments = Bundle().apply {
-                    putBoolean("isSubCategoryItemPresent", true)
+                    putBoolean("isSubCategoryItemPresent", false)
                     putSerializable("modal", brandEMIDataModal)
                     putSerializable("type", action)
                 }
