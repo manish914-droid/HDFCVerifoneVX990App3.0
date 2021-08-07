@@ -96,8 +96,8 @@ class BrandEMIDataByCategoryID : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
-                    displayFilteredList=displayAllDataList
-                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayAllDataList)
+                    //displayFilteredList=displayAllDataList
+                    brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     binding?.brandCategoryByIDRecyclerView?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
                 }
@@ -137,12 +137,13 @@ class BrandEMIDataByCategoryID : Fragment() {
                         )
                 }
                 withContext(Dispatchers.Main) {
-                    displayFilteredList = searchedDataList
+
                     if(searchedDataList.size>0) {
-                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
+                        displayFilteredList = searchedDataList
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                     }else{
-                        brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
+                        brandEMISubCategoryByIDAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
                     }

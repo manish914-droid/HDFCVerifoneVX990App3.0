@@ -103,6 +103,7 @@ class EMIIssuerList : Fragment() {
         setUpRecyclerViews()
         binding?.subHeaderView?.headerHome?.visibility= View.VISIBLE
         binding?.subHeaderView?.headerHome?.setOnClickListener {   (activity as MainActivity).transactFragment(DashboardFragment()) }
+        binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
         if (action == UiAction.BRAND_EMI_CATALOGUE) {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmiCatalogue)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_catalogue)
@@ -112,7 +113,7 @@ class EMIIssuerList : Fragment() {
                         "^${brandEMIData?.productID}^^^$enquiryAmount"
         } else {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.bankEmiCatalogue)
-            binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
+          //  binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_bank_emi)
             field57RequestData =
                 if (AppPreference.getLongData(AppPreference.ENQUIRY_AMOUNT_FOR_EMI_CATALOGUE) != 0L)
                     "${EMIRequestType.EMI_CATALOGUE_ACCESS_CODE.requestType}^$totalRecord^1^^^^${

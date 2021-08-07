@@ -47,7 +47,7 @@ Here we are Fetching Master Category Data(Brand Data) From Host and Displaying o
 class BrandEMIMasterCategoryFragment : Fragment() {
     private var binding: BrandEmiMasterCategoryFragmentBinding? = null
     private var iDialog: IDialog? = null
-    private val brandEmiMasterDataList by lazy { mutableListOf<BrandEMIMasterDataModal>() }
+    private var brandEmiMasterDataList = mutableListOf<BrandEMIMasterDataModal>()
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var field57RequestData: String? = null
     private var moreDataFlag = "0"
@@ -160,9 +160,12 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                                 brandData.mobileNumberBillNumberFlag
                             )
                         )
+                    Log.d("searchedDataList:- ", searchedDataList.toString())
                 }
                 withContext(Dispatchers.Main) {
+
                     if(searchedDataList.size>0) {
+                        brandEmiMasterDataList=searchedDataList
                         brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                     }
@@ -306,6 +309,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         Log.d("Field57UpdateRequest:- ", field57RequestData.toString())
                         fetchBrandEMIMasterDataFromHost()
                     } else {
+
+
+
                         //Notify RecyclerView DataList on UI:-
                         withContext(Dispatchers.Main) {
                             iDialog?.hideProgress()
@@ -498,7 +504,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             brandEMIDataModel.brandReservedValues=(modal.mobileNumberBillNumberFlag)
             brandEMIDataModel.dataTimeStampChangedOrNot=(isDataMatch)
             //endregion
-
+            binding?.brandSearchET?.setText("")
             (activity as MainActivity).transactFragment(BrandEMISubCategoryFragment().apply {
                 arguments = Bundle().apply {
                     putString("categoryUpdatedTimeStamp", brandCategoryUpdatedTimeStamp)
