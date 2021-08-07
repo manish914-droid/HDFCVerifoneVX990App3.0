@@ -782,7 +782,17 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         //    printBatch(b)
                                         when (b.transactionType) {
                                             TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type,TransactionType.CASH_AT_POS.type,TransactionType.SALE_WITH_CASH.type -> {
-                                                PrintUtil(activity).startPrinting(
+                                                PrintUtil(activity).startPrinting(b, EPrintCopyType.DUPLICATE, activity) { printCB, printingFail ->
+                                                    if (printCB) {
+                                                        iDiag?.hideProgress()
+                                                        Log.e("PRINTING", "LAST_RECEIPT")
+                                                    } else {
+                                                        iDiag?.hideProgress()
+                                                    }
+                                                }
+                                            }
+                                            TransactionType.TEST_EMI.type -> {
+                                                PrintUtil(activity).printEMISale(
                                                     b,
                                                     EPrintCopyType.DUPLICATE,
                                                     activity

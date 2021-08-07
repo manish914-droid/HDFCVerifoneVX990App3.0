@@ -423,7 +423,13 @@ internal class SettlementAdapter(private val list: List<BatchFileDataTable>) :
 
 
 
-        p0.transactionType.text = list[p1].getTransactionType()
+        if(TransactionType.TEST_EMI.txnTitle.equals(list[p1].getTransactionType())){
+            p0.transactionType.text = TransactionType.SALE.txnTitle
+        }
+        else{
+            p0.transactionType.text = list[p1].getTransactionType()
+        }
+
 
         p0.transactionDateText.text = list[p1].transactionDate
     }
