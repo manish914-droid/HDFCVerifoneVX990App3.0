@@ -95,6 +95,7 @@ class BrandEMIProductFragment : Fragment() {
                // parentFragmentManager.popBackStackImmediate()
                parentFragmentManager.popBackStack()
                 parentFragmentManager.popBackStack()
+
             }
         }
 

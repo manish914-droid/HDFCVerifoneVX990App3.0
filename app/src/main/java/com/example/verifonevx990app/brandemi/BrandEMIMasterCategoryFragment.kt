@@ -47,6 +47,7 @@ Here we are Fetching Master Category Data(Brand Data) From Host and Displaying o
 class BrandEMIMasterCategoryFragment : Fragment() {
     private var binding: BrandEmiMasterCategoryFragmentBinding? = null
     private var iDialog: IDialog? = null
+    private var brandEmiMasterDataListUpdate = mutableListOf<BrandEMIMasterDataModal>()
     private var brandEmiMasterDataList = mutableListOf<BrandEMIMasterDataModal>()
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var field57RequestData: String? = null
@@ -96,7 +97,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
             parentFragmentManager.popBackStackImmediate()
         }
-      //  delayTime = timeOutTime()
+        //  delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         empty_view_placeholder = view.findViewById(R.id.empty_view_placeholder)
 
@@ -107,9 +108,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
         setUpRecyclerView()
         brandEmiMasterDataList.clear()
 
-      /*  val issuerTAndCData =
-            runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
-        Log.d("IssuerTC:- ", Gson().toJson(issuerTAndCData))*/
+        /*  val issuerTAndCData =
+              runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+          Log.d("IssuerTC:- ", Gson().toJson(issuerTAndCData))*/
 
         //Method to Fetch BrandEMIMasterData:-
         fetchBrandEMIMasterDataFromHost()
@@ -121,6 +122,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
+                    brandEmiMasterDataList = brandEmiMasterDataListUpdate
                     brandEMIMasterCategoryAdapter.refreshAdapterList(brandEmiMasterDataList)
                     binding?.brandEmiMasterRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -165,11 +167,13 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                 withContext(Dispatchers.Main) {
 
                     if(searchedDataList.size>0) {
+                        brandEmiMasterDataListUpdate = brandEmiMasterDataList
                         brandEmiMasterDataList=searchedDataList
                         brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                     }
                     else{
+                        brandEmiMasterDataListUpdate = brandEmiMasterDataList
                         brandEMIMasterCategoryAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
@@ -196,7 +200,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
             }
         }
         //endregion
-      //  startTimeOut()
+        //  startTimeOut()
         //region==============================Host Hit To Fetch BrandEMIMaster Data:-
         lifecycleScope.launch(Dispatchers.IO) {
             if (brandEMIMasterISOData != null) {
@@ -233,7 +237,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                               // parentFragmentManager.popBackStackImmediate()
+                                // parentFragmentManager.popBackStackImmediate()
                                 iDialog?.alertBoxWithAction(null, null,
                                     getString(R.string.error), hostMsg,
                                     false, getString(R.string.positive_button_ok),
@@ -248,10 +252,10 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
                             parentFragmentManager.popBackStackImmediate()
-                           /* iDialog?.alertBoxWithAction(null, null,
-                                getString(R.string.error),getString(R.string.socket_time_out) ,
-                                false, getString(R.string.positive_button_ok),
-                                { parentFragmentManager.popBackStackImmediate() }, {})*/
+                            /* iDialog?.alertBoxWithAction(null, null,
+                                 getString(R.string.error),getString(R.string.socket_time_out) ,
+                                 false, getString(R.string.positive_button_ok),
+                                 { parentFragmentManager.popBackStackImmediate() }, {})*/
                         }
                     }
                 }, {})
@@ -300,9 +304,9 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                             }
                         }
                     }
-                   /* withContext(Dispatchers.Main) {
-                        cancelTimeOut()
-                    }*/
+                    /* withContext(Dispatchers.Main) {
+                         cancelTimeOut()
+                     }*/
                     //Refresh Field57 request value for Pagination if More Record Flag is True:-
                     if (moreDataFlag == "1") {
                         field57RequestData = "${EMIRequestType.BRAND_DATA.requestType}^$totalRecord"
@@ -526,7 +530,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
 
         if (!TextUtils.isEmpty(timeStampsData[0].brandTAndCTimeStamp) &&
             !TextUtils.isEmpty(timeStampsData[0].issuerTAndCTimeStamp) &&
-           ! TextUtils.isEmpty(timeStampsData[0].brandCategoryUpdatedTimeStamp)
+            ! TextUtils.isEmpty(timeStampsData[0].brandCategoryUpdatedTimeStamp)
         ) {
             isDataMatch = issuerTAndCTimeStamp == timeStampsData[0].issuerTAndCTimeStamp &&
                     brandTAndCTimeStamp == timeStampsData[0].brandTAndCTimeStamp &&

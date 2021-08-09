@@ -47,8 +47,8 @@ Fragment Page and Displaying on UI:-
 class BrandEMISubCategoryFragment : Fragment() {
     private var binding: FragmentBrandEmiSubCategoryBinding? = null
     private var iDialog: IDialog? = null
-    private var brandEmiMasterSubCategoryDataList =
-        mutableListOf<BrandEMIMasterSubCategoryDataModal>()
+    private var brandEmiMasterSubCategoryDataListUpdate = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
+    private var brandEmiMasterSubCategoryDataList = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
     private var brandEMIAllDataList = mutableListOf<BrandEMIMasterSubCategoryDataModal>()
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private var brandEMIDataModal: BrandEMIDataModal? = null
@@ -97,7 +97,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             binding?.subHeaderView?.subHeaderText?.text = getString(R.string.brandEmi)
             binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_brand_emi_sub_header_logo)
         }
-       // delayTime = timeOutTime()
+        // delayTime = timeOutTime()
         //(activity as MainActivity).showBottomNavigationBar(isShow = false)
         brandEMIDataModal = arguments?.getSerializable("modal") as? BrandEMIDataModal
         Log.d("BrandID:- ", brandEMIDataModal?.brandID ?: "")
@@ -121,9 +121,8 @@ class BrandEMISubCategoryFragment : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
-                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(
-                        brandEmiMasterSubCategoryDataList
-                    )
+                    brandEmiMasterSubCategoryDataList = brandEmiMasterSubCategoryDataListUpdate
+                    brandEMIMasterSubCategoryAdapter.refreshAdapterList(brandEmiMasterSubCategoryDataList)
                     binding?.brandEmiMasterSubCategoryRV?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
                 }
@@ -164,18 +163,20 @@ class BrandEMISubCategoryFragment : Fragment() {
                 }
                 withContext(Dispatchers.Main) {
                     if(searchedDataList.size>0) {
+                        brandEmiMasterSubCategoryDataListUpdate = brandEmiMasterSubCategoryDataList
                         brandEmiMasterSubCategoryDataList = searchedDataList
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                             brandEmiMasterSubCategoryDataList
                         )
                         iDialog?.hideProgress()
                     }else{
+                        brandEmiMasterSubCategoryDataListUpdate = brandEmiMasterSubCategoryDataList
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
                             searchedDataList
                         )
                         iDialog?.hideProgress()
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE
-                       // VFService.showToast(getString(R.string.no_data_found))
+                        // VFService.showToast(getString(R.string.no_data_found))
                     }
 
                 }
@@ -238,7 +239,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                             )
                             lifecycleScope.launch(Dispatchers.Main) {
                                 iDialog?.hideProgress()
-                               // parentFragmentManager.popBackStackImmediate()
+                                // parentFragmentManager.popBackStackImmediate()
                             }
                         }
                     } else {
@@ -248,7 +249,7 @@ class BrandEMISubCategoryFragment : Fragment() {
                         )
                         lifecycleScope.launch(Dispatchers.Main) {
                             iDialog?.hideProgress()
-                          //  parentFragmentManager.popBackStackImmediate()
+                            //  parentFragmentManager.popBackStackImmediate()
                             /*iDialog?.alertBoxWithAction(null, null,
                                 getString(R.string.error), result,
                                 false, getString(R.string.positive_button_ok),
@@ -259,7 +260,7 @@ class BrandEMISubCategoryFragment : Fragment() {
             } else {
                 lifecycleScope.launch(Dispatchers.Main) {
                     iDialog?.hideProgress()
-                //    parentFragmentManager.popBackStackImmediate()
+                    //    parentFragmentManager.popBackStackImmediate()
                     /*iDialog?.alertBoxWithAction(null, null,
                         getString(R.string.error), "Something went wrong",
                         false, getString(R.string.positive_button_ok),
@@ -330,9 +331,9 @@ class BrandEMISubCategoryFragment : Fragment() {
 
                                 //region=====================Line added to resolve category only issue===================== By Manish
                                 brandEmiMasterSubCategoryDataList =
-                                        brandEmiMasterSubCategoryDataList.filter {
-                                            it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
-                                        } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                                    brandEmiMasterSubCategoryDataList.filter {
+                                        it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
+                                    } as MutableList<BrandEMIMasterSubCategoryDataModal>
                                 //region=====================Line added to resolve category only issue end=====================
 
                                 brandEMIMasterSubCategoryAdapter.refreshAdapterList(
@@ -392,9 +393,9 @@ class BrandEMISubCategoryFragment : Fragment() {
                         brandEMIAllDataList = brandEmiMasterSubCategoryDataList
                         //region=====================Line added to resolve category only showing issue===================== By Manish
                         brandEmiMasterSubCategoryDataList =
-                                brandEmiMasterSubCategoryDataList.filter {
-                                    it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
-                                } as MutableList<BrandEMIMasterSubCategoryDataModal>
+                            brandEmiMasterSubCategoryDataList.filter {
+                                it.brandID == brandEMIDataModal?.brandID && it.parentCategoryID == "0"
+                            } as MutableList<BrandEMIMasterSubCategoryDataModal>
                         //region=====================Line added to resolve category only issue end=====================
 
                         brandEMIMasterSubCategoryAdapter.refreshAdapterList(
@@ -428,7 +429,7 @@ class BrandEMISubCategoryFragment : Fragment() {
     @SuppressLint("LongLogTag")
     private fun onCategoryItemClick(position: Int) {
         try {
-          //  Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
+            //  Log.d("CategoryName:- ", brandEmiMasterSubCategoryDataList[position].categoryName)
             Log.d("Category & Subcategory data- ", Gson().toJson(brandEMIAllDataList))
             val childFilteredList = brandEMIAllDataList.filter {
                 brandEmiMasterSubCategoryDataList[position].categoryID == it.parentCategoryID
