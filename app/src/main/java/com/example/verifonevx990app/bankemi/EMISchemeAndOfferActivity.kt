@@ -106,56 +106,146 @@ class EMISchemeAndOfferActivity : BaseActivity() {
     }
 
     private fun calculateEmi() {
-        var monthlyEmi3 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,11.0f,3.0f) }
+         var testEmiOption= cardProcessedDataModal?.testEmiOption
+        when(testEmiOption) {
+            "3" -> {
 
-        var totalInterestPay3 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi3?.times(3.0))?.minus(it) }
+                var monthlyEmi3 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                ?.let { emi_calculator(it, 11.0f, 3.0f) }
 
-
-        bankEMIDataModal = BankEMIDataModal("3", "1100",
-            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
-            cardProcessedDataModal?.getTransactionAmount().toString(),
-            monthlyEmi3.toString(),"","", "","",totalInterestPay3.toString(),"","",
-            "","","","")
-
-        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
-
-        var monthlyEmi6 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,12.0f,6.0f) }
-
-        var totalInterestPay6 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi6?.times(6.0))?.minus(it) }
-
-        bankEMIDataModal = BankEMIDataModal("6", "1200",
-            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
-            cardProcessedDataModal?.getTransactionAmount().toString(),
-            monthlyEmi6.toString(),"","", "","",totalInterestPay6.toString(),"","",
-            "","","","")
-
-        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
-
-        var monthlyEmi9 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,13.0f,9.0f) }
-
-        var totalInterestPay9 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi9?.times(9.0))?.minus(it) }
+                var totalInterestPay3 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                ?.let { (monthlyEmi3?.times(3.0))?.minus(it) }
 
 
-        bankEMIDataModal = BankEMIDataModal("9", "1300",
-            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
-            cardProcessedDataModal?.getTransactionAmount().toString(),
-            monthlyEmi9.toString(),"","", "","",totalInterestPay9.toString(),"","",
-            "","","","")
+            bankEMIDataModal = BankEMIDataModal(
+                "3", "1100",
+                "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                cardProcessedDataModal?.getTransactionAmount().toString(),
+                monthlyEmi3.toString(), "", "", "", "", totalInterestPay3.toString(), "", "",
+                "", "", "", ""
+            )
 
-        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+                    emiSchemeOfferDataList ?. add (bankEMIDataModal as BankEMIDataModal)
+        }
+        "6"->{
+            var monthlyEmi6 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                ?.let { emi_calculator(it, 12.0f, 6.0f) }
 
-        var monthlyEmi12 =   cardProcessedDataModal?.getTransactionAmount()?.toFloat()?.let { emi_calculator(it,14.0f,12.0f) }
+            var totalInterestPay6 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                ?.let { (monthlyEmi6?.times(6.0))?.minus(it) }
 
-        var totalInterestPay12 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()?.let { (monthlyEmi12?.times(12.0))?.minus(it) }
+            bankEMIDataModal = BankEMIDataModal(
+                "6", "1200",
+                "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                cardProcessedDataModal?.getTransactionAmount().toString(),
+                monthlyEmi6.toString(), "", "", "", "", totalInterestPay6.toString(), "", "",
+                "", "", "", ""
+            )
+
+            emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+        }
+            "9"-> {
+                var monthlyEmi9 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 13.0f, 9.0f) }
+
+                var totalInterestPay9 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi9?.times(9.0))?.minus(it) }
 
 
-        bankEMIDataModal = BankEMIDataModal("12", "1400",
-            "","",cardProcessedDataModal?.getTransactionAmount().toString(), "","","",
-            cardProcessedDataModal?.getTransactionAmount().toString(),
-            monthlyEmi12.toString(),"","", "","",totalInterestPay12.toString(),"","",
-            "","","","")
+                bankEMIDataModal = BankEMIDataModal(
+                    "9", "1300",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi9.toString(), "", "", "", "", totalInterestPay9.toString(), "", "",
+                    "", "", "", ""
+                )
 
-        emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+                emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+            }
+           "12"-> {
+                var monthlyEmi12 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 14.0f, 12.0f) }
+
+                var totalInterestPay12 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi12?.times(12.0))?.minus(it) }
+
+
+                bankEMIDataModal = BankEMIDataModal(
+                    "12", "1400",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi12.toString(), "", "", "", "", totalInterestPay12.toString(), "", "",
+                    "", "", "", ""
+                )
+
+                emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+            }
+            else->{
+                var monthlyEmi3 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 11.0f, 3.0f) }
+
+                var totalInterestPay3 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi3?.times(3.0))?.minus(it) }
+
+
+                bankEMIDataModal = BankEMIDataModal(
+                    "3", "1100",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi3.toString(), "", "", "", "", totalInterestPay3.toString(), "", "",
+                    "", "", "", ""
+                )
+
+                emiSchemeOfferDataList ?. add (bankEMIDataModal as BankEMIDataModal)
+                var monthlyEmi6 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 12.0f, 6.0f) }
+
+                var totalInterestPay6 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi6?.times(6.0))?.minus(it) }
+
+                bankEMIDataModal = BankEMIDataModal(
+                    "6", "1200",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi6.toString(), "", "", "", "", totalInterestPay6.toString(), "", "",
+                    "", "", "", ""
+                )
+
+                emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+                var monthlyEmi9 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 13.0f, 9.0f) }
+
+                var totalInterestPay9 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi9?.times(9.0))?.minus(it) }
+
+
+                bankEMIDataModal = BankEMIDataModal(
+                    "9", "1300",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi9.toString(), "", "", "", "", totalInterestPay9.toString(), "", "",
+                    "", "", "", ""
+                )
+
+                emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+                var monthlyEmi12 = cardProcessedDataModal?.getTransactionAmount()?.toFloat()
+                    ?.let { emi_calculator(it, 14.0f, 12.0f) }
+
+                var totalInterestPay12 = cardProcessedDataModal?.getTransactionAmount()?.toDouble()
+                    ?.let { (monthlyEmi12?.times(12.0))?.minus(it) }
+
+
+                bankEMIDataModal = BankEMIDataModal(
+                    "12", "1400",
+                    "", "", cardProcessedDataModal?.getTransactionAmount().toString(), "", "", "",
+                    cardProcessedDataModal?.getTransactionAmount().toString(),
+                    monthlyEmi12.toString(), "", "", "", "", totalInterestPay12.toString(), "", "",
+                    "", "", "", ""
+                )
+
+                emiSchemeOfferDataList?.add(bankEMIDataModal as BankEMIDataModal)
+            }
+        }
     }
 
     // Function to calculate EMI

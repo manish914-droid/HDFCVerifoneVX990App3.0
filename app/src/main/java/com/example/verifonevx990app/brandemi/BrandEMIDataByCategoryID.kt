@@ -38,10 +38,9 @@ Here we are Fetching Brand EMI Sub-Category ID based Data From Previous Sub-Cate
 class BrandEMIDataByCategoryID : Fragment() {
     private var iDialog: IDialog? = null
     private var subCategoryData: MutableList<BrandEMIMasterSubCategoryDataModal>? = null
-    private var displayFilteredList: MutableList<BrandEMIMasterSubCategoryDataModal>? =
-        mutableListOf()
-    private var displayAllDataList: MutableList<BrandEMIMasterSubCategoryDataModal>? =
-        mutableListOf()
+    private var displayFilteredList: MutableList<BrandEMIMasterSubCategoryDataModal>? = mutableListOf()
+    private var displayAllDataList: MutableList<BrandEMIMasterSubCategoryDataModal>? = mutableListOf()
+    private var displayAllDataListUpdated: MutableList<BrandEMIMasterSubCategoryDataModal>? = mutableListOf()
     private var selectedCategoryID: String? = null
     private val action by lazy { arguments?.getSerializable("type") ?: "" }
     private val isSubCategoryItem by lazy { arguments?.getBoolean("isSubCategoryItemPresent") }
@@ -96,7 +95,7 @@ class BrandEMIDataByCategoryID : Fragment() {
             override fun afterTextChanged(p0: Editable?) {
                 if (TextUtils.isEmpty(p0.toString())) {
                     binding?.emptyViewPlaceholder?.visibility = View.INVISIBLE
-                    //displayFilteredList=displayAllDataList
+                    displayFilteredList=displayAllDataListUpdated
                     brandEMISubCategoryByIDAdapter.refreshAdapterList(displayFilteredList)
                     binding?.brandCategoryByIDRecyclerView?.smoothScrollToPosition(0)
                     hideSoftKeyboard(requireActivity())
@@ -139,10 +138,12 @@ class BrandEMIDataByCategoryID : Fragment() {
                 withContext(Dispatchers.Main) {
 
                     if(searchedDataList.size>0) {
+                        displayAllDataListUpdated=displayFilteredList
                         displayFilteredList = searchedDataList
                         brandEMISubCategoryByIDAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                     }else{
+                        displayAllDataListUpdated=displayFilteredList
                         brandEMISubCategoryByIDAdapter.refreshAdapterList(searchedDataList)
                         iDialog?.hideProgress()
                         binding?.emptyViewPlaceholder?.visibility = View.VISIBLE

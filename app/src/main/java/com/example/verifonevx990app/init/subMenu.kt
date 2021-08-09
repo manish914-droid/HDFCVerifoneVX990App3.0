@@ -436,8 +436,8 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
     private fun initUI(v: View) {
         iDiag?.onEvents(VxEvent.ChangeTitle(option.name))
-        binding?.fSmTitleTv?.text = option.heading
-
+        binding?.subHeaderView?.subHeaderText?.text =option.heading
+        binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
         binding?.fSmRv?.apply {
             layoutManager = LinearLayoutManager(context)
             adapter = mAdapter

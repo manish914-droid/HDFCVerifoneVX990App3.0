@@ -28,6 +28,7 @@ class CommunicationOptionFragment : Fragment() {
             parentFragmentManager.popBackStackImmediate()
         }
         binding?.subHeaderView?.subHeaderText?.text = getString(R.string.comm_param)
+        binding?.subHeaderView?.headerImage?.setImageResource(R.drawable.ic_copt)
         binding?.transComParamOption?.setOnClickListener {
             (activity as MainActivity).transactFragment(TableEditFragment().apply {
                 arguments = Bundle().apply {

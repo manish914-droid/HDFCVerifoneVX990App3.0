@@ -7,18 +7,12 @@
 
     android:orientation="vertical">
 
-    <com.example.verifonevx990app.vxUtils.BHTextView
-        android:id="@+id/f_sm_title_tv"
-        android:layout_width="match_parent"
-        android:layout_height="@dimen/item_dashboard_size"
-        android:layout_marginBottom="1dp"
 
-        android:gravity="start|center"
-        android:paddingStart="@dimen/pad_32"
-        android:paddingEnd="@dimen/pad_32"
-        android:textColor="@color/white"
-        android:textSize="@dimen/text_size_xregular"
-        app:fname="bold" />
+    <include
+        android:id="@+id/sub_header_view"
+        layout="@layout/sub_header_layout"
+        android:visibility="visible" />
+
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/f_sm_rv"
