@@ -7,8 +7,8 @@ import com.example.verifonevx990app.vxUtils.VerifoneApp
  * Created by Lucky on 08/07/2020.
  */
 object PrinterFonts {
-
-    const val FONT_AGENCYR = "AGENCYR.TTF"
+// Inconsolta
+    const val FONT_AGENCYR = "f25bank.ttf"
     var path = ""
     fun initialize(assets: AssetManager?) {
         val fileName = FONT_AGENCYR

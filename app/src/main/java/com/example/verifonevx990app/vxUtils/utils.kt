@@ -2278,11 +2278,12 @@ fun getRevisionIDFromFile(context: Context, cb: (Boolean) -> Unit) {
 }
 
 //Below method is used to chunk the TNC's text(words's are not splitted in between) which was printed on EMI sale :-
-fun chunkTnC(s: String, limit: Int = 48): List<String> {
+fun chunkTnC(s: String, limit: Int = 32): List<String> {
+
     var str = s
     val parts: MutableList<String> = ArrayList()
-    while (str.length > limit) {
-        var splitAt = limit - 1
+    while (str.length > 34) {
+        var splitAt = 34 - 1
         while (splitAt > 0 && !Character.isWhitespace(str[splitAt])) {
             splitAt--
         }

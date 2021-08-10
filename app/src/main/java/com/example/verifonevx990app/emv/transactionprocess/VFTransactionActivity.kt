@@ -433,7 +433,18 @@ class VFTransactionActivity : BaseActivity() {
         }
         else{
             binding?.tvInsertCard?.visibility = View.VISIBLE
-            binding?.tvInsertCard?.text = getString(R.string.please_insert_swipe)
+            if( transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+                if(brandEMIAccessData?.issuerName?.contains("Card",true) == true){
+                    val insertTxt = "Please Insert/Swipe ${brandEMIAccessData?.issuerName}"
+                    binding?.tvInsertCard?.text = insertTxt
+                }else{
+                    val insertTxt = "Please Insert/Swipe ${brandEMIAccessData?.issuerName} Card"
+                    binding?.tvInsertCard?.text = insertTxt
+                }
+
+            }
+            else
+                binding?.tvInsertCard?.text = getString(R.string.please_insert_swipe)
         }
 
 

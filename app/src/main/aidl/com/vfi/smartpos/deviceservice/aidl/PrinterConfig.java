@@ -49,7 +49,7 @@ public class PrinterConfig {
         public class FontSize {
             public static final String BundleName = "fontSize";
             public static final int SMALL_16_16 = 0;
-            public static final int NORMAL_24_24 = 1;
+            public static final int NORMAL_24_24 = 0;
             public static final int NORMAL_DH_24_48_IN_BOLD = 2;
             public static final int LARGE_32_32 = 3;
 

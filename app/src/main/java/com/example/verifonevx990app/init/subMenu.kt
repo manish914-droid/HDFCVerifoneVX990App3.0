@@ -37,8 +37,8 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-enum class EOptionGroup(val heading: String) {
-    FUNCTIONS("BANK FUNCTIONS"), REPORT("REPORT"), NONE("NONE")
+enum class EOptionGroup(val heading: String,val res:Int) {
+    FUNCTIONS("BANK FUNCTIONS",R.drawable.ic_new_bank_function), REPORT("REPORT",R.drawable.ic_new_reports), NONE("NONE",0)
 }
 
 enum class BankOptions(val _name: String, val group: String, val res: Int = 0) {
@@ -436,6 +436,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
     private fun initUI(v: View) {
         iDiag?.onEvents(VxEvent.ChangeTitle(option.name))
+        binding?.subHeaderView?.headerImage?.setImageResource(option.res)
         binding?.subHeaderView?.subHeaderText?.text =option.heading
         binding?.subHeaderView?.backImageButton?.setOnClickListener { parentFragmentManager.popBackStackImmediate() }
         binding?.fSmRv?.apply {

@@ -177,7 +177,7 @@
         android:paddingEnd="@dimen/pad_20"
         android:paddingBottom="@dimen/pad_8"
         android:text="@string/please_insert_swipe_tap_card"
-        android:visibility="gone"
+        android:visibility="visible"
         android:textSize="@dimen/text_size_xregular"
         android:textColor="@color/themeBackground"
         android:textStyle="normal"

@@ -1512,7 +1512,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
                 is DashboardFragment -> exitApp()
 
-                is SubMenuFragment -> supportFragmentManager.popBackStackImmediate()
+             //   is SubMenuFragment -> supportFragmentManager.popBackStackImmediate()
 
                 is InputAmountFragment -> supportFragmentManager.popBackStackImmediate()
 
