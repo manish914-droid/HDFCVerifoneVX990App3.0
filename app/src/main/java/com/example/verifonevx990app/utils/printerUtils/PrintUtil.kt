@@ -1975,13 +1975,7 @@ class PrintUtil(context: Context?) {
         }
     }*/
 
-    fun printSettlementReportupdate(
-        context: Context?,
-        batch: MutableList<BatchFileDataTable>,
-        isSettlementSuccess: Boolean = false,
-        isLastSummary: Boolean = false,
-        callBack: (Boolean) -> Unit
-    ) {
+    fun printSettlementReportupdate(context: Context?, batch: MutableList<BatchFileDataTable>, isSettlementSuccess: Boolean = false, isLastSummary: Boolean = false, callBack: (Boolean) -> Unit) {
         //  val format = Bundle()
         //   val fmtAddTextInLine = Bundle()
 
@@ -2105,7 +2099,9 @@ class PrintUtil(context: Context?) {
                     }
 
                     if(it.transactionType == TransactionType.TEST_EMI.type){
+                        it.issuerName ="Test Issuer"
                         it.transactionType = TransactionType.SALE.type
+
                     }
 
                     val transAmt = try {
@@ -2120,29 +2116,19 @@ class PrintUtil(context: Context?) {
                         if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.issuerName)) {
                             _issuerName = it.cardType
 
-                            val ma =
-                                map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] as MutableMap<Int, SummeryModel>
+                            val ma = map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] as MutableMap<Int, SummeryModel>
                             if (ma.containsKey(it.transactionType)) {
                                 val m = ma[it.transactionType] as SummeryModel
                                 m.count += 1
                                 m.total += transAmt
                             } else {
-                                val sm = SummeryModel(
-                                    transactionType2Name(it.transactionType),
-                                    1,
-                                    transAmt,
-                                    it.hostTID
-                                )
+                                val sm = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
                                 ma[it.transactionType] = sm
                             }
                         } else {
                             val hm = HashMap<Int, SummeryModel>().apply {
                                 this[it.transactionType] = SummeryModel(
-                                    transactionType2Name(it.transactionType),
-                                    1,
-                                    transAmt,
-                                    it.hostTID
-                                )
+                                    transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
                             }
                             map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
                             list.add(it.hostTID)
@@ -2151,12 +2137,7 @@ class PrintUtil(context: Context?) {
                         tempTid = it.hostTID
                         _issuerName = it.cardType
                         val hm = HashMap<Int, SummeryModel>().apply {
-                            this[it.transactionType] = SummeryModel(
-                                transactionType2Name(it.transactionType),
-                                1,
-                                transAmt,
-                                it.hostTID
-                            )
+                            this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
                         }
                         map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
                         list.add(it.hostTID)
@@ -2234,12 +2215,7 @@ class PrintUtil(context: Context?) {
 
 
                         printSeperator(textFormatBundle)
-                        alignLeftRightText(
-                            textInLineFormatBundle,
-                            _issuerNameString,
-                            "",
-                            cardIssuer.toUpperCase(Locale.ROOT)
-                        )
+                        alignLeftRightText(textInLineFormatBundle, _issuerNameString, "", cardIssuer.toUpperCase(Locale.ROOT))
                         // if(ind==0){
                         alignLeftRightText(textInLineFormatBundle, "TXN TYPE", "TOTAL", "COUNT")
                         //   ind=1
