@@ -2096,10 +2096,12 @@ class PrintUtil(context: Context?) {
 
                     if (it.transactionType == TransactionType.EMI_SALE.type || it.transactionType == TransactionType.BRAND_EMI.type || it.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
                         it.transactionType = TransactionType.EMI_SALE.type
+                        it.cardType =it.issuerName
                     }
 
                     if(it.transactionType == TransactionType.TEST_EMI.type){
                         it.issuerName ="Test Issuer"
+                        it.cardType ="Test Issuer"
                         it.transactionType = TransactionType.SALE.type
 
                     }
@@ -2113,10 +2115,10 @@ class PrintUtil(context: Context?) {
 
                     if (tempTid == it.hostTID) {
                         _issuerName = it.cardType
-                        if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.issuerName)) {
+                        if (map.containsKey(it.hostTID + it.hostMID + it.batchNumber + it.cardType)) {
                             _issuerName = it.cardType
 
-                            val ma = map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] as MutableMap<Int, SummeryModel>
+                            val ma = map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] as MutableMap<Int, SummeryModel>
                             if (ma.containsKey(it.transactionType)) {
                                 val m = ma[it.transactionType] as SummeryModel
                                 m.count += 1
@@ -2130,7 +2132,7 @@ class PrintUtil(context: Context?) {
                                 this[it.transactionType] = SummeryModel(
                                     transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
                             }
-                            map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
+                            map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
                             list.add(it.hostTID)
                         }
                     } else {
@@ -2139,7 +2141,7 @@ class PrintUtil(context: Context?) {
                         val hm = HashMap<Int, SummeryModel>().apply {
                             this[it.transactionType] = SummeryModel(transactionType2Name(it.transactionType), 1, transAmt, it.hostTID)
                         }
-                        map[it.hostTID + it.hostMID + it.batchNumber + it.issuerName] = hm
+                        map[it.hostTID + it.hostMID + it.batchNumber + it.cardType] = hm
                         list.add(it.hostTID)
                     }
 
@@ -2206,7 +2208,7 @@ class PrintUtil(context: Context?) {
                             )
                             ietration--
                         }
-                        if (cardIssuer.isNullOrEmpty()) {
+                      if (cardIssuer.isNullOrEmpty()) {
                             cardIssuer = _issuerName.toString()
                             _issuerNameString = "CARD ISSUER"
 
