@@ -46,10 +46,7 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                 }
             }
             logger("coroutine 5", Thread.currentThread().name, "e")
-            syncAuthTransactionToHost(
-                transactionISOByteArray,
-                cardProcessedDataModal
-            ) { syncStatus, responseCode, transactionMsg ->
+            syncAuthTransactionToHost(transactionISOByteArray, cardProcessedDataModal) { syncStatus, responseCode, transactionMsg ->
                 //withactivityContext(Dispatchers.Main){
                 activityContext?.hideProgress()
                 //}
@@ -59,25 +56,20 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
                     }
                     //Below we are saving batch data and print the receipt of transaction:-
                     val responseIsoData: IsoDataReader = readIso(transactionMsg, false)
-                    val autoSettlementCheck =
-                        responseIsoData.isoMap[60]?.parseRaw2String().toString()
+                    val autoSettlementCheck = responseIsoData.isoMap[60]?.parseRaw2String().toString()
+
                     AppPreference.clearReversal()
 
                     val encyPan = responseIsoData.isoMap[57]?.parseRaw2String().toString()
                     cardProcessedDataModal.setTrack2Data(encyPan)
                     //    cardProcessedDataModal.setPanNumberData(encyPan)
                     responseIsoData.isoMap[4]?.rawData?.toLong()?.let {
-                        cardProcessedDataModal.setTransactionAmount(
-                            it
-                        )
+                        cardProcessedDataModal.setTransactionAmount(it)
                     }
                     StubBatchData("", cardProcessedDataModal.getTransType(), cardProcessedDataModal, null, autoSettlementCheck) { stubbedData ->
 
                         activityContext?.let {
-                            printAndSaveAuthTransToBatchDataInDB(
-                                stubbedData, autoSettlementCheck,
-                                it
-                            ) { isSuccess, msg ->
+                            printAndSaveAuthTransToBatchDataInDB(stubbedData, autoSettlementCheck, it) { isSuccess, msg ->
                                 cb(true, msg)
 
                             }
@@ -310,18 +302,10 @@ class SyncAuthTransToHost(activityContext: BaseActivity) {
 
 
     //Below method is used to save (Tip adjust on a sale and change sale type to tip type data) in batch file data table and print the receipt of it:-
-    private fun printAndSaveAuthTransToBatchDataInDB(
-        stubbedData: BatchFileDataTable,
-        autoSettlementCheck: String,
-        activityContext: BaseActivity, cb: (Boolean, String) -> Unit
-    ) {
+    private fun printAndSaveAuthTransToBatchDataInDB(stubbedData: BatchFileDataTable, autoSettlementCheck: String, activityContext: BaseActivity, cb: (Boolean, String) -> Unit) {
         //Here we are saving printerReceiptData in BatchFileData Table:-
         saveTableInDB(stubbedData)
-        PrintUtil(activityContext).printAuthCompleteChargeSlip(
-            stubbedData,
-            EPrintCopyType.MERCHANT,
-            activityContext
-        ) { printCB ->
+        PrintUtil(activityContext).printAuthCompleteChargeSlip(stubbedData, EPrintCopyType.MERCHANT, activityContext) { printCB ->
             if (!printCB) {
                 GlobalScope.launch(Dispatchers.IO){
                     withContext(Dispatchers.Main) {
