@@ -1317,7 +1317,7 @@ fun panMasking(input: String, maskFormat: String): String {
             }
             val tempCh = inputArr.slice(index..endIndex)
             sb.append(tempCh.toCharArray())
-            sb.append(" ")
+            sb.append("")
             index += 4
         }
 
@@ -1402,7 +1402,7 @@ fun releaseWakeLock(wakeLock: PowerManager.WakeLock) {
 fun transactionType2Name(code: Int): String {
     return when (code) {
         TransactionType.SALE.type -> "Sale"
-        TransactionType.VOID.type -> "Void Sale"
+        TransactionType.VOID.type -> "Void"
         TransactionType.VOID_REFUND.type -> "Void Refund"
         TransactionType.REFUND.type -> "Refund"
         TransactionType.PRE_AUTH.type -> "Pre-Auth"
@@ -1413,7 +1413,7 @@ fun transactionType2Name(code: Int): String {
         TransactionType.SALE_WITH_CASH.type -> "Sale Cash"
         TransactionType.TIP_ADJUSTMENT.type -> "Tip Adjust"
         TransactionType.VOID_OFFLINE_SALE.type -> "Void Offline Sale"
-        TransactionType.TEST_EMI.type -> "TEST EMI TXN"
+        TransactionType.TEST_EMI.type -> "Test EMI Txn"
         TransactionType.BRAND_EMI.type, TransactionType.BRAND_EMI_BY_ACCESS_CODE.type , TransactionType.EMI_SALE.type -> "EMI Sale"
         TransactionType.CASH_AT_POS.type -> "Cash only"
         TransactionType.VOID_EMI.type -> "Void EMI"
