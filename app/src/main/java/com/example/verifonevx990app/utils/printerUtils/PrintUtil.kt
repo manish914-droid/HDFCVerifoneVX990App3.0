@@ -3688,64 +3688,44 @@ class PrintUtil(context: Context?) {
                 }
             }
             //endregion
-            //region====================Printing DBD Wise TAndC==================
-            if (copyType == EPrintCopyType.MERCHANT && (brandEmiData?.brandReservedValues?.get(3) == '1')) {
-                if (!TextUtils.isEmpty(printerReceiptData.tenureWiseDBDTAndC)) {
-                    val tenureWiseTAndC: List<String> =
-                        chunkTnC(printerReceiptData.tenureWiseDBDTAndC)
-                    for (st in tenureWiseTAndC) {
-                        logger("tenureWiseDBDTAndC", st, "e")
-                        alignLeftRightText(textFormatBundle, st, "", "")
-                    }
-                }
-            }
-            //endregion
+
 
             //region=====================Printing Merchant Brand Purchase Details:-
             if (printerReceiptData.transactionType == TransactionType.BRAND_EMI.type) {
+                //region====================Printing DBD Wise TAndC Brand EMI==================
+                if (copyType == EPrintCopyType.MERCHANT && (brandEmiData?.brandReservedValues?.get(3) == '1')) {
+                    if (!TextUtils.isEmpty(printerReceiptData.tenureWiseDBDTAndC)) {
+                        val tenureWiseTAndC: List<String> =
+                            chunkTnC(printerReceiptData.tenureWiseDBDTAndC)
+                        for (st in tenureWiseTAndC) {
+                            logger("tenureWiseDBDTAndC", st, "e")
+                            alignLeftRightText(textFormatBundle, st, "", "")
+                        }
+                    }
+                }
+                //endregion
+
                 printSeperator(seperatorLineBundle)
                 centerText(centerTextBundle, "-----**Product Details**-----", true)
                 if (brandEmiData != null) {
-                    /* alignLeftRightText(
-                         textInLineFormatBundle,
-                         "Merch/Mfr Name",
-                         brandEmiData.brandName,
-                         ":"
-                     )*/
+
                     printer?.addText(
                         textInLineFormatBundle,
                         formatTextLMR("Merch/Mfr Name", ":", brandEmiData.brandName, 14)
                     )
 
-                    /* alignLeftRightText(
-                         textInLineFormatBundle,
-                         "Prod Category",
-                         brandEmiData.categoryName,
-                         ":"
-                     )*/
                     printer?.addText(
                         textInLineFormatBundle,
                         formatTextLMR("Prod Category", ":", brandEmiData.categoryName, 14)
                     )
                     if (brandEmiData.producatDesc == "subCat") {
-                        /*alignLeftRightText(
-                            textInLineFormatBundle,
-                            "Prod desc",
-                            brandEmiData.childSubCategoryName,
-                            ":"
-                        )*/
+
                         printer?.addText(
                             textInLineFormatBundle,
                             formatTextLMR("Prod desc", ":", brandEmiData.childSubCategoryName, 14)
                         )
                     }
 
-                    /*alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Prod",
-                        brandEmiData.productName,
-                        ":"
-                    )*/
                     printer?.addText(
                         textInLineFormatBundle,
                         formatTextLMR("Prod", ":", brandEmiData.productName, 10)
@@ -3753,12 +3733,7 @@ class PrintUtil(context: Context?) {
 
 
                     if (!TextUtils.isEmpty(brandEmiData.imeiNumber)) {
-                        /* alignLeftRightText(
-                             textInLineFormatBundle,
-                             "Prod ${brandEmiData.validationTypeName}",
-                             brandEmiData.imeiNumber,
-                             ":"
-                         )*/
+
                         printer?.addText(
                             textInLineFormatBundle,
                             formatTextLMR(
@@ -3777,12 +3752,7 @@ class PrintUtil(context: Context?) {
                                     printerReceiptData.merchantMobileNumber,
                                     "000****000"
                                 )
-                                /*alignLeftRightText(
-                                    textInLineFormatBundle,
-                                    "Mobile No.",
-                                    maskedMob,
-                                    ":"
-                                )*/
+
                                 printer?.addText(
                                     textInLineFormatBundle,
                                     formatTextLMR("Mobile No.", ":", maskedMob, 14)
@@ -3791,12 +3761,7 @@ class PrintUtil(context: Context?) {
                             }
 //PLAIN PRINT
                             "2" -> {
-                                /*alignLeftRightText(
-                                    textInLineFormatBundle,
-                                    "Mobile No.",
-                                    printerReceiptData.merchantMobileNumber,
-                                    ":"
-                                )*/
+
                                 printer?.addText(
                                     textInLineFormatBundle,
                                     formatTextLMR(
@@ -3813,36 +3778,80 @@ class PrintUtil(context: Context?) {
                         }
                     }
                 }
-            } else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+            }
+            else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
                 val productData =
                     BrandEMIAccessDataModalTable.getBrandEMIAccessCodeDataByInvoice(hostInvoice)
+                //region====================Printing DBD Wise TAndC Brand EMI By code==================
+                 if (copyType == EPrintCopyType.MERCHANT && (productData?.brandReservField?.get(3) == '1')) {
+                    if (!TextUtils.isEmpty(printerReceiptData.tenureWiseDBDTAndC)) {
+                        val tenureWiseTAndC: List<String> =
+                            chunkTnC(printerReceiptData.tenureWiseDBDTAndC)
+                        for (st in tenureWiseTAndC) {
+                            logger("dbdTNC_By Code", st, "e")
+                            alignLeftRightText(textFormatBundle, st, "", "")
+                        }
+                    }
+                }
+                //endregion
+
                 printSeperator(seperatorLineBundle)
                 centerText(centerTextBundle, "-----**Product Details**-----", true)
                 if (productData != null) {
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Merch/Mfr Name",
-                        productData.brandName,
-                        ":"
+                    printer?.addText(
+                        textInLineFormatBundle, formatTextLMR("Merch/Mfr Name",":",productData.brandName,14)
                     )
-                    alignLeftRightText(
-                        textInLineFormatBundle,
-                        "Product Category",
-                        productData.productCategoryName,
-                        ":"
+                    printer?.addText(
+                        textInLineFormatBundle,formatTextLMR("Prod Category", ":", productData.productBaseCat,14)
                     )
-                    alignLeftRightText(
+                    printer?.addText(
                         textInLineFormatBundle,
-                        "Product",
-                        productData.productName,
-                        ":"
+                        formatTextLMR("Prod desc", ":", productData.productCategoryName, 14)
                     )
-                    alignLeftRightText(
+                    printer?.addText(
                         textInLineFormatBundle,
-                        "Prod Iemei No",
-                        productData.productSerialCode,
-                        ":"
+                        formatTextLMR("Prod", ":", productData.productName, 10)
                     )
+
+                    printer?.addText(
+                        textInLineFormatBundle, formatTextLMR("Prod Iemei No",":"  ,productData.productSerialCode,14)
+                    )
+
+                    when (productData.brandReservField.substring(1, 2)) {
+                        "1" -> {
+                            // MASK PRINT
+                            val maskedMob = panMasking(
+                                productData.mobileNo,
+                                "000****000"
+                            )
+                            printer?.addText(
+                                textInLineFormatBundle,
+                                formatTextLMR(
+                                    "Mobile No.",
+                                    ":",
+                                    maskedMob,
+                                    14
+                                )
+                            )
+
+                        }
+//PLAIN PRINT
+                        "2" -> {
+                            printer?.addText(
+                                textInLineFormatBundle,
+                                formatTextLMR(
+                                    "Mobile No.",
+                                    ":",
+                                    productData.mobileNo,
+                                    14
+                                )
+                            )
+                        }
+                        else -> {
+                            // NO PRINT
+                        }
+                    }
+
 
                 }
             }

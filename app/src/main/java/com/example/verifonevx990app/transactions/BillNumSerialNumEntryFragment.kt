@@ -139,11 +139,7 @@ class BillNumSerialNumEntryFragment : Fragment() {
     }
 // extension function to set edit text maximum length
 
-    fun EditText.setMaxLength(maxLength: Int){
 
-        filters = arrayOf<InputFilter>(LengthFilter(maxLength))
-
-    }
     private fun navigateToTransaction() {
 
         if (brandValidation.isBillNumMandatory || brandValidation.isBillNumReq) {
@@ -208,5 +204,11 @@ class BillNumSerialNumEntryFragment : Fragment() {
 
     }
 
+
+}
+
+fun EditText.setMaxLength(maxLength: Int){
+
+    filters = arrayOf<InputFilter>(LengthFilter(maxLength))
 
 }

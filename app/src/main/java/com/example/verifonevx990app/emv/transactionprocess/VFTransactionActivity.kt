@@ -75,6 +75,7 @@ class VFTransactionActivity : BaseActivity() {
     //used in case of sale with cash
     private val saleAmt by lazy { intent.getStringExtra("saleAmt") ?: "0" }
     private val mobileNumber by lazy { intent.getStringExtra("mobileNumber") ?: "" }
+
     private val billNumber by lazy { intent.getStringExtra("billNumber") ?: "0" }
     private val saleWithTipAmt by lazy { intent.getStringExtra("saleWithTipAmt") ?: "0" }
 
@@ -434,6 +435,7 @@ class VFTransactionActivity : BaseActivity() {
         else{
             binding?.tvInsertCard?.visibility = View.VISIBLE
             if( transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
+
                 if(brandEMIAccessData?.issuerName?.contains("Card",true) == true){
                     val insertTxt = "Please Insert/Swipe ${brandEMIAccessData?.issuerName}"
                     binding?.tvInsertCard?.text = insertTxt

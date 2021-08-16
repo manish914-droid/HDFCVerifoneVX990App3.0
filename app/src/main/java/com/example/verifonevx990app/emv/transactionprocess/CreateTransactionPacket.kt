@@ -189,6 +189,7 @@ class CreateTransactionPacket(
                   0|60|5|00,60832632,52,144,11,2356,800000,18320,781680,3,1400,266663,0,815623,,12qw3e,,,,0,0,200.0,15634,52429840,*/
 
                 TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
+                    //cardProcessedData.getMobileBillExtraData()?.second replace with billno
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
                             "${brandEMIByAccessCodeDataModel?.issuerID},${brandEMIByAccessCodeDataModel?.emiSchemeID},${brandEMIByAccessCodeDataModel?.brandID}," +
@@ -208,6 +209,7 @@ class CreateTransactionPacket(
                         "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection"
                 }
             }
+
 
             Log.d("SALE Indicator:- ", indicator.toString())
             additionalData["indicatorF58"] = indicator ?: ""

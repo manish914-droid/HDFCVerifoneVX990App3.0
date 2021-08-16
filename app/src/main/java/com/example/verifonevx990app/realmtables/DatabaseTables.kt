@@ -4461,7 +4461,11 @@ open class BrandEMIAccessDataModalTable() : RealmObject(), Parcelable {
     var discountCalculatedValue: String = ""
     var cashBackCalculatedValue: String = ""
     var orignalTxnAmt:String=""
-
+    var mobileNo:String=""
+    var brandReservField:String=""
+    var productBaseCat:String=""
+    var issuerTimeStamp:String=""
+    var brandTimeStamp:String=""
 
 
     private constructor(parcel: Parcel) : this() {
