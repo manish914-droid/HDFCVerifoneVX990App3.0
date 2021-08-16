@@ -1019,9 +1019,9 @@ class PrintUtil(context: Context?) {
                             b.transactionType = TransactionType.EMI_SALE.type
                         }
 
-                        /*       if (b.transactionType == TransactionType.TEST_EMI.type) {
-                                   b.transactionType = TransactionType.SALE.type
-                               }*/
+                     /*   if (b.transactionType == TransactionType.TEST_EMI.type) {
+                            b.transactionType = TransactionType.SALE.type
+                        }*/
 
                         count++
                         if (updatedindex <= frequencylist.size - 1)
@@ -3334,7 +3334,7 @@ class PrintUtil(context: Context?) {
                 if (islongTextHeading) {
                     printer?.addText(
                         textInLineFormatBundle,
-                        formatTextLMR(cashBackAmountHeadingText, ":$currencySymbol", "", 18)
+                        formatTextLMR(cashBackAmountHeadingText, "", "", 18)
                     )
 
 
@@ -3430,7 +3430,7 @@ class PrintUtil(context: Context?) {
                 if (islongTextHeading) {
                     printer?.addText(
                         textInLineFormatBundle,
-                        formatTextLMR(discountAmountHeadingText, ":$currencySymbol", "", 18)
+                        formatTextLMR(discountAmountHeadingText, "", "", 18)
                     )
 
                     printer?.addText(
@@ -4706,4 +4706,3 @@ fun formatTextLMR(leftTxt: String, middleText: String, rightTxt: String, totalLe
 enum class EPrintCopyType(val pName: String) {
     MERCHANT("**MERCHANT COPY**"), CUSTOMER("**CUSTOMER COPY**"), DUPLICATE("**DUPLICATE COPY**");
 }
-
