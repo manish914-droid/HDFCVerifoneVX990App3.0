@@ -1019,9 +1019,9 @@ class PrintUtil(context: Context?) {
                             b.transactionType = TransactionType.EMI_SALE.type
                         }
 
-                        if (b.transactionType == TransactionType.TEST_EMI.type) {
-                            b.transactionType = TransactionType.SALE.type
-                        }
+                        /*       if (b.transactionType == TransactionType.TEST_EMI.type) {
+                                   b.transactionType = TransactionType.SALE.type
+                               }*/
 
                         count++
                         if (updatedindex <= frequencylist.size - 1)
@@ -1098,7 +1098,7 @@ class PrintUtil(context: Context?) {
                             hasfrequency = false
                         }
                         if (hasfrequency) {
-                           // printSeperator(textFormatBundle)
+                            // printSeperator(textFormatBundle)
                             centerText(textFormatBundle, "***TOTAL TRANSACTIONS***")
                             val sortedMap = totalMap.toSortedMap(compareByDescending { it })
                             /* for ((k, v) in sortedMap) {
@@ -2371,7 +2371,7 @@ class PrintUtil(context: Context?) {
                         "%.2f".format(printerReceiptData.amountInResponse.toDouble() / 100)
                 }
             }
-val tpt=TerminalParameterTable.selectFromSchemeTable()
+            val tpt=TerminalParameterTable.selectFromSchemeTable()
             printer?.addTextInLine(
                 fmtAddTextInLine,
                 "BASE AMOUNT  :    ${getCurrencySymbol(tpt)}    $baseAmount",
@@ -2540,7 +2540,7 @@ val tpt=TerminalParameterTable.selectFromSchemeTable()
                 } else {
                     "%.2f".format(procFee)
                 }
-val tpt=TerminalParameterTable.selectFromSchemeTable()
+                val tpt=TerminalParameterTable.selectFromSchemeTable()
                 alignLeftRightText(
                     textInLineFormatBundle,
                     "PROCESSING FEE",
@@ -3334,7 +3334,7 @@ val tpt=TerminalParameterTable.selectFromSchemeTable()
                 if (islongTextHeading) {
                     printer?.addText(
                         textInLineFormatBundle,
-                        formatTextLMR(cashBackAmountHeadingText, "", "", 18)
+                        formatTextLMR(cashBackAmountHeadingText, ":$currencySymbol", "", 18)
                     )
 
 
@@ -3430,7 +3430,7 @@ val tpt=TerminalParameterTable.selectFromSchemeTable()
                 if (islongTextHeading) {
                     printer?.addText(
                         textInLineFormatBundle,
-                        formatTextLMR(discountAmountHeadingText, "", "", 18)
+                        formatTextLMR(discountAmountHeadingText, ":$currencySymbol", "", 18)
                     )
 
                     printer?.addText(

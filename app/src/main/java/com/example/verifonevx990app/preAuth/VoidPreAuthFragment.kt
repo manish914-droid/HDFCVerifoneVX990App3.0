@@ -160,7 +160,7 @@ class VoidPreAuthFragment : Fragment() {
                 SyncAuthTransToHost(it as BaseActivity).checkReversalPerformAuthTransaction(
                     transactionISO, cardProcessedData
                 ) { isSuccess, msg ->
-                    VFService.showToast("$msg----------->  $isSuccess")
+                  //  VFService.showToast("$msg----------->  $isSuccess")
                     logger("PREAUTHVOID", "Is success --->  $isSuccess  Message  --->  $msg")
                 }
             }
