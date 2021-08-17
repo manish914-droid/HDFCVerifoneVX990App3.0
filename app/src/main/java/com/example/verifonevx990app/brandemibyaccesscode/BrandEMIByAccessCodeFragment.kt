@@ -16,6 +16,7 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
 import com.example.verifonevx990app.databinding.BrandEmiByAccessCodeViewBinding
@@ -24,6 +25,7 @@ import com.example.verifonevx990app.main.EMIRequestType
 import com.example.verifonevx990app.main.SplitterTypes
 import com.example.verifonevx990app.realmtables.BrandEMIAccessDataModalTable
 import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.transactions.setMaxLength
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
@@ -190,7 +192,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                                 splitData[24], splitData[25],
                                 splitData[26], splitData[27],
                                 splitData[28], splitData[29],
-                                splitData[30], splitData[31],splitData[32]
+                                splitData[30], splitData[31],splitData[32],splitData[33],splitData[34],splitData[35],splitData[36],splitData[37]
                             )
                         )
 
@@ -222,14 +224,11 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             val window = dialog.window
             window?.setLayout(
                 ViewGroup.LayoutParams.MATCH_PARENT,
-                WindowManager.LayoutParams.WRAP_CONTENT
-            )
-
+                WindowManager.LayoutParams.WRAP_CONTENT)
             dialog.findViewById<Button>(R.id.cancelButton).setOnClickListener {
                 brandEmiAccessCodeList.clear()
                 dialog.dismiss()
             }
-
             val productName = dialog.findViewById<BHTextView>(R.id.productNameET)
             val categoryName = dialog.findViewById<BHTextView>(R.id.categoryNameET)
             val tenureTime = dialog.findViewById<BHTextView>(R.id.tenureET)
@@ -246,7 +245,17 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             val discountAmountLL = dialog.findViewById<LinearLayout>(R.id.discountAmountLL)
             val cashBackPercentageLL = dialog.findViewById<LinearLayout>(R.id.cashBackPercentageLL)
             val cashBackAmountLL = dialog.findViewById<LinearLayout>(R.id.cashBackAmountLL)
+            val billNoCrdView = dialog.findViewById<NeumorphCardView>(R.id.billno_crd_view)
+            val billNoet = dialog.findViewById<BHEditText>(R.id.billNum_et)
             val rupeeSymbol= activity?.getString(R.string.rupees_symbol)
+
+            if (brandEMIAccessData.brandReservField[2]=='1' || brandEMIAccessData.brandReservField[2]=='2' ) {
+                billNoCrdView?.visibility = View.VISIBLE
+                showEditTextSelected(billNoet, billNoCrdView, requireContext())
+                billNoet?.setMaxLength( 16)
+            } else {
+                billNoCrdView?.visibility = View.GONE
+            }
             productName.text = brandEMIAccessData.productName
             categoryName.text = brandEMIAccessData.productCategoryName
             issuerName.text = brandEMIAccessData.issuerName
@@ -254,9 +263,7 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             tenureTime.text = tenureMonths
             val txnAmt= rupeeSymbol+"%.2f".format(brandEMIAccessData.transactionAmount.toFloat() / 100)
             transactionAmountET.text =txnAmt
-
             brandNameTV.text=brandEMIAccessData.brandName
-
             if (!TextUtils.isEmpty(brandEMIAccessData.discountCalculatedValue)) {
                 discountPercentageET.text = brandEMIAccessData.discountCalculatedValue
                 discountPercentageLL.visibility = View.VISIBLE
@@ -279,11 +286,14 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             emiAmountET.text = emiAmt
             netPayAmountET.text =netPayAmt
             dialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
+               if(brandEMIAccessData.brandReservField[2]=='2' && billNoet.text.isNullOrBlank()){
+                   VFService.showToast("Enter bill number")
+                   return@setOnClickListener
+               }
                 dialog.dismiss()
                 if (checkInternetConnection()) {
                     GlobalScope.launch(Dispatchers.IO) {
                         // Saving brandEmiAccessData (Brand Data)
-
                      //   saveDataInDB(brandEMIAccessData)
                         activity?.startActivity(
                             Intent(
@@ -293,14 +303,16 @@ class BrandEMIByAccessCodeFragment : Fragment() {
                                 putExtra("amt", brandEMIAccessData.transactionAmount)
                                 putExtra("type", TransactionType.BRAND_EMI_BY_ACCESS_CODE.type)
                                 putExtra("proc_code", ProcessingCode.SALE.code)
-                                putExtra("mobileNumber", "")
-                                putExtra("billNumber", "")
+                                putExtra("mobileNumber", brandEMIAccessData.mobileNo)
+                                putExtra("billNumber", billNoet.text.toString())
                                 putExtra("uiAction", UiAction.BANK_EMI_BY_ACCESS_CODE)
+                                brandEMIAccessData.billNumberInvoiceNo=billNoet.text.toString()
                                 putExtra("brandEMIAccessData", brandEMIAccessData)
 
                             })
                     }
-                } else {
+                }
+                else {
                     VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
                 }
             }
@@ -350,8 +362,15 @@ data class BrandEMIAccessDataModal(
     var schemeDBDTAndC: String,
     var discountCalculatedValue: String,
     var cashBackCalculatedValue: String,
-    var orignalTxnAmt:String
-) : Serializable
+    var orignalTxnAmt:String,
+    var mobileNo:String,
+    var brandReservField:String,
+    var productBaseCat:String,
+    var issuerTimeStamp:String,
+    var brandTimeStamp:String
+) : Serializable{
+   var billNumberInvoiceNo:String=""
+}
 //endregion
 
 // Saving Brand EMI By access code data in database
@@ -392,6 +411,12 @@ if(brandEMIAccessData!=null) {
     modal.schemeDBDTAndC = brandEMIAccessData.schemeDBDTAndC
     modal.discountCalculatedValue = brandEMIAccessData.discountCalculatedValue
     modal.cashBackCalculatedValue = brandEMIAccessData.cashBackCalculatedValue
+    modal.orignalTxnAmt=brandEMIAccessData.orignalTxnAmt
+    modal.mobileNo=brandEMIAccessData.mobileNo
+    modal.brandReservField=brandEMIAccessData.brandReservField
+    modal.issuerTimeStamp=brandEMIAccessData.issuerTimeStamp
+    modal.brandTimeStamp=brandEMIAccessData.brandTimeStamp
+    modal.productBaseCat=brandEMIAccessData.productBaseCat
 
 /* below invoice is used to define the relation between
  Emi data and Brand Emi data in "BRAND EMI BY ACCESS CODE" module.*/

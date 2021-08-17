@@ -782,7 +782,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                         val b = bat.first { it.hostInvoice.toLong() == invoice.toLong() }
                                         //    printBatch(b)
                                         when (b.transactionType) {
-                                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type,TransactionType.CASH_AT_POS.type,TransactionType.SALE_WITH_CASH.type -> {
+                                            TransactionType.SALE.type, TransactionType.TIP_SALE.type, TransactionType.REFUND.type, TransactionType.VOID.type,TransactionType.CASH_AT_POS.type,TransactionType.SALE_WITH_CASH.type,TransactionType.VOID_EMI.type -> {
                                                 PrintUtil(activity).startPrinting(b, EPrintCopyType.DUPLICATE, activity) { printCB, printingFail ->
                                                     if (printCB) {
                                                         iDiag?.hideProgress()
@@ -865,7 +865,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                             }
                                             else -> {
                                                 iDiag?.hideProgress()
-                                                VFService.showToast("Something wrong Transaction Not Defined")
+                                                VFService.showToast("Transaction Not Defined")
                                             }
                                         }
                                     } catch (ex: Exception) {

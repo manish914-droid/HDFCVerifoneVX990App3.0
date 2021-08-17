@@ -342,7 +342,50 @@ android:text="@string/brand_emi_by_access_code"
 
     </LinearLayout>
 
+    <!--Bill no-->
+    <com.example.customneumorphic.NeumorphCardView
+        android:id="@+id/billno_crd_view"
+        style="@style/Widget.Neumorph.CardView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/pad_8"
+        android:visibility="visible"
+        app:neumorph_inset="@dimen/pad_8"
+        app:neumorph_shadowColorDark="@color/lowerShadow"
+        app:neumorph_shadowColorLight="@color/upperShadow"
+        app:neumorph_shadowElevation="2dp"
+        app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+        app:neumorph_shapeType="flat"
+        app:neumorph_strokeWidth="@dimen/pad_1"
 
+        >
+
+        <com.example.verifonevx990app.vxUtils.BHEditText
+            android:id="@+id/billNum_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/pad_8"
+            android:layout_marginBottom="@dimen/pad_16"
+            android:background="@null"
+            android:cursorVisible="false"
+            android:drawableStart="@drawable/ic_bill_number_update"
+            android:ems="10"
+            android:focusable="false"
+            android:gravity="center"
+            android:hint="@string/bill_num"
+            android:imeOptions="actionDone"
+            android:inputType="textEmailAddress"
+            android:lines="1"
+
+            android:paddingStart="@dimen/pad_8"
+            android:paddingEnd="@dimen/pad_8"
+            android:textColor="@color/white"
+            android:textColorHint="@color/hint_color"
+            android:textSize="@dimen/text_size_regular"
+            app:fname="regular" />
+
+
+    </com.example.customneumorphic.NeumorphCardView>
     <!--Buttons-->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

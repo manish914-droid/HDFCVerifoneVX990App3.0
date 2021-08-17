@@ -166,21 +166,7 @@ class CreateTransactionPacket(
                             "${bankEmiSchemeData?.netPay},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
                             ",,${cardProcessedData.getMobileBillExtraData()?.first ?: ""},,0,${bankEmiSchemeData?.processingFee},${bankEmiSchemeData?.processingRate}," +
                             "${bankEmiSchemeData?.totalProcessingFee},,"
-/*0|60|5|00,60832632,52,82,1,0,5666,224,5442,6,1400,944,0,5664,23,,,,8920868887,,0,0,0,0,,*/
 
-                                    /*
-                                    netpay
-                                    bill invoice no-                                                ,
-                                    serial number -                                                              ,
-                                    customer name -                                                                         ,
-                                    mobile no-                                                                                     ,
-                                    email id -                                                                                        ,
-                                    insta emi -                                                                                      0,
-                                    processing fee-                                                              0,
-                                    processing rate -                                                           0,
-                                    processing amount total-                            0,
-                                    emi code -                                           */
-                    // mobile before mobile  --> bill,emie,phonenum
                 }
 /*0|46|1|00,460133,54,135,25,586,650000,0,635960,3,1300,216596,14040,635748,12,8,,8287305603,,0,0,0,0,,*/
                 TransactionType.BRAND_EMI.type -> {
@@ -203,16 +189,11 @@ class CreateTransactionPacket(
                   0|60|5|00,60832632,52,144,11,2356,800000,18320,781680,3,1400,266663,0,815623,,12qw3e,,,,0,0,200.0,15634,52429840,*/
 
                 TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
-                    val txnAmt: String = if(brandEMIByAccessCodeDataModel?.issuerID=="64"){
-                        brandEMIByAccessCodeDataModel?.orignalTxnAmt.toString()
-                    }else{
-                        brandEMIByAccessCodeDataModel?.transactionAmount.toString()
-                    }
-
+                    //cardProcessedData.getMobileBillExtraData()?.second replace with billno
                     indicator = "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection," +
                             "${cardProcessedData.getPanNumberData()?.substring(0, 8)}," +
                             "${brandEMIByAccessCodeDataModel?.issuerID},${brandEMIByAccessCodeDataModel?.emiSchemeID},${brandEMIByAccessCodeDataModel?.brandID}," +
-                            "${brandEMIByAccessCodeDataModel?.productID},${txnAmt}," +
+                            "${brandEMIByAccessCodeDataModel?.productID},${brandEMIByAccessCodeDataModel?.orignalTxnAmt}," +
                             "${brandEMIByAccessCodeDataModel?.discountAmount},${brandEMIByAccessCodeDataModel?.loanAmount},${brandEMIByAccessCodeDataModel?.tenure}," +
                             "${brandEMIByAccessCodeDataModel?.interestAmount},${brandEMIByAccessCodeDataModel?.emiAmount},${brandEMIByAccessCodeDataModel?.cashBackAmount}," +
                             "${brandEMIByAccessCodeDataModel?.netPayAmount},${cardProcessedData.getMobileBillExtraData()?.second ?: ""}," +
@@ -228,6 +209,7 @@ class CreateTransactionPacket(
                         "$cardIndFirst|$firstTwoDigitFoCard|$cdtIndex|$accSellection"
                 }
             }
+
 
             Log.d("SALE Indicator:- ", indicator.toString())
             additionalData["indicatorF58"] = indicator ?: ""
