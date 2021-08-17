@@ -313,9 +313,6 @@ class BrandEMIMasterCategoryFragment : Fragment() {
                         Log.d("Field57UpdateRequest:- ", field57RequestData.toString())
                         fetchBrandEMIMasterDataFromHost()
                     } else {
-
-
-
                         //Notify RecyclerView DataList on UI:-
                         withContext(Dispatchers.Main) {
                             iDialog?.hideProgress()
@@ -417,73 +414,7 @@ class BrandEMIMasterCategoryFragment : Fragment() {
     }
     //endregion
 
-    //region==================Get Issuer TAndC Data:-
-    private fun getIssuerTAndCData(cb: (Boolean) -> Unit) {
-        if (checkInternetConnection()) {
-            Log.d("Bank EMI Clicked:- ", "Clicked")
-            GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
-                val issuerTAndCData = issuerTermsAndConditionData.first
-                val responseBool = issuerTermsAndConditionData.second
-                if (issuerTAndCData.isNotEmpty() && responseBool) {
-                    //region================Insert IssuerTAndC and Brand TAndC in DB:-
-                    //Issuer TAndC Inserting:-
-                    for (i in 0 until issuerTAndCData.size) {
-                        val issuerModel = IssuerTAndCTable()
-                        if (!TextUtils.isEmpty(issuerTAndCData[i])) {
-                            val splitData = parseDataListWithSplitter(
-                                SplitterTypes.CARET.splitter,
-                                issuerTAndCData[i]
-                            )
 
-                            if (splitData.size > 2) {
-                                issuerModel.issuerId = splitData[0]
-                                issuerModel.headerTAndC = splitData[1]
-                                issuerModel.footerTAndC = splitData[2]
-                            } else {
-                                issuerModel.issuerId = splitData[0]
-                                issuerModel.headerTAndC = splitData[1]
-                            }
-
-                            runBlocking(Dispatchers.IO) {
-                                IssuerTAndCTable.performOperation(issuerModel)
-                            }
-                        }
-                    }
-                    cb(true)
-                } else
-                    cb(false)
-            }
-        } else {
-            cb(false)
-            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-        }
-    }
-    //endregion
-
-    //region==========================Get Brand TAndC Data:-
-    private fun getBrandTAndCData(cb: (Boolean) -> Unit) {
-        GenericBrandTAndC(EMIRequestType.BRAND_T_AND_C.requestType) { brandTAndCData, hostResponseData ->
-            if (brandTAndCData.first.isNotEmpty()) {
-                for (i in 0 until brandTAndCData.first.size) {
-                    val brandModel = BrandTAndCTable()
-                    if (!TextUtils.isEmpty(brandTAndCData.first[i])) {
-                        val splitData = parseDataListWithSplitter(
-                            SplitterTypes.CARET.splitter,
-                            brandTAndCData.first[i]
-                        )
-                        brandModel.brandId = splitData[0]
-                        brandModel.brandTAndC = splitData[1]
-                        runBlocking(Dispatchers.IO) {
-                            BrandTAndCTable.performOperation(brandModel)
-                        }
-                    }
-                }
-                cb(true)
-            } else
-                cb(false)
-        }
-    }
-    //endregion
 
     //region==============Save Brand Master Data TimeStamps:-
     private fun saveBrandMasterTimeStampsData(cb: (Boolean) -> Unit) {
@@ -633,6 +564,74 @@ data class BrandEMIMasterDataModal(
     var brandName: String,
     var mobileNumberBillNumberFlag: String
 )
+//endregion
+
+
+//region==================Get Issuer TAndC Data:-
+ fun getIssuerTAndCData(cb: (Boolean) -> Unit) {
+    if (checkInternetConnection()) {
+        Log.d("Bank EMI Clicked:- ", "Clicked")
+        GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
+            val issuerTAndCData = issuerTermsAndConditionData.first
+            val responseBool = issuerTermsAndConditionData.second
+            if (issuerTAndCData.isNotEmpty() && responseBool) {
+                //region================Insert IssuerTAndC and Brand TAndC in DB:-
+                //Issuer TAndC Inserting:-
+                for (i in 0 until issuerTAndCData.size) {
+                    val issuerModel = IssuerTAndCTable()
+                    if (!TextUtils.isEmpty(issuerTAndCData[i])) {
+                        val splitData = parseDataListWithSplitter(
+                            SplitterTypes.CARET.splitter,
+                            issuerTAndCData[i]
+                        )
+
+                        if (splitData.size > 2) {
+                            issuerModel.issuerId = splitData[0]
+                            issuerModel.headerTAndC = splitData[1]
+                            issuerModel.footerTAndC = splitData[2]
+                        } else {
+                            issuerModel.issuerId = splitData[0]
+                            issuerModel.headerTAndC = splitData[1]
+                        }
+                        runBlocking(Dispatchers.IO) {
+                            IssuerTAndCTable.performOperation(issuerModel)
+                        }
+                    }
+                }
+                cb(true)
+            } else
+                cb(false)
+        }
+    } else {
+        cb(false)
+        VFService.showToast(VerifoneApp.appContext.getString(R.string.no_internet_available_please_check_your_internet))
+    }
+}
+//endregion
+
+//region==========================Get Brand TAndC Data:-
+ fun getBrandTAndCData(cb: (Boolean) -> Unit) {
+    GenericBrandTAndC(EMIRequestType.BRAND_T_AND_C.requestType) { brandTAndCData, hostResponseData ->
+        if (brandTAndCData.first.isNotEmpty()) {
+            for (i in 0 until brandTAndCData.first.size) {
+                val brandModel = BrandTAndCTable()
+                if (!TextUtils.isEmpty(brandTAndCData.first[i])) {
+                    val splitData = parseDataListWithSplitter(
+                        SplitterTypes.CARET.splitter,
+                        brandTAndCData.first[i]
+                    )
+                    brandModel.brandId = splitData[0]
+                    brandModel.brandTAndC = splitData[1]
+                    runBlocking(Dispatchers.IO) {
+                        BrandTAndCTable.performOperation(brandModel)
+                    }
+                }
+            }
+            cb(true)
+        } else
+            cb(false)
+    }
+}
 //endregion
 
 

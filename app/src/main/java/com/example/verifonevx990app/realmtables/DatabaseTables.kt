@@ -4103,6 +4103,18 @@ open class BrandTAndCTable() : RealmObject(), Parcelable {
         }
         //endregion
 
+        fun getBrandTncBybrandId(brandId:String)=runBlocking {
+            var brandTnc: BrandTAndCTable? = null
+            getRealm {
+                val res =
+                    it.where(BrandTAndCTable::class.java)
+                        .equalTo("brandId", brandId)
+                        .findFirst()
+                if (res != null) brandTnc = it.copyFromRealm(res)
+            }.await()
+            brandTnc?.brandTAndC
+        }
+
         fun clear() =
             withRealm {
                 it.executeTransaction { i ->

@@ -3653,7 +3653,6 @@ class PrintUtil(context: Context?) {
                             val emiTnc = "#" + issuerHeaderTAndC[i]
                             val chunks: List<String> = chunkTnC(emiTnc, limit)
                             for (st in chunks) {
-
                                 logger("issuerHeaderTAndC", st, "e")
                                 alignLeftRightText(textInLineFormatBundle, st, "")
                             }
@@ -3664,6 +3663,30 @@ class PrintUtil(context: Context?) {
             //endregion
 
             printer?.feedLine(1)
+
+            //region=====================BRAND TAndC===============
+            val brandId = if(printerReceiptData.transactionType == TransactionType.BRAND_EMI.type){
+                brandEmiData?.brandID?:"0"
+            }else{
+                val productData =
+                    BrandEMIAccessDataModalTable.getBrandEMIAccessCodeDataByInvoice(hostInvoice)
+                productData?.brandID?:""
+            }
+            val brandTnc =
+                BrandTAndCTable.getBrandTncBybrandId(brandId?:"0")?:""
+            val chunk: List<String> = chunkTnC(brandTnc)
+            for (st in chunk) {
+                logger("Brand Tnc", st, "e")
+                alignLeftRightText(
+                    textInLineFormatBundle,
+                    st.replace(bankEMIFooterTAndCSeparator, "")
+                        .replace(disclaimerIssuerClose, ""),
+                    ""
+                )
+            }
+            //endregion
+
+
 
             //region=====================SCHEME TAndC===============
             val emiCustomerConsent =
@@ -3840,7 +3863,7 @@ class PrintUtil(context: Context?) {
                             printer?.addText(
                                 textInLineFormatBundle,
                                 formatTextLMR(
-                                    "Mobile No.",
+                                    "Mobile No ",
                                     ":",
                                     productData.mobileNo,
                                     14
