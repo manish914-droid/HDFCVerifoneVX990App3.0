@@ -16,15 +16,18 @@ import android.view.WindowManager
 import android.widget.Button
 import android.widget.LinearLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
+import com.example.verifonevx990app.bankemi.GenericEMIIssuerTAndC
 import com.example.verifonevx990app.brandemi.CreateBrandEMIPacket
+import com.example.verifonevx990app.brandemi.GenericBrandTAndC
 import com.example.verifonevx990app.databinding.BrandEmiByAccessCodeViewBinding
 import com.example.verifonevx990app.emv.transactionprocess.VFTransactionActivity
 import com.example.verifonevx990app.main.EMIRequestType
+import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.SplitterTypes
-import com.example.verifonevx990app.realmtables.BrandEMIAccessDataModalTable
-import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.transactions.setMaxLength
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +43,8 @@ class BrandEMIByAccessCodeFragment : Fragment() {
     private var binding: BrandEmiByAccessCodeViewBinding? = null
     private var field57Request: String? = null
     private var totalRecord: String = "0"
+    private var isDataMatch = false
+
     private val brandEmiAccessCodeList: MutableList<BrandEMIAccessDataModal> = mutableListOf()
 
     override fun onCreateView(
@@ -286,35 +291,51 @@ class BrandEMIByAccessCodeFragment : Fragment() {
             emiAmountET.text = emiAmt
             netPayAmountET.text =netPayAmt
             dialog.findViewById<Button>(R.id.submitButton).setOnClickListener {
-               if(brandEMIAccessData.brandReservField[2]=='2' && billNoet.text.isNullOrBlank()){
+                if(brandEMIAccessData.brandReservField[2]=='2' && billNoet.text.isNullOrBlank()){
                    VFService.showToast("Enter bill number")
                    return@setOnClickListener
                }
-                dialog.dismiss()
-                if (checkInternetConnection()) {
-                    GlobalScope.launch(Dispatchers.IO) {
-                        // Saving brandEmiAccessData (Brand Data)
-                     //   saveDataInDB(brandEMIAccessData)
-                        activity?.startActivity(
-                            Intent(
-                                requireActivity(),
-                                VFTransactionActivity::class.java
-                            ).apply {
-                                putExtra("amt", brandEMIAccessData.transactionAmount)
-                                putExtra("type", TransactionType.BRAND_EMI_BY_ACCESS_CODE.type)
-                                putExtra("proc_code", ProcessingCode.SALE.code)
-                                putExtra("mobileNumber", brandEMIAccessData.mobileNo)
-                                putExtra("billNumber", billNoet.text.toString())
-                                putExtra("uiAction", UiAction.BANK_EMI_BY_ACCESS_CODE)
-                                brandEMIAccessData.billNumberInvoiceNo=billNoet.text.toString()
-                                putExtra("brandEMIAccessData", brandEMIAccessData)
+                val issuerTAndCData = runBlocking(Dispatchers.IO) { IssuerTAndCTable.getAllIssuerTAndCData() }
+                val brandTAndCData = runBlocking(Dispatchers.IO) { BrandTAndCTable.getAllBrandTAndCData() }
+                iDialog?.showProgress()
+                if (issuerTAndCData?.isEmpty() == true || brandTAndCData.isEmpty() || !matchHostAndDBData(brandEMIAccessData)) {
+                    getIssuerTAndCData { issuerTCDataSaved ->
+                        if (issuerTCDataSaved) {
+                            getBrandTAndCData { brandTCDataSaved ->
+                                if (brandTCDataSaved) {
+                                    saveBrandMasterTimeStampsData("","",brandEMIAccessData.issuerTimeStamp,brandEMIAccessData.brandTimeStamp) {
+                                        lifecycleScope.launch(Dispatchers.Main) {
+                                            iDialog?.hideProgress()
+                                            navigateToVFTransactionActivity(
+                                                brandEMIAccessData,
+                                                billNoet.text.toString()
+                                            )
+                                        }
+                                    }
 
-                            })
+                                } else {
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        iDialog?.hideProgress()
+                                        showSomethingWrongPopUp()
+                                    }
+                                }
+                            }
+                        } else {
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                iDialog?.hideProgress()
+                                showSomethingWrongPopUp()
+                            }
+                        }
+                    }
+                } else {
+                    GlobalScope.launch(Dispatchers.Main) {
+                        iDialog?.hideProgress()
+                        navigateToVFTransactionActivity(brandEMIAccessData,billNoet.text.toString())
                     }
                 }
-                else {
-                    VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
-                }
+
+                dialog.dismiss()
+
             }
             dialog.show()
             window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
@@ -322,8 +343,140 @@ class BrandEMIByAccessCodeFragment : Fragment() {
     }
     //endregion
 
+    //region======================Navigate Fragment to VFTransactionActivity:-
+    private fun navigateToVFTransactionActivity(brandEMIAccessData: BrandEMIAccessDataModal,billNoet: String){
+        if (checkInternetConnection()) {
+            GlobalScope.launch(Dispatchers.IO) {
+                // Saving brandEmiAccessData (Brand Data)
+                //   saveDataInDB(brandEMIAccessData)
+                activity?.startActivity(
+                    Intent(
+                        requireActivity(),
+                        VFTransactionActivity::class.java
+                    ).apply {
+                        putExtra("amt", brandEMIAccessData.transactionAmount)
+                        putExtra("type", TransactionType.BRAND_EMI_BY_ACCESS_CODE.type)
+                        putExtra("proc_code", ProcessingCode.SALE.code)
+                        putExtra("mobileNumber", brandEMIAccessData.mobileNo)
+                        putExtra("billNumber", billNoet)
+                        putExtra("uiAction", UiAction.BANK_EMI_BY_ACCESS_CODE)
+                        brandEMIAccessData.billNumberInvoiceNo=billNoet
+                        putExtra("brandEMIAccessData", brandEMIAccessData)
+
+                    })
+            }
+        }
+        else {
+            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+        }
+    }
+    //region=======================Check Whether we got Updated Data from Host or to use Previous BrandEMIMaster Store Data:-
+    private fun matchHostAndDBData(brandEMIAccessData: BrandEMIAccessDataModal): Boolean {
+        val timeStampsData = runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.getAllBrandEMIMasterDataTimeStamps() }
+
+        if (!TextUtils.isEmpty(brandEMIAccessData.brandTimeStamp) && !TextUtils.isEmpty(brandEMIAccessData.issuerTimeStamp)) {
+            isDataMatch = brandEMIAccessData.issuerTimeStamp == timeStampsData[0].issuerTAndCTimeStamp &&
+                    brandEMIAccessData.brandTimeStamp == timeStampsData[0].brandTAndCTimeStamp
+        }
+        return isDataMatch
+    }
+    //endregion
     //region======================Saving BrandEMI By Access Code Host Response Data in DB:-
 
+    //endregion
+
+    //region==================Get Issuer TAndC Data:-
+    private fun getIssuerTAndCData(cb: (Boolean) -> Unit) {
+        if (checkInternetConnection()) {
+            Log.d("Bank EMI Clicked:- ", "Clicked")
+            GenericEMIIssuerTAndC { issuerTermsAndConditionData, issuerHostResponseCodeAndMsg ->
+                val issuerTAndCData = issuerTermsAndConditionData.first
+                val responseBool = issuerTermsAndConditionData.second
+                if (issuerTAndCData.isNotEmpty() && responseBool) {
+                    //region================Insert IssuerTAndC and Brand TAndC in DB:-
+                    //Issuer TAndC Inserting:-
+                    for (i in 0 until issuerTAndCData.size) {
+                        val issuerModel = IssuerTAndCTable()
+                        if (!TextUtils.isEmpty(issuerTAndCData[i])) {
+                            val splitData = parseDataListWithSplitter(
+                                SplitterTypes.CARET.splitter,
+                                issuerTAndCData[i]
+                            )
+
+                            if (splitData.size > 2) {
+                                issuerModel.issuerId = splitData[0]
+                                issuerModel.headerTAndC = splitData[1]
+                                issuerModel.footerTAndC = splitData[2]
+                            } else {
+                                issuerModel.issuerId = splitData[0]
+                                issuerModel.headerTAndC = splitData[1]
+                            }
+
+                            runBlocking(Dispatchers.IO) {
+                                IssuerTAndCTable.performOperation(issuerModel)
+                            }
+                        }
+                    }
+                    cb(true)
+                } else
+                    cb(false)
+            }
+        } else {
+            cb(false)
+            VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
+        }
+    }
+    //endregion
+
+    //region==========================Get Brand TAndC Data:-
+    private fun getBrandTAndCData(cb: (Boolean) -> Unit) {
+        GenericBrandTAndC(EMIRequestType.BRAND_T_AND_C.requestType) { brandTAndCData, hostResponseData ->
+            if (brandTAndCData.first.isNotEmpty()) {
+                for (i in 0 until brandTAndCData.first.size) {
+                    val brandModel = BrandTAndCTable()
+                    if (!TextUtils.isEmpty(brandTAndCData.first[i])) {
+                        val splitData = parseDataListWithSplitter(
+                            SplitterTypes.CARET.splitter,
+                            brandTAndCData.first[i]
+                        )
+                        brandModel.brandId = splitData[0]
+                        brandModel.brandTAndC = splitData[1]
+                        runBlocking(Dispatchers.IO) {
+                            BrandTAndCTable.performOperation(brandModel)
+                        }
+                    }
+                }
+                cb(true)
+            } else
+                cb(false)
+        }
+    }
+    //endregion
+
+    //region==============Save Brand Master Data TimeStamps:-
+    private fun saveBrandMasterTimeStampsData(brandTimeStamp:String,brandCategoryUpdatedTimeStamp:String, issuerTAndCTimeStamp:String,brandTAndCTimeStamp:String,cb: (Boolean) -> Unit) {
+        runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.clear() }
+        val model = BrandEMIMasterTimeStamps()
+        model.brandTimeStamp = brandTimeStamp ?: ""
+        model.brandCategoryUpdatedTimeStamp = brandCategoryUpdatedTimeStamp ?: ""
+        model.issuerTAndCTimeStamp = issuerTAndCTimeStamp ?: ""
+        model.brandTAndCTimeStamp = brandTAndCTimeStamp ?: ""
+        runBlocking(Dispatchers.IO) { BrandEMIMasterTimeStamps.performOperation(model) }
+        cb(true)
+    }
+    //endregion
+
+    //region=====================TAndC not Loaded Properly Pop-Up:-
+    private fun showSomethingWrongPopUp() {
+        (activity as MainActivity).alertBoxWithAction(null,
+            null,
+            getString(R.string.error),
+            getString(R.string.issuer_brand_tandc_loading_error),
+            false,
+            getString(R.string.positive_button_ok),
+            {},
+            {})
+    }
     //endregion
 }
 
