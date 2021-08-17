@@ -1019,9 +1019,9 @@ class PrintUtil(context: Context?) {
                             b.transactionType = TransactionType.EMI_SALE.type
                         }
 
-                     /*   if (b.transactionType == TransactionType.TEST_EMI.type) {
+                        if (b.transactionType == TransactionType.TEST_EMI.type) {
                             b.transactionType = TransactionType.SALE.type
-                        }*/
+                        }
 
                         count++
                         if (updatedindex <= frequencylist.size - 1)
