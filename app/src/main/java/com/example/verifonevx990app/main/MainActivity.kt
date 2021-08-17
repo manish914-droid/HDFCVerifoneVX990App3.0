@@ -4,9 +4,11 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.Dialog
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.*
 import android.provider.Settings
 import android.text.InputFilter
@@ -58,7 +60,6 @@ import com.example.verifonevx990app.voidofflinesale.VoidOfflineSale
 import com.example.verifonevx990app.voidrefund.VoidOfRefund
 import com.example.verifonevx990app.vxUtils.*
 import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getChargerStatus
-import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getOtherInfo
 import com.example.verifonevx990app.vxUtils.ConnectionTimeStamps.getbatteryinfo
 
 import com.example.verifonevx990app.vxUtils.ROCProviderV2.refreshToolbarLogos
@@ -68,7 +69,6 @@ import com.google.gson.Gson
 import com.vfi.smartpos.system_service.aidl.IAppInstallObserver
 import kotlinx.coroutines.*
 import java.io.File
-import java.lang.reflect.Field
 import java.util.*
 import kotlin.jvm.Throws
 
@@ -486,12 +486,87 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         }
     }
 
+  /*  private fun startHTTPSAppUpdate1(appHostDownloadURL: String? = null, ftpIPPort: Int? = null, downloadAppFileName: String, downloadFileSize: String) {
+        showProgress(getString(R.string.please_wait_downloading_application_update))
+
+        val appHostDownloadURL = appHostDownloadURL?.replace("/app", ":"+ftpIPPort)
+        AppUpdateDownloadManager(appHostDownloadURL+"app"+"/"+downloadAppFileName,
+                object : OnDownloadCompleteListener {
+                    override fun onError(msg: String) {
+                        GlobalScope.launch(Dispatchers.Main) {
+                            hideProgress()
+                            getInfoDialog(
+                                    getString(R.string.connection_error),
+                                    "No update available"
+                            ) {}
+                        }
+                    }
+
+                    override fun onDownloadComplete(path: String, appName: String, fileUri: Uri) {
+                        if (!TextUtils.isEmpty(path)) {
+                            hideProgress()
+                            Log.d("DownloadAppFilePath:- ", path)
+                            autoInstallApk(path) { status, packageName, code ->
+                                GlobalScope.launch(Dispatchers.Main) {
+                                    VFService.showToast(getString(R.string.app_updated_successfully))
+                                }
+                            }
+                        } else {
+                            hideProgress()
+                            VFService.showToast(getString(R.string.something_went_wrong))
+                        }
+                    }
+                }).execute()
+    }*/
+
     //Below method is used to update App through HTTP/HTTPs:-
-    private fun startHTTPSAppUpdate(appHostDownloadURL: String? = null) {
+    private fun startHTTPSAppUpdate(appHostDownloadURL: String? = null, ftpIPPort: Int? = null, downloadAppFileName: String, downloadFileSize: String) {
         showProgress(getString(R.string.please_wait_downloading_application_update))
         if (appHostDownloadURL != null) {
-            AppUpdateDownloadManager(
-                "https://testapp.bonushub.co.in:8055/app/pos.zip",
+            val appHostDownloadURL = appHostDownloadURL?.replace("/app", ":"+ftpIPPort)
+            //https://testcallbh.bonushub.co.in/app/
+            AppUpdateDownloadManager(this@MainActivity,appHostDownloadURL+"app"+"/"+downloadAppFileName,
+                    object : OnDownloadCompleteListener {
+                        override fun onError(msg: String) {
+                            GlobalScope.launch(Dispatchers.Main) {
+                                hideProgress()
+                                getInfoDialog(
+                                        getString(R.string.connection_error),
+                                        "No update available"
+                                ) {}
+                            }
+                        }
+
+                        override fun onDownloadComplete(path: String, appName: String, fileUri: File?) {
+                            if (!TextUtils.isEmpty(path)) {
+                                hideProgress()
+                                Log.d("DownloadAppFilePath:- ", path)
+
+                                val downloadedFile = File(fileUri?.path ?: "")
+
+                                if (!TextUtils.isEmpty(fileUri.toString())) {
+                                    var isPackageInstalled = if (isPackageInstalled("com.vfi.smartpos.system_service")) {
+                                        autoInstallApk(fileUri.toString()) { status, packageName, code ->
+                                            GlobalScope.launch(Dispatchers.Main) {
+                                                VFService.showToast(getString(R.string.app_updated_successfully))
+                                            }
+                                        }
+                                    } else {
+                                        startActivity(Intent(Intent.ACTION_VIEW).apply {
+                                            setDataAndType(Uri.fromFile(fileUri), "application/vnd.android.package-archive")
+                                            flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                                        })
+                                    }
+                                }
+
+                            } else {
+                                hideProgress()
+                                VFService.showToast(getString(R.string.something_went_wrong))
+                            }
+                        }
+                    }).execute()
+
+          /*  AppUpdateDownloadManager("https://testapp.bonushub.co.in:8055/app/pos.zip",
                 object : OnDownloadCompleteListener {
                     override fun onError(msg: String) {
                         GlobalScope.launch(Dispatchers.Main) {
@@ -517,11 +592,22 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             VFService.showToast(getString(R.string.something_went_wrong))
                         }
                     }
-                }).execute()
+                }).execute()*/
+
         } else {
             VFService.showToast("Download URL Not Found!!!")
         }
     }
+
+        fun isPackageInstalled(packageName: String): Boolean {
+            val packageManager = getPackageManager()
+            return try {
+                packageManager.getPackageInfo(packageName, 0)
+                true
+            } catch (e: PackageManager.NameNotFoundException) {
+                false
+            }
+        }
 
     //region=========================Auto Install Apk Execution Code:-
     fun autoInstallApk(filePath: String?, apkInstallCB: (Boolean, String, Int) -> Unit) {
@@ -590,31 +676,22 @@ class MainActivity : BaseActivity(), IFragmentRequest {
     }
 
     //Below method is used to Connect Host For App Update process:-
-    private fun startTCPIPAppUpdate(
-        appUpdateProccessingCode: String,
-        chunkValue: String,
-        partialName: String
-    ) {
-        val isoAppData = CreatePacketForAppUpdate(
-            appUpdateProccessingCode,
-            chunkValue,
-            partialName
-        ).createAppUpdatePacket()
+    private fun startTCPIPAppUpdate(appUpdateProccessingCode: String, chunkValue: String, partialName: String) {
+        val isoAppData = CreatePacketForAppUpdate(appUpdateProccessingCode, chunkValue, partialName).createAppUpdatePacket()
+        logger("Transaction REQUEST PACKET --->>", isoAppData.isoMap, "d")
         val isoAppByteArray = isoAppData.generateIsoByteRequest()
         SyncAppUpdateToHost(isoAppByteArray) { successResponseCode, responseProcessingCode, responseField60Value ->
-            if (!TextUtils.isEmpty(successResponseCode) && successResponseCode == "00" &&
-                responseField60Value.substring(0, 4) == AppUpdate.APP_UPDATE_AVAILABLE.updateCode
+            if (!TextUtils.isEmpty(successResponseCode) && successResponseCode == "00" && responseField60Value.substring(0, 4) == AppUpdate.APP_UPDATE_AVAILABLE.updateCode
             ) {
                 val appPartialName = responseField60Value.substring(24, 36)
+                System.out.println("App partial Name"+appPartialName)
                 val apkData = responseField60Value.substring(96, responseField60Value.length)
+                System.out.println("App apk data"+apkData)
                 tcpIPImagesDataList.addAll(apkData.hexStr2ByteArr().toList())
+                System.out.println("App all data"+tcpIPImagesDataList)
 
                 when (responseProcessingCode) {
-                    ProcessingCode.APP_UPDATE_CONTINUE.code -> saveAndContinueUpdateApplication(
-                        responseField60Value,
-                        responseProcessingCode,
-                        appPartialName
-                    )
+                    ProcessingCode.APP_UPDATE_CONTINUE.code -> saveAndContinueUpdateApplication(responseField60Value, responseProcessingCode, appPartialName)
                     ProcessingCode.APP_UPDATE.code -> {
                         unzipZippedBytes(tcpIPImagesDataList.toByteArray())
                         Log.d("Full ImageData:- ", Gson().toJson(tcpIPImagesDataList))
@@ -1665,8 +1742,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                             .toString()
                     )
                     val responseCode = responseIsoData.isoMap[39]?.parseRaw2String().toString()
-                    val hostFailureValidationMsg =
-                        responseIsoData.isoMap[58]?.parseRaw2String().toString()
+                    val hostFailureValidationMsg = responseIsoData.isoMap[58]?.parseRaw2String().toString()
                     /* Note:- If responseCode is "00" then delete Batch File Data Table happens and Navigate to MainActivity
                              else responseCode is "95" then Batch Upload will Happens and then delete Batch File Data Table happens
                              and Navigate to MainActivity */
@@ -1686,14 +1762,8 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                         Log.d("Success Data:- ", result)
                         Log.d("isAppUpdate:- ", isAppUpdateAvailableData.toString())
                         //Below we are placing values in preference for the use to know whether batch is settled or not:-
-                        AppPreference.saveString(
-                            PrefConstant.SETTLEMENT_PROCESSING_CODE.keyName.toString(),
-                            ProcessingCode.SETTLEMENT.code
-                        )
-                        AppPreference.saveBoolean(
-                            PrefConstant.SETTLE_BATCH_SUCCESS.keyName.toString(),
-                            false
-                        )
+                        AppPreference.saveString(PrefConstant.SETTLEMENT_PROCESSING_CODE.keyName.toString(), ProcessingCode.SETTLEMENT.code)
+                        AppPreference.saveBoolean(PrefConstant.SETTLE_BATCH_SUCCESS.keyName.toString(), false)
                         Log.d("Success Data:- ", result)
                         //Below we are placing values in preference for the use to know whether batch is settled or not:-
                         AppPreference.saveString(
@@ -1763,61 +1833,24 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                     )
                                     delay(2000)
                                     if (!TextUtils.isEmpty(isAppUpdateAvailableData) && isAppUpdateAvailableData != "00" && isAppUpdateAvailableData != "01") {
-                                        val dataList =
-                                            isAppUpdateAvailableData?.split("|") as MutableList<String>
+                                        val dataList = isAppUpdateAvailableData?.split("|") as MutableList<String>
                                         if (dataList.size > 1) {
                                             onBackPressed()
                                             writeAppRevisionIDInFile(this@MainActivity)
                                             when (dataList[0]) {
                                                 AppUpdate.MANDATORY_APP_UPDATE.updateCode -> {
-                                                    if (terminalParameterTable?.reservedValues?.length == 20 &&
-                                                        terminalParameterTable.reservedValues.endsWith(
-                                                            "1"
-                                                        )
-                                                    )
-                                                        startFTPAppUpdate(
-                                                            dataList[2],
-                                                            dataList[3].toInt(),
-                                                            dataList[4],
-                                                            dataList[5],
-                                                            dataList[7],
-                                                            dataList[8]
-                                                        )
-                                                    else if (terminalParameterTable?.reservedValues?.length == 20 &&
-                                                        terminalParameterTable.reservedValues.endsWith(
-                                                            "3"
-                                                        )
-                                                    )
-                                                        startHTTPSAppUpdate(dataList[2]) //------------>HTTPS App Update not in use currently
+                                                    if (terminalParameterTable?.reservedValues?.length == 20 && terminalParameterTable.reservedValues.endsWith("1"))
+                                                        startFTPAppUpdate(dataList[2], dataList[3].toInt(), dataList[4], dataList[5], dataList[7], dataList[8])
+                                                    else if (terminalParameterTable?.reservedValues?.length == 20 && terminalParameterTable.reservedValues.endsWith("3"))
+                                                      //  startHTTPSAppUpdate1(dataList[2],dataList[3].toInt(), dataList[7], dataList[8]) //------------>HTTPS App Update not in use currently
+                                                        startHTTPSAppUpdate(dataList[2],dataList[3].toInt(), dataList[7], dataList[8]) //------------>HTTPS App Update not in use currently
                                                 }
                                                 AppUpdate.OPTIONAL_APP_UPDATE.updateCode -> {
-                                                    alertBoxWithAction(
-                                                        null,
-                                                        null,
-                                                        getString(R.string.app_update),
-                                                        getString(R.string.app_update_available_do_you_want_to_update),
-                                                        true,
-                                                        getString(R.string.yes),
-                                                        {
-                                                            if (terminalParameterTable?.reservedValues?.length == 20 &&
-                                                                terminalParameterTable.reservedValues.endsWith(
-                                                                    "1"
-                                                                )
-                                                            )
-                                                                startFTPAppUpdate(
-                                                                    dataList[2],
-                                                                    dataList[3].toInt(),
-                                                                    dataList[4],
-                                                                    dataList[5],
-                                                                    dataList[7],
-                                                                    dataList[8]
-                                                                )
-                                                            else if (terminalParameterTable?.reservedValues?.length == 20 &&
-                                                                terminalParameterTable.reservedValues.endsWith(
-                                                                    "3"
-                                                                )
-                                                            )
-                                                                startHTTPSAppUpdate(dataList[2]) //------------>HTTPS App Update not in use currently
+                                                    alertBoxWithAction(null, null, getString(R.string.app_update), getString(R.string.app_update_available_do_you_want_to_update), true, getString(R.string.yes), {
+                                                            if (terminalParameterTable?.reservedValues?.length == 20 && terminalParameterTable.reservedValues.endsWith("1"))
+                                                                startFTPAppUpdate(dataList[2], dataList[3].toInt(), dataList[4], dataList[5], dataList[7], dataList[8])
+                                                            else if (terminalParameterTable?.reservedValues?.length == 20 && terminalParameterTable.reservedValues.endsWith("3"))
+                                                                startHTTPSAppUpdate(dataList[2],dataList[3].toInt(), dataList[7], dataList[8]) //------------>HTTPS App Update not in use currently
                                                         },
                                                         {})
                                                 }
@@ -1827,26 +1860,16 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                             }
                                         } else {
                                             //VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
-                                            startTCPIPAppUpdate(
-                                                ProcessingCode.APP_UPDATE.code,
-                                                chunkValue = "0",
-                                                partialName = "0"
-                                            )
+                                            startTCPIPAppUpdate(ProcessingCode.APP_UPDATE.code, chunkValue = "0", partialName = "0")
                                         }
                                     } else {
                                         onBackPressed()
                                         when (isAppUpdateAvailableData) {
                                             "00" -> {
                                                 if (terminalParameterTable != null) {
-                                                    val tid =
-                                                        terminalParameterTable.terminalId.toLong()
-                                                            .toString()
+                                                    val tid = terminalParameterTable.terminalId.toLong().toString()
                                                     showProgress()
-                                                    KeyExchanger(
-                                                        this@MainActivity,
-                                                        tid,
-                                                        ::onInitResponse
-                                                    ).apply {
+                                                    KeyExchanger(this@MainActivity, tid, ::onInitResponse).apply {
                                                         keWithInit = true
                                                     }.insertPPKDPKAfterSettlement()
                                                 }
@@ -1854,15 +1877,9 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
                                             "01" -> {
                                                 if (terminalParameterTable != null) {
-                                                    val tid =
-                                                        terminalParameterTable.terminalId.toLong()
-                                                            .toString()
+                                                    val tid = terminalParameterTable.terminalId.toLong().toString()
                                                     showProgress()
-                                                    KeyExchanger(
-                                                        this@MainActivity,
-                                                        tid,
-                                                        ::onInitResponse
-                                                    ).apply {
+                                                    KeyExchanger(this@MainActivity, tid, ::onInitResponse).apply {
                                                         keWithInit = true
                                                     }.startExchange()
                                                 }
@@ -1938,7 +1955,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                                                 "3"
                                                             )
                                                         )
-                                                            startHTTPSAppUpdate(dataList[2]) //------------>HTTPS App Update not in use currently
+                                                            startHTTPSAppUpdate(dataList[2],dataList[3].toInt(), dataList[7], dataList[8]) //------------>HTTPS App Update not in use currently 
                                                     }
                                                     AppUpdate.OPTIONAL_APP_UPDATE.updateCode -> {
                                                         alertBoxWithAction(
@@ -1967,7 +1984,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                                                         "3"
                                                                     )
                                                                 )
-                                                                    startHTTPSAppUpdate(dataList[2]) //------------>HTTPS App Update not in use currently
+                                                                    startHTTPSAppUpdate(dataList[2],dataList[3].toInt(), dataList[7], dataList[8])  //------------>HTTPS App Update not in use currently
                                                             },
                                                             {})
                                                     }

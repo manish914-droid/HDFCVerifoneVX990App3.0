@@ -463,11 +463,8 @@ class ProcessCard(private var issuerUpdateHandler: IssuerUpdateHandler?,var acti
                                                         (activity as VFTransactionActivity).hideProgress()
                                                     } else {
                                                         (activity as VFTransactionActivity).hideProgress()
-                                                        (activity as VFTransactionActivity).alertBoxWithAction(null, null, activity.getString(R.string.error), hostResponseCodeAndMessage.second, false, activity.getString(R.string.positive_button_ok),
-                                                            {
-                                                                (activity as VFTransactionActivity).declinedTransaction()
-                                                            },
-                                                            {})
+                                                        (activity as VFTransactionActivity).alertBoxWithAction(null, null, activity.getString(R.string.error), hostResponseCodeAndMessage.second, false, activity.getString(R.string.positive_button_ok), {
+                                                                (activity as VFTransactionActivity).declinedTransaction() }, {})
                                                     }
                                                 }
                                             }

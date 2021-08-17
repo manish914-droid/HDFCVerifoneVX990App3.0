@@ -107,6 +107,11 @@ class DashboardFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         isDashboardOpen = true
         activity?.let { hideSoftKeyboard(it) }
+
+        //Below method is only called once after App is Updated to newer version:-
+        sendConfirmationToHost()
+
+
         //region=============Checking If Banner Data Available in File System the Display From There else Display From Local Android Drawable:-
         val data = readAppBannerConfigurationData()
         if (data.isNotEmpty()) {
@@ -116,11 +121,7 @@ class DashboardFragment : Fragment() {
             imageDataList.clear()
             //region===============Stubbing Dummy Banner Data in Banner ViewPager:-
             imageDataList.add(
-                BannerConfigModal(
-                    BitmapFactory.decodeResource(resources, R.drawable.banner_1), "", "",
-                    "1", "0", "", ""
-                )
-            )
+                BannerConfigModal(BitmapFactory.decodeResource(resources, R.drawable.banner_1), "", "", "1", "0", "", ""))
             imageDataList.add(
                 BannerConfigModal(
                     BitmapFactory.decodeResource(resources, R.drawable.banner_2), "", "",
@@ -314,7 +315,7 @@ class DashboardFragment : Fragment() {
         Log.d("Update Value:- ", isUpdate.toString())
 
         //Below method is only called once after App is Updated to newer version:-
-        //sendConfirmationToHost()
+        sendConfirmationToHost()
 
         if (toRefresh || itemList.isEmpty()) {
             itemList.clear()

@@ -6,10 +6,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class SyncAppUpdateToHost(
-    private var appUpdateISOPacket: ByteArray,
-    var appUpdateCB: (String, String, String) -> Unit
-) {
+class SyncAppUpdateToHost(private var appUpdateISOPacket: ByteArray, var appUpdateCB: (String, String, String) -> Unit) {
     private var successResponseCode: String? = null
     private var responseProcessingCode: String? = null
     private var responseField60Value: String? = null
@@ -48,11 +45,8 @@ class SyncAppUpdateToHost(
                     responseField60Value.toString()
                 )
             } else {
-                ROCProviderV2.incrementFromResponse(
-                    ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(),
-                    AppPreference.getBankCode()
-                )
-                appUpdateCB("", "", "")
+                ROCProviderV2.incrementFromResponse(ROCProviderV2.getRoc(AppPreference.getBankCode()).toString(), AppPreference.getBankCode())
+                appUpdateCB("", result, "")
             }
         }, {
             //backToCalled(it, false, true)

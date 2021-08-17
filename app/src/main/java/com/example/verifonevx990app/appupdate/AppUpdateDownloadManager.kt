@@ -1,31 +1,31 @@
 package com.example.verifonevx990app.appupdate
 
+import android.content.Context
+import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
 import java.io.OutputStream
-import java.net.HttpURLConnection
 import java.net.URL
+import javax.net.ssl.HttpsURLConnection
 
-class AppUpdateDownloadManager(
-    private var appHostDownloadURL: String,
-    private var onDownloadCompleteListener: OnDownloadCompleteListener
-) :
-    AsyncTask<String, Int, String>() {
+class AppUpdateDownloadManager(var context: Context, private var appHostDownloadURL: String, private var onDownloadCompleteListener: OnDownloadCompleteListener) : AsyncTask<String, Int, String>() {
 
     private val appName = "BonusHub.apk"
+   // private var fileUri: Uri? = null
+    private val downloadedFilePath = File("/sdcard/", appName)
 
     override fun doInBackground(vararg params: String?): String {
         var input: InputStream? = null
         var output: OutputStream? = null
         val PATH = "/sdcard/"
-        val connection: HttpURLConnection
+        val connection: HttpsURLConnection
         try {
             val url = URL(appHostDownloadURL)
             Log.d("HTTPS Download URL:- ", appHostDownloadURL)
-            connection = url.openConnection() as HttpURLConnection
+            connection = url.openConnection() as HttpsURLConnection
 
             connection.readTimeout = 100000
             connection.connectTimeout = 150000
@@ -53,6 +53,7 @@ class AppUpdateDownloadManager(
                 publishProgress((total * 100 / fileLength).toInt())
                 output.write(data, 0, length)
             }
+           // fileUri = downloadedFilePath
             return outputFile.toString()
         } catch (e: Exception) {
             e.printStackTrace()
@@ -64,18 +65,18 @@ class AppUpdateDownloadManager(
 
     override fun onCancelled() {
         super.onCancelled()
-        onDownloadCompleteListener.onDownloadComplete("", appName)
+        onDownloadCompleteListener.onDownloadComplete("", appName, downloadedFilePath)
     }
 
     override fun onPostExecute(result: String?) {
         super.onPostExecute(result)
         if (result?.isNotEmpty() == true) {
-            onDownloadCompleteListener.onDownloadComplete(result, appName)
+            onDownloadCompleteListener.onDownloadComplete(result, appName,downloadedFilePath)
         }
     }
 }
 
 interface OnDownloadCompleteListener {
-    fun onDownloadComplete(path: String, appName: String)
+    fun onDownloadComplete(path: String, appName: String, fileUri: File?)
     fun onError(msg: String)
 }
