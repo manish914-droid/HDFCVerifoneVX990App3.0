@@ -3511,9 +3511,10 @@ class PrintUtil(context: Context?) {
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
 
                     val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
-                    val totalInterest =
-                        "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
-                    val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
+                    val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
+                    val totalAmt ="%.2f".format(( loanAmt.toDouble().plus(totalInterest.toDouble())).toFloat() / 100)
+
+
                     /*alignLeftRightText(
                         textInLineFormatBundle,
                         totalAmountHeadingText,
@@ -3796,6 +3797,10 @@ class PrintUtil(context: Context?) {
                             }
                         }
                     }
+                }
+                else{
+                    printSeperator(seperatorLineBundle)
+                    centerText(centerTextBundle, "Product Details is blank", true)
                 }
             }
             else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {

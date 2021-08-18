@@ -150,21 +150,42 @@ class BrandEMIProductFragment : Fragment() {
         if (checkInternetConnection()) {
             //region===================Saving Selected ProductID and ProductName in BrandEMIDataModal:-
             if (selectedProductUpdatedPosition > -1) {
-                brandEMIDataModal?.productID=(brandEmiProductDataList?.get(selectedProductUpdatedPosition)?.productID)
-                brandEMIDataModal?.productName=(brandEmiProductDataList[selectedProductUpdatedPosition].productName)
-                brandEMIDataModal?.validationTypeName=(brandEmiProductDataList[selectedProductUpdatedPosition].validationTypeName)
-                brandEMIDataModal?.isRequired=(brandEmiProductDataList[selectedProductUpdatedPosition].isRequired)
-                brandEMIDataModal?.inputDataType=(brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
-                brandEMIDataModal?.minLength=(brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
-                brandEMIDataModal?.maxLength=(brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
-                brandEMIDataModal?.producatDesc=(brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc)
-                brandEMIDataModal?.productMinAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble().div(100).toString())
-                brandEMIDataModal?.productMaxAmount=((brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble().div(100).toString())
-                if(!brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName.isNullOrEmpty()) {
-                    brandEMIDataModal?.categoryName = (brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName)
+                brandEMIDataModal?.productID =
+                    (brandEmiProductDataList?.get(selectedProductUpdatedPosition)?.productID)
+                brandEMIDataModal?.productName =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].productName)
+                brandEMIDataModal?.validationTypeName =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].validationTypeName)
+                brandEMIDataModal?.isRequired =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].isRequired)
+                brandEMIDataModal?.inputDataType =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].inputDataType)
+                brandEMIDataModal?.minLength =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
+                brandEMIDataModal?.maxLength =
+                    (brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
+                if (!(brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc.isNullOrEmpty())) {
+                    brandEMIDataModal?.producatDesc =
+                        (brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc)
+                } else{
+                    brandEMIDataModal?.producatDesc ="test case (blank)"
+                }
+                brandEMIDataModal?.productMinAmount =
+                    ((brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
+                        .div(100).toString())
+                brandEMIDataModal?.productMaxAmount =
+                    ((brandEmiProductDataList[selectedProductUpdatedPosition].productMaxAmount).toDouble()
+                        .div(100).toString())
+                if (!brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName.isNullOrEmpty()) {
+                    brandEMIDataModal?.categoryName =
+                        (brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName)
+                } else{
+                    brandEMIDataModal?.producatDesc ="test case (blank)"
                 }
             }
             //endregion
+            // add for checking brandemidatamodel is not blank====== add by sandeep(18-08-2021)
+            if (brandEMIDataModal != null) {
                 (activity as MainActivity).transactFragment(NewInputAmountFragment().apply {
                     arguments = Bundle().apply {
                         putSerializable("type", action)
@@ -172,7 +193,11 @@ class BrandEMIProductFragment : Fragment() {
                         putString(MainActivity.INPUT_SUB_HEADING, SubHeaderTitle.Brand_EMI.title)
                     }
                 })
-        } else {
+            }else{
+                VFService.showToast("connection is slow ,please select product again")
+            }
+        }
+        else {
             VFService.showToast(getString(R.string.no_internet_available_please_check_your_internet))
         }
     }
