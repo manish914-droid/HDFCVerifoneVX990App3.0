@@ -460,7 +460,7 @@ class DashboardFragment : Fragment() {
         try {
             context?.let {
                 getRevisionIDFromFile(it) { isRevisionIDSame ->
-                    if (isRevisionIDSame || !isUpdate) {
+                    if (isRevisionIDSame) {
                         sendConfirmation()
                     }
                 }
@@ -473,8 +473,7 @@ class DashboardFragment : Fragment() {
 
     //Sync App Confirmation to Host:-
     private fun sendConfirmation() {
-        val appUpdateConfirmationISOData =
-            SendAppUpdateConfirmationPacket().createAppUpdateConfirmationPacket()
+        val appUpdateConfirmationISOData = SendAppUpdateConfirmationPacket().createAppUpdateConfirmationPacket()
         val isoByteArray = appUpdateConfirmationISOData.generateIsoByteRequest()
         GlobalScope.launch(Dispatchers.Main) {
             (activity as MainActivity).showProgress(getString(R.string.please_wait))
