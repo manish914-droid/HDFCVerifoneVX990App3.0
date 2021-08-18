@@ -1472,11 +1472,7 @@ class PrintUtil(context: Context?) {
             )
             fmtAddTextInLine.putString(
                 PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-
-
-
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
 
             printer?.addTextInLine(
                 fmtAddTextInLine,
@@ -1529,7 +1525,7 @@ class PrintUtil(context: Context?) {
 
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "Mob.:${digiPosData.customerMobileNumber}",
+                "Mob:${digiPosData.customerMobileNumber}",
                 "",
                 "Mode:${digiPosData.paymentMode}",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
@@ -1543,7 +1539,7 @@ class PrintUtil(context: Context?) {
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
+              0
             )
             format.putInt(
                 PrinterConfig.addText.Alignment.BundleName,
@@ -3778,7 +3774,7 @@ class PrintUtil(context: Context?) {
 
                                 printer?.addText(
                                     textInLineFormatBundle,
-                                    formatTextLMR("Mobile No.", ":", maskedMob, 14)
+                                    formatTextLMR("Mobile No", ":", maskedMob, 14)
                                 )
 
                             }
@@ -3788,7 +3784,7 @@ class PrintUtil(context: Context?) {
                                 printer?.addText(
                                     textInLineFormatBundle,
                                     formatTextLMR(
-                                        "Mobile No.",
+                                        "Mobile No",
                                         ":",
                                         printerReceiptData.merchantMobileNumber,
                                         14
@@ -3850,7 +3846,7 @@ class PrintUtil(context: Context?) {
                             printer?.addText(
                                 textInLineFormatBundle,
                                 formatTextLMR(
-                                    "Mobile No.",
+                                    "Mobile No",
                                     ":",
                                     maskedMob,
                                     14
@@ -4160,8 +4156,8 @@ class PrintUtil(context: Context?) {
         printSeperator(Bundle())
         centerText(Bundle(), "CROSS SELL REPORT", true)
         printSeperator(Bundle())
-        alignLeftRightText(Bundle(), "Product", "4 Digit Mobile No.")
-        alignLeftRightText(Bundle(), "Txn Ref No.", "Status")
+        alignLeftRightText(Bundle(), "Product", "4 Digit Mobile No")
+        alignLeftRightText(Bundle(), "Txn Ref No", "Status")
         alignLeftRightText(Bundle(), "Date & Time", "")
         printSeperator(Bundle())
 

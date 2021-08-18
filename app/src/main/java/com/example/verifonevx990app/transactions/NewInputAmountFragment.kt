@@ -844,10 +844,9 @@ class NewInputAmountFragment : Fragment() {
                     }
                 }
             } else { // percent tip check is applied
-                val saleAmount = saleAmt
-                val maxAmountTip = (maxTipPercent / 100) * saleAmount
+                val maxAmountTip = (maxTipPercent / 100) * saleAmt
                 val formatMaxTipAmount = "%.2f".format(maxAmountTip)
-                if (tipAmount <= maxAmountTip) {
+                if (tipAmount <= maxAmountTip.toFloat()) {
                     //   iDialog?.showProgress()
                     GlobalScope.launch {
 

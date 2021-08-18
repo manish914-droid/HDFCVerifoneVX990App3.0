@@ -1310,18 +1310,23 @@ fun panMasking(input: String, maskFormat: String): String {
         val sb = StringBuilder()
 
         var index = 0
-        while (index < inputArr.size) {
+       /* while (index < inputArr.size) {
             var endIndex = index + 3
             if (endIndex > inputArr.lastIndex) {
                 endIndex = inputArr.lastIndex
             }
             val tempCh = inputArr.slice(index..endIndex)
             sb.append(tempCh.toCharArray())
-            sb.append("")
+            sb.append(" ")
             index += 4
+        }*/
+
+        for(i in inputArr){
+            sb.append(i)
         }
 
-        return sb.toString().substring(0, sb.lastIndex)
+      //  return sb.toString().substring(0, sb.lastIndex)
+        return sb.toString()
     } else return ""
 }
 
