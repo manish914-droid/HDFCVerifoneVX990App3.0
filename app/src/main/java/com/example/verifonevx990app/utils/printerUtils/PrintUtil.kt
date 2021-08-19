@@ -1472,11 +1472,7 @@ class PrintUtil(context: Context?) {
             )
             fmtAddTextInLine.putString(
                 PrinterConfig.addTextInLine.GlobalFont.BundleName,
-                PrinterFonts.path + PrinterFonts.FONT_AGENCYR
-            )
-
-
-
+                PrinterFonts.path + PrinterFonts.FONT_AGENCYR)
 
             printer?.addTextInLine(
                 fmtAddTextInLine,
@@ -1529,7 +1525,7 @@ class PrintUtil(context: Context?) {
 
             printer?.addTextInLine(
                 fmtAddTextInLine,
-                "Mob.:${digiPosData.customerMobileNumber}",
+                "Mob:${digiPosData.customerMobileNumber}",
                 "",
                 "Mode:${digiPosData.paymentMode}",
                 PrinterConfig.addTextInLine.mode.Devide_flexible
@@ -1543,7 +1539,7 @@ class PrintUtil(context: Context?) {
 
             format.putInt(
                 PrinterConfig.addText.FontSize.BundleName,
-                PrinterConfig.addText.FontSize.NORMAL_24_24
+              0
             )
             format.putInt(
                 PrinterConfig.addText.Alignment.BundleName,
@@ -3515,9 +3511,10 @@ class PrintUtil(context: Context?) {
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
 
                     val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
-                    val totalInterest =
-                        "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
-                    val totalAmt = loanAmt.toDouble().plus(totalInterest.toDouble())
+                    val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
+                    val totalAmt ="%.2f".format(( loanAmt.toDouble().plus(totalInterest.toDouble())).toFloat() / 100)
+
+
                     /*alignLeftRightText(
                         textInLineFormatBundle,
                         totalAmountHeadingText,
@@ -3778,7 +3775,7 @@ class PrintUtil(context: Context?) {
 
                                 printer?.addText(
                                     textInLineFormatBundle,
-                                    formatTextLMR("Mobile No.", ":", maskedMob, 14)
+                                    formatTextLMR("Mobile No", ":", maskedMob, 14)
                                 )
 
                             }
@@ -3788,7 +3785,7 @@ class PrintUtil(context: Context?) {
                                 printer?.addText(
                                     textInLineFormatBundle,
                                     formatTextLMR(
-                                        "Mobile No.",
+                                        "Mobile No",
                                         ":",
                                         printerReceiptData.merchantMobileNumber,
                                         14
@@ -3800,6 +3797,10 @@ class PrintUtil(context: Context?) {
                             }
                         }
                     }
+                }
+                else{
+                    printSeperator(seperatorLineBundle)
+                    centerText(centerTextBundle, "Product Details is blank", true)
                 }
             }
             else if (printerReceiptData.transactionType == TransactionType.BRAND_EMI_BY_ACCESS_CODE.type) {
@@ -3850,7 +3851,7 @@ class PrintUtil(context: Context?) {
                             printer?.addText(
                                 textInLineFormatBundle,
                                 formatTextLMR(
-                                    "Mobile No.",
+                                    "Mobile No",
                                     ":",
                                     maskedMob,
                                     14
@@ -4160,8 +4161,8 @@ class PrintUtil(context: Context?) {
         printSeperator(Bundle())
         centerText(Bundle(), "CROSS SELL REPORT", true)
         printSeperator(Bundle())
-        alignLeftRightText(Bundle(), "Product", "4 Digit Mobile No.")
-        alignLeftRightText(Bundle(), "Txn Ref No.", "Status")
+        alignLeftRightText(Bundle(), "Product", "4 Digit Mobile No")
+        alignLeftRightText(Bundle(), "Txn Ref No", "Status")
         alignLeftRightText(Bundle(), "Date & Time", "")
         printSeperator(Bundle())
 

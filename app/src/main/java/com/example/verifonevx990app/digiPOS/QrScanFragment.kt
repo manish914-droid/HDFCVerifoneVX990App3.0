@@ -90,6 +90,7 @@ class QrScanFragment : Fragment() {
                                 if (isSuccess) {
                                     val statusRespDataList =
                                         responsef57.split("^")
+                                    if( statusRespDataList[1]==EDigiPosTerminalStatusResponseCodes.SuccessString.statusCode){
                                     val tabledata =
                                         DigiPosDataTable()
                                     tabledata.requestType =
@@ -140,7 +141,10 @@ class QrScanFragment : Fragment() {
                                             Log.e("F56->>", responsef57)
                                             VFService.showToast(getString(R.string.txn_status_still_pending))
                                             lifecycleScope.launch(Dispatchers.Main) {
-                                                parentFragmentManager.popBackStack(DigiPosMenuFragment::class.java.simpleName, 0);
+                                                parentFragmentManager.popBackStack(
+                                                    DigiPosMenuFragment::class.java.simpleName,
+                                                    0
+                                                )
 
                                             }
 
@@ -162,7 +166,13 @@ class QrScanFragment : Fragment() {
                                             ) { alertCB, printingFail ->
                                                 //context.hideProgress()
                                                 if (!alertCB) {
-                                                    parentFragmentManager.popBackStack()
+                                                    lifecycleScope.launch(Dispatchers.Main) {
+                                                        parentFragmentManager.popBackStack(
+                                                            DigiPosMenuFragment::class.java.simpleName,
+                                                            0
+                                                        );
+
+                                                    }
 
                                                 }
                                             }
@@ -175,8 +185,35 @@ class QrScanFragment : Fragment() {
 
                                         }
                                     }
-
-                                } else {
+                                }
+                                    else
+                                    {
+                                        lifecycleScope.launch(
+                                            Dispatchers.Main
+                                        ) {
+                                            (activity as BaseActivity).alertBoxWithAction(
+                                                null,
+                                                null,
+                                                getString(R.string.transaction_failed_msg),
+                                                statusRespDataList[1],
+                                                false,
+                                                getString(R.string.positive_button_ok),
+                                                { alertPositiveCallback ->
+                                                    if (alertPositiveCallback) {
+                                                        DigiPosDataTable.deletRecord(
+                                                            digiPosTabledata.partnerTxnId)
+                                                        lifecycleScope.launch(Dispatchers.Main) {
+                                                            parentFragmentManager.popBackStack(
+                                                                DigiPosMenuFragment::class.java.simpleName,
+                                                                0
+                                                            )}
+                                                    }
+                                                },
+                                                {})
+                                        }
+                                    }
+                                } else
+                                {
                                     lifecycleScope.launch(
                                         Dispatchers.Main
                                     ) {
@@ -223,6 +260,7 @@ class QrScanFragment : Fragment() {
                 }
 
                 else -> {
+
                 }
             }
 

@@ -57,106 +57,135 @@ class PendingTxnListFragment : Fragment() {
                         try {
                             (activity as BaseActivity).hideProgress()
                             if (isSuccess) {
-
-
                                 val statusRespDataList =
                                     responsef57.split("^")
+                                if (statusRespDataList[1] == EDigiPosTerminalStatusResponseCodes.SuccessString.statusCode) {
+                                    val tabledata =
+                                        DigiPosDataTable()
+                                    tabledata.requestType =
+                                        statusRespDataList[0].toInt()
+                                    //  tabledata.partnerTxnId = statusRespDataList[1]
+                                    tabledata.status =
+                                        statusRespDataList[1]
+                                    tabledata.statusMsg =
+                                        statusRespDataList[2]
+                                    tabledata.statusCode =
+                                        statusRespDataList[3]
+                                    tabledata.mTxnId =
+                                        statusRespDataList[4]
+                                    tabledata.partnerTxnId =
+                                        statusRespDataList[6]
+                                    tabledata.transactionTimeStamp = statusRespDataList[7]
+                                    tabledata.displayFormatedDate =
+                                        getDateInDisplayFormatDigipos(statusRespDataList[7])
+                                    val dateTime =
+                                        statusRespDataList[7].split(
+                                            " "
+                                        )
+                                    tabledata.txnDate = dateTime[0]
+                                    if (dateTime.size == 2)
+                                        tabledata.txnTime = dateTime[1]
+                                    tabledata.amount =
+                                        statusRespDataList[8]
+                                    tabledata.paymentMode =
+                                        statusRespDataList[9]
+                                    tabledata.customerMobileNumber =
+                                        statusRespDataList[10]
+                                    tabledata.description =
+                                        statusRespDataList[11]
+                                    tabledata.pgwTxnId =
+                                        statusRespDataList[12]
 
 
-                                val tabledata =
-                                    DigiPosDataTable()
-                                tabledata.requestType =
-                                    statusRespDataList[0].toInt()
-                                //  tabledata.partnerTxnId = statusRespDataList[1]
-                                tabledata.status =
-                                    statusRespDataList[1]
-                                tabledata.statusMsg =
-                                    statusRespDataList[2]
-                                tabledata.statusCode =
-                                    statusRespDataList[3]
-                                tabledata.mTxnId =
-                                    statusRespDataList[4]
-                                tabledata.partnerTxnId =
-                                    statusRespDataList[6]
-                                tabledata.transactionTimeStamp = statusRespDataList[7]
-                                tabledata.displayFormatedDate = getDateInDisplayFormatDigipos(statusRespDataList[7])
-                                val dateTime =
-                                    statusRespDataList[7].split(
-                                        " "
-                                    )
-                                tabledata.txnDate = dateTime[0]
-                                if(dateTime.size==2)
-                                tabledata.txnTime = dateTime[1]
-                                tabledata.amount =
-                                    statusRespDataList[8]
-                                tabledata.paymentMode =
-                                    statusRespDataList[9]
-                                tabledata.customerMobileNumber =
-                                    statusRespDataList[10]
-                                tabledata.description =
-                                    statusRespDataList[11]
-                                tabledata.pgwTxnId =
-                                    statusRespDataList[12]
-
-
-                                when (statusRespDataList[5]) {
-                                    EDigiPosPaymentStatus.Pending.desciption -> {
-                                        tabledata.txnStatus = statusRespDataList[5]
-                                        VFService.showToast(getString(R.string.txn_status_still_pending))
-                                    }
-
-                                    EDigiPosPaymentStatus.Approved.desciption -> {
-                                        tabledata.txnStatus = statusRespDataList[5]
-                                        DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
-                                        val dp =
-                                            DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
-                                                EDigiPosPaymentStatus.Pending.desciption
-                                            )
-                                        val dpObj = Gson().toJson(dp)
-                                        logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
-                                        Log.e("F56->>", responsef57)
-                                        runBlocking(Dispatchers.Main) {
-                                            if (dp.size == 0) {
-                                                binding?.emptyViewText?.visibility = View.VISIBLE
-                                                binding?.recyclerView?.visibility = View.GONE
-                                            } else {
-                                                binding?.recyclerView?.visibility = View.VISIBLE
-                                                binding?.emptyViewText?.visibility = View.GONE
-                                                binding?.recyclerView?.apply {
-                                                    pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
-                                                    (activity as MainActivity).hideProgress()
-                                                }
-                                            }
-                                            //   binding?.recyclerView?.smoothScrollToPosition(0)
-                                        }
-                                    }
-                                    else -> {
-                                        DigiPosDataTable.deletRecord(digiPosData[position].partnerTxnId)
-                                        DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
-                                        val dp =
-                                            DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
-                                                EDigiPosPaymentStatus.Pending.desciption
-                                            )
-                                        val dpObj = Gson().toJson(dp)
-                                        logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
-                                        Log.e("F56->>", responsef57)
-                                        runBlocking(Dispatchers.Main) {
-                                            if (dp.size == 0) {
-                                                binding?.emptyViewText?.visibility = View.VISIBLE
-                                                binding?.recyclerView?.visibility = View.GONE
-                                            } else {
-                                                binding?.recyclerView?.visibility = View.VISIBLE
-                                                binding?.emptyViewText?.visibility = View.GONE
-                                                binding?.recyclerView?.apply {
-                                                    pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
-                                                    (activity as MainActivity).hideProgress()
-                                                }
-                                            }
-                                            //   binding?.recyclerView?.smoothScrollToPosition(0)
+                                    when (statusRespDataList[5]) {
+                                        EDigiPosPaymentStatus.Pending.desciption -> {
+                                            tabledata.txnStatus = statusRespDataList[5]
+                                            VFService.showToast(getString(R.string.txn_status_still_pending))
                                         }
 
+                                        EDigiPosPaymentStatus.Approved.desciption -> {
+                                            tabledata.txnStatus = statusRespDataList[5]
+                                            DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                            val dp =
+                                                DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
+                                                    EDigiPosPaymentStatus.Pending.desciption
+                                                )
+                                            val dpObj = Gson().toJson(dp)
+                                            logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                            Log.e("F56->>", responsef57)
+                                            runBlocking(Dispatchers.Main) {
+                                                if (dp.size == 0) {
+                                                    binding?.emptyViewText?.visibility =
+                                                        View.VISIBLE
+                                                    binding?.recyclerView?.visibility = View.GONE
+                                                } else {
+                                                    binding?.recyclerView?.visibility = View.VISIBLE
+                                                    binding?.emptyViewText?.visibility = View.GONE
+                                                    binding?.recyclerView?.apply {
+                                                        pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
+                                                        (activity as MainActivity).hideProgress()
+                                                    }
+                                                }
+                                                //   binding?.recyclerView?.smoothScrollToPosition(0)
+                                            }
+                                        }
+                                        else -> {
+                                            DigiPosDataTable.deletRecord(digiPosData[position].partnerTxnId)
+                                            //DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                            val dp =
+                                                DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
+                                                    EDigiPosPaymentStatus.Pending.desciption
+                                                )
+                                            val dpObj = Gson().toJson(dp)
+                                            logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                            Log.e("F56->>", responsef57)
+                                            runBlocking(Dispatchers.Main) {
+                                                if (dp.size == 0) {
+                                                    binding?.emptyViewText?.visibility =
+                                                        View.VISIBLE
+                                                    binding?.recyclerView?.visibility = View.GONE
+                                                } else {
+                                                    binding?.recyclerView?.visibility = View.VISIBLE
+                                                    binding?.emptyViewText?.visibility = View.GONE
+                                                    binding?.recyclerView?.apply {
+                                                        pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
+                                                        (activity as MainActivity).hideProgress()
+                                                    }
+                                                }
+                                                //   binding?.recyclerView?.smoothScrollToPosition(0)
+                                            }
+
+                                        }
                                     }
+                                } else {
+                                    DigiPosDataTable.deletRecord(digiPosData[position].partnerTxnId)
+                                    //DigiPosDataTable.insertOrUpdateDigiposData(tabledata)
+                                    val dp =
+                                        DigiPosDataTable.selectDigiPosDataAccordingToTxnStatus(
+                                            EDigiPosPaymentStatus.Pending.desciption
+                                        )
+                                    val dpObj = Gson().toJson(dp)
+                                    VFService.showToast(statusRespDataList[1])
+                                    logger(LOG_TAG.DIGIPOS.tag, "--->      $dpObj ")
+                                    Log.e("F56->>", responsef57)
+                                    runBlocking(Dispatchers.Main) {
+                                        if (dp.size == 0) {
+                                            binding?.emptyViewText?.visibility = View.VISIBLE
+                                            binding?.recyclerView?.visibility = View.GONE
+                                        } else {
+                                            binding?.recyclerView?.visibility = View.VISIBLE
+                                            binding?.emptyViewText?.visibility = View.GONE
+                                            binding?.recyclerView?.apply {
+                                                pendingTxnAdapter?.refreshAdapterList(dp as ArrayList<DigiPosDataTable>)
+                                                (activity as MainActivity).hideProgress()
+                                            }
+                                        }
+                                        //   binding?.recyclerView?.smoothScrollToPosition(0)
+                                    }
+
+
                                 }
+
                             } else {
                                 lifecycleScope.launch(Dispatchers.Main) {
                                     (activity as BaseActivity).alertBoxWithAction(null,
@@ -305,7 +334,7 @@ class PendingTxnRecyclerView(
         holder.binding.transactionIV.visibility = View.VISIBLE
         holder.binding.parentSubHeader.visibility = View.VISIBLE
         holder.binding.transactionIV.visibility = View.VISIBLE
-        if(digiData[position].customerMobileNumber.isNullOrEmpty())
+        if (digiData[position].customerMobileNumber.isNullOrEmpty())
             holder.binding.mobileNumberTV.visibility = View.INVISIBLE
         holder.binding.sepraterLineView.visibility = View.VISIBLE
     }
