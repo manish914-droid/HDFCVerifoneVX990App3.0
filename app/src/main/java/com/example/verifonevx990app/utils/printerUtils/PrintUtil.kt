@@ -3034,16 +3034,30 @@ class PrintUtil(context: Context?) {
             )
             var mBillno = ""
             if (printerReceiptData.merchantBillNumber.isNotBlank() && printerReceiptData.merchantBillNumber != "0") {
-                mBillno = "M.BILL NO:" + printerReceiptData.merchantBillNumber
+                mBillno = "M.BILL NO:"+printerReceiptData.merchantBillNumber
             }
+       if (printerReceiptData.merchantBillNumber.isNotBlank() && printerReceiptData.merchantBillNumber != "0") {
 
+               if(mBillno.length<=18) {
+                   alignLeftRightText(
+                       textInLineFormatBundle,
+                       "INVOICE:${invoiceWithPadding(hostInvoice)}",
+                       mBillno
+                   )
+               }
+                else{
+                   alignLeftRightText(
+                       textInLineFormatBundle,
+                       "INVOICE:${invoiceWithPadding(hostInvoice)}",
+                       ""
+                   )
+                   alignLeftRightText(
+                       textInLineFormatBundle,
+                       mBillno,
+                       ""
+                   )
 
-            if (printerReceiptData.merchantBillNumber.isNotBlank() && printerReceiptData.merchantBillNumber != "0") {
-                alignLeftRightText(
-                    textInLineFormatBundle,
-                    "INVOICE:${invoiceWithPadding(hostInvoice)}",
-                    mBillno
-                )
+                }
             } else {
                 alignLeftRightText(
                     textInLineFormatBundle,
