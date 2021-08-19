@@ -37,13 +37,7 @@ object HitServer {
     private var callbackSale: ServerMessageCallbackSale? = null
 
     @Synchronized
-    suspend fun hitServer(
-        data: ByteArray,
-        callback: ServerMessageCallback,
-        progressMsg: ProgressCallback,
-        irh: IReversalHandler? = null,
-        isAppUpdate: Boolean = false
-    ) {
+    suspend fun hitServer(data: ByteArray, callback: ServerMessageCallback, progressMsg: ProgressCallback, irh: IReversalHandler? = null, isAppUpdate: Boolean = false) {
         this@HitServer.callback = callback
         var responseStr: String? = null
         try {
@@ -559,11 +553,7 @@ object HitServer {
                 TerminalCommunicationTable.selectCommTableByRecordType("1")  // always get tct it may get refresh meanwhile
             if (tct != null) {
                 val sAddress = VFService.getIpPort(isAppUpdate, isPrimaryIpPort = hitCounter)
-                logger(
-                    "Connection Details:- ",
-                    VFService.getIpPort(isPrimaryIpPort = hitCounter).toString(),
-                    "d"
-                )
+                logger("Connection Details:- ", VFService.getIpPort(isAppUpdate,isPrimaryIpPort = hitCounter).toString(), "d")
 
                 ServerSocketChannel.open().apply {
                     configureBlocking(false)

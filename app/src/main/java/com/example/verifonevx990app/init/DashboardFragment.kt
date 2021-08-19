@@ -460,6 +460,7 @@ class DashboardFragment : Fragment() {
         try {
             context?.let {
                 getRevisionIDFromFile(it) { isRevisionIDSame ->
+
                     if (isRevisionIDSame) {
                         sendConfirmation()
                     }

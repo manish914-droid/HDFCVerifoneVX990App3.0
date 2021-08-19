@@ -40,7 +40,7 @@ class SyncAppUpdateConfirmation(private var confirmationISOData: ByteArray, cb: 
                 )
                 isBool = false
             }
-        }, {})
+        }, {},isAppUpdate = true)
         return isBool
     }
 }

@@ -524,7 +524,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         showProgress(getString(R.string.please_wait_downloading_application_update))
         if (appHostDownloadURL != null) {
             val appHostDownloadURL = appHostDownloadURL?.replace("/app", ":"+ftpIPPort)
-            //https://testcallbh.bonushub.co.in/app/
+            //   AppUpdateDownloadManager(this@MainActivity,"https://bonushub.co.in/",
             AppUpdateDownloadManager(this@MainActivity,appHostDownloadURL+"app"+"/"+downloadAppFileName,
                     object : OnDownloadCompleteListener {
                         override fun onError(msg: String) {
@@ -548,7 +548,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                     var isPackageInstalled = if (isPackageInstalled("com.vfi.smartpos.system_service")) {
                                         autoInstallApk(fileUri.toString()) { status, packageName, code ->
                                             GlobalScope.launch(Dispatchers.Main) {
-                                                VFService.showToast(getString(R.string.app_updated_successfully))
+                                               // VFService.showToast(getString(R.string.app_updated_successfully))
                                             }
                                         }
                                     } else {
@@ -611,27 +611,32 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     //region=========================Auto Install Apk Execution Code:-
     fun autoInstallApk(filePath: String?, apkInstallCB: (Boolean, String, Int) -> Unit) {
-        showProgress(getString(R.string.please_wait_aaplication_is_configuring_updates))
+        val pInfo = this@MainActivity?.packageManager?.getPackageInfo(this@MainActivity.packageName, 0)
+      //  showProgress(getString(R.string.please_wait_aaplication_is_configuring_updates))
         if (systemManager != null && !TextUtils.isEmpty(filePath)) {
             try {
                 systemManager?.installApp(
                     filePath, object : IAppInstallObserver.Stub() {
                         @Throws(RemoteException::class)
                         override fun onInstallFinished(packageName: String, returnCode: Int) {
-                            Log.d("ReturnCode:- ", returnCode.toString())
-                            hideProgress()
+                            Log.d(TAG, "$packageName : $returnCode")
+                            runOnUiThread {
+                                Log.d(TAG, "$packageName : $returnCode")
+                                Toast.makeText(this@MainActivity, "$packageName : $returnCode", Toast.LENGTH_LONG).show()
+                            }
+                         //   hideProgress()
                             apkInstallCB(true, packageName, returnCode)
                         }
                     },
-                    "com.example.verifonevx990app"
+                        "com.example.verifonevx990app"
                 )
             } catch (e: RemoteException) {
                 e.printStackTrace()
-                hideProgress()
+             //   hideProgress()
                 apkInstallCB(true, "", 500)
             } catch (ex: java.lang.Exception) {
                 Log.d(TAG, ex.printStackTrace().toString())
-                hideProgress()
+             //   hideProgress()
                 apkInstallCB(true, "", 500)
             }
         } else {
