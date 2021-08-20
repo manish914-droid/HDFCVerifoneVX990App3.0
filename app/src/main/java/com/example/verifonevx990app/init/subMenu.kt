@@ -22,7 +22,6 @@ import com.example.verifonevx990app.bankemi.TestEmiOptionFragment
 import com.example.verifonevx990app.databinding.FragmentSubmenuBinding
 import com.example.verifonevx990app.main.MainActivity
 import com.example.verifonevx990app.main.PrefConstant
-import com.example.verifonevx990app.main.SubHeaderTitle
 import com.example.verifonevx990app.offlinemanualsale.OfflineSalePrintReceipt
 import com.example.verifonevx990app.realmtables.*
 import com.example.verifonevx990app.utils.printerUtils.EPrintCopyType
@@ -32,10 +31,7 @@ import com.example.verifonevx990app.vxUtils.*
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.vfi.smartpos.deviceservice.aidl.IPrinter
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.*
 
 enum class EOptionGroup(val heading: String,val res:Int) {
     FUNCTIONS("BANK FUNCTIONS",R.drawable.ic_new_bank_function), REPORT("REPORT",R.drawable.ic_new_reports), NONE("NONE",0)
@@ -636,6 +632,7 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
 
         } else if (type.group == EOptionGroup.REPORT.heading) {
             printer = VFService.vfPrinter
+
             if (printer?.status == 0) {
                 when (type) {
                     //   BankOptions.LAST_RECEIPT -> Log.d("REPORTS", "LAST_RECEIPT")
@@ -677,10 +674,16 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                     }
                                 }
                                 TransactionType.BRAND_EMI.type , TransactionType.BRAND_EMI_BY_ACCESS_CODE.type  -> {
+                                    val brandEmiData = runBlocking(Dispatchers.IO) {
+                                        BrandEMIDataTable.getBrandEMIDataByInvoice(
+                                            lastReceiptData.hostInvoice
+                                        )
+                                    }
                                     PrintUtil(activity).printEMISale(
                                         lastReceiptData,
                                         EPrintCopyType.DUPLICATE,
-                                        activity
+                                        activity,
+                                        brandEmiData
                                     ) { printCB, printingFail ->
                                         if (printCB) {
                                             iDiag?.hideProgress()
@@ -821,10 +824,15 @@ class SubMenuFragment : Fragment(), IOnSubMenuItemSelectListener {
                                                 }
                                             }
                                             TransactionType.BRAND_EMI.type , TransactionType.BRAND_EMI_BY_ACCESS_CODE.type -> {
+                                              val brandEmiData = runBlocking(Dispatchers.IO) {
+                                                    BrandEMIDataTable.getBrandEMIDataByInvoice(
+                                                        invoice
+                                                    )
+                                                }
                                                 PrintUtil(activity).printEMISale(
                                                     b,
                                                     EPrintCopyType.DUPLICATE,
-                                                    activity
+                                                    activity,brandEmiData
                                                 ) { printCB, printingFail ->
                                                     if (printCB) {
                                                         iDiag?.hideProgress()

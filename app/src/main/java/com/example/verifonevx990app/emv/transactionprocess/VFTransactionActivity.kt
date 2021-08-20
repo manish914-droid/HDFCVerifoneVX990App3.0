@@ -81,7 +81,11 @@ class VFTransactionActivity : BaseActivity() {
 
     private val brandEMIAccessData by lazy { intent.getSerializableExtra("brandEMIAccessData") as BrandEMIAccessDataModal? }
 
-    private val brandEMIData by lazy { intent.getSerializableExtra("brandEMIData") as BrandEMIDataModal? }
+    private val brandEMIData by lazy {
+        intent.getSerializableExtra("brandEMIData") as BrandEMIDataModal?
+    }
+    var modal = BrandEMIDataTable()
+
 
     private val uiAction by lazy {
         (intent.getSerializableExtra("uiAction") ?: UiAction.DEFAUTL) as UiAction
@@ -617,11 +621,21 @@ class VFTransactionActivity : BaseActivity() {
                                     stubEMI(stubbedData, emiSelectedData, emiTAndCData, brandEMIAccessData) { data ->
                                         Log.d("StubbedEMIData:- ", data.toString())
 
-                                        saveBrandEMIDataToDB(brandEMIData, data.hostInvoice)
+                                      modal=  saveBrandEMIDataToDB(brandEMIData, data.hostInvoice)
                                         saveBrandEMIbyCodeDataInDB(
                                             brandEMIAccessData,
                                             data.hostInvoice
                                         )
+                                      val modal2=runBlocking(Dispatchers.IO) {
+                                            BrandEMIDataTable.getBrandEMIDataByInvoice(data.hostInvoice)
+                                        }
+                                        if (modal2 != null) {
+                                            modal=modal2
+                                            VFService.showToast("getting data from db")
+                                            }else{
+                                            VFService.showToast("getting data from model")
+                                          }
+
                                         printSaveSaleEmiDataInBatch(data) { printCB ->
                                             if (!printCB) {
                                                 Log.e("EMI FIRST ", "COMMENT ******")
@@ -977,7 +991,8 @@ class VFTransactionActivity : BaseActivity() {
         PrintUtil(this).printEMISale(
             stubbedData,
             EPrintCopyType.MERCHANT,
-            this
+            this,
+            modal
         ) { dialogCB, printingFail ->
             Log.d("Sale Printer Status:- ", printingFail.toString())
             if (printingFail == 0)
@@ -1028,7 +1043,8 @@ class VFTransactionActivity : BaseActivity() {
                         printerUtil.printEMISale(
                             batchData,
                             EPrintCopyType.CUSTOMER,
-                            this
+                            this,
+                            modal
                         ) { customerCopyPrintSuccess, printingFail ->
                             if (!customerCopyPrintSuccess) {
                                 //  VFService.showToast(getString(R.string.customer_copy_print_success))

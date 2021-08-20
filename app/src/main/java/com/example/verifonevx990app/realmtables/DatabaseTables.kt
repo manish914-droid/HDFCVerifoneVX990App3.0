@@ -18,6 +18,7 @@ import kotlinx.coroutines.runBlocking
 import java.io.Serializable
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 enum class EDashboardItem(
     val title: String,
@@ -4075,6 +4076,7 @@ open class BrandTAndCTable() : RealmObject(), Parcelable {
     }
 
     companion object {
+
         private val TAG = BrandTAndCTable::class.java.simpleName
 
         @JvmField
@@ -4398,11 +4400,11 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
             withRealm { it.executeTransaction { i -> i.insertOrUpdate(param) } }
 
         //region====================Method to Get All IssuerTAndC Data================
-        fun getAllEMIData(): BrandEMIDataTable = runBlocking {
-            var result = BrandEMIDataTable()
+        fun getAllEMIData(): ArrayList<BrandEMIDataTable> = runBlocking {
+            var result = arrayListOf<BrandEMIDataTable>()
             getRealm {
-                val re = it.copyFromRealm(it.where(BrandEMIDataTable::class.java).findFirst())
-                if (re != null) result = re
+                val re = it.copyFromRealm(it.where(BrandEMIDataTable::class.java).findAll())
+                if (re != null) result = re as ArrayList<BrandEMIDataTable>
 
             }.await()
             result

@@ -164,12 +164,10 @@ class BrandEMIProductFragment : Fragment() {
                     (brandEmiProductDataList[selectedProductUpdatedPosition].minLength)
                 brandEMIDataModal?.maxLength =
                     (brandEmiProductDataList[selectedProductUpdatedPosition].maxLength)
-                if (!(brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc.isNullOrEmpty())) {
+
                     brandEMIDataModal?.producatDesc =
                         (brandEmiProductDataList[selectedProductUpdatedPosition].producatDesc)
-                } else{
-                    brandEMIDataModal?.producatDesc ="test case (blank)"
-                }
+
                 brandEMIDataModal?.productMinAmount =
                     ((brandEmiProductDataList[selectedProductUpdatedPosition].productMinAmount).toDouble()
                         .div(100).toString())
@@ -179,8 +177,6 @@ class BrandEMIProductFragment : Fragment() {
                 if (!brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName.isNullOrEmpty()) {
                     brandEMIDataModal?.categoryName =
                         (brandEmiProductDataList[selectedProductUpdatedPosition].productCategoryName)
-                } else{
-                    brandEMIDataModal?.producatDesc ="test case (blank)"
                 }
             }
             //endregion

@@ -1188,10 +1188,9 @@ class BrandEmiBillSerialMobileValidationModel : Serializable {
 //region======================Saving BrandEMI Data To DB:-
 fun saveBrandEMIDataToDB(
     brandEMIDataModal: BrandEMIDataModal?,hostInvoice:String
-) {
+): BrandEMIDataTable{
     val modal = BrandEMIDataTable()
   //  runBlocking(Dispatchers.IO) { BrandEMIDataTable.clear() }
-
     //Stubbing Data to BrandEMIDataTable:-
     modal.brandID = brandEMIDataModal?.brandID?: ""
     modal.brandName = brandEMIDataModal?.brandName?: ""
@@ -1208,8 +1207,9 @@ fun saveBrandEMIDataToDB(
     modal.imeiNumber = brandEMIDataModal?.imeiORserailNum ?: ""
     modal.serialNumber = brandEMIDataModal?.imeiORserailNum ?: ""
     modal.producatDesc= brandEMIDataModal?.producatDesc?: ""
-  //  modal.emiType = transactionType.title
-modal.hostInvoice=hostInvoice
+    VFService.showToast( modal.brandID+ modal.brandName+  modal.categoryName+ modal.productName+ modal.imeiNumber+modal.producatDesc )
+    modal.hostInvoice=hostInvoice
     runBlocking(Dispatchers.IO) { BrandEMIDataTable.saveBrandEMIDataTable(modal) }
+    return modal
 }
 //endregion
