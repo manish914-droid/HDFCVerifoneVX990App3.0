@@ -14,6 +14,7 @@ import android.util.Log
 import com.example.verifonevx990app.BuildConfig
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.bankemi.BankEMIDataModal
+import com.example.verifonevx990app.brandemi.BrandEMIDataModal
 import com.example.verifonevx990app.crosssell.CrossSellReportWithType
 import com.example.verifonevx990app.crosssell.ReportDownloadedModel
 import com.example.verifonevx990app.crosssell.TotalCrossellRep
@@ -31,6 +32,7 @@ import com.example.verifonevx990app.transactions.TenureDataModel
 import com.example.verifonevx990app.utils.MoneyUtil
 import com.example.verifonevx990app.utils.printerUtils.PrinterFonts.initialize
 import com.example.verifonevx990app.vxUtils.*
+import com.google.gson.Gson
 import com.vfi.smartpos.deviceservice.aidl.IPrinter
 import com.vfi.smartpos.deviceservice.aidl.PrinterConfig
 import com.vfi.smartpos.deviceservice.aidl.PrinterListener
@@ -2918,11 +2920,11 @@ class PrintUtil(context: Context?) {
     fun printEMISale(
         printerReceiptData: BatchFileDataTable,
         copyType: EPrintCopyType,
-        context: Context?,
+        context: Context?, model: BrandEMIDataTable? =null,
         printerCallback: (Boolean, Int) -> Unit
     ) {
         var currencySymbol: String? = "Rs"
-        var brandEmiData: BrandEMIDataTable? = null
+        var brandEmiData: BrandEMIDataTable? = model
         try {
             val tpt = runBlocking(Dispatchers.IO) { TerminalParameterTable.selectFromSchemeTable() }
 
@@ -2983,9 +2985,7 @@ class PrintUtil(context: Context?) {
             }
 
             if (printerReceiptData.transactionType == TransactionType.BRAND_EMI.type) {
-                brandEmiData = runBlocking(Dispatchers.IO) {
-                    BrandEMIDataTable.getBrandEMIDataByInvoice(hostInvoice)
-                }
+
             }
 
             if (!TextUtils.isEmpty(tpt?.currencySymbol)) {
@@ -3523,11 +3523,9 @@ class PrintUtil(context: Context?) {
             if (!TextUtils.isEmpty(printerReceiptData.totalInterest)) {
 
                 if (printerReceiptData.transactionType == TransactionType.TEST_EMI.type) {
-
                     val loanAmt = "%.2f".format(printerReceiptData.loanAmt.toFloat() / 100)
                     val totalInterest = "%.2f".format(printerReceiptData.totalInterest.toFloat() / 100)
-                    val totalAmt ="%.2f".format(( loanAmt.toDouble().plus(totalInterest.toDouble())).toFloat() / 100)
-
+                    val totalAmt = "%.2f".format(loanAmt.toDouble().plus(totalInterest.toDouble()))
 
                     /*alignLeftRightText(
                         textInLineFormatBundle,
