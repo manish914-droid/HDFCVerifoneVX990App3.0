@@ -12,97 +12,156 @@
             layout="@layout/sub_header_layout"
             android:visibility="visible" />
 
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginEnd="8dp"
-            android:elevation="@dimen/pad_4"
-            android:orientation="vertical"
-            app:cardCornerRadius="@dimen/pad_4"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
+
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:orientation="vertical"
+                android:gravity="left"
                 android:padding="@dimen/pad_16">
 
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
                     android:id="@+id/flexipay"
-                    style="@style/ActionButtonStyle"
+                    style="@style/Widget.Neumorph.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/pad_16"
-                    android:background="@drawable/basic_button_bg"
+                     android:layout_gravity="left"
                     android:text="@string/flexi_pay"
                     android:visibility="visible"
-                    app:fname="bold" />
+                    android:drawableStart="@drawable/ic_flexi_pay"
+                    app:fname="bold"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    android:layout_marginTop="@dimen/pad_60"
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                   app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"/>
+
+                <com.example.customneumorphic.NeumorphButton
+                    style="@style/Widget.Neumorph.Button"
                     android:id="@+id/hdfcCreditCard"
-                    style="@style/ActionButtonStyle"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/pad_16"
-                    android:background="@drawable/basic_button_bg"
                     android:text="@string/hdfc_credit_card"
+                    android:drawableStart="@drawable/ic_hdfc_cc"
+                    
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                   app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     app:fname="bold" />
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
+                    style="@style/Widget.Neumorph.Button"
                     android:id="@+id/instaLoan"
-                    style="@style/ActionButtonStyle"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/insta_loan"
+                    android:drawableStart="@drawable/ic_insta_loan"
+                    
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                   app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
                     android:visibility="gone"
-                    app:fname="bold" />
+                    app:fname="bold"/>
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
+                    style="@style/Widget.Neumorph.Button"
                     android:id="@+id/jumboLoan"
-                    style="@style/ActionButtonStyle"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/jumbo_loan"
+                    android:drawableStart="@drawable/ic_jumo_loan"
+                    
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                   app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"
+                    android:textAllCaps="true"
                     android:visibility="gone"
+                    android:textColor="@color/white"
+
                     app:fname="bold" />
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
+                    style="@style/Widget.Neumorph.Button"
                     android:id="@+id/creditLimitIncrease"
-                    style="@style/ActionButtonStyle"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/credit_limit_increase"
+                    android:drawableStart="@drawable/ic_credit_limt"
+                    
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
                     android:visibility="gone"
                     app:fname="bold" />
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
+                    style="@style/Widget.Neumorph.Button"
                     android:id="@+id/reports"
-                    style="@style/ActionButtonStyle"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_marginTop="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/reports"
+                    
+                    android:drawableStart="@drawable/ic_cs_report"
+                    android:layout_marginStart="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                   app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat"
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
                     app:fname="bold" />
             </LinearLayout>
-        </androidx.cardview.widget.CardView>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

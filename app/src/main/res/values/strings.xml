@@ -32,7 +32,7 @@
     <string name="admin_password">Admin Password</string>
     <string name="enter_admin_password">Enter admin password</string>
     <string name="super_admin">Super Admin</string>
-
+    <string name="enter_reg_mobile_number">Enter Registered Mobile Number</string>
     <!--taBLE edit-->
     <string name="update">Update</string>
 
@@ -359,7 +359,7 @@
     <string name="last_month">Last Month</string>
     <string name="enter_otp">Enter OTP</string>
     <string name="enter_last_four_digit">Enter Last 4 Digit Card Number</string>
-    <string name="enter_choice">Enter Choice</string>
+    <string name="enter_choice">Select Your Preference</string>
     <string name="sent_to_registered_email_id">Sent To Registered Email id</string>
     <string name="print_on_pos">Print on POS</string>
     <string name="otp_time_out">OTP Time Out</string>
@@ -425,7 +425,7 @@
     <string name="send_promo">SEND PROMO</string>
     <string name="add_customer">ADD CUSTOMER</string>
     <string name="enter_reg_mobile_no_of_consented_customer">Enter Reg. Mobile No. of consented Customer</string>
-    <string name="enter_last_4_digits_of_consented_customer_s_credit_card_number">Enter Last 4 digits of consented Customer\'s Credit Card Number</string>
+    <string name="enter_last_4_digits_of_consented_customer_s_credit_card_number">Enter Last 4 digit Credit Card No</string>
     <string name="enter_promo_code">Enter Promo Code</string>
     <string name="age">Age</string>
     <string name="gender">Gender</string>

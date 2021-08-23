@@ -2694,6 +2694,21 @@ fun getTransactionLimitForHDFCIssuer():Double{
     }
 
 }
+fun showEditTextUnSelectedWithFocus(
+    editText: BHEditText? = null,
+    cardView: NeumorphCardView?,
+    context: Context?
+) {
+    editText?.isFocusable = false
+    editText?.isFocusableInTouchMode = false
+
+    val imm: InputMethodManager? =
+        context?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager?
+    imm?.showSoftInput(editText, 0)
+    cardView?.setStrokeColor(ColorStateList.valueOf(Color.parseColor("#A9A9A9")))
+    cardView?.setStrokeWidth(1f)
+}
+//endregion
 
 fun maxAmountLimitDialog(iDialog: IDialog?, maxTxnLimit:Double){
     GlobalScope.launch(Dispatchers.Main) {

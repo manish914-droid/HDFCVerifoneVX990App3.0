@@ -1,101 +1,138 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scc"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+        <androidx.constraintlayout.widget.ConstraintLayout
 
-    <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context=".crosssell.InitiateCrossSellProcessFragment">
-
-        <include
-            android:id="@+id/sub_header_view"
-            layout="@layout/sub_header_layout"
-            android:visibility="visible" />
-
-        <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/sub_header_view"
-            android:layout_marginTop="16dp"
-            android:elevation="@dimen/pad_4"
-            android:orientation="vertical"
-            app:cardCornerRadius="@dimen/pad_4">
+            android:layout_height="match_parent"
+            >
 
-            <LinearLayout
+            <include
+                android:id="@+id/sub_header_view"
+                layout="@layout/sub_header_layout"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/crossSellMobileCardView"
+
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="@dimen/pad_16"
-                android:visibility="gone">
+                android:layout_height="match_parent"
+                android:layout_marginTop="@dimen/pad_60"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
 
                 <!--Enter Last Four Card Number Digit-->
-                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
-                    android:id="@+id/lastFourCardDigitTIL"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+
+
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/lastFourCardDigitET_crd_view"
+                    style="@style/Widget.Neumorph.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pad_8">
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_inset="@dimen/pad_8"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                    app:neumorph_shapeType="flat">
 
                     <com.example.verifonevx990app.vxUtils.BHEditText
                         android:id="@+id/lastFourCardDigitET"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/height_size_navigation_item"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
                         android:digits="0123456789"
+                        android:drawableStart="@drawable/ic_credit_card"
+                        android:ems="10"
+
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
                         android:hint="@string/enter_last_4_digits_of_consented_customer_s_credit_card_number"
                         android:imeOptions="actionNext"
-                        android:inputType="number"
-                        android:maxLength="4"
-                        android:paddingStart="@dimen/pad_16"
-                        android:paddingEnd="@dimen/pad_16"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_xregular"
-                        app:fname="bold" />
+                        android:inputType="none"
+                        android:lines="1"
+                        android:maxLength="13"
+                        android:paddingStart="@dimen/pad_10"
+                        android:paddingEnd="@dimen/pad_8"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/colorGrey"
+                        android:textSize="@dimen/text_size_regular" />
 
-                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+
+                </com.example.customneumorphic.NeumorphCardView>
+
 
                 <!--Enter Mobile Number Digit-->
-                <com.example.verifonevx990app.vxUtils.BHTextInputLayout
-                    android:id="@+id/mobileNoTIL"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                <com.example.customneumorphic.NeumorphCardView
+                    android:id="@+id/mobileNoET_crd_view"
+                    style="@style/Widget.Neumorph.CardView"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="@dimen/pad_8">
-
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/lastFourCardDigitET_crd_view"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="2dp"
+                    app:neumorph_inset="@dimen/pad_8"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+                    app:neumorph_shapeType="flat">
                     <com.example.verifonevx990app.vxUtils.BHEditText
                         android:id="@+id/mobileNoET"
-                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
-                        android:layout_height="@dimen/height_size_navigation_item"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/pad_8"
+                        android:layout_marginBottom="@dimen/pad_16"
+                        android:background="@null"
+                        android:cursorVisible="false"
                         android:digits="0123456789"
-                        android:hint="@string/enter_reg_mobile_no_of_consented_customer"
+                        android:drawableStart="@drawable/ic_mobile_icon"
+                        android:ems="10"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:gravity="center"
+                        android:hint="@string/enter_reg_mobile_number"
                         android:imeOptions="actionNext"
-                        android:inputType="number"
+                        android:inputType="none"
+                        android:lines="1"
                         android:maxLength="13"
-                        android:paddingStart="@dimen/pad_16"
-                        android:paddingEnd="@dimen/pad_16"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/text_size_xregular"
-                        app:fname="bold" />
+                        android:paddingStart="@dimen/pad_10"
+                        android:paddingEnd="@dimen/pad_8"
+                        android:textColor="@color/white"
+                        android:textColorHint="@color/colorGrey"
+                        android:textSize="@dimen/text_size_regular" />
 
-                </com.example.verifonevx990app.vxUtils.BHTextInputLayout>
+                </com.example.customneumorphic.NeumorphCardView>
+                >
 
-                <com.example.verifonevx990app.vxUtils.BHButton
-                    android:id="@+id/sendOtpBTN"
-                    style="@style/ActionButtonStyle"
+                <include
+                    android:id="@+id/main_keyBoard"
+                    layout="@layout/new_enter_amount_keyboard"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_marginTop="@dimen/pad_16"
-                    android:background="@drawable/basic_button_bg"
-                    android:text="@string/key_ok"
-                    app:fname="bold" />
+                    android:layout_height="0dp"
+                    android:layout_marginBottom="52dp"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent" />
 
-            </LinearLayout>
 
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
             <LinearLayout
                 android:id="@+id/reportLL"
@@ -103,32 +140,54 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="@dimen/pad_16"
-                android:visibility="gone">
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/sub_header_view">
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
                     android:id="@+id/reportCurrentMonthBTN"
-                    style="@style/ActionButtonStyle"
+                    style="@style/Widget.Neumorph.Button"
+
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-
+                    android:layout_marginStart="@dimen/pad_16"
                     android:layout_marginTop="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/Current_month"
-                    app:fname="bold" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    app:fname="bold"
+                    android:drawableStart="@drawable/ic_current_month"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat" />
 
-                <com.example.verifonevx990app.vxUtils.BHButton
+                <com.example.customneumorphic.NeumorphButton
                     android:id="@+id/reportLastMonthBTN"
-                    style="@style/ActionButtonStyle"
+                    style="@style/Widget.Neumorph.Button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/pad_16"
                     android:layout_marginTop="@dimen/pad_16"
+                    android:layout_marginEnd="@dimen/pad_16"
                     android:background="@drawable/basic_button_bg"
                     android:text="@string/last_month"
-                    app:fname="bold" />
+                    android:textAllCaps="true"
+                    android:textColor="@color/white"
+                    app:fname="bold"
+                    android:drawableStart="@drawable/ic_last_month"
+                    app:neumorph_shadowColorDark="@color/lowerShadow"
+                    app:neumorph_shadowColorLight="@color/upperShadow"
+                    app:neumorph_shadowElevation="5dp"
+                    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_10"
+                    app:neumorph_shapeType="flat" />
 
             </LinearLayout>
 
-        </androidx.cardview.widget.CardView>
 
-    </RelativeLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.core.widget.NestedScrollView>

@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<com.example.customneumorphic.NeumorphCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/Widget.Neumorph.CardView"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_below="@+id/sub_header_view"
-
     android:elevation="@dimen/pad_4"
     android:orientation="vertical"
-    app:cardCornerRadius="@dimen/pad_4">
+    app:neumorph_inset="@dimen/pad_8"
+    app:neumorph_backgroundColor="@color/colorPrimary"
+    app:neumorph_shadowElevation="5dp"
+    app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+    app:neumorph_shapeType="flat"
+    app:neumorph_shadowColorDark="@color/lowerShadow"
+    app:neumorph_shadowColorLight="@color/upperShadow"
+    app:neumorph_strokeWidth="@dimen/pad_1"
+  >
 
     <LinearLayout
         android:id="@+id/crossSellMobileCardView"
@@ -29,14 +37,16 @@
                 android:layout_centerHorizontal="true"
                 android:gravity="center"
                 android:text="@string/enter_choice"
-                android:textColor="@color/black"
-                android:textSize="@dimen/text_size_xregular"
-                app:fname="bold" />
+                android:textColor="@color/white"
+                android:textSize="@dimen/text_size_small"
+                app:fname="bold"
+                app:textAllCaps="true" />
 
             <ImageView
                 android:id="@+id/closeDialogChooserIMG"
-                android:layout_width="@dimen/pad_36"
-                android:layout_height="@dimen/pad_36"
+                android:layout_width="@dimen/pad_30"
+                android:layout_height="@dimen/pad_30"
+                android:layout_marginLeft="@dimen/pad_10"
                 android:layout_alignParentEnd="true"
                 android:contentDescription="@string/done"
                 android:scaleType="fitXY"
@@ -45,6 +55,7 @@
 
         <RadioGroup
             android:id="@+id/rg"
+            app:neumorph_shadowElevation="2dp"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical">
@@ -54,26 +65,44 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:checked="true"
+                android:textColor="@color/white"
+                android:shadowColor="@color/upperShadow"
+                android:buttonTint="@color/white"
+                android:paddingLeft="25dp"
                 android:text="@string/sent_to_registered_email_id"
-                android:textSize="@dimen/text_size_regular" />
+                android:textSize="15dp" />
 
             <RadioButton
                 android:id="@+id/printOnPos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/print_on_pos"
-                android:textSize="@dimen/text_size_regular" />
+                android:paddingLeft="25dp"
+                android:shadowColor="@color/upperShadow"
+                android:buttonTint="@color/white"
+                android:textColor="@color/white"
+                android:textSize="15dp" />
         </RadioGroup>
 
-        <com.example.verifonevx990app.vxUtils.BHButton
+        <com.example.customneumorphic.NeumorphButton
+            style="@style/Widget.Neumorph.Button"
             android:id="@+id/otpSubmitBTN"
-            style="@style/ActionButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/pad_50"
             android:layout_gravity="center"
             android:layout_marginTop="@dimen/pad_16"
             android:background="@drawable/basic_button_bg"
             android:text="@string/key_ok"
+            android:textAllCaps="true"
+            android:textColor="@color/white"
+            android:layout_marginStart="@dimen/pad_16"
+            android:layout_marginEnd="@dimen/pad_16"
+            app:neumorph_inset="@dimen/pad_8"
+            app:neumorph_shadowColorDark="@color/lowerShadow"
+            app:neumorph_shadowColorLight="@color/upperShadow"
+            app:neumorph_shadowElevation="2dp"
+            app:neumorph_shapeAppearance="@style/ShapeAppearance.Neumorph_costom_round_corner_14"
+            app:neumorph_shapeType="flat"
             app:fname="bold" />
     </LinearLayout>
-</androidx.cardview.widget.CardView>
+</com.example.customneumorphic.NeumorphCardView>

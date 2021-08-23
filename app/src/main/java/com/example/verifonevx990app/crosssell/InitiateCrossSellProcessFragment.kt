@@ -3,6 +3,7 @@ package com.example.verifonevx990app.crosssell
 import android.app.Dialog
 import android.content.Intent
 import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.TextUtils
@@ -11,12 +12,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
+import com.example.customneumorphic.NeumorphCardView
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.EnterOtpDialogBinding
 import com.example.verifonevx990app.databinding.FragmentInitiateCrossSellProcessBinding
 import com.example.verifonevx990app.main.MainActivity
+
+import com.example.verifonevx990app.realmtables.EDashboardItem
+import com.example.verifonevx990app.utils.KeyboardModel
 import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 import com.example.verifonevx990app.vxUtils.*
 import kotlinx.coroutines.Dispatchers
@@ -36,20 +45,24 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
     private val CROSS_SELL_REQUEST_TYPE: Int by lazy {
         arguments?.getInt(MainActivity.CROSS_SELL_REQUEST_TYPE) ?: -1947
     }
-    private var crossSellMobileCardView: LinearLayout? = null
+    private var crossSellMobileCardView: ConstraintLayout? = null
     private var reportLL: LinearLayout? = null
-    private var lastFourCardDigitTIL: BHTextInputLayout? = null
+    private var lastFourCardDigitTIL: NeumorphCardView? = null
     private var mobileNoTIL: BHTextInputLayout? = null
 
     private var mCountDown: CountDownTimer? = null
     private var otpExpireTime: Long = 120000
     private var field57Data: String? = null
     private var transactionReferenceNumber: String? = null
-
+    private var animShow: Animation? = null
+    private var animHide: Animation? = null
     var dataCounter = 0
     var hasMoreData = false
     var downloadedReportDataList = arrayListOf<ReportDownloadedModel>()
-
+    private val keyModelMobNumber: KeyboardModel by lazy {
+        KeyboardModel()
+    }
+    var inputInMobilenumber = false
     private var binding: FragmentInitiateCrossSellProcessBinding? = null
 
     override fun onCreateView(
@@ -67,7 +80,7 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
         binding?.subHeaderView?.subHeaderText?.text = fragTitle
         crossSellMobileCardView = view.findViewById(R.id.crossSellMobileCardView)
         reportLL = view.findViewById(R.id.reportLL)
-        lastFourCardDigitTIL = view.findViewById(R.id.lastFourCardDigitTIL)
+        lastFourCardDigitTIL = view.findViewById(R.id.lastFourCardDigitET_crd_view)
         mobileNoTIL = view.findViewById(R.id.mobileNoTIL)
         Log.d("RequestID:- ", CROSS_SELL_REQUEST_TYPE.toString())
         Log.d("OptionID:- ", CROSS_SELL_OPTIONS.toString())
@@ -77,88 +90,33 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
             CrossSellOptions.HDFC_CREDIT_CARD.code -> {
                 crossSellMobileCardView?.visibility = View.VISIBLE
                 lastFourCardDigitTIL?.visibility = View.GONE
+                binding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.HDFC_CREDIT_CARD.res)
             }
             CrossSellOptions.INSTA_LOAN.code -> {
                 crossSellMobileCardView?.visibility = View.VISIBLE
                 lastFourCardDigitTIL?.visibility = View.VISIBLE
+                binding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.INSTA_LOAN.res)
             }
             CrossSellOptions.JUMBO_LOAN.code -> {
                 crossSellMobileCardView?.visibility = View.VISIBLE
                 lastFourCardDigitTIL?.visibility = View.VISIBLE
+                binding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.JUMBO_LOAN.res)
             }
             CrossSellOptions.CREDIT_LIMIT_INCREASE.code -> {
                 crossSellMobileCardView?.visibility = View.VISIBLE
                 lastFourCardDigitTIL?.visibility = View.VISIBLE
+                binding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.CREDIT_LIMIT_INCREASE.res)
             }
             CrossSellOptions.REPORTS.code -> {
                 reportLL?.visibility = View.VISIBLE
                 crossSellMobileCardView?.visibility = View.GONE
+                binding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.REPORTS.res)
             }
         }
 
         // 2= last month
         // 1= current month
-        binding?.reportLastMonthBTN?.setOnClickListener { sendMailPrintChooserDialog("2") }
-        binding?.reportCurrentMonthBTN?.setOnClickListener { sendMailPrintChooserDialog("1") }
-
-        binding?.sendOtpBTN?.setOnClickListener {
-            when (CROSS_SELL_OPTIONS) {
-                CrossSellOptions.HDFC_CREDIT_CARD.code -> {
-                    if (hdfcCreditCardValidation()) {
-                        field57Data =
-                            "$CROSS_SELL_REQUEST_TYPE~~${binding?.mobileNoET?.text?.trim()}~~~"
-                        (activity as MainActivity).showProgress()
-                        SyncCrossSellToHost(
-                            field57Data ?: ""
-                        ) { crossSellCB, responseMsg, reportData ->
-                            GlobalScope.launch(Dispatchers.Main) {
-                                (activity as MainActivity).hideProgress()
-                                if (!TextUtils.isEmpty(reportData)) {
-                                    val data = reportData.split("~")
-                                    transactionReferenceNumber = data[3]
-                                }
-                                if (crossSellCB) {
-                                    VFService.showToast(responseMsg)
-                                    enterOTPDialog()
-                                } else
-                                    VFService.showToast(responseMsg)
-                            }
-                        }
-                    } else
-                        VFService.showToast(getString(R.string.enter_valid_mobile_number))
-                }
-
-                else -> {
-                    when {
-                        binding?.lastFourCardDigitET?.text?.length != 4 -> VFService.showToast(
-                            getString(R.string.enter_valid_last_four_digit_of_card)
-                        )
-                        binding?.mobileNoET?.text?.length !in 10..13 -> VFService.showToast(
-                            getString(R.string.enter_valid_mobile_number)
-                        )
-                        else -> {
-                            field57Data =
-                                "$CROSS_SELL_REQUEST_TYPE~${binding?.lastFourCardDigitET?.text?.trim()}~${binding?.mobileNoET?.text?.trim()}~~~"
-                            (activity as MainActivity).showProgress()
-                            SyncCrossSellToHost(field57Data.toString()) { crossSellCB, responseMsg, reportData ->
-                                GlobalScope.launch(Dispatchers.Main) {
-                                    (activity as MainActivity).hideProgress()
-                                    if (!TextUtils.isEmpty(reportData)) {
-                                        val data = reportData.split("~")
-                                        transactionReferenceNumber = data[3]
-                                    }
-                                    if (crossSellCB) {
-                                        VFService.showToast(responseMsg)
-                                        enterOTPDialog()
-                                    } else
-                                        VFService.showToast(responseMsg)
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        setOnClickListeners()
     }
 
     private fun hdfcCreditCardValidation(): Boolean {
@@ -166,7 +124,39 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
 
 
     }
+    private fun setOnClickListeners() {
 
+        binding?.reportLastMonthBTN?.setOnClickListener { sendMailPrintChooserDialog("2") }
+        binding?.reportCurrentMonthBTN?.setOnClickListener { sendMailPrintChooserDialog("1") }
+        //mobile number editText
+        binding?.mobileNoET?.setOnClickListener {
+            showEditTextUnSelectedWithFocus(binding?.mobileNoET, binding?.mobileNoETCrdView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.lastFourCardDigitETCrdView] = binding?.lastFourCardDigitET
+
+            showOtherEditTextUnSelected(hm, requireContext())
+            keyModelMobNumber.view = it
+            keyModelMobNumber.callback = ::onOKClicked
+            keyModelMobNumber.isInutSimpleDigit = true
+            inputInMobilenumber = true
+
+        }
+        binding?.lastFourCardDigitET?.setOnClickListener {
+            showEditTextUnSelectedWithFocus(binding?.lastFourCardDigitET, binding?.lastFourCardDigitETCrdView, requireContext())
+            val hm = hashMapOf<NeumorphCardView?, EditText?>()
+            hm[binding?.mobileNoETCrdView] = binding?.mobileNoET
+            showOtherEditTextUnSelected(hm, requireContext())
+            keyModelMobNumber.view = it
+            keyModelMobNumber.callback = ::onOKClicked
+            keyModelMobNumber.isInutSimpleDigit = true
+            inputInMobilenumber = true
+
+        }
+        onSetKeyBoardButtonClick()
+        initAnimation()
+        binding?.mainKeyBoard?.root?.visibility = View.VISIBLE
+        binding?.mainKeyBoard?.root?.startAnimation(animShow)
+    }
     //Below method is used to show enter OTP dialog:-
     private fun enterOTPDialog() {
         val dialog = androidx.appcompat.app.AlertDialog.Builder(requireActivity()).create()
@@ -199,117 +189,7 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
             otpSubmitBTN.isEnabled = it.length == 4 || it.length == 6
         })
 
-        otpSubmitBTN.setOnClickListener {
-            when (CROSS_SELL_OPTIONS) {
-                CrossSellOptions.HDFC_CREDIT_CARD.code -> {
-                    field57Data =
-                        "${CROSS_SELL_REQUEST_TYPE + 1}~~${binding?.mobileNoET?.text?.trim()}~${transactionReferenceNumber}~${otpET.text?.trim()}~"
-                    (activity as MainActivity).showProgress()
-                    SyncCrossSellToHost(field57Data ?: "") { crossSellCB, responseMsg, _ ->
-                        GlobalScope.launch(Dispatchers.Main) {
-                            (activity as MainActivity).hideProgress()
-                            if (crossSellCB) {
-                                VFService.showToast(responseMsg)
-                                mCountDown?.cancel()
-                                mCountDown = null
-                                dialog.dismiss()
-                                (activity as MainActivity).alertBoxWithAction(
-                                    null,
-                                    null,
-                                    getString(R.string.success_message),
-                                    getString(R.string.success_transaction),
-                                    false,
-                                    getString(R.string.positive_button_ok),
-                                    { alertPositiveCallback ->
-                                        if (alertPositiveCallback) {
-                                            ROCProviderV2.incrementFromResponse(
-                                                ROCProviderV2.getRoc(
-                                                    AppPreference.getBankCode()
-                                                ).toString(), AppPreference.getBankCode()
-                                            )
-                                            startActivity(
-                                                Intent(activity, MainActivity::class.java).apply {
-                                                    flags =
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                })
-                                        }
-                                    },
-                                    {})
-                            } else {
-                                mCountDown?.cancel()
-                                mCountDown = null
-                                dialog.dismiss()
-                                (activity as MainActivity).alertBoxWithAction(null,
-                                    null,
-                                    getString(R.string.failed),
-                                    getString(R.string.transaction_failed_msg),
-                                    false,
-                                    getString(R.string.positive_button_ok),
-                                    { alertPositiveCallback ->
-                                        if (alertPositiveCallback)
-                                            navigateToDashboard()
-                                    },
-                                    {})
-                            }
-                        }
-                    }
-                }
 
-                else -> {
-                    field57Data =
-                        "${CROSS_SELL_REQUEST_TYPE + 1}~${binding?.lastFourCardDigitET?.text?.trim()}~${binding?.mobileNoET?.text?.trim()}~${transactionReferenceNumber}~${otpET.text?.trim()}~"
-                    (activity as MainActivity).showProgress()
-                    SyncCrossSellToHost(field57Data ?: "") { crossSellCB, responseMsg, _ ->
-                        GlobalScope.launch(Dispatchers.Main) {
-                            (activity as MainActivity).hideProgress()
-                            if (crossSellCB) {
-                                VFService.showToast(responseMsg)
-                                mCountDown?.cancel()
-                                mCountDown = null
-                                dialog.dismiss()
-                                (activity as MainActivity).alertBoxWithAction(
-                                    null,
-                                    null,
-                                    getString(R.string.success_message),
-                                    getString(R.string.success_transaction),
-                                    false,
-                                    getString(R.string.positive_button_ok),
-                                    { alertPositiveCallback ->
-                                        if (alertPositiveCallback) {
-                                            ROCProviderV2.incrementFromResponse(
-                                                ROCProviderV2.getRoc(
-                                                    AppPreference.getBankCode()
-                                                ).toString(), AppPreference.getBankCode()
-                                            )
-                                            startActivity(
-                                                Intent(activity, MainActivity::class.java).apply {
-                                                    flags =
-                                                        Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                                                })
-                                        }
-                                    },
-                                    {})
-                            } else {
-                                mCountDown?.cancel()
-                                mCountDown = null
-                                dialog.dismiss()
-                                (activity as MainActivity).alertBoxWithAction(null,
-                                    null,
-                                    getString(R.string.failed),
-                                    getString(R.string.transaction_failed_msg),
-                                    false,
-                                    getString(R.string.positive_button_ok),
-                                    { alertPositiveCallback ->
-                                        if (alertPositiveCallback)
-                                            navigateToDashboard()
-                                    },
-                                    {})
-                            }
-                        }
-                    }
-                }
-            }
-        }
         dialog.show()
     }
 
@@ -405,7 +285,7 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
                 }
             }
         }
-
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
         dialog?.show()
 
     }
@@ -559,6 +439,209 @@ class InitiateCrossSellProcessFragment : Fragment(R.layout.fragment_initiate_cro
         startActivity(Intent(activity, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_CLEAR_TASK
         })
+    }
+    private fun initAnimation() {
+        animShow = AnimationUtils.loadAnimation(activity, R.anim.view_show)
+        animHide = AnimationUtils.loadAnimation(activity, R.anim.view_hide)
+    }
+    private fun onOKClicked(mobile: String) {
+        when (CROSS_SELL_OPTIONS) {
+            CrossSellOptions.HDFC_CREDIT_CARD.code -> {
+                if (hdfcCreditCardValidation()) {
+                    field57Data =
+                        "$CROSS_SELL_REQUEST_TYPE~~${binding?.mobileNoET?.text?.trim()}~~~"
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        (activity as MainActivity).showProgress()
+                    }
+                    SyncCrossSellToHost(
+                        field57Data ?: ""
+                    ) { crossSellCB, responseMsg, reportData ->
+                        GlobalScope.launch(Dispatchers.Main) {
+                            (activity as MainActivity).hideProgress()
+                            if (!TextUtils.isEmpty(reportData)) {
+                                val data = reportData.split("~")
+                                transactionReferenceNumber = data[3]
+                            }
+                            if (crossSellCB) {
+                                VFService.showToast(responseMsg)
+                                enterOTPDialog()
+                            } else
+                                VFService.showToast(responseMsg)
+                        }
+                    }
+                } else
+                    VFService.showToast(getString(R.string.enter_valid_mobile_number))
+            }
+
+            else -> {
+                when {
+                    binding?.lastFourCardDigitET?.text?.length != 4 -> VFService.showToast(
+                        getString(R.string.enter_valid_last_four_digit_of_card)
+                    )
+                    binding?.mobileNoET?.text?.length !in 10..13 -> VFService.showToast(
+                        getString(R.string.enter_valid_mobile_number)
+                    )
+                    else -> {
+                        field57Data =
+                            "$CROSS_SELL_REQUEST_TYPE~${binding?.lastFourCardDigitET?.text?.trim()}~${binding?.mobileNoET?.text?.trim()}~~~"
+                        (activity as MainActivity).showProgress()
+                        SyncCrossSellToHost(field57Data.toString()) { crossSellCB, responseMsg, reportData ->
+                            GlobalScope.launch(Dispatchers.Main) {
+                                (activity as MainActivity).hideProgress()
+                                if (!TextUtils.isEmpty(reportData)) {
+                                    val data = reportData.split("~")
+                                    transactionReferenceNumber = data[3]
+                                }
+                                if (crossSellCB) {
+                                    VFService.showToast(responseMsg)
+                                    enterOTPDialog()
+                                } else
+                                    VFService.showToast(responseMsg)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private fun onSetKeyBoardButtonClick() {
+        binding?.mainKeyBoard?.key0?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("0")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key00?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("00")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key000?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("000")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key1?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("1")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key2?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("2")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key3?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("3")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key4?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("4")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key5?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("5")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key6?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("6")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key7?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("7")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key8?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("8")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.key9?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("9")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyClr?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("c")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyDelete?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("d")
+                }
+
+            }
+        }
+        binding?.mainKeyBoard?.keyOK?.setOnClickListener {
+            when {
+
+                inputInMobilenumber -> {
+                    keyModelMobNumber.onKeyClicked("o")
+                }
+
+            }
+        }
+
     }
 }
 

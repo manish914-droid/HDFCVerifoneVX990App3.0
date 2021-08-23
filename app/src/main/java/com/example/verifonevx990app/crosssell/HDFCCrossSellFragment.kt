@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.fragment.app.Fragment
+import com.example.customneumorphic.NeumorphButton
 import com.example.verifonevx990app.R
 import com.example.verifonevx990app.databinding.CrossSellViewBinding
 
@@ -24,12 +25,12 @@ class HDFCCrossSellFragment : Fragment(R.layout.cross_sell_view) {
         arguments?.getString(MainActivity.RESERVED_VALUE) ?: ""
     }
     private var backImageButton: ImageView? = null
-    private var hdfcCreditCard: BHButton? = null
-    private var instaLoan: BHButton? = null
-    private var jumboLoan: BHButton? = null
-    private var creditLimitIncrease: BHButton? = null
-    private var reports: BHButton? = null
-    private var flexiPayBtn: BHButton? = null
+    private var hdfcCreditCard: NeumorphButton? = null
+    private var instaLoan: NeumorphButton? = null
+    private var jumboLoan: NeumorphButton? = null
+    private var creditLimitIncrease: NeumorphButton? = null
+    private var reports: NeumorphButton? = null
+    private var flexiPayBtn: NeumorphButton? = null
 
     private var crossSellViewBinding: CrossSellViewBinding? = null
 
@@ -131,7 +132,7 @@ class HDFCCrossSellFragment : Fragment(R.layout.cross_sell_view) {
     //endregion
 
     //region ShowButtons Visibility in Layout=========
-    private fun showHideButtons(button: BHButton?) {
+    private fun showHideButtons(button: NeumorphButton?) {
         button?.visibility = View.VISIBLE
     }
     //endregion
@@ -152,13 +153,13 @@ class HDFCCrossSellFragment : Fragment(R.layout.cross_sell_view) {
 
 //ENUMS
 //Below enum class is used to detect Cross Sell List Options:-
-enum class CrossSellOptions(val heading: String, val code: Int) {
-    FLEXI_PAY("Flexi Pay", 12),
-    CREDIT_LIMIT_INCREASE("Credit Limit Increase", 13),
-    JUMBO_LOAN("Jumbo Loan", 14),
-    INSTA_LOAN("Insta Loan", 15),
-    HDFC_CREDIT_CARD("HDFC Credit Card", 16),
-    REPORTS("Report", 17)
+enum class CrossSellOptions(val heading: String, val code: Int, val res: Int) {
+    FLEXI_PAY("Flexi Pay", 12, R.drawable.ic_flexi_pay),
+    CREDIT_LIMIT_INCREASE("Credit Limit Increase", 13, R.drawable.ic_credit_limt),
+    JUMBO_LOAN("Jumbo Loan", 14, R.drawable.ic_jumo_loan),
+    INSTA_LOAN("Insta Loan", 15 ,R.drawable.ic_insta_loan,),
+    HDFC_CREDIT_CARD("HDFC Credit Card", 16, R.drawable.ic_hdfc_cc),
+    REPORTS("Report", 17, R.drawable.ic_cs_report)
 }
 
 //Below enum class is used to identify cross sell packet request type:-
