@@ -631,10 +631,7 @@ class VFTransactionActivity : BaseActivity() {
                                         }
                                         if (modal2 != null) {
                                             modal=modal2
-                                            VFService.showToast("getting data from db")
-                                            }else{
-                                            VFService.showToast("getting data from model")
-                                          }
+                                        }
 
                                         printSaveSaleEmiDataInBatch(data) { printCB ->
                                             if (!printCB) {

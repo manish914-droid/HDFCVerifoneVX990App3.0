@@ -49,6 +49,7 @@ class HDFCCrossSellFragment : Fragment(R.layout.cross_sell_view) {
 
 
         crossSellViewBinding?.subHeaderView?.subHeaderText?.text = title
+        crossSellViewBinding?.subHeaderView?.headerImage?.setImageResource(CrossSellOptions.HDFC_CREDIT_CARD.res)
 
         //region Mapping All Layout Views START=======
         hdfcCreditCard = view.findViewById(R.id.hdfcCreditCard)

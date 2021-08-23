@@ -1208,7 +1208,6 @@ fun saveBrandEMIDataToDB(
     modal.imeiNumber = brandEMIDataModal?.imeiORserailNum ?: ""
     modal.serialNumber = brandEMIDataModal?.imeiORserailNum ?: ""
     modal.producatDesc= brandEMIDataModal?.producatDesc?: ""
-    VFService.showToast( modal.brandID+ modal.brandName+  modal.categoryName+ modal.productName+ modal.imeiNumber+modal.producatDesc )
     modal.hostInvoice=hostInvoice
     runBlocking(Dispatchers.IO) {
         // delay(4000)
