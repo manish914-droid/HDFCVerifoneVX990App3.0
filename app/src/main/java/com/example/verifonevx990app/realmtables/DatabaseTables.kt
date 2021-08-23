@@ -14,6 +14,7 @@ import io.realm.annotations.PrimaryKey
 import io.realm.annotations.RealmClass
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import java.io.Serializable
 import java.text.SimpleDateFormat
@@ -4416,6 +4417,7 @@ open class BrandEMIDataTable() : RealmObject(), Parcelable {
             runBlocking {
                 var brandEmidata: BrandEMIDataTable? = null
                 val inv = invoiceWithPadding(invoiceNumber)
+               // delay(4000)
                 getRealm {
                     val data = it.where(BrandEMIDataTable::class.java)
                         .equalTo("hostInvoice", inv)

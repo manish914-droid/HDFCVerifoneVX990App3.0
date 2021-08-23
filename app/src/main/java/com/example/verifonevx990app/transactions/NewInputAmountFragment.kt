@@ -1191,6 +1191,7 @@ fun saveBrandEMIDataToDB(
 ): BrandEMIDataTable{
     val modal = BrandEMIDataTable()
   //  runBlocking(Dispatchers.IO) { BrandEMIDataTable.clear() }
+
     //Stubbing Data to BrandEMIDataTable:-
     modal.brandID = brandEMIDataModal?.brandID?: ""
     modal.brandName = brandEMIDataModal?.brandName?: ""
@@ -1209,7 +1210,10 @@ fun saveBrandEMIDataToDB(
     modal.producatDesc= brandEMIDataModal?.producatDesc?: ""
     VFService.showToast( modal.brandID+ modal.brandName+  modal.categoryName+ modal.productName+ modal.imeiNumber+modal.producatDesc )
     modal.hostInvoice=hostInvoice
-    runBlocking(Dispatchers.IO) { BrandEMIDataTable.saveBrandEMIDataTable(modal) }
+    runBlocking(Dispatchers.IO) {
+        // delay(4000)
+        //   Thread.sleep(4000)
+        BrandEMIDataTable.saveBrandEMIDataTable(modal) }
     return modal
 }
 //endregion
