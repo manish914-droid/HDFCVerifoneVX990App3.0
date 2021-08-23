@@ -4,6 +4,9 @@ import android.content.Context
 import android.net.Uri
 import android.os.AsyncTask
 import android.util.Log
+import com.example.verifonevx990app.R
+import com.example.verifonevx990app.main.MainActivity
+import com.example.verifonevx990app.vxUtils.logger
 import java.io.File
 import java.io.FileOutputStream
 import java.io.InputStream
@@ -61,6 +64,12 @@ class AppUpdateDownloadManager(var context: Context, private var appHostDownload
             return ""
         }
 
+    }
+
+    override fun onProgressUpdate(vararg values: Int?) {
+        super.onProgressUpdate(*values)
+        logger("APP UPDATE",values[0].toString())
+        values[0]?.let { (context as MainActivity).updatePercentProgress(it) }
     }
 
     override fun onCancelled() {

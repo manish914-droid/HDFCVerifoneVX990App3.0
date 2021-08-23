@@ -521,7 +521,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
 
     //Below method is used to update App through HTTP/HTTPs:-
     private fun startHTTPSAppUpdate(appHostDownloadURL: String? = null, ftpIPPort: Int? = null, downloadAppFileName: String, downloadFileSize: String) {
-        showProgress(getString(R.string.please_wait_downloading_application_update))
+        showPercentDialog(getString(R.string.please_wait_downloading_application_update))
         if (appHostDownloadURL != null) {
             val appHostDownloadURL = appHostDownloadURL?.replace("/app", ":"+ftpIPPort)
             //   AppUpdateDownloadManager(this@MainActivity,"https://bonushub.co.in/",
@@ -891,7 +891,6 @@ class MainActivity : BaseActivity(), IFragmentRequest {
             }
 
             UiAction.BRAND_EMI -> {
-
                 if (checkInternetConnection()) {
                     val amt = (data as Pair<*, *>).first.toString()
                     startActivityForResult(
@@ -1812,6 +1811,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
                                             }
                                         } else {
                                             //VFService.showToast(getString(R.string.something_went_wrong_in_app_update))
+
                                             startTCPIPAppUpdate(ProcessingCode.APP_UPDATE.code, chunkValue = "0", partialName = "0")
                                         }
                                     } else {

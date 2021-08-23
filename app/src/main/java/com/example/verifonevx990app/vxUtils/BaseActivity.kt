@@ -11,9 +11,7 @@ import android.os.Handler
 import android.os.Looper
 import android.text.TextUtils
 import android.view.*
-import android.widget.Button
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.verifonevx990app.R
@@ -32,6 +30,10 @@ import com.example.verifonevx990app.utils.printerUtils.PrintUtil
 abstract class BaseActivity : AppCompatActivity(), IDialog {
     private lateinit var progressDialog: Dialog
     lateinit var progressTitleMsg: TextView
+    lateinit var progressPercent:ProgressBar
+    lateinit var progressPercentTv:TextView
+    lateinit var horizontalPLL:LinearLayout
+    lateinit var verticalProgressBar: ProgressBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,6 +60,10 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
             setCancelable(false)
         }
         progressTitleMsg = progressDialog.findViewById(R.id.msg_et)
+        progressPercent=progressDialog.findViewById(R.id.pBar)
+        progressPercentTv=progressDialog.findViewById(R.id.downloadPercentTv)
+        horizontalPLL=progressDialog.findViewById(R.id.horizontalProgressLL)
+        verticalProgressBar=progressDialog.findViewById(R.id.verticalProgressbr)
     }
 
     override fun showProgress(progressMsg: String) {
@@ -67,10 +73,33 @@ abstract class BaseActivity : AppCompatActivity(), IDialog {
         }
     }
 
+    override fun updatePercentProgress(percent: Int) {
+        progressPercent.visibility=View.VISIBLE
+        progressPercentTv.visibility=View.VISIBLE
+        val downloadPercent= "$percent %"
+        progressPercent.progress = percent
+        progressPercentTv.text=downloadPercent
+
+    }
+
+    override fun showPercentDialog(progressMsg: String) {
+        if (!progressDialog.isShowing && !(this as Activity).isFinishing) {
+            progressTitleMsg.text = progressMsg
+            horizontalPLL.visibility=View.VISIBLE
+            verticalProgressBar.visibility=View.GONE
+            progressTitleMsg .text=progressMsg
+            progressDialog.show()
+        }
+    }
+
+
 
     override fun hideProgress() {
-        if (progressDialog.isShowing && !(this as Activity).isFinishing)
+        if (progressDialog.isShowing && !(this as Activity).isFinishing) {
             progressDialog.dismiss()
+            horizontalPLL.visibility=View.GONE
+            verticalProgressBar.visibility=View.VISIBLE
+        }
     }
 
     override fun setProgressTitle(title: String) {
@@ -500,6 +529,8 @@ interface IDialog {
         title: String, msg: String, showCancelButton: Boolean = false, positiveButtonText: String,
         alertCallback: (Boolean) -> Unit, cancelButtonCallback: (Boolean) -> Unit
     )
+    fun updatePercentProgress(percent:Int)
+    fun showPercentDialog(progressMsg: String = "Please Wait....")
 
 }
 

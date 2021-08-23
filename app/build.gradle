@@ -9,7 +9,7 @@ android {
     compileSdkVersion 30
     signingConfigs {
         release {
-            storeFile file('/home/manishkumar/Documents/app_release_keys/bonushdfc.jks')
+            storeFile file('/home/lucky.singh/Downloads/bonushdfc.jks')
             storePassword 'Bonus@123'
             keyAlias 'Android'
             keyPassword "Bonus@123"
@@ -41,8 +41,8 @@ android {
         targetSdkVersion 30
         versionCode 1
         buildConfigField "long", "TIMESTAMP", System.currentTimeMillis() + "L"
-        buildConfigField "long", "REVISION_ID", "210106"
-        versionName "02.02.20"
+        buildConfigField "long", "REVISION_ID", "210105"
+        versionName "02.02.19"
         multiDexEnabled true
 
         ndk {
