@@ -107,7 +107,7 @@ object VFService {
             return if (txnCpt != null) {
                 if(isPrimaryIpPort==1) {
                     InetSocketAddress(
-                        InetAddress.getByName(txnCpt.hostPrimaryIp.replace("/203.112.151.169","203.112.151.169")),
+                        InetAddress.getByName(txnCpt.hostPrimaryIp),
                         txnCpt.hostPrimaryPortNo.toInt()
                     )
                 }else{

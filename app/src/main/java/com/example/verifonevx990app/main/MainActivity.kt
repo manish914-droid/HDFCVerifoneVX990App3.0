@@ -525,7 +525,7 @@ class MainActivity : BaseActivity(), IFragmentRequest {
         if (appHostDownloadURL != null) {
             val appHostDownloadURL = appHostDownloadURL?.replace("/app", ":"+ftpIPPort)
             //   AppUpdateDownloadManager(this@MainActivity,"https://bonushub.co.in/",
-            AppUpdateDownloadManager(this@MainActivity,appHostDownloadURL+"app"+"/"+downloadAppFileName,
+            AppUpdateDownloadManager(this@MainActivity,appHostDownloadURL+"app"+"/"+"X990"+"/"+downloadAppFileName,
                     object : OnDownloadCompleteListener {
                         override fun onError(msg: String) {
                             GlobalScope.launch(Dispatchers.Main) {
